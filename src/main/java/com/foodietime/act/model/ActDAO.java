@@ -1,4 +1,4 @@
-package com.foodtimetest.act.model;
+package com.foodietime.act.model;
 
 import java.sql.*;
 import java.util.*;

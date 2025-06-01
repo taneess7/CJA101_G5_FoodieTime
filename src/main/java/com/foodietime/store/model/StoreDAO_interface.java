@@ -1,4 +1,4 @@
-package com.foodtimetest.store.model;
+package com.foodietime.store.model;
 
 import java.util.List;
 
