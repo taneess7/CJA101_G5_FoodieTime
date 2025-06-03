@@ -62,7 +62,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- com.sun.mail -->                        <!-- spring-boot 未內建依賴 -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		
     </dependencies>
+    
+    
 
     <build>
         <plugins>
