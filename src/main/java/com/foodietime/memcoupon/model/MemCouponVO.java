@@ -1,7 +1,14 @@
 package com.foodietime.memcoupon.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Entity
+@Data
+@Table(name = "member_coupon")
 public class MemCouponVO implements Serializable{
 	private Integer memCouId;   // 會員優惠券編號（主鍵）
     private Integer couId;      // 優惠券編號（外鍵，對應COUPON表）
