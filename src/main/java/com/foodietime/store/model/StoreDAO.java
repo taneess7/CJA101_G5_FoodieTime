@@ -38,23 +38,23 @@ public class StoreDAO implements StoreDAO_interface {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT);
 
-			pstmt.setInt(1, storeVO.getStoreCateId());
-			pstmt.setString(2, storeVO.getStorName());
-			pstmt.setString(3, storeVO.getStorDesc());
-			pstmt.setString(4, storeVO.getStorAddr());
-			pstmt.setDouble(5, storeVO.getStorLon());
-			pstmt.setDouble(6, storeVO.getStorLat());
-			pstmt.setString(7, storeVO.getStorPhone());
-			pstmt.setString(8, storeVO.getStorWeb());
-			pstmt.setTime(9, storeVO.getStorOnTime());
-			pstmt.setTime(10, storeVO.getStorOffTime());
-			pstmt.setString(11, storeVO.getStorOffDay());
-			pstmt.setByte(12, storeVO.getStorDeliver());
-			pstmt.setByte(13, storeVO.getStorStatus());
-			pstmt.setBytes(14, storeVO.getStorPhoto());
-			pstmt.setByte(15, storeVO.getStorReportCount());
-			pstmt.setInt(16, storeVO.getStarNum());
-			pstmt.setInt(17, storeVO.getReviews());
+//			pstmt.setInt(1, storeVO.getStoreCateId());
+//			pstmt.setString(2, storeVO.getStorName());
+//			pstmt.setString(3, storeVO.getStorDesc());
+//			pstmt.setString(4, storeVO.getStorAddr());
+//			pstmt.setDouble(5, storeVO.getStorLon());
+//			pstmt.setDouble(6, storeVO.getStorLat());
+//			pstmt.setString(7, storeVO.getStorPhone());
+//			pstmt.setString(8, storeVO.getStorWeb());
+//			pstmt.setTime(9, storeVO.getStorOnTime());
+//			pstmt.setTime(10, storeVO.getStorOffTime());
+//			pstmt.setString(11, storeVO.getStorOffDay());
+//			pstmt.setByte(12, storeVO.getStorDeliver());
+//			pstmt.setByte(13, storeVO.getStorStatus());
+//			pstmt.setBytes(14, storeVO.getStorPhoto());
+//			pstmt.setByte(15, storeVO.getStorReportCount());
+//			pstmt.setInt(16, storeVO.getStarNum());
+//			pstmt.setInt(17, storeVO.getReviews());
 
 			pstmt.executeUpdate();
 
@@ -91,24 +91,24 @@ public class StoreDAO implements StoreDAO_interface {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE);
 
-			pstmt.setInt(1, storeVO.getStoreCateId());
-			pstmt.setString(2, storeVO.getStorName());
-			pstmt.setString(3, storeVO.getStorDesc());
-			pstmt.setString(4, storeVO.getStorAddr());
-			pstmt.setDouble(5, storeVO.getStorLon());
-			pstmt.setDouble(6, storeVO.getStorLat());
-			pstmt.setString(7, storeVO.getStorPhone());
-			pstmt.setString(8, storeVO.getStorWeb());
-			pstmt.setTime(9, storeVO.getStorOnTime());
-			pstmt.setTime(10, storeVO.getStorOffTime());
-			pstmt.setString(11, storeVO.getStorOffDay());
-			pstmt.setByte(12, storeVO.getStorDeliver());
-			pstmt.setByte(13, storeVO.getStorStatus());
-			pstmt.setBytes(14, storeVO.getStorPhoto());
-			pstmt.setByte(15, storeVO.getStorReportCount());
-			pstmt.setInt(16, storeVO.getStarNum());
-			pstmt.setInt(17, storeVO.getReviews());
-			pstmt.setInt(18, storeVO.getStorId());
+//			pstmt.setInt(1, storeVO.getStoreCateId());
+//			pstmt.setString(2, storeVO.getStorName());
+//			pstmt.setString(3, storeVO.getStorDesc());
+//			pstmt.setString(4, storeVO.getStorAddr());
+//			pstmt.setDouble(5, storeVO.getStorLon());
+//			pstmt.setDouble(6, storeVO.getStorLat());
+//			pstmt.setString(7, storeVO.getStorPhone());
+//			pstmt.setString(8, storeVO.getStorWeb());
+//			pstmt.setTime(9, storeVO.getStorOnTime());
+//			pstmt.setTime(10, storeVO.getStorOffTime());
+//			pstmt.setString(11, storeVO.getStorOffDay());
+//			pstmt.setByte(12, storeVO.getStorDeliver());
+//			pstmt.setByte(13, storeVO.getStorStatus());
+//			pstmt.setBytes(14, storeVO.getStorPhoto());
+//			pstmt.setByte(15, storeVO.getStorReportCount());
+//			pstmt.setInt(16, storeVO.getStarNum());
+//			pstmt.setInt(17, storeVO.getReviews());
+//			pstmt.setInt(18, storeVO.getStorId());
 
 			pstmt.executeUpdate();
 
@@ -190,25 +190,25 @@ public class StoreDAO implements StoreDAO_interface {
 
 			while (rs.next()) {
 
-				storeVO = new StoreVO();
-				storeVO.setStorId(rs.getInt("STOR_ID"));
-				storeVO.setStoreCateId(rs.getInt("STORE_CATE_ID"));
-				storeVO.setStorName(rs.getString("STOR_NAME"));
-				storeVO.setStorDesc(rs.getString("STOR_DESC"));
-				storeVO.setStorAddr(rs.getString("STOR_ADDR"));
-				storeVO.setStorLon(rs.getDouble("STOR_LONGITUDE"));
-				storeVO.setStorLat(rs.getDouble("STOR_LATITUDE"));
-				storeVO.setStorPhone(rs.getString("STOR_PHONE"));
-				storeVO.setStorWeb(rs.getString("STOR_WEB"));
-				storeVO.setStorOnTime(rs.getTime("STOR_OPEN_TIME"));
-				storeVO.setStorOffTime(rs.getTime("STOR_CLOSE_TIME"));
-				storeVO.setStorOffDay(rs.getString("STOR_WEEKLY_OFF_DAY"));
-				storeVO.setStorDeliver(rs.getByte("STOR_DELIVER"));
-				storeVO.setStorStatus(rs.getByte("STOR_OPEN"));
-				storeVO.setStorPhoto(rs.getBytes("STOR_PHOTO"));
-				storeVO.setStorReportCount(rs.getByte("STOR_REPORT_COUNT"));
-				storeVO.setStarNum(rs.getInt("TOTAL_STAR_NUM"));
-				storeVO.setReviews(rs.getInt("TOTAL_REVIEWS"));
+//				storeVO = new StoreVO();
+//				storeVO.setStorId(rs.getInt("STOR_ID"));
+//				storeVO.setStoreCateId(rs.getInt("STORE_CATE_ID"));
+//				storeVO.setStorName(rs.getString("STOR_NAME"));
+//				storeVO.setStorDesc(rs.getString("STOR_DESC"));
+//				storeVO.setStorAddr(rs.getString("STOR_ADDR"));
+//				storeVO.setStorLon(rs.getDouble("STOR_LONGITUDE"));
+//				storeVO.setStorLat(rs.getDouble("STOR_LATITUDE"));
+//				storeVO.setStorPhone(rs.getString("STOR_PHONE"));
+//				storeVO.setStorWeb(rs.getString("STOR_WEB"));
+//				storeVO.setStorOnTime(rs.getTime("STOR_OPEN_TIME"));
+//				storeVO.setStorOffTime(rs.getTime("STOR_CLOSE_TIME"));
+//				storeVO.setStorOffDay(rs.getString("STOR_WEEKLY_OFF_DAY"));
+//				storeVO.setStorDeliver(rs.getByte("STOR_DELIVER"));
+//				storeVO.setStorStatus(rs.getByte("STOR_OPEN"));
+//				storeVO.setStorPhoto(rs.getBytes("STOR_PHOTO"));
+//				storeVO.setStorReportCount(rs.getByte("STOR_REPORT_COUNT"));
+//				storeVO.setStarNum(rs.getInt("TOTAL_STAR_NUM"));
+//				storeVO.setReviews(rs.getInt("TOTAL_REVIEWS"));
 
 			}
 
@@ -262,24 +262,24 @@ public class StoreDAO implements StoreDAO_interface {
 
 				storeVO = new StoreVO();
 
-				storeVO.setStorId(rs.getInt("STOR_ID"));
-				storeVO.setStoreCateId(rs.getInt("STORE_CATE_ID"));
-				storeVO.setStorName(rs.getString("STOR_NAME"));
-				storeVO.setStorDesc(rs.getString("STOR_DESC"));
-				storeVO.setStorAddr(rs.getString("STOR_ADDR"));
-				storeVO.setStorLon(rs.getDouble("STOR_LONGITUDE"));
-				storeVO.setStorLat(rs.getDouble("STOR_LATITUDE"));
-				storeVO.setStorPhone(rs.getString("STOR_PHONE"));
-				storeVO.setStorWeb(rs.getString("STOR_WEB"));
-				storeVO.setStorOnTime(rs.getTime("STOR_OPEN_TIME"));
-				storeVO.setStorOffTime(rs.getTime("STOR_CLOSE_TIME"));
-				storeVO.setStorOffDay(rs.getString("STOR_WEEKLY_OFF_DAY"));
-				storeVO.setStorDeliver(rs.getByte("STOR_DELIVER"));
-				storeVO.setStorStatus(rs.getByte("STOR_OPEN"));
-				storeVO.setStorPhoto(rs.getBytes("STOR_PHOTO"));
-				storeVO.setStorReportCount(rs.getByte("STOR_REPORT_COUNT"));
-				storeVO.setStarNum(rs.getInt("TOTAL_STAR_NUM"));
-				storeVO.setReviews(rs.getInt("TOTAL_REVIEWS"));
+//				storeVO.setStorId(rs.getInt("STOR_ID"));
+//				storeVO.setStoreCateId(rs.getInt("STORE_CATE_ID"));
+//				storeVO.setStorName(rs.getString("STOR_NAME"));
+//				storeVO.setStorDesc(rs.getString("STOR_DESC"));
+//				storeVO.setStorAddr(rs.getString("STOR_ADDR"));
+//				storeVO.setStorLon(rs.getDouble("STOR_LONGITUDE"));
+//				storeVO.setStorLat(rs.getDouble("STOR_LATITUDE"));
+//				storeVO.setStorPhone(rs.getString("STOR_PHONE"));
+//				storeVO.setStorWeb(rs.getString("STOR_WEB"));
+//				storeVO.setStorOnTime(rs.getTime("STOR_OPEN_TIME"));
+//				storeVO.setStorOffTime(rs.getTime("STOR_CLOSE_TIME"));
+//				storeVO.setStorOffDay(rs.getString("STOR_WEEKLY_OFF_DAY"));
+//				storeVO.setStorDeliver(rs.getByte("STOR_DELIVER"));
+//				storeVO.setStorStatus(rs.getByte("STOR_OPEN"));
+//				storeVO.setStorPhoto(rs.getBytes("STOR_PHOTO"));
+//				storeVO.setStorReportCount(rs.getByte("STOR_REPORT_COUNT"));
+//				storeVO.setStarNum(rs.getInt("TOTAL_STAR_NUM"));
+//				storeVO.setReviews(rs.getInt("TOTAL_REVIEWS"));
 
 				list.add(storeVO); // Store the row in the list
 			}

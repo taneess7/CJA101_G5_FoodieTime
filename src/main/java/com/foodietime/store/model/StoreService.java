@@ -18,25 +18,25 @@ public class StoreService {
 
 		StoreVO storeVO = new StoreVO();
 
-		storeVO.setStoreCateId(storeCateId);
-		storeVO.setStorName(storName);
-		storeVO.setStorDesc(storDesc);
-		storeVO.setStorAddr(storAddr);
-		storeVO.setStorLon(storLon);
-		storeVO.setStorLat(storLat);
-		storeVO.setStorPhone(storPhone);
-		storeVO.setStorWeb(storWeb);
-		storeVO.setStorOnTime(storOnTime);
-		storeVO.setStorOffTime(storOffTime);
-		storeVO.setStorOffDay(storOffDay);
-		storeVO.setStorDeliver(storDeliver);
-		storeVO.setStorStatus(storStatus);
-		storeVO.setStorPhoto(storPhoto);
-		storeVO.setStorReportCount(storReportCount);
-		storeVO.setStarNum(starNum);
-		storeVO.setReviews(reviews);
-		dao.insert(storeVO);
-		
+//		storeVO.setStoreCateId(storeCateId);
+//		storeVO.setStorName(storName);
+//		storeVO.setStorDesc(storDesc);
+//		storeVO.setStorAddr(storAddr);
+//		storeVO.setStorLon(storLon);
+//		storeVO.setStorLat(storLat);
+//		storeVO.setStorPhone(storPhone);
+//		storeVO.setStorWeb(storWeb);
+//		storeVO.setStorOnTime(storOnTime);
+//		storeVO.setStorOffTime(storOffTime);
+//		storeVO.setStorOffDay(storOffDay);
+//		storeVO.setStorDeliver(storDeliver);
+//		storeVO.setStorStatus(storStatus);
+//		storeVO.setStorPhoto(storPhoto);
+//		storeVO.setStorReportCount(storReportCount);
+//		storeVO.setStarNum(starNum);
+//		storeVO.setReviews(reviews);
+//		dao.insert(storeVO);
+//		
 		return storeVO;
 	}
 
@@ -44,25 +44,25 @@ public class StoreService {
 
 		StoreVO storeVO = new StoreVO();
 
-		storeVO.setStorId(storId);
-		storeVO.setStoreCateId(storeCateId);
-		storeVO.setStorName(storName);
-		storeVO.setStorDesc(storDesc);
-		storeVO.setStorAddr(storAddr);
-		storeVO.setStorLon(storLon);
-		storeVO.setStorLat(storLat);
-		storeVO.setStorPhone(storPhone);
-		storeVO.setStorWeb(storWeb);
-		storeVO.setStorOnTime(storOnTime);
-		storeVO.setStorOffTime(storOffTime);
-		storeVO.setStorOffDay(storOffDay);
-		storeVO.setStorDeliver(storDeliver);
-		storeVO.setStorStatus(storStatus);
-		storeVO.setStorPhoto(storPhoto);
-		storeVO.setStorReportCount(storReportCount);
-		storeVO.setStarNum(starNum);
-		storeVO.setReviews(reviews);
-		
+//		storeVO.setStorId(storId);
+//		storeVO.setStoreCateId(storeCateId);
+//		storeVO.setStorName(storName);
+//		storeVO.setStorDesc(storDesc);
+//		storeVO.setStorAddr(storAddr);
+//		storeVO.setStorLon(storLon);
+//		storeVO.setStorLat(storLat);
+//		storeVO.setStorPhone(storPhone);
+//		storeVO.setStorWeb(storWeb);
+//		storeVO.setStorOnTime(storOnTime);
+//		storeVO.setStorOffTime(storOffTime);
+//		storeVO.setStorOffDay(storOffDay);
+//		storeVO.setStorDeliver(storDeliver);
+//		storeVO.setStorStatus(storStatus);
+//		storeVO.setStorPhoto(storPhoto);
+//		storeVO.setStorReportCount(storReportCount);
+//		storeVO.setStarNum(starNum);
+//		storeVO.setReviews(reviews);
+//		
 		dao.update(storeVO);
 
 		return storeVO;
