@@ -27,43 +27,4 @@ public class OrdDetVO implements Serializable{
 	@Column(name="ORD_DESC")
 	private String ordDesc;     // 訂單備註
 
-
-	public Integer getOrdDetId() {
-		return ordDetId;
-	}
-	public void setOrdDetId(Integer ordDetId) {
-		this.ordDetId = ordDetId;
-	}
-	public OrdersVO getOrdId() {
-		return ordId;
-	}
-	public void setOrdId(OrdersVO ordId) {
-		this.ordId = ordId;
-	}
-	public Integer getProdId() {
-		return prodId;
-	}
-	public void setProdId(Integer prodId) {
-		this.prodId = prodId;
-	}
-	public Integer getProdQty() {
-		return prodQty;
-	}
-	public void setProdQty(Integer prodQty) {
-		this.prodQty = prodQty;
-	}
-	public Integer getProdPrice() {
-		return prodPrice;
-	}
-	public void setProdPrice(Integer prodPrice) {
-		this.prodPrice = prodPrice;
-	}
-	public String getOrdDesc() {
-		return ordDesc;
-	}
-	public void setOrdDesc(String ordDesc) {
-		this.ordDesc = ordDesc;
-	}
-
-
 }
