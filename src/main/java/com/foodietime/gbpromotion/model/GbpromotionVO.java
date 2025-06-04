@@ -3,58 +3,49 @@ package com.foodietime.gbpromotion.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class GbpromotionVO implements Serializable{
-	private Integer gbPromoId;                              
-	private Integer gbProdId;
-	private Integer gbMinQty;
-	private Date promotStart;                 
-	private Date promotEnd;                               
-	private Integer gbProdSales;             
-	private Integer gbProdSpe;
-	public Integer getGbPromoId() {
-		return gbPromoId;
-	}
-	public void setGbPromoId(Integer gbPromoId) {
-		this.gbPromoId = gbPromoId;
-	}
-	public Integer getGbProdId() {
-		return gbProdId;
-	}
-	public void setGbProdId(Integer gbProdId) {
-		this.gbProdId = gbProdId;
-	}
-	public Integer getGbMinQty() {
-		return gbMinQty;
-	}
-	public void setGbMinQty(Integer gbMinQty) {
-		this.gbMinQty = gbMinQty;
-	}
-	public Date getPromotStart() {
-		return promotStart;
-	}
-	public void setPromotStart(Date promotStart) {
-		this.promotStart = promotStart;
-	}
-	public Date getPromotEnd() {
-		return promotEnd;
-	}
-	public void setPromotEnd(Date promotEnd) {
-		this.promotEnd = promotEnd;
-	}
-	public Integer getGbProdSales() {
-		return gbProdSales;
-	}
-	public void setGbProdSales(Integer gbProdSales) {
-		this.gbProdSales = gbProdSales;
-	}
-	public Integer getGbProdSpe() {
-		return gbProdSpe;
-	}
-	public void setGbProdSpe(Integer gbProdSpe) {
-		this.gbProdSpe = gbProdSpe;
-	}
-	
-	
-	     
+import com.foodietime.gbprod.model.GbprodVO;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.Data;
+
+@Entity
+@Data
+@Table(name = "gb_promotion")
+public class GbpromotionVO implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "GB_PROMO_ID")
+    private Integer gbPromoId;
+
+    @OneToOne
+    @JoinColumn(name = "GB_PROD_ID")
+    private GbprodVO gbprodVO;
+
+    @Column(name = "GB_MIN_QTY")
+    private Integer gbMinQty;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "PROMT_START")
+    private Date promotStart;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "PROMT_END")
+    private Date promotEnd;
+
+    @Column(name = "GB_PROD_SALES")
+    private Integer gbProdSales;
+
+    @Column(name = "GB_PROD_SPE")
+    private Integer gbProdSpe;
 
 }

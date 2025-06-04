@@ -2,19 +2,34 @@ package com.foodietime.smgauth.model;
 
 import java.io.Serializable;
 
-public class SmgauthVO implements Serializable{
-	private Integer smgFuncId;
-	private Integer smgId;
-	public Integer getSmgFuncId() {
-		return smgFuncId;
-	}
-	public void setSmgFuncId(Integer smgFuncId) {
-		this.smgFuncId = smgFuncId;
-	}
-	public Integer getSmgId() {
-		return smgId;
-	}
-	public void setSmgId(Integer smgId) {
-		this.smgId = smgId;
-	}
+import com.foodietime.smg.model.SmgVO;
+import com.foodietime.smgfc.model.SmgfcVO;
+
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Data
+@Table(name = "servermanagerauth")
+public class SmgauthVO implements Serializable {
+
+    @EmbeddedId
+    private SmgauthId id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("smgId") // 這裡對應 SmgauthId 的 smgId
+    @JoinColumn(name = "SMGR_ID")
+    private SmgVO smg;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("smgFuncId") // 這裡對應 SmgauthId 的 smgFuncId
+    @JoinColumn(name = "SMGEFUNC_ID")
+    private SmgfcVO smgfc;
+
 }

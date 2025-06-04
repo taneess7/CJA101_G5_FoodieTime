@@ -2,51 +2,35 @@ package com.foodietime.smg.model;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class SmgService {
-	private SmgDAO_interface dao;
 
-	public SmgService() {
-		dao = new SmgDAO();
-	}
+    @Autowired
+    private SmgRepository smgRepository;
 
-	public SmgVO addSmg(String smgrEmail, String smgrAccount, String smgrPassword, String smgrName, String smgrPhone) {
-
-		SmgVO smgVO = new SmgVO();
-
-		smgVO.setSmgrEmail(smgrEmail);
-		smgVO.setSmgrAccount(smgrAccount);
-		smgVO.setSmgrPassword(smgrPassword);
-		smgVO.setSmgrName(smgrName);
-		smgVO.setSmgrPhone(smgrPhone);
-		dao.insert(smgVO);
-
-		return smgVO;
-	}
-
-	public SmgVO updateSmg(Integer smgId, String smgrEmail, String smgrAccount, String smgrPassword, String smgrName,
-			String smgrPhone,Integer smgrStatus) {
-
-		SmgVO smgVO = new SmgVO();
-
-		smgVO.setSmgId(smgId);
-		smgVO.setSmgrEmail(smgrEmail);
-		smgVO.setSmgrAccount(smgrAccount);
-		smgVO.setSmgrPassword(smgrPassword);
-		smgVO.setSmgrName(smgrName);
-		smgVO.setSmgrPhone(smgrPhone);
-		smgVO.setSmgrStatus(smgrStatus);
-		dao.update(smgVO);
-
-		return smgVO;
-	}
-	
-	public SmgVO getOneSmg(Integer smgId) {
-		return dao.findByPrimaryKey(smgId);
-	}
-	public boolean isAccountExists(String smgrAccount) {
-        return dao.isAccountExist(smgrAccount);
+    public List<SmgVO> findAllSmgs() {
+        return smgRepository.findAll();
     }
-	public List<SmgVO> getAll() {
-		return dao.getAll();
-	}
+
+    public SmgVO findById(Integer id) {
+        return smgRepository.findById(id).orElse(null);
+    }
+
+    public SmgVO save(SmgVO smg) {
+        return smgRepository.save(smg);
+    }
+
+    public void deleteById(Integer id) {
+        smgRepository.deleteById(id);
+    }
+    public SmgVO login(String account, String password) {
+        SmgVO smg = smgRepository.findBySmgrAccount(account);
+        if (smg != null && smg.getSmgrPassword().equals(password)) {
+            return smg;
+        }
+        return null;
+    }
 }
