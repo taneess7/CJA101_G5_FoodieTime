@@ -1,21 +1,20 @@
 package com.foodietime.smgfc.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
 import java.io.Serializable;
 
-public class SmgfcVO implements Serializable{
-	private Integer smgFuncId;
-	private String smgFunc;
-	public Integer getSmgFuncId() {
-		return smgFuncId;
-	}
-	public void setSmgFuncId(Integer smgFuncId) {
-		this.smgFuncId = smgFuncId;
-	}
-	public String getSmgFunc() {
-		return smgFunc;
-	}
-	public void setSmgFunc(String smgFunc) {
-		this.smgFunc = smgFunc;
-	}
-	
+@Entity
+@Data
+@Table(name = "servermanagefunction")
+public class SmgfcVO implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SMGEFUNC_ID")
+    private Integer smgFuncId;
+
+    @Column(name = "SMGEFUNC", length = 45)
+    private String smgFunc;
+
 }

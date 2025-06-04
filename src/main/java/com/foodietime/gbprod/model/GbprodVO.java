@@ -3,91 +3,75 @@ package com.foodietime.gbprod.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class GbprodVO implements Serializable{
-	private Integer gbProdId;
-	private Integer storId;
-	private Integer gbCaseId;
-	private String  gbProdName;
-	private String  gbProdDescription;
-	private Integer gbProdQuantity;
-	private Byte 	gbProdStatus;
-	private Date	updateAt;
-	private String	gbProdSpecification;
-	private Byte []	gbProdPhoto;
-	private String	gbProdEvaluate;
-	private Byte	gbProdReportCount;
-	
-	public Integer getGbProdId() {
-		return gbProdId;
-	}
-	public void setGbProdId(Integer gbProdId) {
-		this.gbProdId = gbProdId;
-	}
-	public Integer getStorId() {
-		return storId;
-	}
-	public void setStorId(Integer storId) {
-		this.storId = storId;
-	}
-	public Integer getGbCaseId() {
-		return gbCaseId;
-	}
-	public void setGbCaseId(Integer gbCaseId) {
-		this.gbCaseId = gbCaseId;
-	}
-	public String getGbProdName() {
-		return gbProdName;
-	}
-	public void setGbProdName(String gbProdName) {
-		this.gbProdName = gbProdName;
-	}
-	public String getGbProdDescription() {
-		return gbProdDescription;
-	}
-	public void setGbProdDescription(String gbProdDescription) {
-		this.gbProdDescription = gbProdDescription;
-	}
-	public Integer getGbProdQuantity() {
-		return gbProdQuantity;
-	}
-	public void setGbProdQuantity(Integer gbProdQuantity) {
-		this.gbProdQuantity = gbProdQuantity;
-	}
-	public Byte getGbProdStatus() {
-		return gbProdStatus;
-	}
-	public void setGbProdStatus(Byte gbProdStatus) {
-		this.gbProdStatus = gbProdStatus;
-	}
-	public Date getUpdateAt() {
-		return updateAt;
-	}
-	public void setUpdateAt(Date updateAt) {
-		this.updateAt = updateAt;
-	}
-	public String getGbProdSpecification() {
-		return gbProdSpecification;
-	}
-	public void setGbProdSpecification(String gbProdSpecification) {
-		this.gbProdSpecification = gbProdSpecification;
-	}
-	public Byte[] getGbProdPhoto() {
-		return gbProdPhoto;
-	}
-	public void setGbProdPhoto(Byte[] gbProdPhoto) {
-		this.gbProdPhoto = gbProdPhoto;
-	}
-	public String getGbProdEvaluate() {
-		return gbProdEvaluate;
-	}
-	public void setGbProdEvaluate(String gbProdEvaluate) {
-		this.gbProdEvaluate = gbProdEvaluate;
-	}
-	public Byte getGbProdReportCount() {
-		return gbProdReportCount;
-	}
-	public void setGbProdReportCount(Byte gbProdReportCount) {
-		this.gbProdReportCount = gbProdReportCount;
-	}
-	
+import com.foodietime.gbprodcg.model.GbprodcgVO;
+import com.foodietime.gbpromotion.model.GbpromotionVO;
+import com.foodietime.store.model.StoreVO;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.Data;
+
+@Entity
+@Data
+@Table(name = "group_products")
+public class GbprodVO implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "GB_PROD_ID")
+    private Integer gbProdId;
+
+    @ManyToOne
+    @JoinColumn(name = "STOR_ID")
+    private StoreVO storeVO;  // 原本是 Integer storId
+
+
+    @ManyToOne
+    @JoinColumn(name = "GB_CATE_ID")
+    private GbprodcgVO gbprodcgVO;
+
+    @Column(name = "GB_PROD_NAME", length = 45)
+    private String gbProdName;
+
+    @Column(name = "GB_PROD_DESCRIPTION", length = 45)
+    private String gbProdDescription;
+
+    @Column(name = "GB_PROD_QUANTITY")
+    private Integer gbProdQuantity;
+
+    @Column(name = "GB_PROD_STATUS")
+    private Byte gbProdStatus;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "UPDATE_AT")
+    private Date updateAt;
+
+    @Column(name = "GB_PROD_SPECIFICATION", length = 45)
+    private String gbProdSpecification;
+
+    @Lob
+    @Column(name = "PROD_PHOTO")
+    private Byte[] gbProdPhoto;
+
+    @Column(name = "GB_PROD_EVALUATE", length = 45)
+    private String gbProdEvaluate;
+
+    @Column(name = "GB_PROD_REPORT_COUNT")
+    private Byte gbProdReportCount;
+
+    @OneToOne(mappedBy = "gbprodVO", cascade = CascadeType.ALL)
+    private GbpromotionVO gbpromotionVO;
+
+   
 }
