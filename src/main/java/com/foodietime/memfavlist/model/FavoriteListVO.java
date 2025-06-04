@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@IdClass(FavoriteListId.class) //複合主鍵
 @Table(name = "favorite_list")
 public class FavoriteListVO implements Serializable{
 	
