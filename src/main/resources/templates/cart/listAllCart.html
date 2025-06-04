@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所有購物車資料</title>
+    <link rel="stylesheet" th:href="@{/css/modern-cart.css}">
+</head>
+<body>
+<div class="container">
+    <!-- 頁面標題 -->
+    <div class="page-header">
+        <h1>📋 所有購物車資料</h1>
+        <a th:href="@{/cart/select_page}" class="nav-button">
+            🏠 回到首頁
+        </a>
+    </div>
+
+    <!-- 統計資訊 -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${#lists.size(cartList)}">0</div>
+            <div class="stat-label">總購物車項目</div>
+        </div>
+    </div>
+
+    <!-- 資料表格 -->
+    <div class="card">
+        <table class="modern-table">
+            <thead>
+            <tr>
+                <th>🛒 購物車編號</th>
+                <th>👤 會員編號</th>
+                <th>📦 商品編號</th>
+                <th>🔢 商品數量</th>
+                <th>⚙️ 操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cartVO : ${cartList}">
+                <td><strong th:text="${cartVO.shopId}">1</strong></td>
+                <td th:text="${cartVO.memId}">M001</td>
+                <td th:text="${cartVO.prodId}">P001</td>
+                <td>
+                    <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                               color: white; padding: 5px 10px; border-radius: 15px; font-weight: 600;"
+                          th:text="${cartVO.prodN}">1</span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <!-- 查看詳細 -->
+                        <a th:href="@{/cart/{shopId}(shopId=${cartVO.shopId})}"
+                           class="btn btn-info btn-sm" style="margin-right: 5px;">👁️ 查看</a>
+
+                        <!-- 修改：跳轉到修改頁面 -->
+                        <a th:href="@{/cart/update/{shopId}(shopId=${cartVO.shopId})}"
+                           class="btn btn-warning btn-sm" style="margin-right: 5px;">✏️ 修改</a>
+
+                        <!-- 刪除 -->
+                        <form method="post" th:action="@{/cart/delete}"
+                              style="display:inline;">
+                            <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('確定要刪除這個項目嗎？')">🗑️ 刪除</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 空資料提示 -->
+    <div th:if="${#lists.isEmpty(cartList)}" class="empty-state">
+        <h3>📭 目前沒有購物車資料</h3>
+        <p>請先新增一些商品到購物車</p>
+        <a th:href="@{/cart/select_page}" class="btn btn-primary">返回首頁</a>
+    </div>
+</div>
+</body>
+</html>

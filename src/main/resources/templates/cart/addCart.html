@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>新增購物車項目</title>
+	<link rel="stylesheet" th:href="@{/css/modern-cart.css}">
+</head>
+<body>
+<div class="container">
+	<!-- 頁面標題 -->
+	<div class="page-header">
+		<h1>➕ 新增購物車項目</h1>
+		<a th:href="@{/cart/select_page}" class="nav-button">
+			🏠 回到首頁
+		</a>
+	</div>
+
+	<!-- 錯誤訊息 -->
+	<div th:if="${not #lists.isEmpty(errorMsgs)}" class="error-container">
+		<h4>⚠️ 請修正以下錯誤：</h4>
+		<ul class="error-list">
+			<li th:each="message : ${errorMsgs}" th:text="${message}"></li>
+		</ul>
+	</div>
+
+	<!-- 新增表單 -->
+	<div class="modern-form">
+		<h3>📝 填寫商品資訊</h3>
+		<form method="post" th:action="@{/cart/add}">
+			<div class="form-group">
+				<label for="memId">👤 會員編號</label>
+				<input type="text" id="memId" name="memId" class="form-control"
+					   th:value="${cartVO != null ? cartVO.memId : ''}"
+					   placeholder="請輸入會員編號" required>
+			</div>
+
+			<div class="form-group">
+				<label for="prodId">📦 商品編號</label>
+				<input type="text" id="prodId" name="prodId" class="form-control"
+					   th:value="${cartVO != null ? cartVO.prodId : ''}"
+					   placeholder="請輸入商品編號" required>
+			</div>
+
+			<div class="form-group">
+				<label for="prodN">🔢 商品數量</label>
+				<input type="number" id="prodN" name="prodN" class="form-control"
+					   th:value="${cartVO != null ? cartVO.prodN : 1}"
+					   min="1" placeholder="請輸入商品數量" required>
+			</div>
+
+			<button type="submit" class="btn btn-success">✅ 送出新增</button>
+		</form>
+	</div>
+
+	<!-- 成功訊息 -->
+	<div th:if="${successMsg}" class="success-container">
+		<h4>✅ 操作成功</h4>
+		<p th:text="${successMsg}"></p>
+	</div>
+</div>
+</body>
+</html>
