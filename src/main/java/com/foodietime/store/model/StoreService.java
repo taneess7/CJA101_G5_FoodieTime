@@ -10,9 +10,9 @@ public class StoreService {
 
 	private StoreDAO_interface dao;
 
-	public StoreService() {
-		dao = new StoreDAO();
-	}
+//	public StoreService() {
+//		dao = new StoreDAO();
+//	}
 
 	public StoreVO addStore(Integer storeCateId, String storName, String storDesc, String storAddr, Double storLon, Double storLat, String storPhone, String storWeb, Time storOnTime,  Time storOffTime,String storOffDay,Byte storDeliver,Byte storStatus,byte[] storPhoto, Byte storReportCount,Integer starNum,Integer reviews) {
 
@@ -73,7 +73,7 @@ public class StoreService {
 	}
 
 	public StoreVO getOneStore(Integer storId) {
-		return dao.findByPrimaryKey(storId);
+		return dao.findByPk(storId);
 	}
 
 	public List<StoreVO> getAll() {
