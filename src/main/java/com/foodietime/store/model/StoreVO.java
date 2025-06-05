@@ -2,10 +2,12 @@ package com.foodietime.store.model;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +15,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import com.foodietime.storeCate.model.StoreCateVO;
 
@@ -28,18 +32,31 @@ public class StoreVO implements Serializable {
 	@Column(name = "STOR_ID", updatable = false)
 	private Integer storId; 
 	
+	//關聯活動
+	@OneToMany(mappedBy = "storId", cascade = CascadeType.ALL)
+	@OrderBy("storId asc")
+	private Set<StoreVO> stores;
 	
-	// 2.店家分類編號
-	@ManyToOne(cascade = CascadeType.PERSIST) // 多對一，指向分類，新增store時，關聯物件一起新增
+	
+	public Set<StoreVO> getStores() {
+		return stores;
+	}
+
+	public void setStores(Set<StoreVO> stores) {
+		this.stores = stores;
+	}
+
+	//2.店家分類物件（外鍵：STORE_CATE_ID）
+	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.PERSIST) // 多對一，指向分類，新增store時，關聯物件一起新增
     @JoinColumn(name = "STORE_CATE_ID", referencedColumnName = "STORE_CATE_ID") // 外鍵名稱
 	private StoreCateVO storeCateId; 
 	
 	
-	public StoreCateVO getStoreCate() {
+	public StoreCateVO getStoreCateId() {
 		return storeCateId;
 	}
 	
-	public void setStoreCate(StoreCateVO storeCateId) {
+	public void setStoreCateId(StoreCateVO storeCateId) {
 		this.storeCateId = storeCateId;
 	}
 	

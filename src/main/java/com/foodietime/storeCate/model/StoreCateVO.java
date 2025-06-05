@@ -21,6 +21,8 @@ import jakarta.persistence.Table;
 public class StoreCateVO implements Serializable {
 
 	// 寫上所有欄位
+	
+	// 1.類型編號
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "STORE_CATE_ID", updatable = false)
@@ -38,9 +40,9 @@ public class StoreCateVO implements Serializable {
 	public void setStores(Set<StoreVO> stores) {
 		this.stores = stores;
 	}
-	
+	// 2.類型名稱
 	@Column(name = "STORE_CATE")
-	private String storCatName; // 類型名稱
+	private String storCatName; 
 
 	// 取得or設置
 

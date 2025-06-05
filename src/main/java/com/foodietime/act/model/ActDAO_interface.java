@@ -2,12 +2,11 @@ package com.foodietime.act.model;
 
 import java.util.List;
 
-
-
 public interface ActDAO_interface {
-	public void insert(ActVO actVO);
-	public void update(ActVO actVO);
-	public void delete(Integer actId);
-	public ActVO findByPrimaryKey(Integer actId);//單一查詢出貨歷史
-	public List<ActVO> getAll();
+	// 此介面定義對資料庫的相關存取抽象方法
+	int add(ActVO act);
+	int update(ActVO act);
+	int delete(Integer actId);
+	ActVO findByPk(Integer actId);
+	List<ActVO> getAll();
 }
