@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.persistence.Column;
