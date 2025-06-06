@@ -2,6 +2,7 @@ package com.foodietime.memfavlist.model;
 
 import java.io.Serializable;
 
+import jakarta.annotation.sql.DataSourceDefinition;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,28 +13,11 @@ import lombok.Data;
 public class FavoriteListVO implements Serializable{
 	
 	@Id
-	@Column(name="mem_id,nullable = false")
+	@Column(name="mem_id",nullable = false)
 	private Integer memId;
 	
 	@Id
-	@Column(name="prod_id,nullable = false")
+	@Column(name="prod_id",nullable = false)
 	private Integer prodId;
 	
-//	public Integer getMemId() {
-//		return memId;
-//	}
-//	public void setMemId(Integer memId) {
-//		this.memId = memId;
-//	}
-//	public Integer getProdId() {
-//		return prodId;
-//	}
-//	public void setProdId(Integer prodId) {
-//		this.prodId = prodId;
-//	}
-//	
-//	@Override
-//    public String toString() {
-//        return "FavoriteListVO [memId=" + memId + ", prodId=" + prodId + "]";
-//    }
 }
