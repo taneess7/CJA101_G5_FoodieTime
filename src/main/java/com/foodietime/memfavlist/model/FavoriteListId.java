@@ -3,6 +3,9 @@ package com.foodietime.memfavlist.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import lombok.Data;
+
+@Data
 public class FavoriteListId implements Serializable{
 	
 	private Integer memId;
