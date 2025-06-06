@@ -2,11 +2,18 @@ package com.foodietime.memfavlist.model;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+@Service
 public class FavoriteListService {
-private FavoriteListDAO_interface dao;
+
+	private final FavoriteListRepository fvlistrepo;
 	
-	public FavoriteListService() {
-		dao = new FavoriteListJNDIDAO();
+	@Autowired
+	public FavoriteListService(FavoriteListRepository fvlistrepo) {
+		this.fvlistrepo = fvlistrepo;
 	}
 	
 	public FavoriteListVO addFavoriteList(Integer memId,Integer prodId) {
@@ -14,24 +21,23 @@ private FavoriteListDAO_interface dao;
 		
 		favoriteListVO.setMemId(memId);
 		favoriteListVO.setProdId(prodId);
-		dao.insert(favoriteListVO);
+		fvlistrepo.save(favoriteListVO);
 		
 		return favoriteListVO;
 	}
 	
-	public void deleteFavorite(Integer memId,Integer prodId) {
-		dao.deleteByMemIdAndProdId(memId, prodId);
+	public void deleteFavorite(Integer memId, Integer prodId) {
+		fvlistrepo.deleteByIdMemIdAndIdProdId(memId, prodId);
 	}
-	
-	public void deleteAllFavoritesByMem(Integer memeId) {
-		dao.deleteAllByMemId(memeId);
+	public void deleteAllFavoritesByMem(Integer memId) {
+		fvlistrepo.deleteAllByIdMemId(memId);
 	}
 
 	public FavoriteListVO getOneFavorite(Integer memId,Integer prodId) {
-		return dao.findByPrimaryKey(memId, prodId);
+		return fvlistrepo.findByIdMemIdAndIdProdId(memId, prodId);
 	}
 	
 	public List<FavoriteListVO> getAll(){
-		return dao.getAll();
+		return fvlistrepo.findAll();
 	}
 }
