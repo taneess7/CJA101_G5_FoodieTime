@@ -1,24 +1,18 @@
-package com.foodietime.favoritepost.model;
+package com.foodietime.reportmessage.model;
 
 import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import com.foodietime.favoritepost.model.HibernateUtil;
 
-import com.foodietime.favoritepost.model.FavoritePostVO;
-//import util.HibernateUtil;
-
-public class FavoritePostDAOImpl implements FavoritePostDAO_interface {
+public class ReportMessageDAOImpl implements ReportMessageDAO_interface{
 	
-	
-
 	@Override
-	public int insert(FavoritePostVO favoritePost) {
+	public int insert(ReportMessageVO reportMessage) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		try {
 			session.beginTransaction();
-			Integer id = (Integer) session.save(favoritePost);
+			Integer id = (Integer) session.save(reportMessage);
 			session.getTransaction().commit();
 			return id;
 		} catch (Exception e) {
@@ -27,13 +21,12 @@ public class FavoritePostDAOImpl implements FavoritePostDAO_interface {
 		}
 		return -1;
 	}
-
 	@Override
-	public int update(FavoritePostVO favoritePost) {	
+	public int update(ReportMessageVO reportMessage) {	
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		try {
 			session.beginTransaction();
-			session.update(favoritePost);
+			session.update(reportMessage);
 			session.getTransaction().commit();
 			return 1;
 		} catch (Exception e) {
@@ -44,14 +37,13 @@ public class FavoritePostDAOImpl implements FavoritePostDAO_interface {
 	}
 
 	@Override
-	public int delete(Integer postId, Integer memId) {		
+	public int delete(Integer repMesId) {		
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		try {
 			session.beginTransaction();
-			FavoritePostPK id = new FavoritePostPK(postId, memId);
-			FavoritePostVO favoritePost = session.get(FavoritePostVO.class, id);
-			if (favoritePost != null) {
-				session.delete(favoritePost);
+			ReportMessageVO reportMessage = session.get(ReportMessageVO.class, repMesId);
+			if (reportMessage != null) {
+				session.delete(reportMessage);
 			}
 			session.getTransaction().commit();
 			return 1;
@@ -63,14 +55,13 @@ public class FavoritePostDAOImpl implements FavoritePostDAO_interface {
 	}
 
 	@Override
-	public FavoritePostVO findByPK(Integer postId, Integer memId) {
+	public ReportMessageVO findByPK(Integer repMesId) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		try {
 			session.beginTransaction();
-			FavoritePostPK id = new FavoritePostPK(postId, memId);
-			FavoritePostVO favoritePost = session.get(FavoritePostVO.class, id);			
+			ReportMessageVO reportMessage = session.get(ReportMessageVO.class, repMesId);		
 			session.getTransaction().commit();
-			return favoritePost;
+			return reportMessage;
 		} catch (Exception e) {
 			e.printStackTrace();
 			session.getTransaction().rollback();
@@ -79,11 +70,11 @@ public class FavoritePostDAOImpl implements FavoritePostDAO_interface {
 	}
 
 	@Override
-	public List<FavoritePostVO> getAll() {
+	public List<ReportMessageVO> getAll() {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		try {
 			session.beginTransaction();
-			List<FavoritePostVO> list = session.createQuery("from FavoritePostVO", FavoritePostVO.class).list();
+			List<ReportMessageVO> list = session.createQuery("from ReportMessageVO", ReportMessageVO.class).list();
 			session.getTransaction().commit();
 			return list;
 		} catch (Exception e) {
@@ -93,3 +84,6 @@ public class FavoritePostDAOImpl implements FavoritePostDAO_interface {
 		return null;
 	}
 }
+	
+
+
