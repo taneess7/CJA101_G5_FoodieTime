@@ -3,6 +3,8 @@ package com.foodietime.directmessage.model;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.foodietime.member.model.MemberVO;
+
 
 
 public class DirectMessageService {
@@ -16,7 +18,9 @@ public class DirectMessageService {
 
 		DirectMessageVO dmVO = new DirectMessageVO();
 
-		dmVO.setMemId(memId);
+		MemberVO member = new MemberVO();
+		member.setMemId(memId);
+		dmVO.setMember(member);
 		dmVO.setSmgrId(smgrId);
 		dmVO.setMessContent(messContent);
 		dmVO.setMessTime(messTime);
@@ -30,9 +34,10 @@ public class DirectMessageService {
 {
 
 		DirectMessageVO dmVO = new DirectMessageVO();
-		
+		MemberVO member = new MemberVO();
+		member.setMemId(memId);
+		dmVO.setMember(member);
 		dmVO.setDmId(dmId);
-		dmVO.setMemId(memId);
 		dmVO.setSmgrId(smgrId);
 		dmVO.setMessContent(messContent);
 //		dmVO.setMessTime(messTime);
