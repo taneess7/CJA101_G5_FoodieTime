@@ -6,6 +6,19 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
+
+import com.foodietime.accrec.model.AccrecVO;
+import com.foodietime.cart.model.CartVO;
+import com.foodietime.directmessage.model.DirectMessageVO;
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.memcoupon.model.MemCouponVO;
+import com.foodietime.memfavlist.model.FavoriteListVO;
+import com.foodietime.orders.model.OrdersVO;
+import com.foodietime.participants.model.ParticipantsVO;
+import com.foodietime.post.model.PostVO;
+import com.foodietime.reportmessage.model.ReportMessageVO;
+import com.foodietime.reportpost.model.ReportPostVO;
 @Entity
 @Data
 @Table(name = "member")
@@ -45,8 +58,8 @@ public class MemberVO implements Serializable {
 	
 	@Column(name = "mem_gender", nullable = false)
 	@NotNull(message="性別請勿空白")
-	@Enumerated(EnumType.ORDINAL)
-	private Integer memGender;
+    @Enumerated(EnumType.ORDINAL)
+	private Gender memGender;
 	
 	@Column(name = "mem_city", nullable = false)
 	@NotNull(message="縣市請勿空白")
@@ -73,27 +86,27 @@ public class MemberVO implements Serializable {
 	@Column(name = "mem_status", nullable = false)
 	@NotNull(message="不可為空")
 	@Enumerated(EnumType.ORDINAL)
-	private Integer memStatus;
+	private MemberStatus memStatus;
 	
 	@Column(name = "mem_no_speak", nullable = false)
 	@NotNull(message="不可為空")
 	@Enumerated(EnumType.ORDINAL)
-	private Integer memNoSpeak;
+	private NoSpeakStatus memNoSpeak;
 	
 	@Column(name = "mem_no_post", nullable = false)
 	@NotNull(message="不可為空")
 	@Enumerated(EnumType.ORDINAL)
-	private Integer memNoPost;
+	private NoPostStatus memNoPost;
 	
 	@Column(name = "mem_no_group", nullable = false)
 	@NotNull(message="不可為空")
 	@Enumerated(EnumType.ORDINAL)
-	private Integer memNoGroup;
+	private NoGroupStatus memNoGroup;
 	
 	@Column(name = "mem_no_joingroup", nullable = false)
 	@NotNull(message="不可為空")
 	@Enumerated(EnumType.ORDINAL)
-	private Integer memNoJoingroup;
+	private NoJoingroupStatus memNoJoingroup;
 	
 	@Column(name = "total_star_num", nullable = false)
 	@NotNull(message="不可為空")
@@ -145,10 +158,10 @@ public class MemberVO implements Serializable {
 	public void setMemPhone(String memPhone) {
 		this.memPhone = memPhone;
 	}
-	public Integer getMemGender() {
+	public Gender getMemGender() {
 		return memGender;
 	}
-	public void setMemGender(Integer memGender) {
+	public void setMemGender(Gender memGender) {
 		this.memGender = memGender;
 	}
 	public String getMemCity() {
@@ -187,34 +200,34 @@ public class MemberVO implements Serializable {
 	public void setMemTime(Timestamp memTime) {
 		this.memTime = memTime;
 	}
-	public Integer getMemStatus() {
+	public MemberStatus getMemStatus() {
 		return memStatus;
 	}
-	public void setMemStatus(Integer memStatus) {
+	public void setMemStatus(MemberStatus memStatus) {
 		this.memStatus = memStatus;
 	}
-	public Integer getMemNoSpeak() {
+	public NoSpeakStatus getMemNoSpeak() {
 		return memNoSpeak;
 	}
-	public void setMemNoSpeak(Integer memNoSpeak) {
+	public void setMemNoSpeak(NoSpeakStatus memNoSpeak) {
 		this.memNoSpeak = memNoSpeak;
 	}
-	public Integer getMemNoPost() {
+	public NoPostStatus getMemNoPost() {
 		return memNoPost;
 	}
-	public void setMemNoPost(Integer memNoPost) {
+	public void setMemNoPost(NoPostStatus memNoPost) {
 		this.memNoPost = memNoPost;
 	}
-	public Integer getMemNoGroup() {
+	public NoGroupStatus getMemNoGroup() {
 		return memNoGroup;
 	}
-	public void setMemNoGroup(Integer memNoGroup) {
+	public void setMemNoGroup(NoGroupStatus memNoGroup) {
 		this.memNoGroup = memNoGroup;
 	}
-	public Integer getMemNoJoingroup() {
+	public NoJoingroupStatus getMemNoJoingroup() {
 		return memNoJoingroup;
 	}
-	public void setMemNoJoingroup(Integer memNoJoingroup) {
+	public void setMemNoJoingroup(NoJoingroupStatus memNoJoingroup) {
 		this.memNoJoingroup = memNoJoingroup;
 	}
 	public Integer getTotalStarNum() {
@@ -230,35 +243,61 @@ public class MemberVO implements Serializable {
 		this.totalReviews = totalReviews;
 	}
 	
-	public enum Gender {
-	    MALE,    // 0
-	    FEMALE,   // 1
-	    NOT_REVEAL // 2
-	}
-	
-	public enum memStatus {
-		INACTIVE,     // 0 
-		ACTIVE        // 1
-	}
-	
-	public enum memNoSpeak {
-		INACTIVE,     // 0 
-		ACTIVE        // 1
-	}
-	
-	public enum memNoPost {
-		INACTIVE,     // 0 
-		ACTIVE        // 1
-	}
-	
-	public enum memNoGroup {
-		INACTIVE,     // 0 
-		ACTIVE        // 1
-	}
-	
-	public enum memNoJoingroup {
-		INACTIVE,     // 0 
-		ACTIVE        // 1
-	}
+	 public enum Gender {
+	        MALE, FEMALE, NOT_REVEAL
+	    }
+
+	    public enum MemberStatus {
+	        INACTIVE, ACTIVE
+	    }
+
+	    public enum NoSpeakStatus {
+	        INACTIVE, ACTIVE
+	    }
+
+	    public enum NoPostStatus {
+	        INACTIVE, ACTIVE
+	    }
+
+	    public enum NoGroupStatus {
+	        INACTIVE, ACTIVE
+	    }
+
+	    public enum NoJoingroupStatus {
+	        INACTIVE, ACTIVE
+	    }
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<DirectMessageVO> directMessages;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<FavoriteListVO> favoriteList;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<CartVO> cart;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<MemCouponVO> memCoupon;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<ParticipantsVO> participants;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<GroupBuyingCasesVO> groupBuyingCases;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<OrdersVO> orders;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<PostVO> post;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<ReportPostVO> reportPost;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<ReportMessageVO> reportMessage;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private List<AccrecVO> appropriationCommRecord;
 
 }
