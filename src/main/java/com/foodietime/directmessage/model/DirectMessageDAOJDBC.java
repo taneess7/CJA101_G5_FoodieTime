@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import com.foodietime.member.model.MemberVO;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -38,7 +41,7 @@ public class DirectMessageDAOJDBC implements DirectMessageDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(INSERT);
 
-			pstmt.setInt(1, dmVO.getMemId());
+			pstmt.setInt(1, dmVO.getMember().getMemId());
 			pstmt.setInt(2, dmVO.getSmgrId());
 			pstmt.setString(3, dmVO.getMessContent());
 			pstmt.setTimestamp(4, new java.sql.Timestamp(dmVO.getMessTime().getTime()));
@@ -80,7 +83,7 @@ public class DirectMessageDAOJDBC implements DirectMessageDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(UPDATE);
 
-			pstmt.setInt(1, dmVO.getMemId());
+			pstmt.setInt(1, dmVO.getMember().getMemId());
 			pstmt.setInt(2, dmVO.getSmgrId());
 			pstmt.setString(3, dmVO.getMessContent());
 			pstmt.setTimestamp(4, new java.sql.Timestamp(dmVO.getMessTime().getTime()));
@@ -133,7 +136,9 @@ public class DirectMessageDAOJDBC implements DirectMessageDAO_interface {
 			while (rs.next()) {
 				// empVo 也稱為 Domain objects
 				dmVO = new DirectMessageVO();
-				dmVO.setMemId(rs.getInt("MEM_ID"));
+				MemberVO member = new MemberVO();
+				member.setMemId(rs.getInt("MEM_ID"));
+				dmVO.setMember(member);
 				dmVO.setSmgrId(rs.getInt("SMGR_ID"));
 				dmVO.setMessContent(rs.getString("MESS_CONTENT"));
 				dmVO.setMessTime(rs.getTimestamp("MESS_TIME"));
@@ -195,7 +200,9 @@ public class DirectMessageDAOJDBC implements DirectMessageDAO_interface {
 
 			while (rs.next()) {
 				dmVO = new DirectMessageVO();
-				dmVO.setMemId(rs.getInt("MEM_ID"));
+				MemberVO member = new MemberVO();
+				member.setMemId(rs.getInt("MEM_ID"));
+				dmVO.setMember(member);
 				dmVO.setSmgrId(rs.getInt("SMGR_ID"));
 				dmVO.setMessContent(rs.getString("MESS_CONTENT"));
 				dmVO.setMessTime(rs.getTimestamp("MESS_TIME"));
