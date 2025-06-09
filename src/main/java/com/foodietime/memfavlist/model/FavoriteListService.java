@@ -40,4 +40,8 @@ public class FavoriteListService {
 	public List<FavoriteListVO> getAll(){
 		return fvlistrepo.findAll();
 	}
+	
+	public List<FavoriteListVO> getFavoritesByMemId(Integer memId) {
+		return fvlistrepo.findAllByIdMemId(memId);
+	}
 }
