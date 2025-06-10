@@ -14,6 +14,13 @@ import javax.sql.DataSource;
 
 import org.springframework.stereotype.Repository;
 
+import com.foodietime.member.model.MemberVO.Gender;
+import com.foodietime.member.model.MemberVO.MemberStatus;
+import com.foodietime.member.model.MemberVO.NoGroupStatus;
+import com.foodietime.member.model.MemberVO.NoJoingroupStatus;
+import com.foodietime.member.model.MemberVO.NoPostStatus;
+import com.foodietime.member.model.MemberVO.NoSpeakStatus;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -58,7 +65,7 @@ public class MemberDAO implements MemDAO_interface {
 			pstmt.setString(4, memberVO.getMemNickname());
 			pstmt.setString(5, memberVO.getMemName());
 			pstmt.setString(6, memberVO.getMemPhone());
-			pstmt.setInt(7, memberVO.getMemGender());
+			pstmt.setInt(7, memberVO.getMemGender().ordinal());
 			pstmt.setString(8, memberVO.getMemCity());
 			pstmt.setString(9, memberVO.getMemCityarea());
 			pstmt.setString(10, memberVO.getMemAddress());
@@ -98,7 +105,7 @@ public class MemberDAO implements MemDAO_interface {
 			pstmt.setString(3, memberVO.getMemNickname());
 			pstmt.setString(4, memberVO.getMemName());
 			pstmt.setString(5, memberVO.getMemPhone());
-			pstmt.setInt(6, memberVO.getMemGender());
+			pstmt.setInt(7, memberVO.getMemGender().ordinal());
 			pstmt.setString(7, memberVO.getMemCity());
 			pstmt.setString(8, memberVO.getMemCityarea());
 			pstmt.setString(9, memberVO.getMemAddress());
@@ -135,11 +142,11 @@ public class MemberDAO implements MemDAO_interface {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(MEMBER_PERMISSION_UPDATE);
 
-			pstmt.setInt(1, memberVO.getMemStatus());
-			pstmt.setInt(2, memberVO.getMemNoSpeak());
-			pstmt.setInt(3, memberVO.getMemNoPost());
-			pstmt.setInt(4, memberVO.getMemNoGroup());
-			pstmt.setInt(5, memberVO.getMemNoJoingroup());
+			pstmt.setInt(1, memberVO.getMemStatus().ordinal());
+			pstmt.setInt(2, memberVO.getMemNoSpeak().ordinal());
+			pstmt.setInt(3, memberVO.getMemNoPost().ordinal());
+			pstmt.setInt(4, memberVO.getMemNoGroup().ordinal());
+			pstmt.setInt(5, memberVO.getMemNoJoingroup().ordinal());
 			pstmt.executeUpdate();
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
@@ -184,18 +191,18 @@ public class MemberDAO implements MemDAO_interface {
 				memberVO.setMemNickname(rs.getString("MEM_NICKNAME"));
 				memberVO.setMemName(rs.getString("MEM_NAME"));
 				memberVO.setMemPhone(rs.getString("MEM_PHONE"));
-				memberVO.setMemGender(rs.getInt("MEM_GENDER"));
+				memberVO.setMemGender(Gender.values()[rs.getInt("MEM_GENDER")]);
 				memberVO.setMemCity(rs.getString("MEM_CITY"));
 				memberVO.setMemCityarea(rs.getString("MEM_CITYAREA"));
 				memberVO.setMemAddress(rs.getString("MEM_ADDRESS"));
 				memberVO.setMemCode(rs.getString("MEM_CODE"));
 				memberVO.setMemAvatar(rs.getBytes("MEM_AVATAR"));
 				memberVO.setMemTime(rs.getTimestamp("MEM_TIME"));
-				memberVO.setMemStatus(rs.getInt("MEM_STATUS"));
-				memberVO.setMemNoSpeak(rs.getInt("MEM_MEM_NO_SPEAK"));
-				memberVO.setMemNoPost(rs.getInt("MEM_NO_POST"));
-				memberVO.setMemNoGroup(rs.getInt("MEM_NO_GROUP"));
-				memberVO.setMemNoJoingroup(rs.getInt("MEM_NO_JOINGROUP"));
+				memberVO.setMemStatus(MemberStatus.values()[rs.getInt("MEM_STATUS")]);
+				memberVO.setMemNoSpeak(NoSpeakStatus.values()[rs.getInt("MEM_MEM_NO_SPEAK")]);
+				memberVO.setMemNoPost(NoPostStatus.values()[rs.getInt("MEM_NO_POST")]);
+				memberVO.setMemNoGroup(NoGroupStatus.values()[rs.getInt("MEM_NO_GROUP")]);
+				memberVO.setMemNoJoingroup(NoJoingroupStatus.values()[rs.getInt("MEM_NO_JOINGROUP")]);
 				memberVO.setTotalStarNum(rs.getInt("TOTAL_STAR_NUM"));
 				memberVO.setTotalReviews(rs.getInt("TOTAL_REVIEWS"));
 			}
@@ -249,18 +256,17 @@ public class MemberDAO implements MemDAO_interface {
 				memberVO.setMemNickname(rs.getString("MEM_NICKNAME"));
 				memberVO.setMemName(rs.getString("MEM_NAME"));
 				memberVO.setMemPhone(rs.getString("MEM_PHONE"));
-				memberVO.setMemGender(rs.getInt("MEM_GENDER"));
-				memberVO.setMemCity(rs.getString("MEM_CITY"));
+				memberVO.setMemGender(Gender.values()[rs.getInt("MEM_GENDER")]);				memberVO.setMemCity(rs.getString("MEM_CITY"));
 				memberVO.setMemCityarea(rs.getString("MEM_CITYAREA"));
 				memberVO.setMemAddress(rs.getString("MEM_ADDRESS"));
 				memberVO.setMemCode(rs.getString("MEM_CODE"));
 				memberVO.setMemAvatar(rs.getBytes("MEM_AVATAR"));
 				memberVO.setMemTime(rs.getTimestamp("MEM_TIME"));
-				memberVO.setMemStatus(rs.getInt("MEM_STATUS"));
-				memberVO.setMemNoSpeak(rs.getInt("MEM_MEM_NO_SPEAK"));
-				memberVO.setMemNoPost(rs.getInt("MEM_NO_POST"));
-				memberVO.setMemNoGroup(rs.getInt("MEM_NO_GROUP"));
-				memberVO.setMemNoJoingroup(rs.getInt("MEM_NO_JOINGROUP"));
+				memberVO.setMemStatus(MemberStatus.values()[rs.getInt("MEM_STATUS")]);
+				memberVO.setMemNoSpeak(NoSpeakStatus.values()[rs.getInt("MEM_MEM_NO_SPEAK")]);
+				memberVO.setMemNoPost(NoPostStatus.values()[rs.getInt("MEM_NO_POST")]);
+				memberVO.setMemNoGroup(NoGroupStatus.values()[rs.getInt("MEM_NO_GROUP")]);
+				memberVO.setMemNoJoingroup(NoJoingroupStatus.values()[rs.getInt("MEM_NO_JOINGROUP")]);
 				memberVO.setTotalStarNum(rs.getInt("TOTAL_STAR_NUM"));
 				memberVO.setTotalReviews(rs.getInt("TOTAL_REVIEWS"));
 				list.add(memberVO);
