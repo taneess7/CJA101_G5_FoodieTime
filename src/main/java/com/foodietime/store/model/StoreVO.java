@@ -18,6 +18,8 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+
 import com.foodietime.storeCate.model.StoreCateVO;
 
 @Entity
@@ -47,7 +49,7 @@ public class StoreVO implements Serializable {
 	}
 
 	//2.店家分類物件（外鍵：STORE_CATE_ID）
-	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.PERSIST) // 多對一，指向分類，新增store時，關聯物件一起新增
+	@ManyToOne// 多對一，指向分類，新增store時，關聯物件一起新增
     @JoinColumn(name = "STORE_CATE_ID", referencedColumnName = "STORE_CATE_ID") // 外鍵名稱
 	private StoreCateVO storeCateId; 
 	
@@ -61,14 +63,17 @@ public class StoreVO implements Serializable {
 	}
 	
 	// 3.店家名稱
-	@Column(name = "STOR_NAME")
+	@NotEmpty(message="店家名稱: 請勿空白")
+	@Column(name = "STOR_NAME", length = 255)
 	private String storName; 
 	
 	// 4.店家敘述
-	@Column(name = "STOR_DESC")
+	@NotEmpty(message="店家敘述: 請勿空白")
+	@Column(name = "STOR_DESC", length = 255)
 	private String storDesc; 
 	
 	// 5.店家地址
+	@NotEmpty(message="店家地址: 請勿空白")
 	@Column(name = "STOR_ADDR")
 	private String storAddr; 
 	
@@ -81,18 +86,21 @@ public class StoreVO implements Serializable {
 	private Double storLat; 
 	
 	// 8.店家電話
-	@Column(name = "STOR_PHONE")
+	@NotEmpty(message="店家電話: 請勿空白")
+	@Column(name = "STOR_PHONE", length = 20)
 	private String storPhone; 
 	
 	// 9.店家訂位網址
-	@Column(name = "STOR_WEB")
+	@Column(name = "STOR_WEB", length = 255)
 	private String storWeb; 
 	
 	// 10.店家開店時間
+	@NotEmpty(message="開店時間: 請勿空白")
 	@Column(name = "STOR_OPEN_TIME")
 	private Time storOnTime;
 	
 	// 11.店家關店時間
+	@NotEmpty(message="關店時間: 請勿空白")
 	@Column(name = "STOR_CLOSE_TIME")
 	private Time storOffTime; 
 	

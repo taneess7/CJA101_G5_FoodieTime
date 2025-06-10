@@ -1,82 +1,60 @@
 package com.foodietime.store.model;
 
-import java.sql.Time;
-
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
+import com.foodietime.store.model.StoreVO;
 
+@Service
 public class StoreService {
-
-	private StoreDAO_interface dao;
-
-//	public StoreService() {
-//		dao = new StoreDAO();
-//	}
-
-	public StoreVO addStore(Integer storeCateId, String storName, String storDesc, String storAddr, Double storLon, Double storLat, String storPhone, String storWeb, Time storOnTime,  Time storOffTime,String storOffDay,Byte storDeliver,Byte storStatus,byte[] storPhoto, Byte storReportCount,Integer starNum,Integer reviews) {
-
-		StoreVO storeVO = new StoreVO();
-
-//		storeVO.setStoreCateId(storeCateId);
-//		storeVO.setStorName(storName);
-//		storeVO.setStorDesc(storDesc);
-//		storeVO.setStorAddr(storAddr);
-//		storeVO.setStorLon(storLon);
-//		storeVO.setStorLat(storLat);
-//		storeVO.setStorPhone(storPhone);
-//		storeVO.setStorWeb(storWeb);
-//		storeVO.setStorOnTime(storOnTime);
-//		storeVO.setStorOffTime(storOffTime);
-//		storeVO.setStorOffDay(storOffDay);
-//		storeVO.setStorDeliver(storDeliver);
-//		storeVO.setStorStatus(storStatus);
-//		storeVO.setStorPhoto(storPhoto);
-//		storeVO.setStorReportCount(storReportCount);
-//		storeVO.setStarNum(starNum);
-//		storeVO.setReviews(reviews);
-//		dao.insert(storeVO);
-//		
-		return storeVO;
+	
+	@Autowired
+	private StoreRepository repository; 
+	
+	@Autowired
+	private SessionFactory sessionFactory;
+	
+	public void addStore(StoreVO storeVO) {
+		repository.save(storeVO);  //原廠save可以用在新增和修改，有主鍵是update，沒有主鍵是insert
 	}
-
-	public StoreVO updateStore(Integer storId, Integer storeCateId, String storName, String storDesc, String storAddr, Double storLon, Double storLat, String storPhone, String storWeb, Time storOnTime,  Time storOffTime,String storOffDay,Byte storDeliver,Byte storStatus,byte[] storPhoto, Byte storReportCount,Integer starNum,Integer reviews) {
-
-		StoreVO storeVO = new StoreVO();
-
-//		storeVO.setStorId(storId);
-//		storeVO.setStoreCateId(storeCateId);
-//		storeVO.setStorName(storName);
-//		storeVO.setStorDesc(storDesc);
-//		storeVO.setStorAddr(storAddr);
-//		storeVO.setStorLon(storLon);
-//		storeVO.setStorLat(storLat);
-//		storeVO.setStorPhone(storPhone);
-//		storeVO.setStorWeb(storWeb);
-//		storeVO.setStorOnTime(storOnTime);
-//		storeVO.setStorOffTime(storOffTime);
-//		storeVO.setStorOffDay(storOffDay);
-//		storeVO.setStorDeliver(storDeliver);
-//		storeVO.setStorStatus(storStatus);
-//		storeVO.setStorPhoto(storPhoto);
-//		storeVO.setStorReportCount(storReportCount);
-//		storeVO.setStarNum(starNum);
-//		storeVO.setReviews(reviews);
-//		
-		dao.update(storeVO);
-
-		return storeVO;
+	
+	public void updateStore(StoreVO storeVO) {
+		repository.save(storeVO);
 	}
-
+	
 	public void deleteStore(Integer storId) {
-		dao.delete(storId);
+		if(repository.existsById(storId))
+			repository.deleteByStorId(storId); //StoreRepository 自訂刪除
 	}
-
+	
 	public StoreVO getOneStore(Integer storId) {
-		return dao.findByPk(storId);
+		Optional<StoreVO> optional = repository.findById(storId); //內建單一查詢
+		return optional.orElse(null); //如果值存在就回傳其值，否則回傳other的值
 	}
-
-	public List<StoreVO> getAll() {
-		return dao.getAll();
+	
+	public List<StoreVO> getAll(){
+		return repository.findAll(); //內建單一查詢
 	}
+	
+	//模糊查詢
+//	public List<StoreVO> getAll(Map<String, String[]> map){ //回傳key-value類型的參數
+//		return HibernateUtil_CompositeQuery_g05.getAllC(map.sessionFactory.openSession());
+//		 // 呼叫 Hibernate 複合查詢工具類別的靜態方法 getAllC(...)
+//	    // map 是從前端來的查詢條件
+//	    // sessionFactory.openSession() 是打開一個新的 Hibernate Session，交給工具處理查詢
+//	}
+	
+	public StoreVO login(String email, Integer storId) {
+        StoreVO store = repository.findByEmail(email);
+        if (store != null && store.getStorId().equals(storId)) {
+            return store;
+        }
+        return null;
+    }
 }
