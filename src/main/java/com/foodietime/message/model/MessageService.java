@@ -14,8 +14,8 @@ public class MessageService {
 		}
 	public MessageVO addMessage(Integer postId, Integer memId, java.sql.Timestamp mesDate, String mesContent) {
 		MessageVO messageVO = new MessageVO();
-		messageVO.setPostId(postId);
-		messageVO.setMemId(memId);
+//		messageVO.setPostId(postId);
+//		messageVO.setMemId(memId);
 		messageVO.setMesDate(mesDate);
 		messageVO.setMesContent(mesContent);
 		dao.insert(messageVO);
@@ -25,8 +25,8 @@ public class MessageService {
 	public MessageVO updateMessage(Integer mesId, Integer postId, Integer memId, java.sql.Timestamp mesDate, String mesContent) {
 		MessageVO messageVO = new MessageVO();
 		messageVO.setMesId(mesId);
-		messageVO.setPostId(postId);
-		messageVO.setMemId(memId);		
+//		messageVO.setPostId(postId);
+//		messageVO.setMemId(memId);		
 		messageVO.setMesDate(mesDate);
 		messageVO.setMesContent(mesContent);
 		dao.update(messageVO);

@@ -3,12 +3,38 @@ package com.foodietime.message.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.post.model.PostVO;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "POST")
 public class MessageVO implements Serializable{
+	
+	@Id
+	@Column(name = "MES_ID")
 	private Integer mesId;
+	
+	@ManyToOne
+	@JoinColumn(name = "PostVO", referencedColumnName = "MEMBER")
 	private Integer postId;
+	
+	@ManyToOne
+	@JoinColumn(name = "MemberVO", referencedColumnName = "MEMBER")
 	private Integer memId;
+	
+	@Column(name = "MES_DATE")
 	private Timestamp mesDate;
+	
+	@Column(name = "MES_CONTENT")
 	private String mesContent;
+	
 	public Integer getMesId() {
 		return mesId;
 	}

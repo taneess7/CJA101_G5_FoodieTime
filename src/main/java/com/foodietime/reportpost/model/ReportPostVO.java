@@ -3,33 +3,33 @@ package com.foodietime.reportpost.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-//import jakarta.persistence.*;
+import com.foodietime.member.model.MemberVO;
 
-//@Entity
-//@Table(name = "REPORT_POST")
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "REPORT_POST")
 public class ReportPostVO implements Serializable{
 	
-//	@Id
-//	@Column(name = "REP_POST_ID")
+	@Id
+	@Column(name = "REP_POST_ID")
 	private Integer repPostId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "PostVO", referencedColumnName = "POST")
-//	@Column(name = "POST_ID")
+	@ManyToOne
+	@JoinColumn(name = "PostVO", referencedColumnName = "POST")
 	private Integer postId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "MemVO", referencedColumnName = "MEMBER")
-//	@Column(name = "MEM_ID")
-	private Integer memId;
+	@ManyToOne
+	@JoinColumn(name = "MemVO", referencedColumnName = "MEMBER")
+	private MemberVO memId;
 	
-//	@Column(name = "REP_POST_DATE")
+	@Column(name = "REP_POST_DATE")
 	private Timestamp repPostDate;
 	
-//	@Column(name = "REP_POST_REASON")
+	@Column(name = "REP_POST_REASON")
 	private char repPostReason;
 	
-//	@Column(name = "REP_POST_STATUS")
+	@Column(name = "REP_POST_STATUS")
 	private byte repPostStatus;
 	
 	public Integer getRepPostId() {
@@ -44,12 +44,7 @@ public class ReportPostVO implements Serializable{
 	public void setPostId(Integer postId) {
 		this.postId = postId;
 	}
-	public Integer getMemId() {
-		return memId;
-	}
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
+
 	public Timestamp getRepPostDate() {
 		return repPostDate;
 	}
