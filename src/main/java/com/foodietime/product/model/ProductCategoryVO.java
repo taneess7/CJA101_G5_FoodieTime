@@ -1,13 +1,9 @@
 package com.foodietime.product.model;
 
 import java.io.Serializable;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -23,6 +19,10 @@ public class ProductCategoryVO implements Serializable{
 	@Column(name = "prod_cate",nullable = false)
 	private String prodCate;
 	
+	// 一個分類對應多個商品
+    @OneToMany(mappedBy = "productCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductVO> productList;
+    
 //	public Integer getProdCateId() {
 //		return prodCateId;
 //	}

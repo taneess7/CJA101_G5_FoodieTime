@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -25,8 +26,9 @@ public class ProductVO implements Serializable{
 	@Column(name = "stor_id",nullable = false)
 	private Integer storId;
 	
-	@Column(name ="prod_cate_id",nullable = false)
-	private Integer prodCateId;
+	@ManyToOne
+	@Column(name ="prod_cate_id",nullable = false) // 外鍵，連到 product_category.prod_cate_id
+	private ProductCategoryVO productCategory;
 	
 	@Column(name ="prod_name",nullable = false,length = 45)
 	private String prodName;
