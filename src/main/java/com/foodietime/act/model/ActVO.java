@@ -3,6 +3,9 @@ package com.foodietime.act.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.foodietime.store.model.StoreVO;
 import com.foodietime.storeCate.model.StoreCateVO;
 
@@ -16,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "activity")
@@ -29,7 +33,7 @@ public class ActVO implements Serializable {
 	private Integer actId; 
 	
 	//2.店家物件（外鍵：STORE_ID）
-	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.PERSIST) // 多對一，指向分類，新增activity時，關聯物件一起新增
+	@ManyToOne
     @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID") // 外鍵名稱
 	private StoreVO storId;
 //	private Integer storId;
@@ -44,28 +48,36 @@ public class ActVO implements Serializable {
 	
 	
 	// 3.活動類型
-	@Column(name = "ACT_CATE")
+	@NotEmpty(message="活動類型: 請勿空白")
+	@Column(name = "ACT_CATE", length = 50)
 	private String actCate; 
 	
 
 	// 4.活動名稱
+	@NotEmpty(message="活動名稱: 請勿空白")
 	@Column(name = "ACT_NAME")
 	private String actName; 
 	
 	// 5.活動內容
-	@Column(name = "ACT_CONTENT")
+	@NotEmpty(message="活動內容: 請勿空白")
+	@Column(name = "ACT_CONTENT", length = 255)
 	private String actContent; 
 	
 	// 6.活動建立時間
+	@NotEmpty
+	@CreationTimestamp
 	@Column(name = "ACT_LAUNCHTIME" , updatable = false)
 	private Timestamp actSetTime; 
+	
 	 
 	//使用活動折扣需同時符合:活動狀態上架、活動開始時間
 	// 7.活動開始時間
+	@NotEmpty(message="活動開始時間: 請勿空白")
 	@Column(name = "ACT_STARTTIME")
 	private Timestamp actStartTime; 
 	
 	// 8.活動結束時間 
+	@NotEmpty(message="活動結束時間: 請勿空白")
 	@Column(name = "ACT_ENDTIME")
 	private Timestamp actEndTime; 
 	
@@ -78,6 +90,7 @@ public class ActVO implements Serializable {
 	private Byte actDiscount; 
 	
 	// 11.折扣值  
+	@NotEmpty(message="折扣值: 請勿空白")
 	@Column(name = "ACT_DISCOUNT_VALUE")
 	private Double actDiscValue; 
 	
@@ -87,6 +100,7 @@ public class ActVO implements Serializable {
 	
 	// 13.最後更新時間
 	@Column(name = "ACT_LAST_UPDATE")
+	@UpdateTimestamp 
 	private Timestamp actLastUpdate; 
 
 	// 取得or設置
