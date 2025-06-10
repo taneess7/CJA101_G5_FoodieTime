@@ -356,5 +356,11 @@ public class MemberDAO implements MemDAO_interface {
 	        entityManager.merge(member);
 	    }
 	}
+
+	@Override
+	public MemberVO findByAccount(String memAccount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
