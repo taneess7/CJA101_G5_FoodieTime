@@ -11,7 +11,7 @@ public interface StoreCateRepository extends JpaRepository<StoreCateVO, Integer>
 
 	@Transactional
 	@Modifying //非查詢，會動到資料庫的操作
-	@Query(value = "delet from store_category where storeCateId =?1", nativeQuery = true)
+	@Query(value = "delet from store_category where STORE_CATE_ID =?1", nativeQuery = true)
 	void deleteByStorCateId(int storeCateId);
 	
 
