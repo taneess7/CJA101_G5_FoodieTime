@@ -24,15 +24,18 @@ public class ParticipantsVO implements Serializable {
 	@Id
 	@Column(name="PAR_ID", nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer parId;
+	private Integer parId;  //參與編號
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	
+	@ManyToOne
 	@JoinColumn(name="MEM_ID", nullable = false, updatable = false)
-	private MemberVO member;
+	private MemberVO member;  //會員編號(團員)
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	
+	@ManyToOne
 	@JoinColumn(name="GB_ID", nullable = false)
-	private GroupBuyingCasesVO groupBuyingCase; 
+	private GroupBuyingCasesVO groupBuyingCase;   //團購編號
+	
 	
 	@Column(name="PAR_PHONE", nullable = false, length = 10)
 	@NotEmpty(message="收件人連絡電話: 請勿空白")
@@ -40,7 +43,8 @@ public class ParticipantsVO implements Serializable {
 		    regexp = "^\\d{10}$",
 		    message = "收件人連絡電話須為 10 位數字"
 		)
-	private String parPhone;
+	private String parPhone;  //收件人連絡電話
+	
 	
 	@Column(name = "PAR_NAME", nullable = false, length = 45)
 	@NotEmpty(message = "收件人姓名: 請勿空白")
@@ -48,7 +52,8 @@ public class ParticipantsVO implements Serializable {
 	    regexp = "^[\u4e00-\u9fa5a-zA-Z0-9_]{2,10}$",
 	    message = "收件人姓名: 只能包含中文、英文字母、數字或底線，且長度須在2到10之間"
 	)
-	private String parName;
+	private String parName;  //收件人姓名
+	
 	
 	@Column(name = "PAR_ADDRESS", nullable = false, length = 45)
 	@NotEmpty(message = "收件人地址: 請勿空白")
@@ -56,38 +61,41 @@ public class ParticipantsVO implements Serializable {
 	    regexp = "^[\\u4e00-\\u9fa5A-Za-z0-9\\s]{5,45}$",
 	    message = "收件人地址: 只能包含中文、英文字母、數字或空格，且長度須在5到45字之間"
 	)
-	private String parAddress;
+	private String parAddress;  //收件人地址
 
 	
 	@Column(name = "PAR_LONGITUDE", nullable = false, precision = 10, scale = 6)
 	@NotNull(message = "地址經度: 不可為空")
 	@DecimalMin(value = "-180.0", inclusive = true, message = "地址經度: 最小值為 -180.0")
 	@DecimalMax(value = "180.0", inclusive = true, message = "地址經度: 最大值為 180.0")
-	private BigDecimal parLongitude;
+	private BigDecimal parLongitude;  //地址經度
 
 	
 	@Column(name = "PAR_LATITUDE", nullable = false, precision = 10, scale = 6)
     @NotNull(message = "地址緯度: 不可為空")
     @DecimalMin(value = "-90.0", inclusive = true, message = "地址緯度: 最小值為 -90.0")
     @DecimalMax(value = "90.0", inclusive = true, message = "地址緯度: 最大值為 90.0")
-    private BigDecimal parLatitude;
+    private BigDecimal parLatitude;  //地址緯度
+	
 	
 	@Column(name = "IS_LEADER", nullable = false)
 	@NotNull(message = "是否為團長: 請指定 0（團長）或 1（非團長）")
 	@Min(value = 0, message = "是否為團長: 僅能為 0（團長）或 1（非團長）")
 	@Max(value = 1, message = "是否為團長: 僅能為 0（團長）或 1（非團長）")
-	private Integer leader;
+	private Integer leader;  //是否為團長
+	
 
 	@Column(name = "PAR_PURCHASE_QUANTITY", nullable = false)
 	@NotNull(message = "購買數量: 請勿空白")
 	@Min(value = 1, message = "購買數量: 最少須為 1")
-	private Integer parPurchaseQuantity;
+	private Integer parPurchaseQuantity;  //購買數量
+	
 
 	@Column(name = "PAYMENT_STATUS", nullable = false)
 	@NotNull(message = "付款狀態: 請指定 0（未付款）或 1（已付款）")
 	@Min(value = 0, message = "付款狀態: 僅能為 0（未付款）或 1（已付款）")
 	@Max(value = 1, message = "付款狀態: 僅能為 0（未付款）或 1（已付款）")
-	private Integer paymentStatus;
+	private Integer paymentStatus;  //付款狀態
 
 	
 	
