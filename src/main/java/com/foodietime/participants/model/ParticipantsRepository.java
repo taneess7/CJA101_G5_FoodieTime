@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ParticipantsRepository extends JpaRepository<ParticipantsVO, Integer>{
 
 	 // 根據「某個團購案的 gbId」去找所有參與者
-    List<ParticipantsVO> findByGroupBuyingCaseGbId(Integer gbId);
+    List<ParticipantsVO> findByGroupBuyingCases_GbId(Integer gbId);
 }

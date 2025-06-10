@@ -1,7 +1,6 @@
 package com.foodietime.groupbuyingcases.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +11,6 @@ import com.foodietime.store.model.StoreVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,17 +37,17 @@ public class GroupBuyingCasesVO implements Serializable{
 	private Integer gbId;  //團購編號
 	
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="STOR_ID", nullable = false)
 	private StoreVO store;  //店家編號
 	
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="GB_PROD_ID", nullable = false)
 	private GbprodVO gbProd;  //商品編號
 	
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="MEM_ID", nullable = false)
 	private MemberVO member;  //會員編號(團主)
 	
@@ -57,13 +55,13 @@ public class GroupBuyingCasesVO implements Serializable{
 	@Column(name = "GB_START_TIME", nullable = false)
 	@NotNull(message = "開始時間: 請勿空白")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate gbStartTime;  //開始時間
+	private Date gbStartTime;  //開始時間
 	
 	
 	@Column(name = "GB_END_TIME", nullable = false)
 	@NotNull(message = "結束時間: 請勿空白")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate gbEndTime;  //結束時間
+	private Date gbEndTime;  //結束時間
 	
 	
 	@Column(name = "GB_TITLE", nullable = false, length = 45)
