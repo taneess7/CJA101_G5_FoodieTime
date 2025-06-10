@@ -9,5 +9,5 @@ public interface SmgRepository extends JpaRepository<SmgVO, Integer> {
     // JpaRepository 內建 CRUD 與分頁功能
     // 可以根據需求自訂方法，例如：
     // Optional<SmgVO> findBySmgrAccount(String account);
-	SmgVO findBySmgrAccount(String smgrAccount);
+	SmgVO findBySmgrAccount(String smgrAccount); 
 }
