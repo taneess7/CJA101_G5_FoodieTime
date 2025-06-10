@@ -267,37 +267,38 @@ public class MemberVO implements Serializable {
 	        INACTIVE, ACTIVE
 	    }
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<DirectMessageVO> directMessages;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<FavoriteListVO> favoriteList;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<CartVO> cart;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<MemCouponVO> memCoupon;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<ParticipantsVO> participants;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<GroupBuyingCasesVO> groupBuyingCases;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<OrdersVO> orders;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<PostVO> post;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<ReportPostVO> reportPost;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<ReportMessageVO> reportMessage;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<AccrecVO> appropriationCommRecord;
+	    
 
 }
