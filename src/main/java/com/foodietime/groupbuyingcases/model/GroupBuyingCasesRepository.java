@@ -3,7 +3,7 @@ package com.foodietime.groupbuyingcases.model;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GroupBuyingCasesJpaRepository extends JpaRepository<GroupBuyingCasesVO, Integer>{
+public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCasesVO, Integer>{
 
 	 // 查詢某會員開的所有團購案（根據 MemberVO.memId）
     List<GroupBuyingCasesVO> findByMemberMemId(Integer memId);
