@@ -15,7 +15,7 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteListVO, Fa
     // 刪除某會員的所有收藏
     void deleteAllByIdMemId(Integer memId);
 
-    // 取得某會員所有收藏
+    // 查詢某會員所有收藏
     List<FavoriteListVO> findAllByIdMemId(Integer memId);
 
 }
