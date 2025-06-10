@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Entity
@@ -21,26 +22,36 @@ import lombok.Data;
 @Table(name = "servermanager")
 public class SmgVO implements Serializable {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SMGR_ID")
     private Integer smgrId;
 
+    @Email(message = "Email 格式錯誤")
+    @NotBlank(message = "Email 不可為空")
     @Column(name = "SMGR_EMAIL", length = 45)
     private String smgrEmail;
 
+    @NotBlank(message = "帳號不可為空")
+    @Size(max = 45, message = "帳號長度不可超過 45 字")
     @Column(name = "SMGR_ACCOUNT", length = 45)
     private String smgrAccount;
 
+    @NotBlank(message = "密碼不可為空")
+    @Size(min = 6, max = 128, message = "密碼長度需介於 6 到 128 字")
     @Column(name = "SMGR_PASSWORD", length = 128)
     private String smgrPassword;
 
+    @NotBlank(message = "名稱不可為空")
+    @Size(max = 45, message = "名稱長度不可超過 45 字")
     @Column(name = "SMGR_NAME", length = 45)
     private String smgrName;
 
+    @Pattern(regexp = "\\d{10}", message = "電話格式錯誤，需為10位數字")
     @Column(name = "SMGR_PHONE", length = 10)
     private String smgrPhone;
 
+    @NotNull(message = "狀態不可為空")
     @Column(name = "SMGR_STATUS")
     private Byte smgrStatus;
 
