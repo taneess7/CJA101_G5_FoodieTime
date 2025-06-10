@@ -11,6 +11,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.foodietime.member.model.MemberVO;
+
 public class DirectMessageDAO implements DirectMessageDAO_interface {
 	private static DataSource ds = null;
 	static {
@@ -39,7 +41,7 @@ public class DirectMessageDAO implements DirectMessageDAO_interface {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT);
 
-			pstmt.setInt(1, dmVO.getMemId());
+			pstmt.setInt(1, dmVO.getMember().getMemId());
 			pstmt.setInt(2, dmVO.getSmgrId());
 			pstmt.setString(3, dmVO.getMessContent());
 			pstmt.setTimestamp(4, dmVO.getMessTime());
@@ -79,7 +81,7 @@ public class DirectMessageDAO implements DirectMessageDAO_interface {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE);
 
-			pstmt.setInt(1, dmVO.getMemId());
+			pstmt.setInt(1, dmVO.getMember().getMemId());
 			pstmt.setInt(2, dmVO.getSmgrId());
 			pstmt.setString(3, dmVO.getMessContent());
 			pstmt.setTimestamp(4, dmVO.getMessTime());
@@ -127,7 +129,9 @@ public class DirectMessageDAO implements DirectMessageDAO_interface {
 			while (rs.next()) {
 				// empVo 也稱為 Domain objects
 				dmVO = new DirectMessageVO();
-				dmVO.setMemId(rs.getInt("MEM_ID"));
+				MemberVO member = new MemberVO();
+				member.setMemId(rs.getInt("MEM_ID"));
+				dmVO.setMember(member);
 				dmVO.setSmgrId(rs.getInt("SMGR_ID"));
 				dmVO.setMessContent(rs.getString("MESS_CONTENT"));
 				dmVO.setMessTime(rs.getTimestamp("MESS_TIME"));
@@ -183,7 +187,9 @@ public class DirectMessageDAO implements DirectMessageDAO_interface {
 
 			while (rs.next()) {
 				dmVO = new DirectMessageVO();
-				dmVO.setMemId(rs.getInt("MEM_ID"));
+				MemberVO member = new MemberVO();
+				member.setMemId(rs.getInt("MEM_ID"));
+				dmVO.setMember(member);
 				dmVO.setSmgrId(rs.getInt("SMGR_ID"));
 				dmVO.setMessContent(rs.getString("MESS_CONTENT"));
 				dmVO.setMessTime(rs.getTimestamp("MESS_TIME"));

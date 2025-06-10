@@ -3,6 +3,13 @@ package com.foodietime.member.model;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.foodietime.member.model.MemberVO.Gender;
+import com.foodietime.member.model.MemberVO.MemberStatus;
+import com.foodietime.member.model.MemberVO.NoGroupStatus;
+import com.foodietime.member.model.MemberVO.NoJoingroupStatus;
+import com.foodietime.member.model.MemberVO.NoPostStatus;
+import com.foodietime.member.model.MemberVO.NoSpeakStatus;
+
 
 public class MemService {
 	private MemDAO_interface dao;
@@ -10,7 +17,7 @@ public class MemService {
 		dao = new MemberDAO();
 	}
 	
-	public MemberVO addMem(String memEmail,String memAccount,String memPassword,String memNickname,String memName,String memPhone,Integer memGender,String memCity,String memCityarea,String memAddress,byte[] memAvatar,Timestamp memTime) {
+	public MemberVO addMem(String memEmail,String memAccount,String memPassword,String memNickname,String memName,String memPhone,Gender memGender,String memCity,String memCityarea,String memAddress,byte[] memAvatar,Timestamp memTime) {
 		MemberVO memVO = new MemberVO();
 		
 		memVO.setMemEmail(memEmail);
@@ -33,7 +40,7 @@ public class MemService {
 	
 		return memVO;
 	}
-	public MemberVO updateMember(String memEmail,String memPassword,String memNickname,String memName,String memPhone,Integer memGender,String memCity,String memCityarea,String memAddress,byte[] memAvatar) {
+	public MemberVO updateMember(String memEmail,String memPassword,String memNickname,String memName,String memPhone,Gender memGender,String memCity,String memCityarea,String memAddress,byte[] memAvatar) {
 		MemberVO memVO = new MemberVO();
 		
 		memVO.setMemEmail(memEmail);
@@ -54,12 +61,12 @@ public class MemService {
 		
 		return memVO;
 	}
-	public MemberVO updateMemberPermission(Integer memStatus,Integer memNoSpeak,Integer memNoGroup,Integer memNoJoinGroup) {
+	public MemberVO updateMemberPermission(MemberStatus memStatus,NoSpeakStatus memNoSpeak,NoPostStatus memNoPost,NoGroupStatus memNoGroup,NoJoingroupStatus memNoJoinGroup) {
 		MemberVO memVO = new MemberVO();
 		
 		memVO.setMemStatus(memStatus);
 		memVO.setMemNoSpeak(memNoSpeak);
-		memVO.setMemNoPost(memNoJoinGroup);
+		memVO.setMemNoPost(memNoPost);
 		memVO.setMemNoGroup(memNoGroup);
 		memVO.setMemNoJoingroup(memNoJoinGroup);
 		dao.updatePermission(memVO);
