@@ -4,29 +4,34 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-//import jakarta.persistence.*;
+import com.foodietime.member.model.MemberVO;
 
-//@Entity
-//@Table(name = "REPORT_MESSAGE")
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "REPORT_MESSAGE")
 public class ReportMessageVO implements Serializable{
 	
-//	@Id
-//	@Column(name = "REP_MES_ID")
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "MemberVO", referencedColumnName = "MEMBER")
 	private Integer repMesId;
 	
-//	@Column(name = "MES_ID")
+	@ManyToOne
+	@JoinColumn(name = "MemberVO", referencedColumnName = "MEMBER")
 	private Integer mesId;
 	
-//	@Column(name = "MEM_ID")
-	private Integer memId;
+	@ManyToOne
+	@JoinColumn(name = "MemberVO", referencedColumnName = "MEMBER")
+	private MemberVO memId;
 	
-//	@Column(name = "REP_MES_DATE")
+	@Column(name = "REP_MES_DATE")
 	private Timestamp repMesDate;
 	
-//	@Column(name = "REP_MES_REASON")
+	@Column(name = "REP_MES_REASON")
 	private char repMesReason;
 	
-//	@Column(name = "REP_MES_STATUS")
+	@Column(name = "REP_MES_STATUS")
 	private byte repMesStatus;
 	
 	public Integer getRepMesId() {
@@ -41,12 +46,7 @@ public class ReportMessageVO implements Serializable{
 	public void setMesId(Integer mesId) {
 		this.mesId = mesId;
 	}
-	public Integer getMemId() {
-		return memId;
-	}
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
+	
 	public Timestamp getRepMesDate() {
 		return repMesDate;
 	}

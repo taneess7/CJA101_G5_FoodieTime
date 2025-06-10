@@ -14,7 +14,7 @@ public class ReportMessageService {
 	public ReportMessageVO addrepMessage(Integer mesId, Integer memId, java.sql.Timestamp repMesDate, char repMesReason, byte repMesStatus) {
 		ReportMessageVO reportmessageVO = new ReportMessageVO();
 		reportmessageVO.setMesId(mesId);
-		reportmessageVO.setMemId(memId);
+//		reportmessageVO.setMemId(memId);
 		reportmessageVO.setRepMesDate(repMesDate);
 		reportmessageVO.setRepMesReason(repMesReason);
 		reportmessageVO.setRepMesStatus(repMesStatus);
@@ -25,7 +25,7 @@ public class ReportMessageService {
 		ReportMessageVO reportmessageVO = new ReportMessageVO();
 		reportmessageVO.setRepMesId(repMesId);
 		reportmessageVO.setMesId(mesId);
-		reportmessageVO.setMemId(memId);
+//		reportmessageVO.setMemId(memId);
 		reportmessageVO.setRepMesDate(repMesDate);
 		reportmessageVO.setRepMesReason(repMesReason);
 		reportmessageVO.setRepMesStatus(repMesStatus);

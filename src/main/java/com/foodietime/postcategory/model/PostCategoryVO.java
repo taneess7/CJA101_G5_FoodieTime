@@ -1,18 +1,24 @@
 package com.foodietime.postcategory.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
-//import jakarta.persistence.*;
+import com.foodietime.post.model.PostVO;
+import jakarta.persistence.*;
 
-//@Entity
-//@Table(name = "POST_CATEGORY")
+@Entity
+@Table(name = "POST_CATEGORY")
 public class PostCategoryVO implements Serializable {
 
-//  @Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)	
-//	@Column(name = "POST_CATE_ID")
+	@Id	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "POST_CATE_ID")
 	private Integer postCateId;
-//	@Column(name = "POST_CATE")
+	
+	@OneToMany(mappedBy = "postcategory", cascade = CascadeType.ALL)
+	private Set<PostVO> posts;
+
+	@Column(name = "POST_CATE")
 	private Integer postCate;
 
 	public Integer getPostCateId() {
@@ -22,7 +28,7 @@ public class PostCategoryVO implements Serializable {
 	public void setPostCateId(Integer postCateId) {
 		this.postCateId = postCateId;
 	}
-
+	
 	public Integer getPostCate() {
 		return postCate;
 	}
@@ -31,4 +37,11 @@ public class PostCategoryVO implements Serializable {
 		this.postCate = postCate;
 	}
 
+	public Set<PostVO> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(Set<PostVO> posts) {
+		this.posts = posts;
+	}
 }

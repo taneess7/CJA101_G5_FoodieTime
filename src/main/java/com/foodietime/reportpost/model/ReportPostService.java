@@ -14,7 +14,7 @@ public class ReportPostService {
 	public ReportPostVO addReportPost(Integer postId, Integer memId, java.sql.Timestamp repPostDate, char repPostReason, byte repPostStatus) {
 		ReportPostVO reportpostVO = new ReportPostVO();
 		reportpostVO.setPostId(postId);
-		reportpostVO.setMemId(memId);
+//		reportpostVO.setMemId(memId);
 		reportpostVO.setRepPostDate(repPostDate);
 		reportpostVO.setRepPostReason(repPostReason);
 		reportpostVO.setRepPostStatus(repPostStatus);
@@ -26,7 +26,7 @@ public class ReportPostService {
 		ReportPostVO reportpostVO = new ReportPostVO();
 		reportpostVO.setRepPostId(repPostId);
 		reportpostVO.setPostId(postId);
-		reportpostVO.setMemId(memId);
+//		reportpostVO.setMemId(memId);
 		reportpostVO.setRepPostDate(repPostDate);
 		reportpostVO.setRepPostReason(repPostReason);
 		reportpostVO.setRepPostStatus(repPostStatus);

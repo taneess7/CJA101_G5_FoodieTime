@@ -3,45 +3,46 @@ package com.foodietime.post.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.postcategory.model.PostCategoryVO;
+
 import jakarta.persistence.*;
 
-//@Entity
-//@Table(name = "POST")
+@Entity
+@Table(name = "POST")
 public class PostVO implements Serializable {
 	
-//	@Id
-//	@Column(name = "POST_ID")
+	@Id
+	@Column(name = "POST_ID")
 	private Integer postId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "MemVO", referencedColumnName = "MEMBER")
-//	@Column(name = "MEM_ID")
-	private Integer memId;
+	@ManyToOne
+	@JoinColumn(name = "MemberVO", referencedColumnName = "MEMBER")
+	private MemberVO memId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "PostCategoryVO", referencedColumnName = "POST_CATEGORY")
-//	@Column(name = "POST_CATE_ID")
-	private Integer postCateId;
+	@ManyToOne
+	@JoinColumn(name = "PostCategoryVO", referencedColumnName = "POST_CATEGORY")
+	private PostCategoryVO postCateId;
 	
-//	@Column(name = "POST_DATE")
+	@Column(name = "POST_DATE")
 	private Timestamp postDate;
 	
-//	@Column(name = "POST_STATUS")
+	@Column(name = "POST_STATUS")
 	private byte postStatus;
 	
-//	@Column(name = "EDITDATE")
+	@Column(name = "EDITDATE")
 	private Timestamp editDate;
 	
-//	@Column(name = "POST_TITLE")
+	@Column(name = "POST_TITLE")
 	private String postTitle;
 	
-//	@Column(name = "POST_CONTENT")
+	@Column(name = "POST_CONTENT")
 	private String postContent;
 	
-//	@Column(name = "LIKE_COUNT")
+	@Column(name = "LIKE_COUNT")
 	private Integer likeCount;
 	
-//	@Column(name = "VIEWS")
+	@Column(name = "VIEWS")
 	private Integer views;
 
 	public Integer getPostId() {
@@ -52,21 +53,21 @@ public class PostVO implements Serializable {
 		this.postId = postId;
 	}
 
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
-
-	public Integer getPostCateId() {
-		return postCateId;
-	}
-
-	public void setPostCateId(Integer postCateId) {
-		this.postCateId = postCateId;
-	}
+//	public Integer getMemId() {
+//		return memId;
+//	}
+//
+//	public void setMemId(Integer memId) {
+//		this.memId = memId;
+//	}
+//
+//	public Integer getPostCateId() {
+//		return postCateId;
+//	}
+//
+//	public void setPostCateId(Integer postCateId) {
+//		this.postCateId = postCateId;
+//	}
 
 	public Timestamp getPostDate() {
 		return postDate;
