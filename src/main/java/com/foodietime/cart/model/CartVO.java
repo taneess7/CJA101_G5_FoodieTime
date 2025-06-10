@@ -1,5 +1,7 @@
 package com.foodietime.cart.model;
 
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.product.model.ProductVO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -18,13 +20,15 @@ public class CartVO implements Serializable {
     @Column(name = "shop_id")
     private Integer shopId;   // 購物車商品編號
 
-    @Column(name = "mem_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "mem_id",referencedColumnName = "mem_id")
     @NotNull(message="不可為空")
-    private Integer memId;    // 會員編號
+    private MemberVO memId;    // 會員編號
 
-    @Column(name = "prod_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "prod_id",referencedColumnName = "prod_id")
     @NotNull(message="不可為空")
-    private Integer prodId;   // 商品編號
+    private ProductVO prodId;   // 商品編號
 
     @Column(name = "prod_n", nullable = false)
     @NotNull(message="不可為空")
