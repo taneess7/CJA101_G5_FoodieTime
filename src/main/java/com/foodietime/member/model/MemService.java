@@ -3,6 +3,8 @@ package com.foodietime.member.model;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.foodietime.member.model.MemberVO.Gender;
 import com.foodietime.member.model.MemberVO.MemberStatus;
 import com.foodietime.member.model.MemberVO.NoGroupStatus;
@@ -10,7 +12,7 @@ import com.foodietime.member.model.MemberVO.NoJoingroupStatus;
 import com.foodietime.member.model.MemberVO.NoPostStatus;
 import com.foodietime.member.model.MemberVO.NoSpeakStatus;
 
-
+@Service
 public class MemService {
 	private MemDAO_interface dao;
 	public MemService() {
@@ -84,6 +86,10 @@ public class MemService {
 	}
 	public List<MemberVO> getAll(){
 		return dao.getAll();
+	}
+	
+	public MemberVO findByAccount(String memAccount) {
+	    return dao.findByAccount(memAccount);
 	}
 	
 	
