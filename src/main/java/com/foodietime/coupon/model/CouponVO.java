@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "coupon")
@@ -26,11 +27,13 @@ public class CouponVO implements Serializable {
 	private Integer storId; 
 	
 	// 3.優惠券類型
-	@Column(name = "COU_TYPE")
+	@NotEmpty(message="優惠券類型: 請勿空白")
+	@Column(name = "COU_TYPE", length = 255)
 	private String couType; 
 	
 	// 4.優惠券說明
-	@Column(name = "COU_DES")
+	@NotEmpty(message="優惠券說明: 請勿空白")
+	@Column(name = "COU_DES", length = 255)
 	private String couDes;
 	
 
@@ -39,6 +42,7 @@ public class CouponVO implements Serializable {
 	private Integer couMinOrd; 
 	
 	// 6.使用期限
+	@NotEmpty(message="使用期限: 請勿空白")
 	@Column(name = "COU_DATE")
 	private Timestamp couDate; 
 
