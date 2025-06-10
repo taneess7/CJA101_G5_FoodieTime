@@ -10,4 +10,5 @@ public interface MemDAO_interface {
 	public List<MemberVO> getAll();//將會員資料放在陣列
 	public boolean isAccountExist(String memAccount);
 	public void updatePhoto(Integer memId, byte[] memAvatar);
+	MemberVO findByAccount(String memAccount);
 }
