@@ -55,7 +55,7 @@ public class SmgVO implements Serializable {
     @Column(name = "SMGR_STATUS")
     private Byte smgrStatus;
 
-    // 與 SmgauthVO (權限關聯) 一對多
+    // 與 SmgauthVO (權限關聯) 一對多  
     @OneToMany(mappedBy = "smg", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SmgauthVO> smgauths;
 
