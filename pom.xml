@@ -62,11 +62,11 @@
             <scope>test</scope>
         </dependency>
 <!--        自動設定Getter/Setter-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>annotationProcessor</scope>
-        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+</dependency>
 <!--        傳輸email-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
