@@ -298,4 +298,12 @@ public class StoreVO implements Serializable {
 		this.storStatus = storStatus;
 	}
 
+	public String getStorEmail() {
+		return storEmail;
+	}
+
+	public void setStorEmail(String storEmail) {
+		this.storEmail = storEmail;
+	}
+
 }
