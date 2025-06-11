@@ -1,8 +1,6 @@
 package com.foodietime.directmessage.model;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import com.foodietime.member.model.MemberVO;
