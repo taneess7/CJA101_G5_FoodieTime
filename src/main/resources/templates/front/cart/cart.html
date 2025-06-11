@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購物車 - FoodieTime 食刻</title>
+    <meta name="description" content="FoodieTime 食刻購物車 - 輕鬆結帳、安全支付，享受美食無負擔。">
+    <link rel="stylesheet" th:href="@{css/common/style.css}">
+    <link rel="stylesheet" th:href="@{css/front/cart/cart.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <!-- PWA 支援 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{images/icons/icon-192x192.png}">
+</head>
+<body>
+<!-- 保持原有的header -->
+<header class="app-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a href="index.html" class="logo">
+                <img th:src="@{images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="material-icons-outlined search-icon">search</i>
+                <label>
+                    <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+                </label>
+                <i class="material-icons-outlined mic-icon">mic</i>
+                <i class="material-icons-outlined camera-icon">photo_camera</i>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a th:href="@{front/map.html}" class="nav-link">地圖</a></li>
+                <li class="nav-item"><a th:href="@{front/group-order.html}" class="nav-link">團購</a></li>
+                <li class="nav-item"><a th:href="@{front/deals.html}" class="nav-link">優惠</a></li>
+                <li class="nav-item"><a th:href="@{front/cart.html}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
+                <li class="nav-item"><a th:href="@{front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
+            </ul>
+            <button class="menu-toggle" aria-label="開啟選單">
+                <i class="material-icons-outlined">menu</i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+
+<main class="cart-page">
+    <div class="container">
+        <!-- 購物流程指示器 -->
+        <div class="checkout-stepper">
+            <div class="stepper-item active" data-step="cart">
+                <div class="step-counter">1</div>
+                <div class="step-name">購物車</div>
+            </div>
+            <div class="stepper-item" data-step="checkout">
+                <div class="step-counter">2</div>
+                <div class="step-name">結帳資訊</div>
+            </div>
+            <div class="stepper-item" data-step="confirmation">
+                <div class="step-counter">3</div>
+                <div class="step-name">訂單確認</div>
+            </div>
+        </div>
+
+        <!-- 購物車內容 -->
+        <div class="cart-container">
+            <h1 class="page-title">您的購物車</h1>
+
+            <!-- 購物車為空的提示 -->
+            <div class="empty-cart" id="empty-cart">
+                <i class="material-icons-outlined empty-cart-icon">shopping_cart</i>
+                <h2>您的購物車是空的</h2>
+                <p>瀏覽我們的美食選擇，將喜歡的餐點加入購物車</p>
+                <a href="index.html" class="btn btn-primary">探索美食</a>
+            </div>
+
+            <!-- 購物車內容 -->
+            <div class="cart-content" id="cart-content">
+                <div class="cart-items" id="cart-items">
+                    <!-- 購物車項目將由JavaScript動態生成 -->
+                </div>
+
+                <div class="cart-sidebar">
+                    <div class="cart-summary">
+                        <h2 class="summary-title">訂單摘要</h2>
+                        <div class="summary-row">
+                            <span>小計</span>
+                            <span id="subtotal">NT$ 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>運費</span>
+                            <span id="shipping">NT$ 0</span>
+                        </div>
+                        <div class="summary-row discount-row" id="discount-row">
+                            <span>折扣</span>
+                            <span id="discount">-NT$ 0</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span>總計</span>
+                            <span id="total">NT$ 0</span>
+                        </div>
+
+                        <!-- 優惠碼輸入 -->
+                        <div class="coupon-container">
+                            <div class="coupon-input-group">
+                                <input type="text" id="coupon-code" placeholder="輸入優惠碼" class="coupon-input">
+                                <button id="apply-coupon" class="btn btn-text">套用</button>
+                            </div>
+                            <div class="coupon-message" id="coupon-message"></div>
+                        </div>
+
+                        <!-- 修改：改為連結到下一頁 -->
+                        <a th:href="@{/front/checkout.html}" class="btn btn-primary btn-block">前往結帳</a>
+                        <a href="index.html" class="btn btn-text btn-block">繼續購物</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 推薦商品 -->
+    <section class="recommendations-section">
+        <div class="container">
+            <h2 class="section-title">您可能也喜歡</h2>
+            <div class="recommendations-grid" id="recommendations">
+                <!-- 推薦商品將由JavaScript動態生成 -->
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- 保持原有的footer -->
+<footer class="app-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img th:src="@{img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">功能</h4>
+                    <ul class="footer-nav-list">
+                        <li><a th:href="@{front/map.html}">地圖搜尋</a></li>
+                        <li><a th:href="@{front/group-order.html}">團購功能</a></li>
+                        <li><a th:href="@{front/deals.html}">比價優惠</a></li>
+                        <li><a th:href="@{front/collections.html}">收藏管理</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">關於我們</h4>
+                    <ul class="footer-nav-list">
+                        <li><a th:href="@{front/about.html}">公司簡介</a></li>
+                        <li><a th:href="@{front/team.html}">團隊成員</a></li>
+                        <li><a th:href="@{front/careers.html}">加入我們</a></li>
+                        <li><a th:href="@{front/press.html}">媒體報導</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">幫助</h4>
+                    <ul class="footer-nav-list">
+                        <li><a th:href="@{front/faq.html}">常見問題</a></li>
+                        <li><a th:href="@{front/contact.html}">聯絡我們</a></li>
+                        <li><a th:href="@{front/terms.html}">使用條款</a></li>
+                        <li><a th:href="@{front/privacy.html}">隱私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script th:src="@{js/common/main.js}"></script>
+<script th:src="@{js/front/cart/cart.js}"></script>
+</body>
+</html>
