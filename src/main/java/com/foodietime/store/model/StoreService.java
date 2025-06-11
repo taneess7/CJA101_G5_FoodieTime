@@ -50,11 +50,5 @@ public class StoreService {
 //	    // sessionFactory.openSession() 是打開一個新的 Hibernate Session，交給工具處理查詢
 //	}
 	
-	public StoreVO login(String email, Integer storId) {
-        StoreVO store = repository.findByEmail(email);
-        if (store != null && store.getStorId().equals(storId)) {
-            return store;
-        }
-        return null;
-    }
+
 }
