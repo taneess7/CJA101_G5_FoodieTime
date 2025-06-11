@@ -1,97 +1,69 @@
 package com.foodietime.member.model;
 
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.foodietime.member.model.MemberVO.Gender;
-import com.foodietime.member.model.MemberVO.MemberStatus;
-import com.foodietime.member.model.MemberVO.NoGroupStatus;
-import com.foodietime.member.model.MemberVO.NoJoingroupStatus;
-import com.foodietime.member.model.MemberVO.NoPostStatus;
-import com.foodietime.member.model.MemberVO.NoSpeakStatus;
 
 @Service
 public class MemService {
-	private MemDAO_interface dao;
-	public MemService() {
-		dao = new MemberDAO();
-	}
-	
-	public MemberVO addMem(String memEmail,String memAccount,String memPassword,String memNickname,String memName,String memPhone,Gender memGender,String memCity,String memCityarea,String memAddress,byte[] memAvatar,Timestamp memTime) {
-		MemberVO memVO = new MemberVO();
-		
-		memVO.setMemEmail(memEmail);
-		memVO.setMemAccount(memAccount);
-		memVO.setMemPassword(memPassword);
-		memVO.setMemNickname(memNickname);
-		memVO.setMemName(memName);
-		memVO.setMemPhone(memPhone);
-		memVO.setMemGender(memGender);
-		memVO.setMemCity(memCity);
-		memVO.setMemCityarea(memCityarea);
-		memVO.setMemAddress(memAddress);
-		memVO.setMemAvatar(memAvatar);
-		memVO.setMemTime(memTime);
-//		memVO.setMemCode(memCode);
-//		memVO.setTotalStarNum(totalStarNum);
-//		memVO.setTotalReviews(totalReviews);
-		dao.insert(memVO);
-		
-	
-		return memVO;
-	}
-	public MemberVO updateMember(String memEmail,String memPassword,String memNickname,String memName,String memPhone,Gender memGender,String memCity,String memCityarea,String memAddress,byte[] memAvatar) {
-		MemberVO memVO = new MemberVO();
-		
-		memVO.setMemEmail(memEmail);
-		memVO.setMemPassword(memPassword);
-		memVO.setMemNickname(memNickname);
-		memVO.setMemName(memName);
-		memVO.setMemPhone(memPhone);
-		memVO.setMemGender(memGender);
-		memVO.setMemCity(memCity);
-		memVO.setMemCityarea(memCityarea);
-		memVO.setMemAddress(memAddress);
-		memVO.setMemAvatar(memAvatar);
-//		memVO.setMemTime(memTime);
-//		memVO.setTotalStarNum(totalStarNum);
-//		memVO.setTotalReviews(totalReviews);
-		dao.update(memVO);
-		
-		
-		return memVO;
-	}
-	public MemberVO updateMemberPermission(MemberStatus memStatus,NoSpeakStatus memNoSpeak,NoPostStatus memNoPost,NoGroupStatus memNoGroup,NoJoingroupStatus memNoJoinGroup) {
-		MemberVO memVO = new MemberVO();
-		
-		memVO.setMemStatus(memStatus);
-		memVO.setMemNoSpeak(memNoSpeak);
-		memVO.setMemNoPost(memNoPost);
-		memVO.setMemNoGroup(memNoGroup);
-		memVO.setMemNoJoingroup(memNoJoinGroup);
-		dao.updatePermission(memVO);
-		
-		
-		
-		return memVO;
-	}
-	
-	public MemberVO getOneMember(Integer memId) {
-		return dao.findByPrimaryKey(memId);
-	}
-	public boolean isAccountExists(String memAccount) {
-        return dao.isAccountExist(memAccount);
-	}
-	public List<MemberVO> getAll(){
-		return dao.getAll();
-	}
-	
-	public MemberVO findByAccount(String memAccount) {
-	    return dao.findByAccount(memAccount);
-	}
-	
-	
+	@Autowired
+    private MemberRepository memberRepository;
+
+    // 新增或修改會員
+    public MemberVO save(MemberVO memberVO) {
+        return memberRepository.save(memberVO);
+    }
+
+    // 查詢所有會員
+    public List<MemberVO> getAll() {
+        return memberRepository.findAll();
+    }
+
+    // 根據 ID 查詢
+    public MemberVO getById(Integer memId) {
+        return memberRepository.findById(memId).orElse(null);
+    }
+
+    // 根據帳號查詢
+    public MemberVO getByAccount(String memAccount) {
+        return memberRepository.findByMemAccount(memAccount);
+    }
+
+    // 檢查帳號是否存在
+    public boolean isAccountExist(String memAccount) {
+        return memberRepository.existsByMemAccount(memAccount);
+    }
+
+    // 刪除會員
+    public void delete(Integer memId) {
+        memberRepository.deleteById(memId);
+    }
+
+    // 更新頭像
+    public void updateAvatar(Integer memId, byte[] avatar) {
+        Optional<MemberVO> optional = memberRepository.findById(memId);
+        if (optional.isPresent()) {
+            MemberVO member = optional.get();
+            member.setMemAvatar(avatar);
+            memberRepository.save(member); // 自動 merge
+        }
+    }
+    public MemberVO login(String memAccount, String memPassword) {
+        MemberVO member = memberRepository.findByMemAccount(memAccount);
+        if (member != null && member.getMemPassword().equals(memPassword)) {
+            return member;
+        }
+        return null;
+    }
+    
+    public boolean isAccountExists(String memAccount) {
+        return memberRepository.existsByMemAccount(memAccount);
+    }
+
+    public boolean isEmailExists(String memEmail) {
+        return memberRepository.existsByMemEmail(memEmail);
+    }
 
 }
