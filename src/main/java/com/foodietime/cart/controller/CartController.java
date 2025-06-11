@@ -17,7 +17,16 @@ public class CartController {
 
     @GetMapping("cart")
     public String cart(Model model) {
-        return "cart";
+        return "front/cart/cart";
     }
 
+    @GetMapping("checkout")
+    public String checkout(Model model) {
+        return "front/cart/checkout";
+    }
+
+    @GetMapping("order-confirmation")
+    public String orderConfirmation(Model model) {
+        return "front/cart/order-confirmation";
+    }
 }
