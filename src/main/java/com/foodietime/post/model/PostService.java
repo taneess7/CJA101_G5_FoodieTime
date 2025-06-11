@@ -2,18 +2,31 @@ package com.foodietime.post.model;
 
 import java.util.List;
 
+import com.foodietime.member.model.MemService;
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.postcategory.model.PostCategoryService;
+import com.foodietime.postcategory.model.PostCategoryVO;
+
 public class PostService {
 	
 	private PostDAO_interface dao;
+	private MemService memService; //新增這兩個 Service
+	private PostCategoryService postCategoryService;
 	
 	
 	public PostService() {
-//		dao = new PostDAOImpl();
+		dao = new PostDAOImpl();
+		memService = new MemService();
+		postCategoryService = new PostCategoryService();
 	}
 	public PostVO addPost(Integer memId, Integer postCateId, java.sql.Timestamp postDate, byte postStatus, java.sql.Timestamp editDate, String postTitle , String postContent,Integer likeCount,Integer views) {
 		PostVO postVO = new PostVO();
-//		postVO.setMember(MemberVO);
-//		postVO.setPostCateId(postCateId);
+		
+		MemberVO member = memService.getOneMember(memId);
+		PostCategoryVO postCategory = postCategoryService.getOnePostCategory(postCateId);
+		
+		postVO.setMemId(member);
+		postVO.setPostCateId(postCategory);
 		postVO.setPostDate(postDate);
 		postVO.setPostStatus(postStatus);
 		postVO.setEditDate(editDate);
@@ -26,9 +39,13 @@ public class PostService {
 	}
 	public PostVO updatePost(Integer postId, Integer memId, Integer postCateId, java.sql.Timestamp postDate, byte postStatus, java.sql.Timestamp editDate, String postTitle , String postContent,Integer likeCount,Integer views) {
 		PostVO postVO = new PostVO();
+		
+		MemberVO member = memService.getOneMember(memId);
+		PostCategoryVO postCategory = postCategoryService.getOnePostCategory(postCateId);
+		
 		postVO.setPostId(postId);
-//		postVO.setMemId(memId);
-//		postVO.setPostCateId(postCateId);
+		postVO.setMemId(member);
+		postVO.setPostCateId(postCategory);
 		postVO.setPostDate(postDate);
 		postVO.setPostStatus(postStatus);
 		postVO.setEditDate(editDate);
