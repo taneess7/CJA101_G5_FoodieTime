@@ -36,8 +36,8 @@ public class MessageDAO implements MessageDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT);
 			
-			pstmt.setInt(1, messageVO.getPostId());
-			pstmt.setInt(2, messageVO.getMemId());
+			pstmt.setInt(1, messageVO.getPostId().getPostId());
+			pstmt.setInt(2, messageVO.getMemId().getMemId());
 			pstmt.setTimestamp(3, messageVO.getMesDate());
 			pstmt.setString(4, messageVO.getMesContent());
 			
@@ -74,8 +74,8 @@ public class MessageDAO implements MessageDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE);
 			
-			pstmt.setInt(1, messageVO.getPostId());
-			pstmt.setInt(2, messageVO.getMemId());
+			pstmt.setInt(1, messageVO.getPostId().getPostId());   //PostVO 裡面的 getPostId() 方法
+			pstmt.setInt(2, messageVO.getMemId().getMemId());
 			pstmt.setTimestamp(3, messageVO.getMesDate());
 			pstmt.setString(4, messageVO.getMesContent());
 			pstmt.setInt(5, messageVO.getMesId());
@@ -157,8 +157,8 @@ public class MessageDAO implements MessageDAO_interface{
 			while (rs.next()) {
 				messageVO = new MessageVO();
 				messageVO.setMesId(rs.getInt("MES_ID"));
-				messageVO.setPostId(rs.getInt("POST_ID"));
-				messageVO.setMemId(rs.getInt("MEM_ID"));
+//				messageVO.setPostId(rs.getInt("POST_ID"));
+//				messageVO.setMemId(rs.getInt("MEM_ID"));
 				messageVO.setMesDate(rs.getTimestamp("MES_DATE"));
 				messageVO.setMesContent(rs.getString("MES_CONTENT"));
 				
@@ -204,8 +204,8 @@ public class MessageDAO implements MessageDAO_interface{
 			while (rs.next()) {
 				messageVO = new MessageVO();
 				messageVO.setMesId(rs.getInt("MES_ID"));
-				messageVO.setPostId(rs.getInt("POST_ID"));
-				messageVO.setMemId(rs.getInt("MEM_ID"));
+//				messageVO.setPostId(rs.getInt("POST_ID"));
+//				messageVO.setMemId(rs.getInt("MEM_ID"));
 				messageVO.setMesDate(rs.getTimestamp("MES_DATE"));
 				messageVO.setMesContent(rs.getString("MES_CONTENT"));
 				list.add(messageVO);
@@ -257,8 +257,8 @@ public class MessageDAO implements MessageDAO_interface{
 			while (rs.next()) {
 				messageVO = new MessageVO();
 				messageVO.setMesId(rs.getInt("MES_ID"));
-				messageVO.setPostId(rs.getInt("POST_ID"));
-				messageVO.setMemId(rs.getInt("MEM_ID"));
+//				messageVO.setPostId(rs.getInt("POST_ID"));
+//				messageVO.setMemId(rs.getInt("MEM_ID"));
 				messageVO.setMesDate(rs.getTimestamp("MES_DATE"));
 				messageVO.setMesContent(rs.getString("MES_CONTENT"));
 				List.add(messageVO);
@@ -312,8 +312,8 @@ public class MessageDAO implements MessageDAO_interface{
 			while (rs.next()) {
 				messageVO = new MessageVO();
 				messageVO.setMesId(rs.getInt("MES_ID"));
-				messageVO.setPostId(rs.getInt("POST_ID"));
-				messageVO.setMemId(rs.getInt("MEM_ID"));
+//				messageVO.setPostId(rs.getInt("POST_ID"));
+//				messageVO.setMemId(rs.getInt("MEM_ID"));
 				messageVO.setMesDate(rs.getTimestamp("MES_DATE"));
 				messageVO.setMesContent(rs.getString("MES_CONTENT"));
 				List.add(messageVO);

@@ -2,46 +2,58 @@ package com.foodietime.post.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Set;
 
+import com.foodietime.favoritepost.model.FavoritePostVO;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.message.model.MessageVO;
 import com.foodietime.postcategory.model.PostCategoryVO;
+import com.foodietime.reportpost.model.ReportPostVO;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "POST")
 public class PostVO implements Serializable {
-	
+
 	@Id
 	@Column(name = "POST_ID")
 	private Integer postId;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "MemberVO", referencedColumnName = "MEMBER")
+	@JoinColumn(name = "MEM_ID", referencedColumnName = "MEM_ID")
 	private MemberVO memId;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "PostCategoryVO", referencedColumnName = "POST_CATEGORY")
+	@JoinColumn(name = "POST_CATE_ID", referencedColumnName = "POST_CATE_ID")
 	private PostCategoryVO postCateId;
-	
+
 	@Column(name = "POST_DATE")
 	private Timestamp postDate;
-	
+
 	@Column(name = "POST_STATUS")
 	private byte postStatus;
-	
+
 	@Column(name = "EDITDATE")
 	private Timestamp editDate;
-	
+
 	@Column(name = "POST_TITLE")
+	@NotNull(message = "標題請勿空白")
+	@Min(value=1, message="最小1")
+    @Max(value=100, message="最大100")
 	private String postTitle;
-	
-	@Column(name = "POST_CONTENT")
+
+	@Lob
+	@Column(name = "POST_CONTENT", columnDefinition = "LONGTEXT")
+	@NotNull(message = "內容請勿空白")
 	private String postContent;
-	
+
 	@Column(name = "LIKE_COUNT")
 	private Integer likeCount;
-	
+
 	@Column(name = "VIEWS")
 	private Integer views;
 
@@ -53,21 +65,21 @@ public class PostVO implements Serializable {
 		this.postId = postId;
 	}
 
-//	public Integer getMemId() {
-//		return memId;
-//	}
-//
-//	public void setMemId(Integer memId) {
-//		this.memId = memId;
-//	}
-//
-//	public Integer getPostCateId() {
-//		return postCateId;
-//	}
-//
-//	public void setPostCateId(Integer postCateId) {
-//		this.postCateId = postCateId;
-//	}
+	public MemberVO getMemId() {
+		return memId;
+	}
+
+	public void setMemId(MemberVO memId) {
+		this.memId = memId;
+	}
+
+	public PostCategoryVO getPostCateId() {
+		return postCateId;
+	}
+
+	public void setPostCateId(PostCategoryVO postCateId) {
+		this.postCateId = postCateId;
+	}
 
 	public Timestamp getPostDate() {
 		return postDate;
@@ -123,6 +135,40 @@ public class PostVO implements Serializable {
 
 	public void setViews(Integer views) {
 		this.views = views;
+	}
+
+// ========== 對應多方 ==========
+	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+	private Set<ReportPostVO> reportPosts; // 這個分類底下的所有貼文
+
+	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+	private Set<MessageVO> messages;
+
+	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+	private Set<FavoritePostVO> favoritePosts;
+
+	public Set<ReportPostVO> getReportPosts() {
+		return reportPosts;
+	}
+
+	public void setReportPosts(Set<ReportPostVO> reportPosts) {
+		this.reportPosts = reportPosts;
+	}
+
+	public Set<MessageVO> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Set<MessageVO> messages) {
+		this.messages = messages;
+	}
+
+	public Set<FavoritePostVO> getfavoritePosts() {
+		return favoritePosts;
+	}
+
+	public void setFavoritePosts(Set<FavoritePostVO> favoritePosts) {
+		this.favoritePosts = favoritePosts;
 	}
 
 }
