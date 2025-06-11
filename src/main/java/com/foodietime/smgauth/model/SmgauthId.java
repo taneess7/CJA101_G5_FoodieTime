@@ -1,14 +1,19 @@
 package com.foodietime.smgauth.model;
 
-import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class SmgauthId implements Serializable {
 
-    private Integer smgFuncId; // 對應 SMGEFUNC_ID
-    private Integer smgId;     // 對應 SMGR_ID
+    @Column(name = "SMGR_ID")
+    private Integer smgId;
+
+    @Column(name = "SMGEFUNC_ID")
+    private Integer smgFuncId;
 
     public SmgauthId() {}
 
