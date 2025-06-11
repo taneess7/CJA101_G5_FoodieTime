@@ -1,60 +1,35 @@
 package com.foodietime.directmessage.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.foodietime.member.model.MemberVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
-
+@Service
 public class DirectMessageService {
-	private DirectMessageDAO_interface dao;
+	 @Autowired
+	    private DirectMessageRepository messageRepo;
 
-	public DirectMessageService() {
-		dao = new DirectMessageDAOJDBC();
-	}
+	    // 新增訊息
+	    public DirectMessageVO addMessage(DirectMessageVO message) {
+	        message.setMessTime(LocalDateTime.now());
+	        return messageRepo.save(message);
+	    }
 
-	public DirectMessageVO addDm( Integer memId, Integer smgrId, String messContent,java.sql.Timestamp messTime,Integer messDirection) {
+	    // 查詢會員的訊息
+	    public List<DirectMessageVO> getMessagesByMemberId(Integer memId) {
+	        return messageRepo.findByMember_MemIdOrderByMessTimeAsc(memId);
+	    }
 
-		DirectMessageVO dmVO = new DirectMessageVO();
+	    // 查詢管理員的訊息
+	    public List<DirectMessageVO> getMessagesBySmgrId(Integer smgrId) {
+	        return messageRepo.findBySmgrId_SmgrIdOrderByMessTimeAsc(smgrId);
+	    }
 
-		MemberVO member = new MemberVO();
-		member.setMemId(memId);
-		dmVO.setMember(member);
-		dmVO.setSmgrId(smgrId);
-		dmVO.setMessContent(messContent);
-		dmVO.setMessTime(messTime);
-		dmVO.setMessDirection(messDirection);
-		dao.insert(dmVO);
-
-		return dmVO;
-	}
-
-	public DirectMessageVO updateDm(Integer dmId, Integer memId,Integer smgrId, String messContent, Integer messDirection)
-{
-
-		DirectMessageVO dmVO = new DirectMessageVO();
-		MemberVO member = new MemberVO();
-		member.setMemId(memId);
-		dmVO.setMember(member);
-		dmVO.setDmId(dmId);
-		dmVO.setSmgrId(smgrId);
-		dmVO.setMessContent(messContent);
-//		dmVO.setMessTime(messTime);
-		dmVO.setMessDirection(messDirection);
-		dao.update(dmVO);
-
-		return dmVO;
-	}
-	
-	public DirectMessageVO getOneDm(Integer dmId) {
-		return dao.findByPrimaryKey(dmId);
-	}
-
-	public List<DirectMessageVO> getAll() {
-		return dao.getAll();
-	}
-	public void delete(Integer dmId) {
-		dao.delete(dmId);
-	}
+	    // 刪除訊息
+	    public void deleteMessage(Integer dmId) {
+	        messageRepo.deleteById(dmId);
+	    }
 }

@@ -1,17 +1,20 @@
 package com.foodietime.directmessage.model;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.smg.model.SmgVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 @Entity
 @Table(name = "direct_message")
@@ -21,20 +24,23 @@ public class DirectMessageVO implements Serializable{
 	@Column(name = "dm_id")
 	private Integer dmId;
 	
+	@ManyToOne
 	@JoinColumn(name = "mem_id", nullable = false)
 	private MemberVO member;
 	
-	@JoinColumn(name = "smgr_id", nullable = true)
-	private Integer smgrId;
+	@ManyToOne
+	@JoinColumn(name = "smgr_id")
+	private SmgVO smgrId;
 	
 	@Column(name = "mess_content", nullable = false)
 	private String messContent;
 	
 	@Column(name = "mess_time", nullable = false)
-	private java.sql.Timestamp messTime;
+	private LocalDateTime messTime;
 	
 	@Column(name = "mess_direction", nullable = false)
-	private Integer messDirection;
+	@Enumerated(EnumType.ORDINAL)
+	private MessageDirection messDirection;
 	
 	public Integer getDmId() {
 		return dmId;
@@ -50,10 +56,10 @@ public class DirectMessageVO implements Serializable{
 		this.member = member;
 	}
 	
-	public Integer getSmgrId() {
+	public SmgVO getSmgrId() {
 		return smgrId;
 	}
-	public void setSmgrId(Integer smgrId) {
+	public void setSmgrId(SmgVO smgrId) {
 		this.smgrId = smgrId;
 	}
 	public String getMessContent() {
@@ -62,17 +68,22 @@ public class DirectMessageVO implements Serializable{
 	public void setMessContent(String messContent) {
 		this.messContent = messContent;
 	}
-	public java.sql.Timestamp getMessTime() {
+	public LocalDateTime getMessTime() {
 		return messTime;
 	}
-	public void setMessTime(java.sql.Timestamp messTime2) {
-		this.messTime = messTime2;
+	public void setMessTime(LocalDateTime messTime) {
+		this.messTime = messTime;
 	}
-	public Integer getMessDirection() {
+	public MessageDirection getMessDirection() {
 		return messDirection;
 	}
-	public void setMessDirection(Integer messDirection) {
+	public void setMessDirection(MessageDirection messDirection) {
 		this.messDirection = messDirection;
 	}
 	
+	
+	public enum MessageDirection {
+	    MEMBER_TO_ADMIN, //0
+	    ADMIN_TO_MEMBER  //1
+	}
 }
