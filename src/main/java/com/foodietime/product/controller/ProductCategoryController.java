@@ -24,12 +24,12 @@ public class ProductCategoryController {
         return "category/listAllCategory";
     }
 
-    // 顯示新增頁面
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("categoryVO", new ProductCategoryVO());
-        return "category/addCategory";
-    }
+//    // 顯示新增頁面
+//    @GetMapping("/add")
+//    public String showAddForm(Model model) {
+//        model.addAttribute("categoryVO", new ProductCategoryVO());
+//        return "category/addCategory";
+//    }
 
 //    // 新增分類
 //    @PostMapping("/add")

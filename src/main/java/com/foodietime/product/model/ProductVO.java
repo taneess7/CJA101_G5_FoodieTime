@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,7 +28,7 @@ public class ProductVO implements Serializable{
 	private Integer storId;
 	
 	@ManyToOne
-	@Column(name ="prod_cate_id",nullable = false) // 外鍵，連到 product_category.prod_cate_id
+	@JoinColumn(name ="prod_cate_id",nullable = false) // 外鍵，連到 product_category.prod_cate_id
 	private ProductCategoryVO productCategory;
 	
 	@Column(name ="prod_name",nullable = false,length = 45)
