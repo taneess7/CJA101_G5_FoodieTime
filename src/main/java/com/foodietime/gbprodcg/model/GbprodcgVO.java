@@ -5,14 +5,8 @@ import java.util.List;
 
 import com.foodietime.gbprod.model.GbprodVO;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Entity
@@ -25,12 +19,12 @@ public class GbprodcgVO implements Serializable {
     @Column(name = "GB_CATE_ID")
     private Integer gbCateId;
 
+    @NotBlank(message = "分類名稱不能為空")
+    @Size(max = 45, message = "分類名稱長度不能超過 45 字")
     @Column(name = "GB_CATE_NAME", length = 45)
     private String gbCateName;
 
     // 一對多關聯：一個分類對多個商品
     @OneToMany(mappedBy = "gbprodcgVO", cascade = CascadeType.ALL)
     private List<GbprodVO> gbprods;
-
-    
 }

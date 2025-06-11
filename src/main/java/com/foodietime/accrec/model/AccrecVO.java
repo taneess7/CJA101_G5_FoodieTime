@@ -2,7 +2,7 @@ package com.foodietime.accrec.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.store.model.StoreVO;
@@ -15,8 +15,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -29,9 +31,11 @@ public class AccrecVO implements Serializable {
     @Column(name = "COMM_PAYOUT_ID")
     private Integer commPayoutID;
 
+    @NotNull(message = "訂單類型不能為空")
     @Column(name = "ORDER_TYPE")
     private Byte orderType;
 
+    @NotNull(message = "訂單參考 ID 不能為空")
     @Column(name = "ORDER_REF_ID")
     private Integer orderRefId;
 
@@ -39,43 +43,45 @@ public class AccrecVO implements Serializable {
     @JoinColumn(name = "STOR_ID", insertable = false, updatable = false)
     private StoreVO store;
 
-
     @ManyToOne
     @JoinColumn(name = "MEM_ID", insertable = false, updatable = false)
     private MemberVO member;
 
-
+    @NotNull(message = "角色類型不能為空")
     @Column(name = "PAYOUT_ROLE")
     private Byte payoutRole;
 
+    @NotNull(message = "撥款金額不能為空")
+    @DecimalMin(value = "0.00", message = "撥款金額不能小於 0")
     @Column(name = "PAYOUT_AMOUNT", precision = 10, scale = 2)
     private BigDecimal payoutAmount;
 
+    @NotNull(message = "抽成金額不能為空")
+    @DecimalMin(value = "0.00", message = "抽成金額不能小於 0")
     @Column(name = "COMMISSION_AMOUNT", precision = 10, scale = 2)
     private BigDecimal commissionAmount;
 
+    @NotNull(message = "撥款狀態不能為空")
     @Column(name = "PAYOUT_STATUS")
     private Byte payoutStatus;
 
+    @NotNull(message = "抽成狀態不能為空")
     @Column(name = "COMMISSION_STATUS")
     private Byte commissionStatus;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @PastOrPresent(message = "建立時間不能在未來")
     @Column(name = "CREATE_AT")
-    private Date createAt;
+    private LocalDateTime createAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @PastOrPresent(message = "更新時間不能在未來")
     @Column(name = "UPDATE_AT")
-    private Date updateAt;
+    private LocalDateTime updateAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @PastOrPresent(message = "撥款時間不能在未來")
     @Column(name = "PAYOUT_TIME")
-    private Date payoutTime;
+    private LocalDateTime payoutTime;
 
+    @Size(max = 6, message = "月份格式長度不能超過 6 位")
     @Column(name = "PAYOUT_MONTH", length = 6)
     private String payoutMonth;
-
-    // --- Getters and Setters ---
-
-   
 }
