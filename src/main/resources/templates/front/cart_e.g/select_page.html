@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>購物車管理系統</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/modern-cart.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/front/modern-cart.css}">
 </head>
 <body>
 <div class="container">
@@ -26,11 +26,11 @@
     <div class="card">
         <h3>📊 快速操作</h3>
         <div style="margin-top: 20px;">
-            <a th:href="@{/cart/listAll}" class="btn btn-primary"
+            <a th:href="@{/templates/cart_e.g./listAll}" class="btn btn-primary"
                style="margin-right: 15px;">
                 📋 查看所有購物車項目
             </a>
-            <a th:href="@{/cart/add}" class="btn btn-success">
+            <a th:href="@{/templates/cart_e.g./add}" class="btn btn-success">
                 ➕ 新增購物車項目
             </a>
         </div>
@@ -43,7 +43,7 @@
             <!-- 查詢方式一 -->
             <div class="search-card">
                 <h4>依購物車編號查詢</h4>
-                <form method="post" th:action="@{/cart/search}">
+                <form method="post" th:action="@{/templates/cart_e.g./search}">
                     <div class="form-group">
                         <input type="text" name="shopId" class="form-control"
                                placeholder="請輸入購物車編號 (例如: 1)">
@@ -56,7 +56,7 @@
             <!-- 查詢方式二 -->
             <div class="search-card">
                 <h4>依會員編號查詢</h4>
-                <form method="post" th:action="@{/cart/search}">
+                <form method="post" th:action="@{/templates/cart_e.g./search}">
                     <div class="form-group">
                         <input type="text" name="memId" class="form-control"
                                placeholder="請輸入會員編號">
@@ -69,7 +69,7 @@
             <!-- 查詢方式三 -->
             <div class="search-card">
                 <h4>組合查詢</h4>
-                <form method="post" th:action="@{/cart/search}">
+                <form method="post" th:action="@{/templates/cart_e.g./search}">
                     <div class="form-group">
                         <input type="text" name="memId" class="form-control"
                                placeholder="會員編號" style="margin-bottom: 10px;">

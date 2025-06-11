@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>購物車商品詳細資料</title>
-	<link rel="stylesheet" th:href="@{/css/modern-cart.css}">
+	<link rel="stylesheet" th:href="@{/css/front/modern-cart.css}">
 </head>
 <body>
 <div class="container">
@@ -84,16 +84,16 @@
 
 	<!-- 操作按鈕區域 -->
 	<div class="action-section">
-		<a th:href="@{/cart/select_page}" class="nav-button"
-		   style="margin-right: 15px;">
+		<a th:href="@{/templates/cart_e.g./select_page}" class="nav-button"
+           style="margin-right: 15px;">
 			🏠 回到首頁
 		</a>
-		<a th:href="@{/cart/listAll}" class="btn btn-primary"
-		   style="margin-right: 15px;">
+		<a th:href="@{/templates/cart_e.g./listAll}" class="btn btn-primary"
+           style="margin-right: 15px;">
 			📋 查看所有購物車
 		</a>
 
-		<form method="post" th:action="@{/cart/update}"
+		<form method="post" th:action="@{/templates/cart_e.g./update}"
 			  style="display: inline-block; margin-right: 15px;">
 			<input type="hidden" name="shopId" th:value="${cartVO.shopId}">
 			<input type="hidden" name="memId" th:value="${cartVO.memId}">
@@ -102,7 +102,7 @@
 			<button type="submit" class="btn btn-warning">✏️ 修改此項目</button>
 		</form>
 
-		<form method="post" th:action="@{/cart/delete}"
+		<form method="post" th:action="@{/templates/cart_e.g./delete}"
 			  style="display: inline-block;">
 			<input type="hidden" name="shopId" th:value="${cartVO.shopId}">
 			<button type="submit" class="btn btn-danger"
@@ -133,14 +133,14 @@
 	<div th:if="${cartVO == null}" class="empty-state">
 		<h3>📭 找不到購物車資料</h3>
 		<p>該購物車項目可能已被刪除或不存在</p>
-		<a th:href="@{/cart/select_page}" class="btn btn-primary">返回首頁</a>
+		<a th:href="@{/templates/cart_e.g./select_page}" class="btn btn-primary">返回首頁</a>
 	</div>
 </div>
 
 <!-- 浮動操作按鈕（手機版友善） -->
 <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
-	<a th:href="@{/cart/select_page}" class="btn btn-primary"
-	   style="border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);">
+	<a th:href="@{/templates/cart_e.g./select_page}" class="btn btn-primary"
+       style="border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);">
 		🏠
 	</a>
 </div>
