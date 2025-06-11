@@ -25,5 +25,5 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
 
 	
 	
-	StoreVO findByEmail(String email);
+//	StoreVO findByEmail(String email);
 }

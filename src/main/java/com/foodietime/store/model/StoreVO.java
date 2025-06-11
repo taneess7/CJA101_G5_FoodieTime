@@ -136,6 +136,13 @@ public class StoreVO implements Serializable {
 	// 19.上架狀態 (1:上架 2:未上架)
 	@Column(name = "STOR_STATUS")
 	private Byte storStatus;  
+	
+	
+	// 20.店家信箱
+	@NotEmpty(message="Email: 請勿空白")
+	@Column(name = "STOR_EMAIL, updatable = false")
+	private String storEmail; 
+	
 
 	public StoreVO() {
 		super();
