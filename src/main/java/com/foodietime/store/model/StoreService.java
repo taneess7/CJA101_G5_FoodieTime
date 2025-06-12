@@ -49,15 +49,23 @@ public class StoreService {
 //	    // sessionFactory.openSession() 是打開一個新的 Hibernate Session，交給工具處理查詢
 //	}
 	
+	
+	//檢舉次數
 	public void reportStore(Integer storId) {
 		StoreVO store = repository.findById(storId)
 				.orElseThrow(() -> new RuntimeException("找不到該店家"));
 				
-		//如果null 初始化為0
-		Byte reportCount = store.getStorReportCount() == null ? 0 : store.getStorReportCount();
+		// 檢舉次數預設為 0
+	    byte oldCount = store.getStorReportCount() == null ? 0 : store.getStorReportCount();
+	    byte newCount = (byte) (oldCount + 1);
+
+	    store.setStorReportCount(newCount);
+
+	    // 根據檢舉次數決定上下架狀態
+	    store.setStorStatus(newCount >= 3 ? (byte) 0 : (byte) 1);
+
 		
-		//檢舉1次
-		store.setStorReportCount((byte)(reportCount + 1));
+		repository.save(store); //存回資料庫
 	}
 	
 
