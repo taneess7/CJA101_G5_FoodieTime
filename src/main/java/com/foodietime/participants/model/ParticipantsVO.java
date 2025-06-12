@@ -82,7 +82,7 @@ public class ParticipantsVO implements Serializable {
 	@NotNull(message = "是否為團長: 請指定 0（團長）或 1（非團長）")
 	@Min(value = 0, message = "是否為團長: 僅能為 0（團長）或 1（非團長）")
 	@Max(value = 1, message = "是否為團長: 僅能為 0（團長）或 1（非團長）")
-	private Integer leader;  //是否為團長
+	private Byte leader;  // 是否為團長
 	
 
 	@Column(name = "PAR_PURCHASE_QUANTITY", nullable = false)
@@ -95,7 +95,7 @@ public class ParticipantsVO implements Serializable {
 	@NotNull(message = "付款狀態: 請指定 0（未付款）或 1（已付款）")
 	@Min(value = 0, message = "付款狀態: 僅能為 0（未付款）或 1（已付款）")
 	@Max(value = 1, message = "付款狀態: 僅能為 0（未付款）或 1（已付款）")
-	private Integer paymentStatus;  //付款狀態
+	private Byte paymentStatus;  //付款狀態
 
 	
 	

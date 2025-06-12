@@ -3,6 +3,7 @@ package com.foodietime.grouporders.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -52,10 +53,11 @@ public class GroupOrdersVO implements Serializable{
 	private GbprodVO gbprod;  //商品編號
 	
 	
-	@Column(name="JOIN_TIME", nullable = false, updatable = false)
+	@Column(name = "JOIN_TIME", nullable = false, updatable = false)
 	@NotNull(message = "參與時間: 請勿空白")
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date joinTime;  //參與時間
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime joinTime;  // 參與時間
+
 	
 	
 	@Column(name="AMOUNT", nullable = false)
@@ -74,28 +76,28 @@ public class GroupOrdersVO implements Serializable{
     @NotNull(message = "付款方式: 請選擇付款方式")
     @Min(value = 0, message = "付款方式: 無效的付款方式")
     @Max(value = 2, message = "付款方式: 無效的付款方式")
-    private Integer payMethod;  // 付款方式 (0: 信用卡, 1: 現金, 2: 第三方)
+    private Byte payMethod;  // 付款方式 (0: 信用卡, 1: 現金, 2: 第三方)
 	
 	
 	@Column(name = "ORDER_STATUS", nullable = false)
     @NotNull(message = "訂單狀態: 請指定訂單狀態")
     @Min(value = 0, message = "訂單狀態: 最小值為 0")
     @Max(value = 3, message = "訂單狀態: 最大值為 3")
-    private Integer orderStatus;  // 訂單狀態 (0: 未接單, 1: 接單, 2: 完成, 3: 取消)
+    private Byte orderStatus;  // 訂單狀態 (0: 未接單, 1: 接單, 2: 完成, 3: 取消)
 
 	
 	@Column(name = "PAYMENT_STATUS", nullable = false)
     @NotNull(message = "付款狀態: 請指定付款狀態")
     @Min(value = 0, message = "付款狀態: 最小值為 0")
     @Max(value = 1, message = "付款狀態: 最大值為 1")
-    private Integer paymentStatus;  // 付款狀態 (0: 未付款, 1: 已付款)
+    private Byte paymentStatus;  // 付款狀態 (0: 未付款, 1: 已付款)
 
 	
 	@Column(name = "SHIPPING_STATUS", nullable = false)
     @NotNull(message = "出貨狀態: 請指定出貨狀態")
     @Min(value = 0, message = "出貨狀態: 最小值為 0")
     @Max(value = 1, message = "出貨狀態: 最大值為 1")
-    private Integer shippingStatus;  // 出貨狀態 (0: 未出貨, 1: 已出貨)
+    private Byte shippingStatus;  // 出貨狀態 (0: 未出貨, 1: 已出貨)
 
 	
 	@Column(name = "PAR_NAME", nullable = false, length = 45)
@@ -134,7 +136,7 @@ public class GroupOrdersVO implements Serializable{
     @NotNull(message = "配送方式: 請選擇配送方式")
     @Min(value = 0, message = "配送方式: 無效的配送方式")
     @Max(value = 1, message = "配送方式: 無效的配送方式")
-    private Integer deliveryMethod;  // 配送方式 (0: 宅配, 1: 自取)
+    private Byte deliveryMethod;  // 配送方式 (0: 宅配, 1: 自取)
 	
 	
 	@Column(name = "COMMENT", length = 255)
@@ -146,7 +148,7 @@ public class GroupOrdersVO implements Serializable{
     @NotNull(message = "星等: 請指定評價星等")
     @Min(value = 1, message = "星等: 最少 1 顆星")
     @Max(value = 5, message = "星等: 最多 5 顆星")
-    private Integer rating;  // 星等 (1: 1 顆星, 2: 2 顆星, ... 5: 5 顆星)
+    private Byte rating;  // 星等 (1: 1 顆星, 2: 2 顆星, ... 5: 5 顆星)
 
 	
 		

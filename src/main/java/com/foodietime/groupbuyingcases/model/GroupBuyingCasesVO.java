@@ -1,14 +1,21 @@
 package com.foodietime.groupbuyingcases.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.foodietime.gbprod.model.GbprodVO;
+import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListVO;
+import com.foodietime.grouporders.model.GroupOrdersVO;
+import com.foodietime.grouppurchasereport.model.GroupPurchaseReportVO;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.participants.model.ParticipantsVO;
 import com.foodietime.store.model.StoreVO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,11 +23,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -54,14 +61,14 @@ public class GroupBuyingCasesVO implements Serializable{
 	
 	@Column(name = "GB_START_TIME", nullable = false)
 	@NotNull(message = "開始時間: 請勿空白")
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date gbStartTime;  //開始時間
-	
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  
+	private LocalDateTime gbStartTime;  // 開始時間
+
 	
 	@Column(name = "GB_END_TIME", nullable = false)
 	@NotNull(message = "結束時間: 請勿空白")
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date gbEndTime;  //結束時間
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  
+	private LocalDateTime gbEndTime;  //結束時間
 	
 	
 	@Column(name = "GB_TITLE", nullable = false, length = 45)
@@ -80,13 +87,13 @@ public class GroupBuyingCasesVO implements Serializable{
 	@NotNull(message = "團購狀態: 請勿空白")
 	@Min(value = 0, message = "團購狀態: 最小值為 0")
 	@Max(value = 6, message = "團購狀態: 最大值為 6")
-	private Integer gbStatus;  // 團購狀態 (0: 待開團, 1: 招募中, 2: 即將截止, 3: 已開團, 4: 已截止, 5: 已取消, 6: 開團失敗)
+	private Byte gbStatus;  // 團購狀態 (0: 待開團, 1: 招募中, 2: 即將截止, 3: 已開團, 4: 已截止, 5: 已取消, 6: 開團失敗)
 
 	
 	@Column(name = "GB_CREATE_AT", nullable = false, updatable = false)
 	@NotNull(message = "團購建立時間: 請勿空白")
 	@PastOrPresent(message = "團購建立時間: 不可晚於目前時間")
-	private Date gbCreateAt;  //團購建立時間(條件成立才會生成團購建立時間)Service 手動 setGbCreateAt(new Date())
+	private LocalDateTime gbCreateAt;  //團購建立時間(條件成立才會生成團購建立時間)Service 手動 setGbCreateAt(new Date())
 	
 	
 	@Column(name = "GB_MIN_PRODUCT_QUANTITY", nullable = false)
@@ -110,6 +117,19 @@ public class GroupBuyingCasesVO implements Serializable{
 	public GroupBuyingCasesVO() {  //必需有一個不傳參數建構子
 		
 	}
+	
+	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+    private List<ParticipantsVO> articipants;
+	
+	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+    private List<GroupPurchaseReportVO> groupPurchaseReport;
+	
+	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+    private List<GroupBuyingCollectionListVO> groupBuyingCollectionList;
+	
+	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+    private List<GroupOrdersVO> groupOrders;
+	
 	
 	
 }
