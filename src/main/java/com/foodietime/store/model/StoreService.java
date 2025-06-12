@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.foodietime.store.model.StoreVO;
 
+
 @Service
 public class StoreService {
 	
@@ -49,6 +50,10 @@ public class StoreService {
 //	    // sessionFactory.openSession() 是打開一個新的 Hibernate Session，交給工具處理查詢
 //	}
 	
+	
+	public StoreVO findByStorEmail(String email) {
+		return repository.findByStorEmail(email);
+	}
 	
 	//檢舉次數
 	public void reportStore(Integer storId) {
