@@ -10,7 +10,7 @@ import com.foodietime.post.model.PostVO;
 
 
 public class ReportPostService {
-	
+	/*
 	private ReportPostDAO_interface dao;
 	private MemService memService;
 	private PostService postService;
@@ -21,11 +21,11 @@ public class ReportPostService {
 	public ReportPostVO addReportPost(Integer postId, Integer memId, java.sql.Timestamp repPostDate, char repPostReason, byte repPostStatus) {
 		ReportPostVO reportpostVO = new ReportPostVO();
 		
-		MemberVO member = memService.getOneMember(memId);
+//		MemberVO member = memService.getOneMember(memId);
 		PostVO post = postService.getOnePost(postId);
 		
 		reportpostVO.setPostId(post);
-		reportpostVO.setMemId(member);
+//		reportpostVO.setMemId(member);
 		reportpostVO.setRepPostDate(repPostDate);
 		reportpostVO.setRepPostReason(repPostReason);
 		reportpostVO.setRepPostStatus(repPostStatus);
@@ -36,12 +36,12 @@ public class ReportPostService {
 	public ReportPostVO updateReportPost(Integer repPostId, Integer postId, Integer memId, java.sql.Timestamp repPostDate, char repPostReason, byte repPostStatus) {
 		ReportPostVO reportpostVO = new ReportPostVO();
 		
-		MemberVO member = memService.getOneMember(memId);
+//		MemberVO member = memService.getOneMember(memId);
 		PostVO post = postService.getOnePost(postId);
 		
 		reportpostVO.setRepPostId(repPostId);
 		reportpostVO.setPostId(post);
-		reportpostVO.setMemId(member);
+//		reportpostVO.setMemId(member);
 		reportpostVO.setRepPostDate(repPostDate);
 		reportpostVO.setRepPostReason(repPostReason);
 		reportpostVO.setRepPostStatus(repPostStatus);
@@ -61,5 +61,5 @@ public class ReportPostService {
 		return dao.getAll();
 	}
 	
-
+*/
 }

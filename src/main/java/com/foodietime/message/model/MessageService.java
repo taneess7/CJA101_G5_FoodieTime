@@ -11,7 +11,7 @@ import com.foodietime.post.model.PostVO;
 
 
 public class MessageService {
-	
+	/*
 	private MessageDAO_interface dao;
 	private MemService memService;
 	private PostService postService;
@@ -22,11 +22,11 @@ public class MessageService {
 	public MessageVO addMessage(Integer postId, Integer memId, java.sql.Timestamp mesDate, String mesContent) {
 		MessageVO messageVO = new MessageVO();
 		
-		MemberVO member = memService.getOneMember(memId);
-		PostVO post = postService.getOnePost(postId);
-		
-		messageVO.setPostId(post);
-		messageVO.setMemId(member);
+//		MemberVO member = memService.getOneMember(memId);
+//		PostVO post = postService.getOnePost(postId);
+//		
+//		messageVO.setPostId(post);
+//		messageVO.setMemId(member);
 		messageVO.setMesDate(mesDate);
 		messageVO.setMesContent(mesContent);
 		dao.insert(messageVO);
@@ -36,12 +36,12 @@ public class MessageService {
 	public MessageVO updateMessage(Integer mesId, Integer postId, Integer memId, java.sql.Timestamp mesDate, String mesContent) {
 		MessageVO messageVO = new MessageVO();
 		
-		MemberVO member = memService.getOneMember(memId);
-		PostVO post = postService.getOnePost(postId);
+//		MemberVO member = memService.getOneMember(memId);
+//		PostVO post = postService.getOnePost(postId);
 		
 		messageVO.setMesId(mesId);
-		messageVO.setPostId(post);
-		messageVO.setMemId(member);		
+//		messageVO.setPostId(post);
+//		messageVO.setMemId(member);		
 		messageVO.setMesDate(mesDate);
 		messageVO.setMesContent(mesContent);
 		dao.update(messageVO);
@@ -67,6 +67,6 @@ public class MessageService {
 	public List<MessageVO> getByPostId(Integer postId) {
 		return dao.findByPostId(postId);
 	}
-	
+	*/
 }
 

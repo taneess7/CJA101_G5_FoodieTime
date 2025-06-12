@@ -12,7 +12,7 @@ public class PostController {
 //	@Autowired
 //	@Autowired
 	
-//	@PostMapping("/")
+//	@PostMapping("")
 	
 	
 
