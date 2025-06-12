@@ -8,7 +8,7 @@ import com.foodietime.postcategory.model.PostCategoryService;
 import com.foodietime.postcategory.model.PostCategoryVO;
 
 public class PostService {
-	
+	/*
 	private PostDAO_interface dao;
 	private MemService memService; //新增這兩個 Service
 	private PostCategoryService postCategoryService;
@@ -22,10 +22,10 @@ public class PostService {
 	public PostVO addPost(Integer memId, Integer postCateId, java.sql.Timestamp postDate, byte postStatus, java.sql.Timestamp editDate, String postTitle , String postContent,Integer likeCount,Integer views) {
 		PostVO postVO = new PostVO();
 		
-		MemberVO member = memService.getOneMember(memId);
+//		MemberVO member = memService.getOneMember(memId);
 		PostCategoryVO postCategory = postCategoryService.getOnePostCategory(postCateId);
 		
-		postVO.setMemId(member);
+//		postVO.setMemId(member);
 		postVO.setPostCateId(postCategory);
 		postVO.setPostDate(postDate);
 		postVO.setPostStatus(postStatus);
@@ -40,11 +40,11 @@ public class PostService {
 	public PostVO updatePost(Integer postId, Integer memId, Integer postCateId, java.sql.Timestamp postDate, byte postStatus, java.sql.Timestamp editDate, String postTitle , String postContent,Integer likeCount,Integer views) {
 		PostVO postVO = new PostVO();
 		
-		MemberVO member = memService.getOneMember(memId);
+//		MemberVO member = memService.getOneMember(memId);
 		PostCategoryVO postCategory = postCategoryService.getOnePostCategory(postCateId);
 		
 		postVO.setPostId(postId);
-		postVO.setMemId(member);
+//		postVO.setMemId(member);
 		postVO.setPostCateId(postCategory);
 		postVO.setPostDate(postDate);
 		postVO.setPostStatus(postStatus);
@@ -65,5 +65,5 @@ public class PostService {
 	public List<PostVO> getAll(){
 		return dao.getAll();
 	}
-
+*/
 }

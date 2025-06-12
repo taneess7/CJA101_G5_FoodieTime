@@ -10,7 +10,7 @@ import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 
 public class ReportMessageService {
-	
+	/*
 	private ReportMessageDAO_interface dao;
 	private MemService memService;
 	private MessageService messageService;
@@ -21,11 +21,11 @@ public class ReportMessageService {
 	public ReportMessageVO addrepMessage(Integer mesId, Integer memId, java.sql.Timestamp repMesDate, char repMesReason, byte repMesStatus) {
 		ReportMessageVO reportmessageVO = new ReportMessageVO();
 		
-		MemberVO member = memService.getOneMember(memId);
+//		MemberVO member = memService.getOneMember(memId);
 		MessageVO message = messageService.getOneMessage(mesId);
 		
 		reportmessageVO.setMesId(message);
-		reportmessageVO.setMemId(member);
+//		reportmessageVO.setMemId(member);
 		reportmessageVO.setRepMesDate(repMesDate);
 		reportmessageVO.setRepMesReason(repMesReason);
 		reportmessageVO.setRepMesStatus(repMesStatus);
@@ -35,12 +35,12 @@ public class ReportMessageService {
 	public ReportMessageVO updateReportMessage(Integer repMesId, Integer mesId, Integer memId, java.sql.Timestamp repMesDate, char repMesReason, byte repMesStatus) {
 		ReportMessageVO reportmessageVO = new ReportMessageVO();
 		
-		MemberVO member = memService.getOneMember(memId);
+//		MemberVO member = memService.getOneMember(memId);
 		MessageVO message = messageService.getOneMessage(mesId);
 		
 		reportmessageVO.setRepMesId(repMesId);
 		reportmessageVO.setMesId(message);
-		reportmessageVO.setMemId(member);
+//		reportmessageVO.setMemId(member);
 		reportmessageVO.setRepMesDate(repMesDate);
 		reportmessageVO.setRepMesReason(repMesReason);
 		reportmessageVO.setRepMesStatus(repMesStatus);
@@ -59,5 +59,5 @@ public class ReportMessageService {
 	public List<ReportMessageVO> getAll(){
 		return dao.getAll();
 	}
-
+*/
 }
