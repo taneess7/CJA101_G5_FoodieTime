@@ -20,7 +20,7 @@ import lombok.Data;
 @Entity
 @Table(name = "coupon")
 public class CouponVO implements Serializable {
-
+ 
 	// 寫上所有欄位
 	// 1.優惠券編號
 	@Id

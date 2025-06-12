@@ -38,7 +38,7 @@ public class ActVO implements Serializable {
 	private StoreVO store;
 //	private Integer storId;
 	
-	public StoreVO getStore() {
+	public StoreVO getStore() { 
 		return store;
 	}
 

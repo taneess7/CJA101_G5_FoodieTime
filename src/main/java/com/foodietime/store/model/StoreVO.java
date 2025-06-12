@@ -55,7 +55,7 @@ public class StoreVO implements Serializable {
 	
 	public Set<StoreVO> getStores() {
 		return stores;
-	}
+	} 
 
 	public void setStores(Set<StoreVO> stores) {
 		this.stores = stores;

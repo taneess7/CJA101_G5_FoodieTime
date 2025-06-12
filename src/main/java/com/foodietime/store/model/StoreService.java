@@ -34,7 +34,7 @@ public class StoreService {
 	
 	public StoreVO getOneStore(Integer storId) {
 		Optional<StoreVO> optional = repository.findById(storId); //內建單一查詢
-		return optional.orElse(null); //如果值存在就回傳其值，否則回傳other的值
+		return optional.orElse(null); //如果值存在就回傳其值，否則回傳null
 	}
 	
 	public List<StoreVO> getAll(){
@@ -48,6 +48,17 @@ public class StoreService {
 //	    // map 是從前端來的查詢條件
 //	    // sessionFactory.openSession() 是打開一個新的 Hibernate Session，交給工具處理查詢
 //	}
+	
+	public void reportStore(Integer storId) {
+		StoreVO store = repository.findById(storId)
+				.orElseThrow(() -> new RuntimeException("找不到該店家"));
+				
+		//如果null 初始化為0
+		Byte reportCount = store.getStorReportCount() == null ? 0 : store.getStorReportCount();
+		
+		//檢舉1次
+		store.setStorReportCount((byte)(reportCount + 1));
+	}
 	
 
 }
