@@ -2,6 +2,7 @@ package com.foodietime.grouppurchasereport.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -44,17 +45,19 @@ public class GroupPurchaseReportVO implements Serializable {
     
     @Column(name = "REPORT_STATUS", nullable = false)
     @NotNull(message = "檢舉狀態: 請勿空白")
-    private Integer reportStatus;  // 檢舉狀態 (0: 未審核 1: 審核通過 2: 審核未通過)
+    private Byte reportStatus;  // 檢舉狀態 (0: 未審核 1: 審核通過 2: 審核未通過)
 
     @Column(name = "CREATE_AT", nullable = false)
     @NotNull(message = "建立時間: 請勿空白")   
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createAt;  // 建立時間
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  
+    private LocalDateTime createAt;  // 建立時間
+
 
     @Column(name = "UPDATE_AT", nullable = false)
     @NotNull(message = "更新時間: 請勿空白")   
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date updateAt;  // 更新時間
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") 
+    private LocalDateTime updateAt;  // 更新時間
+
 
     public GroupPurchaseReportVO() {
         // 無參數建構子

@@ -3,6 +3,7 @@ package com.foodietime.groupbuyingcollectionlist.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -34,8 +35,9 @@ public class GroupBuyingCollectionListVO implements Serializable{
 
     @Column
     @NotNull(message = "建立時間: 請勿空白")  
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createAt;  // 建立時間
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") 
+    private LocalDateTime createAt;  // 建立時間
+
     
     public GroupBuyingCollectionListVO() {  //必需有一個不傳參數建構子
     	
