@@ -2,26 +2,37 @@ package com.foodietime.store.model;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.util.List;
 import java.util.Set;
+
+import com.foodietime.accrec.model.AccrecVO;
+import com.foodietime.act.model.ActVO;
+import com.foodietime.gbprod.model.GbprodVO;
+import com.foodietime.gbpromotion.model.GbpromotionVO;
+import com.foodietime.grouporders.model.GroupOrdersVO;
+import com.foodietime.memcoupon.model.MemCouponVO;
+import com.foodietime.orders.model.OrdersVO;
+import com.foodietime.product.model.ProductVO;
+import com.foodietime.storeCate.model.StoreCateVO;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
-import com.foodietime.storeCate.model.StoreCateVO;
-
+@Data
 @Entity
 @Table(name = "store")
 //@NamedQuery(name = "getAllStores", query = "from store where storId > :storId order by storId desc")
@@ -121,6 +132,7 @@ public class StoreVO implements Serializable {
 	private byte[] storPhoto; 
 	
 	// 16.店家被檢舉次數
+	@Min(value = 0)
 	@Column(name = "STOR_REPORT_COUNT")
 	private Byte storReportCount; 
 	
@@ -139,163 +151,47 @@ public class StoreVO implements Serializable {
 	
 	
 	// 20.店家信箱
+	@Pattern(regexp = "^(?!\\\\.)[\\\\w!#$%&'*+/=?^`{|}~.-]+(?<!\\\\.)@([A-Za-z0-9-]+\\\\.)+[A-Za-z]{2,}$", message = "信箱格式不正確")
 	@NotEmpty(message="Email: 請勿空白")
-	@Column(name = "STOR_EMAIL, updatable = false")
+	@Column(name = "STOR_EMAIL", updatable = false)
 	private String storEmail; 
 	
 
 	public StoreVO() {
 		super();
 	}
+	
+	//OneToMany
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OrderBy("storId asc")
+	private List<StoreVO> store;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<ProductVO> product;
+
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OrderBy("actLaunchTime desc") // 自訂排序，依照你的活動時間欄位
+	private List<ActVO> act;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<GbprodVO> gbprod;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<GroupOrdersVO> groupOrders;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<GbpromotionVO> gbPromotion;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<MemCouponVO> memCoupon;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<AccrecVO> accrec;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<OrdersVO> orders;
 
 	// 取得or設置
 
-	public Integer getStorId() {
-		return storId;
-	}
-
-	public void setStorId(Integer storId) {
-		this.storId = storId;
-	}
-
-
-
-	public String getStorName() {
-		return storName;
-	}
-
-	public void setStorName(String storName) {
-		this.storName = storName;
-	}
-
-	public String getStorDesc() {
-		return storDesc;
-	}
-
-	public void setStorDesc(String storDesc) {
-		this.storDesc = storDesc;
-	}
-
-	public String getStorAddr() {
-		return storAddr;
-	}
-
-	public void setStorAddr(String storAddr) {
-		this.storAddr = storAddr;
-	}
-
-	public Double getStorLon() {
-		return storLon;
-	}
-
-	public void setStorLon(Double storLon) {
-		this.storLon = storLon;
-	}
-
-	public Double getStorLat() {
-		return storLat;
-	}
-
-	public void setStorLat(Double storLat) {
-		this.storLat = storLat;
-	}
-
-	public String getStorPhone() {
-		return storPhone;
-	}
-
-	public void setStorPhone(String storPhone) {
-		this.storPhone = storPhone;
-	}
-
-	public String getStorWeb() {
-		return storWeb;
-	}
-
-	public void setStorWeb(String storWeb) {
-		this.storWeb = storWeb;
-	}
-
-	public Time getStorOnTime() {
-		return storOnTime;
-	}
-
-	public void setStorOnTime(Time storOnTime) {
-		this.storOnTime = storOnTime;
-	}
-
-	public Time getStorOffTime() {
-		return storOffTime;
-	}
-
-	public void setStorOffTime(Time storOffTime) {
-		this.storOffTime = storOffTime;
-	}
-
-	public String getStorOffDay() {
-		return storOffDay;
-	}
-
-	public void setStorOffDay(String storOffDay) {
-		this.storOffDay = storOffDay;
-	}
-
-	public Byte getStorDeliver() {
-		return storDeliver;
-	}
-
-	public void setStorDeliver(Byte storDeliver) {
-		this.storDeliver = storDeliver;
-	}
-
-	public Byte getStorOpen() {
-		return storOpen;
-	}
-
-	public void setStorOpen(Byte storOpen) {
-		this.storOpen = storOpen;
-	}
-
-
-
-	public byte[] getStorPhoto() {
-		return storPhoto;
-	}
-
-	public void setStorPhoto(byte[] storPhoto) {
-		this.storPhoto = storPhoto;
-	}
-
-	public Byte getStorReportCount() {
-		return storReportCount;
-	}
-
-	public void setStorReportCount(Byte storReportCount) {
-		this.storReportCount = storReportCount;
-	}
-
-	public Integer getStarNum() {
-		return starNum;
-	}
-
-	public void setStarNum(Integer starNum) {
-		this.starNum = starNum;
-	}
-
-	public Integer getReviews() {
-		return reviews;
-	}
-
-	public void setReviews(Integer reviews) {
-		this.reviews = reviews;
-	}
 	
-	public Byte getStorStatus() {
-		return storStatus;
-	}
-
-	public void setStorStatus(Byte storStatus) {
-		this.storStatus = storStatus;
-	}
-
 }
