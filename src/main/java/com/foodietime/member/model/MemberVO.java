@@ -11,9 +11,13 @@ import java.util.List;
 import com.foodietime.accrec.model.AccrecVO;
 import com.foodietime.cart.model.CartVO;
 import com.foodietime.directmessage.model.DirectMessageVO;
+import com.foodietime.favoritepost.model.FavoritePostVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListVO;
+import com.foodietime.grouppurchasereport.model.GroupPurchaseReportVO;
 import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.memfavlist.model.FavoriteListVO;
+import com.foodietime.message.model.MessageVO;
 import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.participants.model.ParticipantsVO;
 import com.foodietime.post.model.PostVO;
@@ -270,31 +274,43 @@ public class MemberVO implements Serializable {
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<DirectMessageVO> directMessages;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<FavoriteListVO> favoriteList;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<CartVO> cart;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<MemCouponVO> memCoupon;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<ParticipantsVO> participants;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    private List<GroupBuyingCollectionListVO> groupBuyingCollectionList;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    private List<GroupPurchaseReportVO> groupPurchaseReport;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<GroupBuyingCasesVO> groupBuyingCases;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<OrdersVO> orders;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<PostVO> post;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    private List<FavoritePostVO> favoritePost;
+	    
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<ReportPostVO> reportPost;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    private List<MessageVO> message;
+	    
+	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<ReportMessageVO> reportMessage;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)

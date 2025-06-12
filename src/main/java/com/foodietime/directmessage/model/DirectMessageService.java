@@ -32,4 +32,9 @@ public class DirectMessageService {
 	    public void deleteMessage(Integer dmId) {
 	        messageRepo.deleteById(dmId);
 	    }
+	    
+	 // 取得單筆訊息 by dmId
+	    public DirectMessageVO getById(Integer dmId) {
+	        return messageRepo.findById(dmId).orElse(null);
+	    }
 }
