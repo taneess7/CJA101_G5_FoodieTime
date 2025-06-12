@@ -1,5 +1,7 @@
 package com.foodietime.cart.model;
 
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.product.model.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,7 @@ public class CartService {
 //    }
 
     // 新增購物車商品
-    public CartVO addCart(Integer memId, Integer prodId, Integer prodN) {
+    public CartVO addCart(MemberVO memId, ProductVO prodId, Integer prodN) {
         CartVO cartVO = new CartVO();
         cartVO.setMemId(memId);
         cartVO.setProdId(prodId);
@@ -30,7 +32,7 @@ public class CartService {
     }
 
     // 修改購物車商品 - 修正：加入 shopId 參數
-    public CartVO updateCart(Integer shopId, Integer memId, Integer prodId, Integer prodN) {
+    public CartVO updateCart(Integer shopId, MemberVO memId, ProductVO prodId, Integer prodN) {
         CartVO cartVO = new CartVO();
         cartVO.setShopId(shopId);
         cartVO.setMemId(memId);

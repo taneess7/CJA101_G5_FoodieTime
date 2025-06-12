@@ -2,6 +2,8 @@ package com.foodietime.cart.controller;
 
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.product.model.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,8 +91,8 @@ public class CartController_eg {
         return "cart/addCart";
     }
     @PostMapping("/add")
-    public String addCart(@RequestParam Integer memId,
-                          @RequestParam Integer prodId,
+    public String addCart(@RequestParam MemberVO memId,
+                          @RequestParam ProductVO prodId,
                           @RequestParam Integer prodN,
                           Model model) {
         CartVO cartVO = cartService.addCart(memId, prodId, prodN);
@@ -124,8 +126,8 @@ public class CartController_eg {
     }
     @PostMapping("/update")
     public String updateCart(@RequestParam Integer shopId,
-                             @RequestParam Integer memId,
-                             @RequestParam Integer prodId,
+                             @RequestParam MemberVO memId,
+                             @RequestParam ProductVO prodId,
                              @RequestParam Integer prodN,
                              Model model) {
         CartVO cartVO = cartService.updateCart(shopId, memId, prodId, prodN);
