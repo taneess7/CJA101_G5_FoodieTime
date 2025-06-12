@@ -3,14 +3,20 @@ package com.foodietime.coupon.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.foodietime.store.model.StoreVO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "coupon")
 public class CouponVO implements Serializable {
@@ -23,8 +29,9 @@ public class CouponVO implements Serializable {
 	private Integer couId; 
 	
 	// 2.店家編號
-	@Column(name = "STOR_ID")
-	private Integer storId; 
+	@ManyToOne
+    @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID") // 外鍵名稱
+	private StoreVO store; 
 	
 	// 3.優惠券類型
 	@NotEmpty(message="優惠券類型: 請勿空白")
@@ -53,52 +60,5 @@ public class CouponVO implements Serializable {
 
 	}
 
-	public Integer getCouId() {
-		return couId;
-	}
-
-	public void setCouId(Integer couId) {
-		this.couId = couId;
-	}
-
-	public Integer getStorId() {
-		return storId;
-	}
-
-	public void setStorId(Integer storId) {
-		this.storId = storId;
-	}
-
-	public String getCouDes() {
-		return couDes;
-	}
-
-	public void setCouDes(String couDes) {
-		this.couDes = couDes;
-	}
-
-	public String getCouType() {
-		return couType;
-	}
-
-	public void setCouType(String couType) {
-		this.couType = couType;
-	}
-
-	public Integer getCouMinOrd() {
-		return couMinOrd;
-	}
-
-	public void setCouMinOrd(Integer couMinOrd) {
-		this.couMinOrd = couMinOrd;
-	}
-
-	public Timestamp getCouDate() {
-		return couDate;
-	}
-
-	public void setCouDate(Timestamp couDate) {
-		this.couDate = couDate;
-	}
 
 }

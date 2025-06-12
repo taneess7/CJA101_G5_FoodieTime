@@ -7,8 +7,10 @@ import java.util.Set;
 
 import com.foodietime.accrec.model.AccrecVO;
 import com.foodietime.act.model.ActVO;
+import com.foodietime.coupon.model.CouponVO;
 import com.foodietime.gbprod.model.GbprodVO;
 import com.foodietime.gbpromotion.model.GbpromotionVO;
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.grouporders.model.GroupOrdersVO;
 import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orders.model.OrdersVO;
@@ -173,22 +175,22 @@ public class StoreVO implements Serializable {
 	@OrderBy("actLaunchTime desc") // 自訂排序，依照你的活動時間欄位
 	private List<ActVO> act;
 	
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "storeVO", cascade = CascadeType.ALL)
     private List<GbprodVO> gbprod;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<GroupOrdersVO> groupOrders;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-    private List<GbpromotionVO> gbPromotion;
+    private List<GroupBuyingCasesVO> groupBuyingCases;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-    private List<MemCouponVO> memCoupon;
+    private List<CouponVO> Coupon;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<AccrecVO> accrec;
 	
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "storId", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 
 	// 取得or設置
