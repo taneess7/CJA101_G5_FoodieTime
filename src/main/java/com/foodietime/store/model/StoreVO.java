@@ -140,7 +140,7 @@ public class StoreVO implements Serializable {
 	
 	// 20.店家信箱
 	@NotEmpty(message="Email: 請勿空白")
-	@Column(name = "STOR_EMAIL, updatable = false")
+	@Column(name = "STOR_EMAIL", updatable = false)
 	private String storEmail; 
 	
 
