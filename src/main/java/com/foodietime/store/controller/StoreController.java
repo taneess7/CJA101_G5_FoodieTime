@@ -36,20 +36,20 @@ public class StoreController {
 	@Autowired
 	StoreCateService storeCateSvc;
 
-	// 只要這裡判斷 session 沒有 storeEmail，就導回登入頁
-	@GetMapping("store/store_edit.html")
-	public String editStorePage(HttpSession session, ModelMap model) {
-
-		String email = (String) session.getAttribute("storeEmail");
-		if (email == null) {
-			return "/store/storeLogin";
-		}
-
-		// 查資料並塞進 model
-		StoreVO storeVO = storeSvc.findByStorEmail(email);
-		model.addAttribute("storeVO", storeVO);
-		return "/store/store_edit";
-	}
+//	// 只要這裡判斷 session 沒有 storeEmail，就導回登入頁
+//	@GetMapping("store/store_edit.html")
+//	public String editStorePage(HttpSession session, ModelMap model) {
+//
+//		String email = (String) session.getAttribute("storeEmail");
+//		if (email == null) {
+//			return "/store/storeLogin";
+//		}
+//
+//		// 查資料並塞進 model
+//		StoreVO storeVO = storeSvc.findByStorEmail(email);
+//		model.addAttribute("storeVO", storeVO);
+//		return "/store/store_edit";
+//	}
 
 	// 檢舉上下架
 	@PostMapping("store/report") // 表單或 URL 的參數抓取名為 storId 的值，轉成 Integer 並賦值給 storId 變數
