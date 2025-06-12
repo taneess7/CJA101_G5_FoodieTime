@@ -3,6 +3,8 @@ package com.foodietime.product.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.foodietime.store.model.StoreVO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,8 +26,12 @@ public class ProductVO implements Serializable{
 	@Column(name = "prod_id")
 	private Integer prodId;
 	
-	@Column(name = "stor_id",nullable = false)
+	@Column(name = "stor_id",nullable = false, insertable = false, updatable = false)
 	private Integer storId;
+	
+	@ManyToOne
+    @JoinColumn(name = "stor_id", referencedColumnName = "stor_id")
+    private StoreVO store;
 	
 	@ManyToOne
 	@JoinColumn(name ="prod_cate_id",nullable = false) // 外鍵，連到 product_category.prod_cate_id
