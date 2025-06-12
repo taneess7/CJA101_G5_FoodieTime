@@ -17,8 +17,7 @@ public class StoreService {
 	@Autowired
 	private StoreRepository repository; 
 	
-	@Autowired
-	private SessionFactory sessionFactory;
+
 	
 	public void addStore(StoreVO storeVO) {
 		repository.save(storeVO);  //原廠save可以用在新增和修改，有主鍵是update，沒有主鍵是insert
@@ -39,7 +38,7 @@ public class StoreService {
 	}
 	
 	public List<StoreVO> getAll(){
-		return repository.findAll(); //內建單一查詢
+		return repository.findAll(); //回傳全部
 	}
 	
 	//模糊查詢

@@ -1,64 +1,40 @@
 package com.foodietime.coupon.model;
 
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+@Service
 public class CouponService {
 
-	private CouponDAO_interface dao;
-
-	public CouponService() {
-		dao = new CouponDAO();
-	}
-
-	public CouponVO addCoupon(Integer storId, String couDes, String couType, Integer couMinOrd, Timestamp couDate) {
-
-		CouponVO couponVO = new CouponVO();
-
-		couponVO.setStorId(storId);
-		couponVO.setCouDes(couDes);
-		couponVO.setCouType(couType);
-		couponVO.setCouMinOrd(couMinOrd);
-		couponVO.setCouDate(couDate);
-		dao.insert(couponVO);
-
-		return couponVO;
-	}
-
-	public CouponVO updateCoupon(Integer couId, Integer storId, String couDes, String couType, Integer couMinOrd,
-			Timestamp couDate) {
-
-		CouponVO couponVO = new CouponVO();
-
-		couponVO.setCouId(couId);
-		couponVO.setStorId(storId);
-		couponVO.setCouDes(couDes);
-		couponVO.setCouType(couType);
-		couponVO.setCouMinOrd(couMinOrd);
-		couponVO.setCouDate(couDate);
-		dao.update(couponVO);
 		
-		return couponVO;
-	}
+		@Autowired
+		private CouponRepository repository; 
 
-	public void deleteCoupon(Integer couId) {
-		dao.delete(couId);
-	}
-
-	public CouponVO getOneCoupon(Integer couId) {
-		return dao.findByPrimaryKey(couId);
-	}
-
-	public List<CouponVO> getAll() {
-		return dao.getAll();
-	}
-	
-	public List<CouponVO> getStorCoupon(Integer storId) {
-		return dao.findByStorId(storId);
-	}
-	
-	public List<CouponVO> getDistinctStorId(){
-		return dao.findDistinctStorId();
-	}
-
+		
+		public void addCoupon(CouponVO couVO) {
+			repository.save(couVO);  //原廠save可以用在新增和修改，有主鍵是update，沒有主鍵是insert
+		}
+		
+		public void updateCoupon(CouponVO couVO) {
+			repository.save(couVO);
+		}
+		
+		public void deleteCoupon(Integer couId) {
+			if(repository.existsById(couId))
+				repository.deleteByCouId(couId); //StoreRepository 自訂刪除
+		}
+		
+		public CouponVO getOneStore(Integer couId) {
+			Optional<CouponVO> optional = repository.findById(couId); //內建單一查詢
+			return optional.orElse(null); //如果值存在就回傳其值，否則回傳other的值
+		}
+		
+		public List<CouponVO> getAll(){
+			return repository.findAll(); //回傳全部
+		}
+		
 }
