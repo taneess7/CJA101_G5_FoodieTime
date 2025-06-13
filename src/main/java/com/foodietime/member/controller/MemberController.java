@@ -11,24 +11,25 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.smg.model.SmgVO;
 
 import jakarta.servlet.http.HttpSession;
 import com.foodietime.member.model.MemService;
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/front/member")
 public class MemberController {
 
     @Autowired
     private MemService memService;
     
-    @GetMapping("/register")
+    @GetMapping("/front/register")
     public String showRegisterForm(Model model) {
     	model.addAttribute("member", new MemberVO()); // 表單綁定使用
-        return "member/register"; // 對應 src/main/resources/templates/member/register.html
+        return "front/member/register"; // 對應 src/main/resources/templates/member/register.html
     }
 
-    @PostMapping("/register")
+    @PostMapping("/front/register")
     public String register(@ModelAttribute MemberVO member,
                            @RequestParam("mem_avatar") MultipartFile memAvatarFile,
                            Model model) throws IOException {
@@ -37,13 +38,13 @@ public class MemberController {
         if (memService.isAccountExists(member.getMemAccount())) {
             model.addAttribute("member", member);
             model.addAttribute("error", "帳號已存在，請選擇其他帳號");
-            return "member/register";
+            return "front/member/register";
         }
 
         if (memService.isEmailExists(member.getMemEmail())) {
             model.addAttribute("member", member);
             model.addAttribute("error", "Email 已註冊過，請使用其他信箱");
-            return "member/register";
+            return "front/member/register";
         }
     	
     	
@@ -55,31 +56,44 @@ public class MemberController {
         memService.save(member);
 
         model.addAttribute("successMessage", "註冊成功！");
-        return "redirect:/member/success";
+        return "redirect:/front/member/success";
     }
 
-    @GetMapping("/success")
+    @GetMapping("/front/success")
     public String registerSuccess() {
-        return "member/success"; // 自行建立 success 畫面
+        return "front/member/success"; // 自行建立 success 畫面
     }
     
-    @PostMapping("/login")
-    public String login(@RequestParam String mem_account,
-                        @RequestParam String mem_password,
-                        Model model,
-                        HttpSession session) {
+    @PostMapping("/front/login")
+    public String login(
+            @RequestParam("mem_account") String account,
+            @RequestParam("mem_password") String password,
+            @RequestParam(value = "isStore", required = false) String isStore,
+            HttpSession session,
+            Model model) {
 
-        MemberVO member = memService.login(mem_account, mem_password);
+        MemberVO member = memService.login(account, password); // 會員驗證
 
-        if (member != null) {
-            session.setAttribute("loggedInMember", member);
-            return "redirect:/"; // 成功導向首頁
-        } else {
-            model.addAttribute("error", "帳號或密碼錯誤");
-            return "member/login"; // 回登入頁
+        if (member == null) {
+            model.addAttribute("error", "帳號或密碼錯誤！");
+            return "member/login";
         }
-        
+
+        // 登入成功，儲存會員資訊
+        session.setAttribute("loggedInMember", member);
+
+        // ✅ 是否以店家身份登入
+        boolean loginAsStore = isStore != null;
+        if (loginAsStore) {
+            session.setAttribute("loginRole", "store");  // 設定身份為店家
+            return "redirect:/store/";         // 導向店家頁面
+        } else {
+            session.setAttribute("loginRole", "member"); // 設定身份為一般會員
+            return "redirect:/member/home";              // 導向會員頁面
+        }
     }
+
+
     
 
     @GetMapping("/edit_profile")
