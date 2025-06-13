@@ -43,7 +43,7 @@ public class DirectMessageController {
         MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
         if (member == null) return "redirect:front/member/login";
 
-        model.addAttribute("messages", messageService.getMessagesByMemberId(member.getMemId()));
+//        model.addAttribute("messages", messageService.getMessagesByMemberId(member.getMemId()));
         return "front/directmessage/history"; // ⬅️ templates/front/directmessage/history.html
     }
 }
