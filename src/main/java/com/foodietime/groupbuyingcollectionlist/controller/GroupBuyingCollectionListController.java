@@ -1,3 +1,4 @@
+
 //
 //package com.foodietime.groupbuyingcollectionlist.controller;
 //
@@ -38,9 +39,5 @@
 //		model.addAttribute("groupBuyingCollectionListVO",vo);
 //		return "groupBuyingCollectionList/listOneCollectionList";
 //	}
-	
-	
-	
-	
 
 
