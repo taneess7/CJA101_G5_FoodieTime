@@ -301,7 +301,7 @@ public class MemberVO implements Serializable {
 	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
 	    private List<PostVO> post;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<FavoritePostVO> favoritePost;
 	    
 	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
