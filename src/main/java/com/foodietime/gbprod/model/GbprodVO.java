@@ -37,7 +37,7 @@ public class GbprodVO implements Serializable {
     @NotNull(message = "商家不能為空")
     @ManyToOne
     @JoinColumn(name = "STOR_ID")
-    private StoreVO storeVO;
+    private StoreVO store;
 
     @NotNull(message = "團購分類不能為空")
     @ManyToOne
