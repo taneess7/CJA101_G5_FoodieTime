@@ -17,7 +17,7 @@ public class OrdDetVO implements Serializable{
 
 	@ManyToOne
 	@JoinColumn(name="ORD_ID",referencedColumnName = "ORD_ID")
-	private OrdersVO order;       // 訂單編號 (外鍵)
+	private OrdersVO orders;       // 訂單編號 (外鍵)
 	//private Integer ordId;      // 訂單編號 (外鍵)
 
 	@ManyToOne

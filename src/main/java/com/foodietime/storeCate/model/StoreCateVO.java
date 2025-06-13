@@ -30,7 +30,7 @@ public class StoreCateVO implements Serializable {
 	@Column(name = "STORE_CATE_ID", updatable = false)
 	private Integer storCateId; // 店家分類編號.
 	
-	@OneToMany(mappedBy = "storeCateId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "storeCate", cascade = CascadeType.ALL)
 	@OrderBy("storId asc")
 	private Set<StoreVO> store;
 	
