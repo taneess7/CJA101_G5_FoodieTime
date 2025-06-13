@@ -70,37 +70,15 @@ public class PostVO implements Serializable {
 	
 
 // ========== 對應多方 ==========
-	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private Set<ReportPostVO> reportPost; // 這個分類底下的所有貼文
 
-	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private Set<MessageVO> message;
 
-	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private Set<FavoritePostVO> favoritePost;
 
-	public Set<ReportPostVO> getReportPost() {
-		return reportPost;
-	}
 
-	public void setReportPost(Set<ReportPostVO> reportPost) {
-		this.reportPost = reportPost;
-	}
-
-	public Set<MessageVO> getMessage() {
-		return message;
-	}
-
-	public void setMessage(Set<MessageVO> message) {
-		this.message = message;
-	}
-
-	public Set<FavoritePostVO> getfavoritePost() {
-		return favoritePost;
-	}
-
-	public void setFavoritePost(Set<FavoritePostVO> favoritePost) {
-		this.favoritePost = favoritePost;
-	}
 
 }
