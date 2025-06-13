@@ -88,14 +88,14 @@ public class MessageVO implements Serializable {
 
 	// ========== 對應多方 ==========
 	@OneToMany(mappedBy = "mesId", cascade = CascadeType.ALL)
-	private Set<ReportMessageVO> reportMessages; // 這個分類底下的所有留言
+	private Set<ReportMessageVO> reportMessage; // 這個分類底下的所有留言
 
-	public Set<ReportMessageVO> getReportMessages() {
-		return reportMessages;
+	public Set<ReportMessageVO> getReportMessage() {
+		return reportMessage;
 	}
 
-	public void setReportMessages(Set<ReportMessageVO> reportMessages) {
-		this.reportMessages = reportMessages;
+	public void setReportMessage(Set<ReportMessageVO> reportMessage) {
+		this.reportMessage = reportMessage;
 	}
 
 }
