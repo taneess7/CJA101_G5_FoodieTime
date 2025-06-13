@@ -34,6 +34,7 @@ public class SmgVO implements Serializable {
 
     @NotBlank(message = "帳號不可為空")
     @Size(max = 45, message = "帳號長度不可超過 45 字")
+    @Pattern(regexp = "^[a-zA-Z0-9]{8,45}$", message = "帳號只能包含英數字及底線，長度需為 4~45 字")
     @Column(name = "SMGR_ACCOUNT", length = 45)
     private String smgrAccount;
 

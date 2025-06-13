@@ -20,9 +20,9 @@ public class GbpromotionVO implements Serializable {
     private Integer gbPromoId;
 
     @NotNull(message = "關聯的商品不可為空")
-    @OneToOne
-    @JoinColumn(name = "GB_PROD_ID")
-    private GbprodVO gbprodVO;
+    @ManyToOne
+    @JoinColumn(name = "GB_PROD_ID", nullable = false) // 這是外鍵
+    private GbprodVO gbprod;
 
     @NotNull(message = "最小成團數不可為空")
     @Min(value = 1, message = "最小成團數必須 ≥ 1")
