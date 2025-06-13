@@ -11,40 +11,39 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "FAVORITE_POST")
-@IdClass(FavoritePostPK.class)
 public class FavoritePostVO implements Serializable {
 
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "POST_ID", referencedColumnName = "POST_ID")
-	private PostVO postId;
+	@EmbeddedId
+	private FavoritePostId Id;
 
-	@ManyToOne
-	@JoinColumn(name = "MEM_ID", referencedColumnName = "MEM_ID")
-	private MemberVO memId;
+	@Column(name = "POST_ID")
+	private Integer postId;
 
-	public FavoritePostVO(PostVO postId, MemberVO memId) {
-		super();
-		this.postId = postId;
-		this.memId = memId;
-	}
+	@Column(name = "MEM_ID")
+	private Integer memId;
+
+//	public FavoritePostVO(PostVO postId, MemberVO memId) {
+//		super();
+//		this.postId = postId;
+//		this.memId = memId;
+//	}
 
 	public FavoritePostVO() {
 	}
 
-	public PostVO getPostId() {
+	public Integer getPostId() {
 		return postId;
 	}
 
-	public void setPostId(PostVO postId) {
+	public void setPostId(Integer postId) {
 		this.postId = postId;
 	}
 
-	public MemberVO getMemId() {
+	public Integer getMemId() {
 		return memId;
 	}
 
-	public void setMemId(MemberVO memId) {
+	public void setMemId(Integer memId) {
 		this.memId = memId;
 	}
 
