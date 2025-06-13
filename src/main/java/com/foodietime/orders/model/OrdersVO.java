@@ -76,6 +76,6 @@ public class OrdersVO implements Serializable{
 	@Column(name="ORD_ADDR")
 	private String ordAddr;          // 外送地址
 
-	@OneToMany(mappedBy = "ordId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private Set<OrdDetVO> ordDet;
 }
