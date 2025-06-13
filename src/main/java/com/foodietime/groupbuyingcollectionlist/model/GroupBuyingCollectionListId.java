@@ -14,15 +14,15 @@ public class GroupBuyingCollectionListId implements Serializable {
 
     // Constructors, equals, hashCode
     public GroupBuyingCollectionListId() {  // 無參數建構子
-    	
+
     }
 
     public GroupBuyingCollectionListId(GroupBuyingCasesVO groupBuyingCase, MemberVO member) {
         this.groupBuyingCase = groupBuyingCase;
         this.member = member;
     }
-    
-    
+
+
     //equals and hashCode 需要正確重寫
 	@Override
 	public int hashCode() {
@@ -41,7 +41,7 @@ public class GroupBuyingCollectionListId implements Serializable {
 		return Objects.equals(groupBuyingCase, other.groupBuyingCase) && Objects.equals(member, other.member);
 	}
 
-    
+
 }
 
 
