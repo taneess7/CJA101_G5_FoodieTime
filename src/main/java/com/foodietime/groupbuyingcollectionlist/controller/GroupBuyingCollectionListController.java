@@ -18,10 +18,15 @@ public class GroupBuyingCollectionListController {
 		this.groupBuyingCollectionListService = groupBuyingCollectionListService;
 	}
 
-	@GetMapping
-	public string index() {
+	//主頁
+	@GetMapping("/select_page")
+	public String index() {
 		return "groupBuyingCollectionList/select_page";
 	}
+	
+	//查詢單筆收藏（判斷是否已收藏）
+	public String 
+	
 	
 	
 	
