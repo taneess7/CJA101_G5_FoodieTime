@@ -1,8 +1,12 @@
 package com.foodietime.smg.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import com.foodietime.accrec.model.AccrecVO;
+import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.smgauth.model.SmgauthVO;
 
 import jakarta.persistence.CascadeType;
@@ -14,7 +18,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -26,7 +34,11 @@ public class SmgVO implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SMGR_ID")
     private Integer smgrId;
-
+	
+	@NotNull(message = "records 不可為空")
+	@OneToMany(mappedBy = "serverManager")
+    private List<AccrecVO> accrec;
+	
     @Email(message = "Email 格式錯誤")
     @NotBlank(message = "Email 不可為空")
     @Column(name = "SMGR_EMAIL", length = 45)
@@ -59,7 +71,13 @@ public class SmgVO implements Serializable {
     // 與 SmgauthVO (權限關聯) 一對多  
     @OneToMany(mappedBy = "smg", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SmgauthVO> smgauths;
-
+    
+    @OneToMany(mappedBy = "smgrId", cascade = CascadeType.ALL)
+    private List<DirectMessageVO> directMessages = new ArrayList<>();
+    
+    
+    
+    
 	public Integer getSmgrId() {
 		return smgrId;
 	}

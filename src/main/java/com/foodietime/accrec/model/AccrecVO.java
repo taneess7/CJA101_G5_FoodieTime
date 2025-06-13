@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.smg.model.SmgVO;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.persistence.Column;
@@ -84,4 +85,10 @@ public class AccrecVO implements Serializable {
     @Size(max = 6, message = "月份格式長度不能超過 6 位")
     @Column(name = "PAYOUT_MONTH", length = 6)
     private String payoutMonth;
+   
+    
+    @ManyToOne
+    @NotNull(message = "serverManager 不可為空")  
+    @JoinColumn(name = "STOR_ID") 
+    private SmgVO serverManager;
 }
