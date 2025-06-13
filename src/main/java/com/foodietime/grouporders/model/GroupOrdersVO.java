@@ -40,7 +40,7 @@ public class GroupOrdersVO implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name="GB_ID", nullable = false)
-	private GroupBuyingCasesVO groupbuyingcases;  //團購編號
+	private GroupBuyingCasesVO groupBuyingCase;  //團購編號
 	
 	
 	@ManyToOne

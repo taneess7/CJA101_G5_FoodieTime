@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.foodietime.cart.model.CartVO;
 import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.store.model.StoreVO;
 
@@ -66,7 +67,10 @@ public class ProductVO implements Serializable{
 	@Column( name = "prod_report_count")
 	private Integer prodReportCount;
 	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "prodId", cascade = CascadeType.ALL)
     private List<OrdDetVO> orderDetails;
+
+	@OneToMany(mappedBy = "prodId", cascade = CascadeType.ALL)
+	private List<CartVO> cart;
 	
 }

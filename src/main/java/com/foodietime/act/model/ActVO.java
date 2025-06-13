@@ -4,12 +4,16 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.foodietime.orddet.model.OrdDetVO;
+import com.foodietime.orders.model.OrdersVO;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
 import com.foodietime.storeCate.model.StoreCateVO;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
