@@ -2,10 +2,12 @@ package com.foodietime.act.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
 import com.foodietime.storeCate.model.StoreCateVO;
 
@@ -18,6 +20,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -103,6 +106,12 @@ public class ActVO implements Serializable {
 	@UpdateTimestamp 
 	private Timestamp actLastUpdate; 
 
+	
+	// OneToMany
+	
+	@OneToMany(mappedBy = "actId", cascade = CascadeType.ALL)
+    private List<OrdersVO> orders;
+	
 	// 取得or設置
 	public ActVO() {
 		super();
