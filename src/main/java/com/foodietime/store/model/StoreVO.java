@@ -53,7 +53,7 @@ public class StoreVO implements Serializable {
 	@ManyToOne// 多對一，指向分類，新增store時，關聯物件一起新增
     @JoinColumn(name = "STORE_CATE_ID", referencedColumnName = "STORE_CATE_ID") // 外鍵名稱
 	private StoreCateVO storeCate; 
-	
+	  
 	
 
 	
