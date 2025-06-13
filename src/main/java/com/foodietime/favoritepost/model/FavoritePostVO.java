@@ -16,35 +16,12 @@ public class FavoritePostVO implements Serializable {
 	@EmbeddedId
 	private FavoritePostId Id;
 
-	@Column(name = "POST_ID")
-	private Integer postId;
+	@ManyToOne
+	@JoinColumn(name = "POST_ID", referencedColumnName = "POST_ID")
+	private PostVO postId;
 
-	@Column(name = "MEM_ID")
-	private Integer memId;
-
-//	public FavoritePostVO(PostVO postId, MemberVO memId) {
-//		super();
-//		this.postId = postId;
-//		this.memId = memId;
-//	}
-
-	public FavoritePostVO() {
-	}
-
-	public Integer getPostId() {
-		return postId;
-	}
-
-	public void setPostId(Integer postId) {
-		this.postId = postId;
-	}
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
+	@ManyToOne
+	@JoinColumn(name = "MEM_ID", referencedColumnName = "POST_ID")
+	private MemberVO memId;
 
 }

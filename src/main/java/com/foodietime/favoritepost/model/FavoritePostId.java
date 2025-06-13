@@ -8,24 +8,30 @@ import com.foodietime.post.model.PostVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Embeddable
+
 public class FavoritePostId implements Serializable {
 
 	
-	@ManyToOne
-	@JoinColumn(name = "POST_ID", referencedColumnName = "POST_ID")
+	@Column(name = "POST_ID")
 	private PostVO postId;
 
-	@ManyToOne
-	@JoinColumn(name = "MEM_ID", referencedColumnName = "MEM_ID")
+	@Column(name = "MEM_ID")
 	private MemberVO memId;
 
 	public FavoritePostId() {
 	}
+	
+	public FavoritePostId(PostVO postId, MemberVO memId) {
+	this.postId = postId;
+	this.memId = memId;
+}
 
 	@Override
 	public boolean equals(Object obj) {
