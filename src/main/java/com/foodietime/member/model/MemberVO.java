@@ -274,13 +274,13 @@ public class MemberVO implements Serializable {
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<DirectMessageVO> directMessages;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<FavoriteListVO> favoriteList;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<CartVO> cart;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<MemCouponVO> memCoupon;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -295,22 +295,22 @@ public class MemberVO implements Serializable {
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<GroupBuyingCasesVO> groupBuyingCases;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<OrdersVO> orders;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<PostVO> post;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<FavoritePostVO> favoritePost;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<ReportPostVO> reportPost;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<MessageVO> message;
 	    
-	    @OneToMany(mappedBy = "memId", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<ReportMessageVO> reportMessage;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)

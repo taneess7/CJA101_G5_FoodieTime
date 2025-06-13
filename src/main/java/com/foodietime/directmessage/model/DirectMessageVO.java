@@ -30,7 +30,7 @@ public class DirectMessageVO implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "smgr_id")
-	private SmgVO smgrId;
+	private SmgVO smgr;
 	
 	@Column(name = "mess_content", nullable = false)
 	private String messContent;
@@ -57,10 +57,10 @@ public class DirectMessageVO implements Serializable{
 	}
 	
 	public SmgVO getSmgrId() {
-		return smgrId;
+		return smgr;
 	}
 	public void setSmgrId(SmgVO smgrId) {
-		this.smgrId = smgrId;
+		this.smgr = smgrId;
 	}
 	public String getMessContent() {
 		return messContent;
