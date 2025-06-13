@@ -17,11 +17,13 @@ public class FavoritePostVO implements Serializable {
 	private FavoritePostId Id;
 
 	@ManyToOne
-	@JoinColumn(name = "POST_ID", referencedColumnName = "POST_ID")
+	@JoinColumn(name = "POST_ID")
+	@MapsId("postId")
 	private PostVO postId;
 
 	@ManyToOne
-	@JoinColumn(name = "MEM_ID", referencedColumnName = "POST_ID")
+	@JoinColumn(name = "MEM_ID")
+	@MapsId("memId")
 	private MemberVO memId;
 
 }
