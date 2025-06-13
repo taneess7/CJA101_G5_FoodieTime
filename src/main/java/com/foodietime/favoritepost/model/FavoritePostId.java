@@ -20,15 +20,15 @@ public class FavoritePostId implements Serializable {
 
 	
 	@Column(name = "POST_ID")
-	private PostVO postId;
+	private Integer postId;
 
 	@Column(name = "MEM_ID")
-	private MemberVO memId;
+	private Integer memId;
 
 	public FavoritePostId() {
 	}
 	
-	public FavoritePostId(PostVO postId, MemberVO memId) {
+	public FavoritePostId(Integer postId, Integer memId) {
 	this.postId = postId;
 	this.memId = memId;
 }
@@ -48,19 +48,19 @@ public class FavoritePostId implements Serializable {
 		return Objects.hash(postId, memId);
 	}
 
-	public PostVO getPostId() {
+	public Integer getPostId() {
 		return postId;
 	}
 
-	public void setPostId(PostVO postId) {
+	public void setPostId(Integer postId) {
 		this.postId = postId;
 	}
 
-	public MemberVO getMemId() {
+	public Integer getMemId() {
 		return memId;
 	}
 
-	public void setMemId(MemberVO memId) {
+	public void setMemId(Integer memId) {
 		this.memId = memId;
 	}
 
