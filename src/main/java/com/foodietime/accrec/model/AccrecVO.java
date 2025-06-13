@@ -32,7 +32,7 @@ public class AccrecVO implements Serializable {
     @Column(name = "COMM_PAYOUT_ID")
     private Integer commPayoutID;
 
-    @NotNull(message = "訂單類型不能為空")
+    @NotNull(message = "訂單類型不能是空的")
     @Column(name = "ORDER_TYPE")
     private Byte orderType;
 
