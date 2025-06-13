@@ -15,7 +15,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "store_category")
 public class StoreCateVO implements Serializable {
@@ -30,16 +32,9 @@ public class StoreCateVO implements Serializable {
 	
 	@OneToMany(mappedBy = "storeCateId", cascade = CascadeType.ALL)
 	@OrderBy("storId asc")
-	private Set<StoreVO> stores;
+	private Set<StoreVO> store;
 	
 	
-	public Set<StoreVO> getStores(){
-		return stores;
-	}
-	
-	public void setStores(Set<StoreVO> stores) {
-		this.stores = stores;
-	}
 	// 2.類型名稱
 	@Column(name = "STORE_CATE")
 	private String storCatName; 
@@ -48,22 +43,6 @@ public class StoreCateVO implements Serializable {
 
 	public StoreCateVO() {
 		super();
-	}
-
-	public Integer getStorCateId() {
-		return storCateId;
-	}
-
-	public void setStorCateId(Integer storCateId) {
-		this.storCateId = storCateId;
-	}
-
-	public String getStorCat() {
-		return storCatName;
-	}
-
-	public void setStorCat(String storCatName) {
-		this.storCatName = storCatName;
 	}
 
 }
