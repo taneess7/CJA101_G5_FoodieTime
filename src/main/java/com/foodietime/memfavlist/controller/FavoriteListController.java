@@ -13,14 +13,14 @@
 //@Controller
 //@RequestMapping("/favorite")
 //public class FavoriteListController {
-//	
+//
 //	private final FavoriteListService favoriteListService;
-//	
+//
 //	@Autowired
 //	public FavoriteListController(FavoriteListService favoriteListService) {
 //		this.favoriteListService = favoriteListService;
 //	}
-//	
+//
 //	// 主頁
 //    @GetMapping("/select_page")
 //    public String index() {
@@ -36,9 +36,9 @@
 //        model.addAttribute("favoriteVO", vo);
 //        return "favorite/listOneFavorite";
 //    }
-//       
+//
 //    //查詢單一會員所有收藏
-//    @PostMapping("/searchByMem") 
+//    @PostMapping("/searchByMem")
 //    public String searchFavoritesByMem(@RequestParam Integer memId, Model model) {
 //        List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memId);
 //        if (favorites.isEmpty()) {
@@ -48,7 +48,7 @@
 //        model.addAttribute("favoriteList", favorites);
 //        return "favorite/listAllFavorite";
 //    }
-//    
+//
 //    // 新增收藏
 //    @GetMapping("/add")
 //    public String showAddForm(Model model) {
