@@ -41,6 +41,10 @@ public class GroupBuyingCollectionListController {
 	
 	// 查詢某會員的所有收藏
 	@PostMapping("/findByMem")
+	public String findCollectionByMem(@RequestParam Integer memId, Model model) {
+		
+	}
+			)
 	
 	
 }
