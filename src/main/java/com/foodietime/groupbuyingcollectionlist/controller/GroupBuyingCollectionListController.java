@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //
 //package com.foodietime.groupbuyingcollectionlist.controller;
 //
