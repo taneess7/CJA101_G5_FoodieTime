@@ -42,13 +42,13 @@ public class PostCategoryVO implements Serializable {
 
 // ========== 對應多方 POSTVO==========
 	@OneToMany(mappedBy = "postCateId", cascade = CascadeType.ALL)
-	private Set<PostVO> posts;
+	private Set<PostVO> post;
 
-	public Set<PostVO> getPosts() {
-		return posts;
+	public Set<PostVO> getPost() {
+		return post;
 	}
 
-	public void setPosts(Set<PostVO> posts) {
-		this.posts = posts;
+	public void setPost(Set<PostVO> post) {
+		this.post = post;
 	}
 }
