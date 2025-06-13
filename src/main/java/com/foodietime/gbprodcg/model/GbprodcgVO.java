@@ -1,6 +1,7 @@
 package com.foodietime.gbprodcg.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.foodietime.gbprod.model.GbprodVO;
@@ -26,5 +27,5 @@ public class GbprodcgVO implements Serializable {
 
     // 一對多關聯：一個分類對多個商品
     @OneToMany(mappedBy = "gbprodcgVO", cascade = CascadeType.ALL)
-    private List<GbprodVO> gbprods;
+    private List<GbprodVO> gbprods = new ArrayList<>();
 }

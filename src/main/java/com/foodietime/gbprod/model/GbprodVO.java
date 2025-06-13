@@ -1,10 +1,14 @@
 package com.foodietime.gbprod.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.foodietime.gbprodcg.model.GbprodcgVO;
 import com.foodietime.gbpromotion.model.GbpromotionVO;
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.grouporders.model.GroupOrdersVO;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.persistence.*;
@@ -20,7 +24,16 @@ public class GbprodVO implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GB_PROD_ID")
     private Integer gbProdId;
+    
+    @OneToMany(mappedBy = "gbprod", cascade = CascadeType.ALL)
+    private List<GroupOrdersVO> groupOrdersList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "gbprod", cascade = CascadeType.ALL)
+    private List<GbpromotionVO> gbpromotionList = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "gbProd", cascade = CascadeType.ALL)
+    private List<GroupBuyingCasesVO> groupbuyingcasesList = new ArrayList<>();
+    
     @NotNull(message = "商家不能為空")
     @ManyToOne
     @JoinColumn(name = "STOR_ID")
@@ -70,6 +83,5 @@ public class GbprodVO implements Serializable {
     @Column(name = "GB_PROD_REPORT_COUNT")
     private Byte gbProdReportCount;
 
-    @OneToOne(mappedBy = "gbprodVO", cascade = CascadeType.ALL)
-    private GbpromotionVO gbpromotionVO;
+  
 }
