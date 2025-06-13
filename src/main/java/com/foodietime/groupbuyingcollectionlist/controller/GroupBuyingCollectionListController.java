@@ -39,8 +39,3 @@
 //		return "groupBuyingCollectionList/listOneCollectionList";
 //	}
 	
-	
-	
-	
-
-
