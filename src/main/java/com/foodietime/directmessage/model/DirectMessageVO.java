@@ -25,28 +25,28 @@ public class DirectMessageVO implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "dm_id")
 	private Integer dmId;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "mem_id", nullable = false)
 	private MemberVO member;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "smgr_id")
 	private SmgVO smgr;
-	
+
 	@Column(name = "mess_content", nullable = false)
 	private String messContent;
-	
+
 	@Column(name = "mess_time", nullable = false)
 	private LocalDateTime messTime;
-	
+
 	@Column(name = "mess_direction", nullable = false)
 	@Enumerated(EnumType.ORDINAL)
 	private MessageDirection messDirection;
-	
 
-	
-	
+
+
+
 	public enum MessageDirection {
 	    MEMBER_TO_ADMIN, //0
 	    ADMIN_TO_MEMBER  //1
