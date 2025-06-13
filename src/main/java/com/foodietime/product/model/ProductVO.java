@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.foodietime.cart.model.CartVO;
+import com.foodietime.memfavlist.model.FavoriteListVO;
 import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.store.model.StoreVO;
 
@@ -73,4 +74,6 @@ public class ProductVO implements Serializable{
 	@OneToMany(mappedBy = "prodId", cascade = CascadeType.ALL)
 	private List<CartVO> cart;
 	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	private List<FavoriteListVO> favoriteList;
 }
