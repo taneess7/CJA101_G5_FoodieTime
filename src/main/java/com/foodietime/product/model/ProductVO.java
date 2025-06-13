@@ -68,4 +68,5 @@ public class ProductVO implements Serializable{
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrdDetVO> orderDetails;
+	
 }
