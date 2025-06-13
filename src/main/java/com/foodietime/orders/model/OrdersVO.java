@@ -23,11 +23,11 @@ public class OrdersVO implements Serializable{
 
 	@ManyToOne
 	@JoinColumn(name = "MEM_ID",referencedColumnName = "MEM_ID")
-	private MemberVO memId;           // 會員編號
+	private MemberVO member;           // 會員編號
 
 	@ManyToOne
 	@JoinColumn(name = "STOR_ID",referencedColumnName = "STOR_ID")
-	private StoreVO storId;          // 店家編號
+	private StoreVO store;          // 店家編號
 
 	@Column(name="ORD_DATE")
 	private Timestamp ordDate;       // 訂單成立時間
@@ -49,11 +49,11 @@ public class OrdersVO implements Serializable{
 
 	@ManyToOne
 	@JoinColumn(name = "ACT_ID",referencedColumnName = "ACT_ID")
-	private ActVO actId;           // 活動編號
+	private ActVO act;           // 活動編號
 
 	@ManyToOne
 	@JoinColumn(name = "COU_ID",referencedColumnName = "COU_ID")
-	private CouponVO couId;           // 優惠券編號
+	private CouponVO coupon;           // 優惠券編號
 
 	@Column(name="CANCEL_REASON")
 	private String cancelReason;     // 取消原因
