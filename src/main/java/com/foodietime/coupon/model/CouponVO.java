@@ -68,6 +68,9 @@ public class CouponVO implements Serializable {
 	//OneToMany
 	@OneToMany(mappedBy = "couId", cascade = CascadeType.ALL)
     private List<MemCouponVO> memCoupon;
+	
+	@OneToMany(mappedBy = "couId", cascade = CascadeType.ALL)
+    private List<OrdersVO> orders;
 
 
 }
