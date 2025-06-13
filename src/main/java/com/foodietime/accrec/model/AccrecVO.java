@@ -30,7 +30,7 @@ public class AccrecVO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMM_PAYOUT_ID")
-    private Integer commPayoutID;
+    private Integer commPayoutID; 
 
     @NotNull(message = "訂單類型不能是空的")
     @Column(name = "ORDER_TYPE")
