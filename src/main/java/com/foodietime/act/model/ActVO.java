@@ -35,15 +35,15 @@ public class ActVO implements Serializable {
 	//2.店家物件（外鍵：STORE_ID）
 	@ManyToOne
     @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID") // 外鍵名稱
-	private StoreVO storId;
+	private StoreVO store;
 //	private Integer storId;
 	
-	public StoreVO getStorId() {
-		return storId;
+	public StoreVO getStore() { 
+		return store;
 	}
 
-	public void setStorId(StoreVO storId) {
-		this.storId = storId;
+	public void setStore(StoreVO store) {
+		this.store = store;
 	}
 	
 	

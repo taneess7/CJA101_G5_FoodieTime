@@ -12,7 +12,7 @@ public interface ActRepository extends JpaRepository<ActVO, Integer>{
 	@Transactional
 	@Modifying //非查詢，會動到資料庫的操作
 	@Query(value = "delet from activity where ACT_ID =?1", nativeQuery = true)
-	void deleteByactId(int actId);
+	void deleteByActId(int actId);
 	
 
 }
