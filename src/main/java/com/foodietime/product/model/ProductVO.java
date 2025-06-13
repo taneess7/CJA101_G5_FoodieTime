@@ -68,10 +68,10 @@ public class ProductVO implements Serializable{
 	@Column( name = "prod_report_count")
 	private Integer prodReportCount;
 	
-	@OneToMany(mappedBy = "prodId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrdDetVO> orderDetails;
 
-	@OneToMany(mappedBy = "prodId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
 	private List<CartVO> cart;
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)

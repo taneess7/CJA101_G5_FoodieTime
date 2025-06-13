@@ -23,12 +23,12 @@ public class CartVO implements Serializable {
     @ManyToOne
     @JoinColumn(name = "mem_id",referencedColumnName = "mem_id")
     @NotNull(message="不可為空")
-    private MemberVO memId;    // 會員編號
+    private MemberVO member;    // 會員編號
 
     @ManyToOne
     @JoinColumn(name = "prod_id",referencedColumnName = "prod_id")
     @NotNull(message="不可為空")
-    private ProductVO prodId;   // 商品編號
+    private ProductVO product;   // 商品編號
 
     @Column(name = "prod_n", nullable = false)
     @NotNull(message="不可為空")
