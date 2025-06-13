@@ -1,5 +1,5 @@
-package com.foodietime.participants.model;
-
-public class ParticipantsService {
-
-}
+//package com.foodietime.participants.model;
+//
+//public class ParticipantsService {
+//
+//}
