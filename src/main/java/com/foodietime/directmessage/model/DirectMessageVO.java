@@ -16,7 +16,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 @Entity
+@Data
 @Table(name = "direct_message")
 public class DirectMessageVO implements Serializable{
 	@Id
@@ -42,44 +44,7 @@ public class DirectMessageVO implements Serializable{
 	@Enumerated(EnumType.ORDINAL)
 	private MessageDirection messDirection;
 	
-	public Integer getDmId() {
-		return dmId;
-	}
-	public void setDmId(Integer dmId) {
-		this.dmId = dmId;
-	}
 
-	public MemberVO getMember() {
-		return member;
-	}
-	public void setMember(MemberVO member) {
-		this.member = member;
-	}
-	
-	public SmgVO getSmgrId() {
-		return smgr;
-	}
-	public void setSmgrId(SmgVO smgrId) {
-		this.smgr = smgrId;
-	}
-	public String getMessContent() {
-		return messContent;
-	}
-	public void setMessContent(String messContent) {
-		this.messContent = messContent;
-	}
-	public LocalDateTime getMessTime() {
-		return messTime;
-	}
-	public void setMessTime(LocalDateTime messTime) {
-		this.messTime = messTime;
-	}
-	public MessageDirection getMessDirection() {
-		return messDirection;
-	}
-	public void setMessDirection(MessageDirection messDirection) {
-		this.messDirection = messDirection;
-	}
 	
 	
 	public enum MessageDirection {

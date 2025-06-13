@@ -9,5 +9,5 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessageVO, 
     List<DirectMessageVO> findByMember_MemIdOrderByMessTimeAsc(Integer memId);
 
     // 依管理者查詢所有訊息（可排序）
-    List<DirectMessageVO> findBySmgrId_SmgrIdOrderByMessTimeAsc(Integer smgrId);
+    List<DirectMessageVO> findBySmgrId_SmgrIdOrderByMessTimeAsc(Integer smgr);
 }

@@ -47,7 +47,7 @@ public class AdminMessageController {
         DirectMessageVO original = messageService.getById(dmId);
 
         reply.setMember(original.getMember());       // 回覆給原本的會員
-        reply.setSmgrId(smgr);                      // 設定是哪個管理員回覆
+        reply.setSmgr(smgr);                      // 設定是哪個管理員回覆
         reply.setMessContent(replyContent);
         reply.setMessTime(LocalDateTime.now());
         reply.setMessDirection(MessageDirection.ADMIN_TO_MEMBER);                  // 1 = 管理員回覆

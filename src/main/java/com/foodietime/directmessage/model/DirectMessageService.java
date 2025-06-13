@@ -24,8 +24,8 @@ public class DirectMessageService {
 	    }
 
 	    // 查詢管理員的訊息
-	    public List<DirectMessageVO> getMessagesBySmgrId(Integer smgrId) {
-	        return messageRepo.findBySmgrId_SmgrIdOrderByMessTimeAsc(smgrId);
+	    public List<DirectMessageVO> getMessagesBySmgrId(Integer smgr) {
+	        return messageRepo.findBySmgrId_SmgrIdOrderByMessTimeAsc(smgr);
 	    }
 
 	    // 刪除訊息
