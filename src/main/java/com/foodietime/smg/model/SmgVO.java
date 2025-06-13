@@ -72,7 +72,7 @@ public class SmgVO implements Serializable {
     @OneToMany(mappedBy = "smg", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SmgauthVO> smgauths;
     
-    @OneToMany(mappedBy = "smgrId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "smgr", cascade = CascadeType.ALL)
     private List<DirectMessageVO> directMessages = new ArrayList<>();
     
     
