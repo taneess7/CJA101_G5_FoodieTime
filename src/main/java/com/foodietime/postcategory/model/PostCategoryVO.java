@@ -1,15 +1,19 @@
 package com.foodietime.postcategory.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Set;
 
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.post.model.PostVO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "POST_CATEGORY")
 public class PostCategoryVO implements Serializable {
 
@@ -24,31 +28,12 @@ public class PostCategoryVO implements Serializable {
     @Max(value=45, message="最大45")
 	private Integer postCate;
 
-	public Integer getPostCateId() {
-		return postCateId;
-	}
-
-	public void setPostCateId(Integer postCateId) {
-		this.postCateId = postCateId;
-	}
-
-	public Integer getPostCate() {
-		return postCate;
-	}
-
-	public void setPostCate(Integer postCate) {
-		this.postCate = postCate;
-	}
+	
 
 // ========== 對應多方 POSTVO==========
-	@OneToMany(mappedBy = "postCateId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "postCate", cascade = CascadeType.ALL)
 	private Set<PostVO> post;
 
-	public Set<PostVO> getPost() {
-		return post;
+
 	}
 
-	public void setPost(Set<PostVO> post) {
-		this.post = post;
-	}
-}

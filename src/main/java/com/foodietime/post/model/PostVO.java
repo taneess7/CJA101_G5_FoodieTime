@@ -10,12 +10,22 @@ import com.foodietime.message.model.MessageVO;
 import com.foodietime.postcategory.model.PostCategoryVO;
 import com.foodietime.reportpost.model.ReportPostVO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "POST")
 public class PostVO implements Serializable {
 
@@ -25,11 +35,11 @@ public class PostVO implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "MEM_ID", referencedColumnName = "MEM_ID")
-	private MemberVO memId;
+	private MemberVO member;
 
 	@ManyToOne
 	@JoinColumn(name = "POST_CATE_ID", referencedColumnName = "POST_CATE_ID")
-	private PostCategoryVO postCateId;
+	private PostCategoryVO postCate;
 
 	@Column(name = "POST_DATE")
 	private Timestamp postDate;
@@ -57,85 +67,7 @@ public class PostVO implements Serializable {
 	@Column(name = "VIEWS")
 	private Integer views;
 
-	public Integer getPostId() {
-		return postId;
-	}
-
-	public void setPostId(Integer postId) {
-		this.postId = postId;
-	}
-
-	public MemberVO getMemId() {
-		return memId;
-	}
-
-	public void setMemId(MemberVO memId) {
-		this.memId = memId;
-	}
-
-	public PostCategoryVO getPostCateId() {
-		return postCateId;
-	}
-
-	public void setPostCateId(PostCategoryVO postCateId) {
-		this.postCateId = postCateId;
-	}
-
-	public Timestamp getPostDate() {
-		return postDate;
-	}
-
-	public void setPostDate(Timestamp postDate) {
-		this.postDate = postDate;
-	}
-
-	public byte getPostStatus() {
-		return postStatus;
-	}
-
-	public void setPostStatus(byte postStatus) {
-		this.postStatus = postStatus;
-	}
-
-	public Timestamp getEditdate() {
-		return editDate;
-	}
-
-	public void setEditDate(Timestamp editDate) {
-		this.editDate = editDate;
-	}
-
-	public String getPostTitle() {
-		return postTitle;
-	}
-
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
-	}
-
-	public String getPostContent() {
-		return postContent;
-	}
-
-	public void setPostContent(String postContent) {
-		this.postContent = postContent;
-	}
-
-	public Integer getLikeCount() {
-		return likeCount;
-	}
-
-	public void setLikeCount(Integer likeCount) {
-		this.likeCount = likeCount;
-	}
-
-	public Integer getViews() {
-		return views;
-	}
-
-	public void setViews(Integer views) {
-		this.views = views;
-	}
+	
 
 // ========== 對應多方 ==========
 	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)

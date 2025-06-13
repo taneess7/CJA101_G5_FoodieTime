@@ -19,11 +19,11 @@ public class FavoritePostVO implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "POST_ID")
 	@MapsId("postId")
-	private PostVO postId;
+	private PostVO post;
 
 	@ManyToOne
 	@JoinColumn(name = "MEM_ID")
 	@MapsId("memId")
-	private MemberVO memId;
+	private MemberVO member;
 
 }
