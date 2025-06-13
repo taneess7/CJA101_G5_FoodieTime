@@ -2,9 +2,13 @@ package com.foodietime.coupon.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
+import com.foodietime.memcoupon.model.MemCouponVO;
+import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -59,6 +64,10 @@ public class CouponVO implements Serializable {
 		super();
 
 	}
+	
+	//OneToMany
+	@OneToMany(mappedBy = "couId", cascade = CascadeType.ALL)
+    private List<MemCouponVO> memCoupon;
 
 
 }

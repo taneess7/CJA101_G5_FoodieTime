@@ -47,19 +47,7 @@ public class StoreVO implements Serializable {
 	@Column(name = "STOR_ID", updatable = false)
 	private Integer storId; 
 	
-	//關聯活動
-	@OneToMany(mappedBy = "storId", cascade = CascadeType.ALL)
-	@OrderBy("storId asc")
-	private Set<StoreVO> stores;
-	
-	
-	public Set<StoreVO> getStores() {
-		return stores;
-	} 
 
-	public void setStores(Set<StoreVO> stores) {
-		this.stores = stores;
-	}
 
 	//2.店家分類物件（外鍵：STORE_CATE_ID）
 	@ManyToOne// 多對一，指向分類，新增store時，關聯物件一起新增
@@ -165,14 +153,9 @@ public class StoreVO implements Serializable {
 	
 	//OneToMany
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-	@OrderBy("storId asc")
-	private List<StoreVO> store;
-	
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<ProductVO> product;
 
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-	@OrderBy("actLaunchTime desc") // 自訂排序，依照你的活動時間欄位
 	private List<ActVO> act;
 	
 	@OneToMany(mappedBy = "storeVO", cascade = CascadeType.ALL)

@@ -10,11 +10,26 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
 import com.foodietime.storeCate.model.StoreCateVO;
 
-import jakarta.validation.constraints.NotEmpty;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "activity")
 public class ActVO implements Serializable {
@@ -97,116 +112,15 @@ public class ActVO implements Serializable {
 	@UpdateTimestamp 
 	private Timestamp actLastUpdate; 
 
+	
+	// OneToMany
+	
+	@OneToMany(mappedBy = "actId", cascade = CascadeType.ALL)
+    private List<OrdersVO> orders;
+	
 	// 取得or設置
 	public ActVO() {
 		super();
 	}
 
-	public Integer getActId() {
-		return actId;
-	}
-
-	public void setActId(Integer actId) {
-		this.actId = actId;
-	}
-	
-
-//	public Integer getStorId() {
-//		return storId;
-//	}
-//
-//	public void setStorId(Integer storId) {
-//		this.storId = storId;
-//	}
-
-	public String getActCate() {
-		return actCate;
-	}
-
-	public void setActCate(String actCate) {
-		this.actCate = actCate;
-	}
-
-	public String getActName() {
-		return actName;
-	}
-
-	public void setActName(String actName) {
-		this.actName = actName;
-	}
-
-	public String getActContent() {
-		return actContent;
-	}
-
-	public void setActContent(String actContent) {
-		this.actContent = actContent;
-	}
-
-	public Timestamp getActSetTime() {
-		return actSetTime;
-	}
-
-	public void setActSetTime(Timestamp actSetTime) {
-		this.actSetTime = actSetTime;
-	}
-
-	public Timestamp getActStartTime() {
-		return actStartTime;
-	}
-
-	public void setActStartTime(Timestamp actStartTime) {
-		this.actStartTime = actStartTime;
-	}
-
-	public Timestamp getActEndTime() {
-		return actEndTime;
-	}
-
-	public void setActEndTime(Timestamp actEndTime) {
-		this.actEndTime = actEndTime;
-	}
-
-	public Byte getActStatus() {
-		return actStatus;
-	}
-
-	public void setActStatus(Byte actStatus) {
-		this.actStatus = actStatus;
-	}
-
-	public Byte getActDiscount() {
-		return actDiscount;
-	}
-
-	public void setActDiscount(Byte actDiscount) {
-		this.actDiscount = actDiscount;
-	}
-
-	public Double getActDiscValue() {
-		return actDiscValue;
-	}
-
-	public void setActDiscValue(Double actDiscValue) {
-		this.actDiscValue = actDiscValue;
-	}
-
-	public byte[] getActPhoto() {
-		return actPhoto;
-	}
-
-	public void setActPhoto(byte[] actPhoto) {
-		this.actPhoto = actPhoto;
-	}
-
-	public Timestamp getActLastUpdate() {
-		return actLastUpdate;
-	}
-
-	public void setActLastUpdate(Timestamp actLastUpdate) {
-		this.actLastUpdate = actLastUpdate;
-	}
-
-	@OneToMany(mappedBy = "actId", cascade = CascadeType.ALL)
-	private List<OrdersVO> orders;
 }
