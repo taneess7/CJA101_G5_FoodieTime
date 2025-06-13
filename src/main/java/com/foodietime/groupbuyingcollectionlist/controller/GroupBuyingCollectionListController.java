@@ -30,8 +30,8 @@ public class GroupBuyingCollectionListController {
 	}
 	
 	//查詢單筆收藏（判斷是否已收藏）
-	@PostMapping("/serchByMemGb")
-	public String searchCollectionList(@RequestParam Integer memId,
+	@PostMapping("/findByMemGb")
+	public String findCollectionList(@RequestParam Integer memId,
 			                           @RequestParam Integer gbId,
 			                           Model model) {
 		GroupBuyingCollectionListVO vo = groupBuyingCollectionListService.getOneCollection(memId, gbId);
@@ -39,7 +39,8 @@ public class GroupBuyingCollectionListController {
 		return "groupBuyingCollectionList/listOneCollectionList";
 	}
 	
-	
+	// 查詢某會員的所有收藏
+	@PostMapping("/findByMem")
 	
 	
 }
