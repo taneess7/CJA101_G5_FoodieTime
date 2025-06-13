@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.smg.model.SmgVO;
+
 
 @Service
 public class DirectMessageService {
@@ -19,12 +22,12 @@ public class DirectMessageService {
 	    }
 
 	    // 查詢會員的訊息
-	    public List<DirectMessageVO> getMessagesByMemberId(Integer memId) {
-	        return messageRepo.findByMember_MemIdOrderByMessTimeAsc(memId);
+	    public List<DirectMessageVO> getMessagesByMemberId(MemberVO member) {
+	        return messageRepo.findByMember_MemIdOrderByMessTimeAsc(member);
 	    }
 
 	    // 查詢管理員的訊息
-	    public List<DirectMessageVO> getMessagesBySmgrId(Integer smgr) {
+	    public List<DirectMessageVO> getMessagesBySmgrId(SmgVO smgr) {
 	        return messageRepo.findBySmgrId_SmgrIdOrderByMessTimeAsc(smgr);
 	    }
 
