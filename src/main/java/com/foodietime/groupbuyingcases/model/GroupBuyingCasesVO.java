@@ -119,7 +119,7 @@ public class GroupBuyingCasesVO implements Serializable{
 	}
 	
 	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
-    private List<ParticipantsVO> articipants;
+    private List<ParticipantsVO> participants;
 	
 	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<GroupPurchaseReportVO> groupPurchaseReport;
