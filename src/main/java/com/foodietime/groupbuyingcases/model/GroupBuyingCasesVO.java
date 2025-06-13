@@ -118,16 +118,16 @@ public class GroupBuyingCasesVO implements Serializable{
 		
 	}
 	
-	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<ParticipantsVO> articipants;
 	
-	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<GroupPurchaseReportVO> groupPurchaseReport;
 	
-	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<GroupBuyingCollectionListVO> groupBuyingCollectionList;
 	
-	@OneToMany(mappedBy = "group_buying_cases", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<GroupOrdersVO> groupOrders;
 	
 	
