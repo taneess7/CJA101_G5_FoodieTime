@@ -173,7 +173,7 @@ public class StoreVO implements Serializable {
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<AccrecVO> accrec;
 	
-	@OneToMany(mappedBy = "storId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 
 	// 取得or設置
