@@ -1105,3 +1105,22 @@ ALTER TABLE APPROPRIATION_COMM_RECORD
 ADD CONSTRAINT FK_ACR_MEMBER
 FOREIGN KEY (MEM_ID) REFERENCES MEMBER(MEM_ID);
 
+ALTER TABLE group_buying_cases
+MODIFY GB_CREATE_AT datetime NULL
+ALTER TABLE appropriation_comm_record
+ADD COLUMN SMGR_ID INT;
+UPDATE appropriation_comm_record SET SMGR_ID = 1 WHERE COMM_PAYOUT_ID = 1;
+UPDATE appropriation_comm_record SET SMGR_ID = 2 WHERE COMM_PAYOUT_ID = 2;
+UPDATE appropriation_comm_record SET SMGR_ID = 3 WHERE COMM_PAYOUT_ID = 3;
+UPDATE appropriation_comm_record SET SMGR_ID = 4 WHERE COMM_PAYOUT_ID = 4;
+UPDATE appropriation_comm_record SET SMGR_ID = 5 WHERE COMM_PAYOUT_ID = 5;
+UPDATE appropriation_comm_record SET SMGR_ID = 6 WHERE COMM_PAYOUT_ID = 6;
+UPDATE appropriation_comm_record SET SMGR_ID = 7 WHERE COMM_PAYOUT_ID = 7;
+UPDATE appropriation_comm_record SET SMGR_ID = 8 WHERE COMM_PAYOUT_ID = 8;
+UPDATE appropriation_comm_record SET SMGR_ID = 9 WHERE COMM_PAYOUT_ID = 9;
+UPDATE appropriation_comm_record SET SMGR_ID = 10 WHERE COMM_PAYOUT_ID = 10;
+ALTER TABLE appropriation_comm_record
+MODIFY SMGR_ID INT NOT NULL,
+ADD CONSTRAINT fk_acr_smgr
+    FOREIGN KEY (SMGR_ID)
+    REFERENCES servermanager(SMGR_ID);
