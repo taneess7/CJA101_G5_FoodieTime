@@ -1,6 +1,9 @@
 
 package com.foodietime.groupbuyingcollectionlist.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +37,7 @@ public class GroupBuyingCollectionListController {
 	public String findCollectionList(@RequestParam Integer memId,
 			                           @RequestParam Integer gbId,
 			                           Model model) {
-		GroupBuyingCollectionListVO vo = groupBuyingCollectionListService.getOneCollection(memId, gbId);
+		GroupBuyingCollectionListVO vo = groupBuyingCollectionListService.getOneCollection(gbId, memId);
 		model.addAttribute("groupBuyingCollectionListVO",vo);
 		return "groupBuyingCollectionList/listOneCollectionList";
 	}
@@ -42,9 +45,18 @@ public class GroupBuyingCollectionListController {
 	// 查詢某會員的所有收藏
 	@PostMapping("/findByMem")
 	public String findCollectionByMem(@RequestParam Integer memId, Model model) {
-		
+		List<GroupBuyingCollectionListVO> collectionList = groupBuyingCollectionListService.getByMemId(memId);
+		if(collectionList.isEmpty()) {
+			model.addAttribute("errorMsgs", Arrays.asList("查無會員收藏資料"));
+            return "groupBuyingCollectionList/select_page";
+		}
+		model.addAttribute("collectionList",collectionList);
+		return "groupBuyingCollectionList/listAllCollectionList";
 	}
-			)
+			
+	
+	
+	
 	
 	
 }
