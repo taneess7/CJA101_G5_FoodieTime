@@ -7,6 +7,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.member.model.MemberVO;
+
 @Service
 public class GroupBuyingCollectionListService {
 	
@@ -18,15 +21,15 @@ public class GroupBuyingCollectionListService {
 	}
 
 	// 新增收藏
-	public GroupBuyingCollectionListVO addCollection(Integer gbId, Integer memId) {
+	public GroupBuyingCollectionListVO addCollection(GroupBuyingCasesVO gbId, MemberVO memId) {
 		// 設置複合主鍵
-        GroupBuyingCollectionListId id = new GroupBuyingCollectionListId(gbId, memId);
+        
         GroupBuyingCollectionListVO collection = new GroupBuyingCollectionListVO();
-        collection.setId(id);
+        collection.setGroupBuyingCase(gbId);
+        collection.setMember(memId);
         collection.setCreateAt(LocalDateTime.now());  // 設置創建時間
 
-        // 使用 save() 進行新增
-        return repo.save(collection);  // 此方法會自動處理新增或更新
+        return repo.save(collection);  // 使用 save() 進行新增
     }
 
 	// 刪除收藏
@@ -40,7 +43,7 @@ public class GroupBuyingCollectionListService {
 	}
 
 	// 查詢所有收藏
-	public List<GroupBuyingCollectionListVO> findAll() {
+	public List<GroupBuyingCollectionListVO> getAll() {
 		return repo.findAll();
 	}
 
