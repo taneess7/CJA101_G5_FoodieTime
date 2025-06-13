@@ -32,6 +32,8 @@ public class MemberController {
     @PostMapping("/front/register")
     public String register(@ModelAttribute MemberVO member,
                            @RequestParam("mem_avatar") MultipartFile memAvatarFile,
+                           @RequestParam(value = "isStore", required = false) Boolean isStore,
+                           HttpSession session,
                            Model model) throws IOException {
     	
     	// 帳號或 Email 重複檢查
@@ -55,8 +57,13 @@ public class MemberController {
         member.setMemTime(Timestamp.from(Instant.now())); // 設定當下註冊時間
         memService.save(member);
 
-        model.addAttribute("successMessage", "註冊成功！");
-        return "redirect:/front/member/success";
+        session.setAttribute("loggedInMember", member);
+
+        if (Boolean.TRUE.equals(isStore)) {
+            return "redirect:/front/store/register"; // ⬅️ 第二階段：前往填寫店家資料
+        }
+
+        return "redirect:/front/member/success"; // ⬅️ 原有流程：一般會員註冊成功
     }
 
     @GetMapping("/front/success")
