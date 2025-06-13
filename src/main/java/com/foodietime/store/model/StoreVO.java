@@ -52,16 +52,10 @@ public class StoreVO implements Serializable {
 	//2.店家分類物件（外鍵：STORE_CATE_ID）
 	@ManyToOne// 多對一，指向分類，新增store時，關聯物件一起新增
     @JoinColumn(name = "STORE_CATE_ID", referencedColumnName = "STORE_CATE_ID") // 外鍵名稱
-	private StoreCateVO storeCateId; 
+	private StoreCateVO storeCate; 
 	
 	
-	public StoreCateVO getStoreCateId() {
-		return storeCateId;
-	}
-	
-	public void setStoreCateId(StoreCateVO storeCateId) {
-		this.storeCateId = storeCateId;
-	}
+
 	
 	// 3.店家名稱
 	@NotEmpty(message="店家名稱: 請勿空白")
@@ -158,7 +152,7 @@ public class StoreVO implements Serializable {
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
 	private List<ActVO> act;
 	
-	@OneToMany(mappedBy = "storeVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<GbprodVO> gbprod;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
@@ -168,7 +162,7 @@ public class StoreVO implements Serializable {
     private List<GroupBuyingCasesVO> groupBuyingCases;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-    private List<CouponVO> Coupon;
+    private List<CouponVO> coupon;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<AccrecVO> accrec;

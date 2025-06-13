@@ -46,15 +46,7 @@ public class ActVO implements Serializable {
     @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID") // 外鍵名稱
 	private StoreVO store;
 //	private Integer storId;
-	
-	public StoreVO getStore() { 
-		return store;
-	}
 
-	public void setStore(StoreVO store) {
-		this.store = store;
-	}
-	
 	
 	// 3.活動類型
 	@NotEmpty(message="活動類型: 請勿空白")
@@ -115,7 +107,7 @@ public class ActVO implements Serializable {
 	
 	// OneToMany
 	
-	@OneToMany(mappedBy = "actId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "act", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 	
 	// 取得or設置
