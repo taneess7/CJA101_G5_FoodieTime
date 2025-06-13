@@ -22,7 +22,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "POST")
+@Table(name = "MESSAGE")
 public class MessageVO implements Serializable {
 
 	@Id

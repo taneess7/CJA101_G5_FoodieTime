@@ -145,7 +145,7 @@ public class PostVO implements Serializable {
 	private Set<MessageVO> message;
 
 	@OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
-	private Set<FavoritePostId> favoritePost;
+	private Set<FavoritePostVO> favoritePost;
 
 	public Set<ReportPostVO> getReportPost() {
 		return reportPost;
@@ -163,11 +163,11 @@ public class PostVO implements Serializable {
 		this.message = message;
 	}
 
-	public Set<FavoritePostId> getfavoritePost() {
+	public Set<FavoritePostVO> getfavoritePost() {
 		return favoritePost;
 	}
 
-	public void setFavoritePost(Set<FavoritePostId> favoritePost) {
+	public void setFavoritePost(Set<FavoritePostVO> favoritePost) {
 		this.favoritePost = favoritePost;
 	}
 
