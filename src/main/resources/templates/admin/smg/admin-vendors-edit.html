@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廠家帳號新增/編輯 - 團購樂後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">廠家管理</li>
+                    <li class="breadcrumb-item active">廠家帳號新增/編輯</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <!-- 搜尋選擇廠家 -->
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">搜尋選擇廠家</h6>
+                </div>
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-4">
+                            <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                            <input type="text" class="form-control" id="searchKeyword" placeholder="廠家名稱、統一編號或廠家ID">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterCategory" class="form-label">廠家類別</label>
+                            <select class="form-select" id="filterCategory">
+                                <option value="">全部</option>
+                                <option value="food">食品</option>
+                                <option value="clothing">服飾</option>
+                                <option value="electronics">3C商品</option>
+                                <option value="home">家居生活</option>
+                                <option value="beauty">美妝保養</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterStatus" class="form-label">廠家狀態</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">全部</option>
+                                <option value="active">啟用</option>
+                                <option value="inactive">停用</option>
+                                <option value="pending">待審核</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary w-100" id="searchBtn">搜尋</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 廠家列表 -->
+            <div class="card mb-4" id="vendorListCard" style="display: none;">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">搜尋結果</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>廠家 ID</th>
+                                    <th>廠家名稱</th>
+                                    <th>統一編號</th>
+                                    <th>廠家類別</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendorTableBody">
+                                <!-- 搜尋結果將顯示在這裡 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 廠家編輯表單 -->
+            <div class="card">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold" id="formTitle">新增廠家</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="clearFormBtn">
+                        <i class="fas fa-plus"></i> 新增廠家
+                    </button>
+                </div>
+                <div class="card-body">
+                    <form id="vendorForm">
+                        <input type="hidden" id="vendorId" name="vendorId">
+                        
+                        <!-- 基本資料 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3"><i class="fas fa-info-circle"></i> 基本資料</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vendorName" class="form-label">廠家名稱 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vendorName" name="vendorName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vendorTaxId" class="form-label">統一編號 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vendorTaxId" name="vendorTaxId" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vendorCategory" class="form-label">廠家類別 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="vendorCategory" name="vendorCategory" required>
+                                    <option value="">請選擇類別</option>
+                                    <option value="food">食品</option>
+                                    <option value="clothing">服飾</option>
+                                    <option value="electronics">3C商品</option>
+                                    <option value="home">家居生活</option>
+                                    <option value="beauty">美妝保養</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vendorStatus" class="form-label">廠家狀態</label>
+                                <select class="form-select" id="vendorStatus" name="vendorStatus">
+                                    <option value="active">啟用</option>
+                                    <option value="inactive">停用</option>
+                                    <option value="pending">待審核</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="vendorDescription" class="form-label">廠家簡介</label>
+                                <textarea class="form-control" id="vendorDescription" name="vendorDescription" rows="3" placeholder="請輸入廠家簡介.."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- 聯絡資料 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3"><i class="fas fa-address-book"></i> 聯絡資料</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contactName" class="form-label">聯絡人<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="contactName" name="contactName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contactEmail" class="form-label">電子郵件 <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="contactEmail" name="contactEmail" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contactPhone" class="form-label">聯絡電話 <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="contactPhone" name="contactPhone" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contactMobile" class="form-label">行動電話</label>
+                                <input type="tel" class="form-control" id="contactMobile" name="contactMobile">
+                            </div>
+                            <div class="col-12">
+                                <label for="companyAddress" class="form-label">公司地址 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="companyAddress" name="companyAddress" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="companyWebsite" class="form-label">公司網站</label>
+                                <input type="url" class="form-control" id="companyWebsite" name="companyWebsite" placeholder="https://">
+                            </div>
+                        </div>
+                        
+                        <!-- 銀行資料 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3"><i class="fas fa-university"></i> 銀行資料</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bankName" class="form-label">銀行名稱</label>
+                                <input type="text" class="form-control" id="bankName" name="bankName">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bankCode" class="form-label">銀行代碼</label>
+                                <input type="text" class="form-control" id="bankCode" name="bankCode">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="accountName" class="form-label">帳戶名稱</label>
+                                <input type="text" class="form-control" id="accountName" name="accountName">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="accountNumber" class="form-label">帳戶號碼</label>
+                                <input type="text" class="form-control" id="accountNumber" name="accountNumber">
+                            </div>
+                        </div>
+                        
+                        <!-- 操作按鈕 -->
+                        <div class="row">
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-secondary me-2" id="cancelBtn">取消</button>
+                                <button type="submit" class="btn btn-primary" id="saveBtn">
+                                    <i class="fas fa-save"></i> 儲存
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JavaScript -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <!-- 頁面專用 JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const vendorForm = document.getElementById('vendorForm');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearFormBtn = document.getElementById('clearFormBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const formTitle = document.getElementById('formTitle');
+            const vendorListCard = document.getElementById('vendorListCard');
+            const vendorTableBody = document.getElementById('vendorTableBody');
+            
+            // 模擬廠家資料
+            const mockVendors = [
+                {
+                    id: 'V1001',
+                    name: '好味食品有限公司',
+                    taxId: '12345678',
+                    category: 'food',
+                    status: 'active',
+                    contactName: '張經理',
+                     contactEmail: 'contact@goodfood.com',
+                    contactPhone: '02-12345678',
+                    contactMobile: '0912-345-678',
+                    companyAddress: '台北市中山區中山北路123號1樓',
+                    companyWebsite: 'http://www.goodfood.com',
+                    description: '好味食品有限公司成立於2010年，專門生產健康食品、零食、糕點等。',
+                    bankName: '國泰世華銀行',
+                    bankCode: '013',
+                    accountName: '好味食品有限公司',
+                    accountNumber: '1234567890123'
+                },
+                {
+                    id: 'V1002',
+                    name: '時尚服飾工作室',
+                    taxId: '87654321',
+                    category: 'clothing',
+                    status: 'active',
+                    contactName: '李設計師',
+                    contactEmail: 'info@fashion.com',
+                    contactPhone: '02-87654321',
+                    contactMobile: '0987-654-321',
+                    companyAddress: '台北市信義區信義路56號2樓',
+                    companyWebsite: 'http://www.fashion.com',
+                    description: '時尚服飾工作室專注於設計製作流行服飾。',
+                    bankName: '台新銀行',
+                    bankCode: '812',
+                    accountName: '時尚服飾工作室',
+                    accountNumber: '9876543210987'
+                }
+            ];
+            
+            // 搜尋功能
+            searchBtn.addEventListener('click', function() {
+                const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+                const category = document.getElementById('filterCategory').value;
+                const status = document.getElementById('filterStatus').value;
+                
+                let filteredVendors = mockVendors;
+                
+                if (keyword) {
+                    filteredVendors = filteredVendors.filter(vendor => 
+                        vendor.name.toLowerCase().includes(keyword) ||
+                        vendor.taxId.includes(keyword) ||
+                        vendor.id.toLowerCase().includes(keyword)
+                    );
+                }
+                
+                if (category) {
+                    filteredVendors = filteredVendors.filter(vendor => vendor.category === category);
+                }
+                
+                if (status) {
+                    filteredVendors = filteredVendors.filter(vendor => vendor.status === status);
+                }
+                
+                displayVendors(filteredVendors);
+            });
+            
+            // 顯示廠家列表
+            function displayVendors(vendors) {
+                vendorTableBody.innerHTML = '';
+                
+                if (vendors.length === 0) {
+                    vendorTableBody.innerHTML = '<tr><td colspan="6" class="text-center">沒有找到符合條件的廠家</td></tr>';
+                } else {
+                    vendors.forEach(vendor => {
+                        const statusBadge = getStatusBadge(vendor.status);
+                        const categoryText = getCategoryText(vendor.category);
+                        
+                        const row = `
+                            <tr>
+                                <td>${vendor.id}</td>
+                                <td>${vendor.name}</td>
+                                <td>${vendor.taxId}</td>
+                                <td>${categoryText}</td>
+                                <td>${statusBadge}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary edit-btn" data-id="${vendor.id}">
+                                        <i class="fas fa-edit"></i> 編輯
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        vendorTableBody.innerHTML += row;
+                    });
+                }
+                
+                vendorListCard.style.display = 'block';
+                
+                // 綁定編輯按鈕事件
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const vendorId = this.getAttribute('data-id');
+                        const vendor = mockVendors.find(v => v.id === vendorId);
+                        if (vendor) {
+                            loadVendorData(vendor);
+                        }
+                    });
+                });
+            }
+            
+            // 載入廠家資料到表單
+            function loadVendorData(vendor) {
+                document.getElementById('vendorId').value = vendor.id;
+                document.getElementById('vendorName').value = vendor.name;
+                document.getElementById('vendorTaxId').value = vendor.taxId;
+                document.getElementById('vendorCategory').value = vendor.category;
+                document.getElementById('vendorStatus').value = vendor.status;
+                document.getElementById('vendorDescription').value = vendor.description || '';
+                document.getElementById('contactName').value = vendor.contactName;
+                document.getElementById('contactEmail').value = vendor.contactEmail;
+                document.getElementById('contactPhone').value = vendor.contactPhone;
+                document.getElementById('contactMobile').value = vendor.contactMobile || '';
+                document.getElementById('companyAddress').value = vendor.companyAddress;
+                document.getElementById('companyWebsite').value = vendor.companyWebsite || '';
+                document.getElementById('bankName').value = vendor.bankName || '';
+                document.getElementById('bankCode').value = vendor.bankCode || '';
+                document.getElementById('accountName').value = vendor.accountName || '';
+                document.getElementById('accountNumber').value = vendor.accountNumber || '';
+                
+                formTitle.textContent = `編輯廠家 - ${vendor.name}`;
+                
+                // 滾動到表單
+                document.getElementById('vendorForm').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // 清空表單
+            function clearForm() {
+                vendorForm.reset();
+                document.getElementById('vendorId').value = '';
+                formTitle.textContent = '新增廠家';
+            }
+            
+            // 清空表單按鈕
+            clearFormBtn.addEventListener('click', clearForm);
+            
+            // 取消按鈕
+            cancelBtn.addEventListener('click', clearForm);
+            
+            // 表單提交
+            vendorForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(vendorForm);
+                const vendorData = Object.fromEntries(formData);
+                
+                // 驗證必填欄位
+                const requiredFields = ['vendorName', 'vendorTaxId', 'vendorCategory', 'contactName', 'contactEmail', 'contactPhone', 'companyAddress'];
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    const input = document.getElementById(field);
+                    if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('請填寫所有必填欄位');
+                    return;
+                }
+                
+                // 模擬保存
+                const isEdit = vendorData.vendorId !== '';
+                const action = isEdit ? '更新' : '新增';
+                
+                alert(`廠家資料${action}成功！`);
+                
+                // 清空表單
+                clearForm();
+                
+                // 隱藏搜尋結果
+                vendorListCard.style.display = 'none';
+            });
+            
+            // 輔助函數
+            function getStatusBadge(status) {
+                switch (status) {
+                    case 'active':
+                        return '<span class="badge bg-success">啟用</span>';
+                    case 'inactive':
+                        return '<span class="badge bg-secondary">停用</span>';
+                    case 'pending':
+                        return '<span class="badge bg-warning text-dark">待審核</span>';
+                    default:
+                        return '<span class="badge bg-secondary">未知</span>';
+                }
+            }
+            
+            function getCategoryText(category) {
+                const categories = {
+                    'food': '食品',
+                    'clothing': '服飾',
+                    'electronics': '3C商品',
+                    'home': '家居生活',
+                    'beauty': '美妝保養',
+                    'other': '其他'
+                };
+                return categories[category] || category;
+            }
+        });
+    </script>
+</body>
+</html>

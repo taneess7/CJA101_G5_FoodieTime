@@ -9,17 +9,22 @@ import com.foodietime.gbprod.model.GbprodVO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "gb_prod_category")
 public class GbprodcgVO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GB_CATE_ID")
+    @EqualsAndHashCode.Include
     private Integer gbCateId;
-
+    
+    
+    
     @NotBlank(message = "分類名稱不能為空")
     @Size(max = 45, message = "分類名稱長度不能超過 45 字")
     @Column(name = "GB_CATE_NAME", length = 45)

@@ -5,19 +5,15 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //
-//
 //@Service
 //public class FavoriteListService {
 //
 //	private final FavoriteListRepository fvlistrepo;
-
 //
-
 //	@Autowired
 //	public FavoriteListService(FavoriteListRepository fvlistrepo) {
 //		this.fvlistrepo = fvlistrepo;
 //	}
-
 //
 //	//新增收藏
 //	public FavoriteListVO addFavoriteList(Integer memId,Integer prodId) {

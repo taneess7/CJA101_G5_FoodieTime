@@ -33,8 +33,8 @@ public class StoreCateVO implements Serializable {
 	@OneToMany(mappedBy = "storeCate", cascade = CascadeType.ALL)
 	@OrderBy("storId asc")
 	private Set<StoreVO> store;
-	
-	
+	 
+	   
 	// 2.類型名稱
 	@Column(name = "STORE_CATE")
 	private String storCatName; 

@@ -1,0 +1,681 @@
+<!DOCTYPE html >
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廠家黑名單管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">廠家管理</li>
+                    <li class="breadcrumb-item active">黑名單管理</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-ban me-2"></i>廠家黑名單管理</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBlacklistModal">
+                                <i class="fas fa-plus me-1"></i>新增黑名單                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="廠家名稱、統一編號、負責人">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="blacklistReason" class="form-label">列入原因</label>
+                                    <select class="form-select" id="blacklistReason">
+                                        <option value="">全部原因</option>
+                                        <option value="fraud">詐騙行為</option>
+                                        <option value="fake_product">假冒商品</option>
+                                        <option value="poor_service">服務不佳</option>
+                                        <option value="violation">違規行為</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="blacklistStatus" class="form-label">狀態</label>
+                                    <select class="form-select" id="blacklistStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="active">生效中</option>
+                                        <option value="expired">已到期</option>
+                                        <option value="removed">已移除</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateFrom" class="form-label">列入日期(起)</label>
+                                    <input type="date" class="form-control" id="dateFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateTo" class="form-label">列入日期(迄)</label>
+                                    <input type="date" class="form-control" id="dateTo">
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Blacklist Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>廠家資料</th>
+                                            <th>統一編號</th>
+                                            <th>負責人</th>
+                                            <th>列入原因</th>
+                                            <th>列入日期</th>
+                                            <th>到期日期</th>
+                                            <th>狀態</th>
+                                            <th>處理人員</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input blacklist-checkbox" data-vendor-id="V001"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="廠家" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">詐騙廠家A</div>
+                                                        <small class="text-muted">V001</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>12345678</td>
+                                            <td>王先生</td>
+                                            <td><span class="badge bg-danger">詐騙行為</span></td>
+                                            <td>2024-01-10</td>
+                                            <td>2024-07-10</td>
+                                            <td><span class="badge bg-danger">生效中</span></td>
+                                            <td>張管理員</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewBlacklist('V001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editBlacklist('V001')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success" onclick="removeBlacklist('V001')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input blacklist-checkbox" data-vendor-id="V002"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="廠家" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">假貨廠家B</div>
+                                                        <small class="text-muted">V002</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>87654321</td>
+                                            <td>王先生</td>
+                                            <td><span class="badge bg-warning">假冒商品</span></td>
+                                            <td>2024-01-05</td>
+                                            <td>2024-04-05</td>
+                                            <td><span class="badge bg-secondary">已到期</span></td>
+                                            <td>李管理員</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewBlacklist('V002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info me-1" onclick="renewBlacklist('V002')">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input blacklist-checkbox" data-vendor-id="V003"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="廠家" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold text-muted">已移除廠家C</div>
+                                                        <small class="text-muted">V003</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>11223344</td>
+                                            <td>陳先生</td>
+                                            <td><span class="badge bg-secondary">服務不佳</span></td>
+                                            <td>2023-12-01</td>
+                                            <td>2024-06-01</td>
+                                            <td><span class="badge bg-success">已移除</span></td>
+                                            <td>李管理員</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewBlacklist('V003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary me-1" disabled>
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchRemove()">
+                                        <i class="fas fa-check me-1"></i>批量移除
+                                    </button>
+                                    <button class="btn btn-info" onclick="batchRenew()">
+                                        <i class="fas fa-redo me-1"></i>批量續期
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="黑名單分頁導航">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Blacklist Modal -->
+    <div class="modal fade" id="addBlacklistModal" tabindex="-1" aria-labelledby="addBlacklistModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBlacklistModalLabel">新增廠家黑名單</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBlacklistForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="vendorSearch" class="form-label">選擇廠家</label>
+                                <input type="text" class="form-control" id="vendorSearch" placeholder="輸入廠家名稱或統一編號">
+                                <div class="mt-2">
+                                    <small class="text-muted">搜尋結果：</small>
+                                    <div id="vendorSearchResults" class="border rounded p-2 mt-1" style="max-height: 150px; overflow-y: auto;">
+                                        <div class="vendor-result p-2 border-bottom" data-vendor-id="V004" onclick="selectVendor('V004', '測試廠家D', '55667788')">
+                                            <strong>測試廠家D</strong> (V004)<br>
+                                            <small class="text-muted">統編：55667788</small>
+                                        </div>
+                                        <div class="vendor-result p-2" data-vendor-id="V005" onclick="selectVendor('V005', '一般廠家E', '99887766')">
+                                            <strong>一般廠家E</strong> (V005)<br>
+                                            <small class="text-muted">統編：99887766</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="selectedVendor" class="form-label">已選廠家</label>
+                                <input type="text" class="form-control" id="selectedVendor" readonly placeholder="請從左側選擇廠家">
+                                <input type="hidden" id="selectedVendorId">
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="blacklistReasonAdd" class="form-label">列入原因 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="blacklistReasonAdd" required>
+                                    <option value="">請選擇期限</option>
+                                    <option value="fraud">詐騙行為</option>
+                                    <option value="fake_product">假冒商品</option>
+                                    <option value="poor_service">服務不佳</option>
+                                    <option value="violation">違規行為</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="blacklistDuration" class="form-label">黑名單期限 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="blacklistDuration" required>
+                                    <option value="">請選擇期限</option>
+                                    <option value="30">30天</option>
+                                    <option value="90">90天</option>
+                                    <option value="180">180天</option>
+                                    <option value="365">1年</option>
+                                    <option value="permanent">永久</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="blacklistDescription" class="form-label">詳細說明 <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="blacklistDescription" rows="4" required placeholder="請詳細說明列入黑名單的原因及相關證據..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="notifyVendor">
+                                    <label class="form-check-label" for="notifyVendor">
+                                        通知廠家（發送電子郵件通知）                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="addToBlacklist()">列入黑名單</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Blacklist Modal -->
+    <div class="modal fade" id="viewBlacklistModal" tabindex="-1" aria-labelledby="viewBlacklistModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewBlacklistModalLabel">黑名單詳情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>廠家資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">廠家名稱：</td>
+                                    <td id="modalVendorName">詐騙廠家A</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">廠家編號：</td>
+                                    <td id="modalVendorId">V001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">統一編號：</td>
+                                    <td id="modalVendorTaxId">12345678</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">負責人：</td>
+                                    <td id="modalVendorOwner">王先生</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>黑名單資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">列入原因：</td>
+                                    <td id="modalBlacklistReason">詐騙行為</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">列入日期：</td>
+                                    <td id="modalBlacklistDate">2024-01-10</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">到期日期：</td>
+                                    <td id="modalExpiryDate">2024-07-10</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">處理人員：</td>
+                                    <td id="modalOperator">張管理員</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>詳細說明</h6>
+                            <div class="border p-3 bg-light" id="modalDescription">
+                                該廠家涉嫌詐騙行為，多次收款後未出貨，已有多位消費者檢舉。經調查確認屬實，故列入黑名單管理。                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.blacklist-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Select Vendor Function
+        function selectVendor(vendorId, vendorName, taxId) {
+            document.getElementById('selectedVendor').value = `${vendorName} (${vendorId}) - 統編：${taxId}`;
+            document.getElementById('selectedVendorId').value = vendorId;
+        }
+
+        // Add to Blacklist Function
+        function addToBlacklist() {
+            const vendorId = document.getElementById('selectedVendorId').value;
+            const reason = document.getElementById('blacklistReasonAdd').value;
+            const duration = document.getElementById('blacklistDuration').value;
+            const description = document.getElementById('blacklistDescription').value;
+            
+            if (!vendorId) {
+                alert('請選擇要列入黑名單的廠家');
+                return;
+            }
+            
+            if (!reason || !duration || !description.trim()) {
+                alert('請填寫所有必填欄位');
+                return;
+            }
+            
+            if (confirm('確認要將此廠家列入黑名單嗎？')) {
+                alert('廠家已成功列入黑名單');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addBlacklistModal'));
+                modal.hide();
+                location.reload();
+            }
+        }
+
+        // View Blacklist Function
+        function viewBlacklist(vendorId) {
+            // 模擬資料
+            const blacklistData = {
+                'V001': {
+                    vendorName: '詐騙廠家A',
+                    vendorId: 'V001',
+                    taxId: '12345678',
+                    owner: '王先生',
+                    reason: '詐騙行為',
+                    date: '2024-01-10',
+                    expiry: '2024-07-10',
+                    operator: '張管理員',
+                    description: '該廠家涉嫌詐騙行為，多次收款後未出貨，已有多位消費者檢舉。經調查確認屬實，故列入黑名單管理。'
+                }
+            };
+
+            const data = blacklistData[vendorId];
+            if (data) {
+                document.getElementById('modalVendorName').textContent = data.vendorName;
+                document.getElementById('modalVendorId').textContent = data.vendorId;
+                document.getElementById('modalVendorTaxId').textContent = data.taxId;
+                document.getElementById('modalVendorOwner').textContent = data.owner;
+                document.getElementById('modalBlacklistReason').textContent = data.reason;
+                document.getElementById('modalBlacklistDate').textContent = data.date;
+                document.getElementById('modalExpiryDate').textContent = data.expiry;
+                document.getElementById('modalOperator').textContent = data.operator;
+                document.getElementById('modalDescription').textContent = data.description;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewBlacklistModal'));
+                modal.show();
+            }
+        }
+
+        // Edit Blacklist Function
+        function editBlacklist(vendorId) {
+            alert('編輯黑名單功能開發中...');
+        }
+
+        // Remove from Blacklist Function
+        function removeBlacklist(vendorId) {
+            if (confirm('確認要將此廠家從黑名單中移除嗎？')) {
+                alert('廠家已從黑名單中移除');
+                location.reload();
+            }
+        }
+
+        // Renew Blacklist Function
+        function renewBlacklist(vendorId) {
+            if (confirm('確認要續期此廠家的黑名單嗎？')) {
+                alert('黑名單已續期');
+                location.reload();
+            }
+        }
+
+        // Batch Remove Function
+        function batchRemove() {
+            const selectedVendors = document.querySelectorAll('.blacklist-checkbox:checked');
+            if (selectedVendors.length === 0) {
+                alert('請選擇要移除的廠家');
+                return;
+            }
+            
+            if (confirm(`確認要批量移除 ${selectedVendors.length} 個廠家的黑名單嗎？`)) {
+                alert('批量移除完成');
+                location.reload();
+            }
+        }
+
+        // Batch Renew Function
+        function batchRenew() {
+            const selectedVendors = document.querySelectorAll('.blacklist-checkbox:checked');
+            if (selectedVendors.length === 0) {
+                alert('請選擇要續期的廠家');
+                return;
+            }
+            
+            if (confirm(`確認要批量續期 ${selectedVendors.length} 個廠家的黑名單嗎？`)) {
+                alert('批量續期完成');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

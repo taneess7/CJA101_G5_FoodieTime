@@ -13,13 +13,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "servermanagerauth")
 public class SmgauthVO implements Serializable {
 
     @EmbeddedId
+    @EqualsAndHashCode.Include
     private SmgauthId id;
 
     @ManyToOne(fetch = FetchType.LAZY)

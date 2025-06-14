@@ -14,17 +14,23 @@ import com.foodietime.store.model.StoreVO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"groupOrdersList","gbpromotionList","groupbuyingcasesList"})
 @Table(name = "group_products")
 public class GbprodVO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GB_PROD_ID")
+    @EqualsAndHashCode.Include
     private Integer gbProdId;
     
+  
     @OneToMany(mappedBy = "gbprod", cascade = CascadeType.ALL)
     private List<GroupOrdersVO> groupOrdersList = new ArrayList<>();
 

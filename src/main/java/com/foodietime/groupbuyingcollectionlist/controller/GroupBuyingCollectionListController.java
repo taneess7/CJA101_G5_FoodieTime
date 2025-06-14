@@ -39,5 +39,3 @@
 //		model.addAttribute("groupBuyingCollectionListVO",vo);
 //		return "groupBuyingCollectionList/listOneCollectionList";
 //	}
-
-

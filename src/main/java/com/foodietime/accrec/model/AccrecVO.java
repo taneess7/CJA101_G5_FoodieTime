@@ -21,18 +21,21 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "appropriation_comm_record")
 public class AccrecVO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMM_PAYOUT_ID")
-    private Integer commPayoutID;
+    @EqualsAndHashCode.Include
+    private Integer commPayoutID; 
 
-    @NotNull(message = "訂單類型不能為空")
+    @NotNull(message = "訂單類型不能是空的")
     @Column(name = "ORDER_TYPE")
     private Byte orderType;
 
@@ -91,4 +94,6 @@ public class AccrecVO implements Serializable {
     @NotNull(message = "serverManager 不可為空")  
     @JoinColumn(name = "STOR_ID") 
     private SmgVO serverManager;
+    
+    
 }

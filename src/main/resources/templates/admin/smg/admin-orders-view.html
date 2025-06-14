@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單詳情檢視 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自訂CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">訂單管理</li>
+                    <li class="breadcrumb-item active">訂單詳情檢視</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-header">
+                        <h1 class="page-title">訂單詳情檢視</h1>
+                        <p class="page-description">管理員檢視和管理所有訂單資料</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">總訂單數</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">2,847</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">已完成訂單</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">2,156</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">處理中訂單</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">456</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">總營收</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">NT$ 1,245,680</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Form -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">訂單搜尋與篩選</h6>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="訂單編號、會員姓名、商品名稱">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="orderType" class="form-label">訂單類型</label>
+                                    <select class="form-select" id="orderType">
+                                        <option value="">全部類型</option>
+                                        <option value="group">團購訂單</option>
+                                        <option value="individual">個人訂單</option>
+                                        <option value="wholesale">批發訂單</option>
+                                        <option value="custom">客製化訂單</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="orderStatus" class="form-label">訂單狀態</label>
+                                    <select class="form-select" id="orderStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="pending">待付款</option>
+                                        <option value="paid">已付款</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="shipped">已出貨</option>
+                                        <option value="delivered">已送達</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="cancelled">已取消</option>
+                                        <option value="refunded">已退款</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="paymentMethod" class="form-label">付款方式</label>
+                                    <select class="form-select" id="paymentMethod">
+                                        <option value="">全部方式</option>
+                                        <option value="credit_card">信用卡</option>
+                                        <option value="bank_transfer">銀行轉帳</option>
+                                        <option value="cash_on_delivery">貨到付款</option>
+                                        <option value="mobile_payment">行動支付</option>
+                                        <option value="store_pickup">超商取貨付款</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="dateRange" class="form-label">日期範圍</label>
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" id="startDate">
+                                        <span class="input-group-text">至</span>
+                                        <input type="date" class="form-control" id="endDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary me-2"><i class="fas fa-search"></i> 搜尋</button>
+                                <button type="button" class="btn btn-secondary me-2"><i class="fas fa-undo"></i> 重置</button>
+                                <button type="button" class="btn btn-success" onclick="exportOrders()"><i class="fas fa-download"></i> 匯出</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">訂單列表</h6>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="batchProcess()">批次處理</button>
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="batchConfirm()">批次確認</button>
+                        <button type="button" class="btn btn-sm btn-outline-info" onclick="batchShip()">批次出貨</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="batchCancel()">批次取消</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th width="3%">
+                                        <input type="checkbox" id="selectAll" class="form-check-input">
+                                    </th>
+                                    <th width="8%">訂單編號</th>
+                                    <th width="8%">訂單類型</th>
+                                    <th width="10%">會員資料</th>
+                                    <th width="12%">商品資料</th>
+                                    <th width="6%">數量</th>
+                                    <th width="8%">金額</th>
+                                    <th width="8%">付款方式</th>
+                                    <th width="10%">下單時間</th>
+                                    <th width="8%">狀態</th>
+                                    <th width="19%">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                                    <td><strong>O2024001</strong></td>
+                                    <td><span class="badge bg-primary">團購訂單</span></td>
+                                    <td>
+                                        <div class="member-info">
+                                            <strong>王小明</strong><br>
+                                            <small class="text-muted">M001</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="product-info">
+                                            <strong>日本進口零食組合</strong><br>
+                                            <small class="text-muted">規格：綜合口味</small>
+                                        </div>
+                                    </td>
+                                    <td>3</td>
+                                    <td><strong>NT$ 897</strong></td>
+                                    <td><span class="badge bg-info">信用卡</span></td>
+                                    <td>2024-01-15<br><small>14:30</small></td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O2024001')" title="檢視詳情">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O2024001')" title="物流追蹤">
+                                            <i class="fas fa-truck"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editOrder('O2024001')" title="編輯訂單">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder('O2024001')" title="取消訂單">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                                    <td><strong>O2024002</strong></td>
+                                    <td><span class="badge bg-secondary">個人訂單</span></td>
+                                    <td>
+                                        <div class="member-info">
+                                            <strong>李大華</strong><br>
+                                            <small class="text-muted">M002</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="product-info">
+                                            <strong>韓國泡麵禮盒</strong><br>
+                                            <small class="text-muted">規格：辛拉麵*5</small>
+                                        </div>
+                                    </td>
+                                    <td>1</td>
+                                    <td><strong>NT$ 450</strong></td>
+                                    <td><span class="badge bg-warning">銀行轉帳</span></td>
+                                    <td>2024-01-15<br><small>16:45</small></td>
+                                    <td><span class="badge bg-info">處理中</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O2024002')" title="檢視詳情">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O2024002')" title="物流追蹤">
+                                            <i class="fas fa-truck"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editOrder('O2024002')" title="編輯訂單">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder('O2024002')" title="取消訂單">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                                    <td><strong>O2024003</strong></td>
+                                    <td><span class="badge bg-success">批發訂單</span></td>
+                                    <td>
+                                        <div class="member-info">
+                                            <strong>陳美玲</strong><br>
+                                            <small class="text-muted">M003</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="product-info">
+                                            <strong>台灣茶葉禮盒</strong><br>
+                                            <small class="text-muted">規格：高山烏龍*10</small>
+                                        </div>
+                                    </td>
+                                    <td>10</td>
+                                    <td><strong>NT$ 2,500</strong></td>
+                                    <td><span class="badge bg-success">行動支付</span></td>
+                                    <td>2024-01-14<br><small>10:20</small></td>
+                                    <td><span class="badge bg-primary">已出貨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O2024003')" title="檢視詳情">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O2024003')" title="物流追蹤">
+                                            <i class="fas fa-truck"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editOrder('O2024003')" title="編輯訂單">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="completeOrder('O2024003')" title="完成訂單">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input order-checkbox"></td>
+                                    <td><strong>O2024004</strong></td>
+                                    <td><span class="badge bg-warning">客製化訂單</span></td>
+                                    <td>
+                                        <div class="member-info">
+                                            <strong>張小華</strong><br>
+                                            <small class="text-muted">M004</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="product-info">
+                                            <strong>客製化商品</strong><br>
+                                            <small class="text-muted">規格：特殊尺寸</small>
+                                        </div>
+                                    </td>
+                                    <td>1</td>
+                                    <td><strong>NT$ 1,200</strong></td>
+                                    <td><span class="badge bg-danger">貨到付款</span></td>
+                                    <td>2024-01-13<br><small>09:15</small></td>
+                                    <td><span class="badge bg-warning">待付款</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O2024004')" title="檢視詳情">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editOrder('O2024004')" title="編輯訂單">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success me-1" onclick="confirmPayment('O2024004')" title="確認付款">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder('O2024004')" title="取消訂單">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">下一頁</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Order Modal -->
+    <div class="modal fade" id="viewOrderModal" tabindex="-1" aria-labelledby="viewOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewOrderModalLabel">訂單詳情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>基本訂單資料</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>訂單編號：</strong> <span id="modalOrderId">O2024001</span></p>
+                                    <p class="mb-1"><strong>訂單類型：</strong> <span id="modalOrderType">團購訂單</span></p>
+                                    <p class="mb-1"><strong>訂單狀態：</strong> <span id="modalOrderStatus" class="badge bg-success">已完成</span></p>
+                                    <p class="mb-1"><strong>下單時間：</strong> <span id="modalOrderTime">2024-01-15 14:30</span></p>
+                                    <p class="mb-1"><strong>付款方式：</strong> <span id="modalPaymentMethod">信用卡</span></p>
+                                    <p class="mb-0"><strong>訂單金額：</strong> <span id="modalOrderAmount" class="text-success fw-bold">NT$ 897</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>會員資料</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>會員姓名：</strong> <span id="modalMemberName">王小明</span></p>
+                                    <p class="mb-1"><strong>會員編號：</strong> <span id="modalMemberId">M001</span></p>
+                                    <p class="mb-1"><strong>聯絡電話：</strong> <span id="modalMemberPhone">0912-345-678</span></p>
+                                    <p class="mb-1"><strong>電子信箱：</strong> <span id="modalMemberEmail">wang@example.com</span></p>
+                                    <p class="mb-0"><strong>會員等級：</strong> <span id="modalMemberLevel" class="badge bg-warning">黃金會員</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>商品詳細</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>商品名稱</th>
+                                            <th>規格</th>
+                                            <th>單價</th>
+                                            <th>數量</th>
+                                            <th>小計</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modalProductDetails">
+                                        <tr>
+                                            <td>日本進口零食組合A</td>
+                                            <td>原味</td>
+                                            <td>NT$ 299</td>
+                                            <td>2</td>
+                                            <td>NT$ 598</td>
+                                        </tr>
+                                        <tr>
+                                            <td>日本進口零食組合B</td>
+                                            <td>辣味</td>
+                                            <td>NT$ 299</td>
+                                            <td>1</td>
+                                            <td>NT$ 299</td>
+                                        </tr>
+                                        <tr class="table-info">
+                                            <td colspan="4" class="text-end fw-bold">總計</td>
+                                            <td class="fw-bold">NT$ 897</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>收件資料</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>收件人：</strong> <span id="modalRecipientName">王小明</span></p>
+                                    <p class="mb-1"><strong>聯絡電話：</strong> <span id="modalRecipientPhone">0912-345-678</span></p>
+                                    <p class="mb-1"><strong>收件地址：</strong> <span id="modalRecipientAddress">台北市信義區信義路五段7號</span></p>
+                                    <p class="mb-0"><strong>備註：</strong> <span id="modalRecipientNote">請於上午配送</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>物流資料</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>物流公司：</strong> <span id="modalShippingCompany">黑貓宅急便</span></p>
+                                    <p class="mb-1"><strong>追蹤編號：</strong> <span id="modalTrackingNumber">TC123456789TW</span></p>
+                                    <p class="mb-1"><strong>預計送達：</strong> <span id="modalDeliveryDate">2024-01-18</span></p>
+                                    <p class="mb-0"><strong>配送狀態：</strong> <span id="modalShippingStatus" class="badge bg-info">配送中</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>訂單狀態歷程</h6>
+                            <div class="timeline" id="modalOrderTimeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">訂單建立</h6>
+                                        <p class="timeline-description">會員成功下單</p>
+                                        <small class="text-muted">2024-01-15 14:30</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">付款完成</h6>
+                                        <p class="timeline-description">信用卡付款成功</p>
+                                        <small class="text-muted">2024-01-15 14:32</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">廠家確認</h6>
+                                        <p class="timeline-description">廠家確認訂單並開始處理</p>
+                                        <small class="text-muted">2024-01-16 09:15</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-info"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">商品出貨</h6>
+                                        <p class="timeline-description">商品已交付物流公司</p>
+                                        <small class="text-muted">2024-01-17 16:20</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-info" onclick="printOrder()">列印訂單</button>
+                    <button type="button" class="btn btn-warning" onclick="editOrderFromModal()">編輯訂單</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Order Modal -->
+    <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editOrderModalLabel">編輯訂單</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editOrderStatus" class="form-label">訂單狀態</label>
+                                    <select class="form-select" id="editOrderStatus">
+                                        <option value="pending">待付款</option>
+                                        <option value="paid">已付款</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="shipped">已出貨</option>
+                                        <option value="delivered">已送達</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="cancelled">已取消</option>
+                                        <option value="refunded">已退款</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editTrackingNumber" class="form-label">追蹤編號</label>
+                                    <input type="text" class="form-control" id="editTrackingNumber" placeholder="請輸入物流追蹤編號">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editShippingCompany" class="form-label">物流公司</label>
+                                    <select class="form-select" id="editShippingCompany">
+                                        <option value="black_cat">黑貓宅急便</option>
+                                        <option value="post_office">中華郵政</option>
+                                        <option value="family_mart">全家便利商店</option>
+                                        <option value="seven_eleven">7-ELEVEN</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editDeliveryDate" class="form-label">預計送達日期</label>
+                                    <input type="date" class="form-control" id="editDeliveryDate">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editOrderNote" class="form-label">訂單備註</label>
+                            <textarea class="form-control" id="editOrderNote" rows="3" placeholder="請輸入訂單備註.."></textarea>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyMember">
+                            <label class="form-check-label" for="notifyMember">
+                                通知會員訂單狀態更新
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveOrderChanges()">儲存變更</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Order Modal -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelOrderModalLabel">取消訂單</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="cancelReason" class="form-label">取消原因</label>
+                            <select class="form-select" id="cancelReason">
+                                <option value="">請選擇取消原因</option>
+                                <option value="customer_request">客戶要求取消</option>
+                                <option value="payment_failed">付款失敗</option>
+                                <option value="out_of_stock">商品缺貨</option>
+                                <option value="address_issue">地址問題</option>
+                                <option value="system_error">系統錯誤</option>
+                                <option value="other">其他原因</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cancelNote" class="form-label">備註說明</label>
+                            <textarea class="form-control" id="cancelNote" rows="3" placeholder="請輸入詳細說明.."></textarea>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="processRefund">
+                            <label class="form-check-label" for="processRefund">
+                                自動處理退款（如已付款）
+                            </label>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyMemberCancel">
+                            <label class="form-check-label" for="notifyMemberCancel">
+                                通知會員訂單取消
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmCancelOrder()">確認取消訂單</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.order-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Order Function
+        function viewOrder(orderId) {
+            // 模擬資料
+            const orderData = {
+                'O2024001': {
+                    id: 'O2024001',
+                    type: '團購訂單',
+                    status: '已付款',
+                    time: '2024-01-15 14:30',
+                    paymentMethod: '信用卡',
+                    amount: 'NT$ 897',
+                    memberName: '王小明',
+                    memberId: 'M001',
+                    memberPhone: '0912-345-678',
+                    memberEmail: 'wang@example.com',
+                    memberLevel: '黃金會員'
+                },
+                'O2024002': {
+                    id: 'O2024002',
+                    type: '個人訂單',
+                    status: '處理中',
+                    time: '2024-01-15 16:45',
+                    paymentMethod: '銀行轉帳',
+                    amount: 'NT$ 450',
+                    memberName: '李大華',
+                    memberId: 'M002',
+                    memberPhone: '0923-456-789',
+                    memberEmail: 'lee@example.com',
+                    memberLevel: '白金會員'
+                }
+            };
+
+            const data = orderData[orderId];
+            if (data) {
+                document.getElementById('modalOrderId').textContent = data.id;
+                document.getElementById('modalOrderType').textContent = data.type;
+                document.getElementById('modalOrderStatus').textContent = data.status;
+                document.getElementById('modalOrderTime').textContent = data.time;
+                document.getElementById('modalPaymentMethod').textContent = data.paymentMethod;
+                document.getElementById('modalOrderAmount').textContent = data.amount;
+                document.getElementById('modalMemberName').textContent = data.memberName;
+                document.getElementById('modalMemberId').textContent = data.memberId;
+                document.getElementById('modalMemberPhone').textContent = data.memberPhone;
+                document.getElementById('modalMemberEmail').textContent = data.memberEmail;
+                document.getElementById('modalMemberLevel').textContent = data.memberLevel;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewOrderModal'));
+                modal.show();
+            }
+        }
+
+        // Track Order Function
+        function trackOrder(orderId) {
+            alert('物流追蹤功能開發中..\n\n追蹤編號：TC123456789TW\n物流公司：黑貓宅急便\n配送狀態：配送中\n預計送達：2024-01-18');
+        }
+
+        // Edit Order Function
+        function editOrder(orderId) {
+            const modal = new bootstrap.Modal(document.getElementById('editOrderModal'));
+            modal.show();
+        }
+
+        // Cancel Order Function
+        function cancelOrder(orderId) {
+            const modal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+            modal.show();
+        }
+
+        // Complete Order Function
+        function completeOrder(orderId) {
+            if (confirm('確認要將此訂單標記為已完成嗎？')) {
+                alert('訂單已標記為完成');
+                location.reload();
+            }
+        }
+
+        // Confirm Payment Function
+        function confirmPayment(orderId) {
+            if (confirm('確認要確認此訂單的付款狀態嗎？')) {
+                alert('付款狀態已確認');
+                location.reload();
+            }
+        }
+
+        // Edit Order from Modal
+        function editOrderFromModal() {
+            bootstrap.Modal.getInstance(document.getElementById('viewOrderModal')).hide();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editOrderModal'));
+                modal.show();
+            }, 300);
+        }
+
+        // Save Order Changes
+        function saveOrderChanges() {
+            const status = document.getElementById('editOrderStatus').value;
+            const trackingNumber = document.getElementById('editTrackingNumber').value;
+            const note = document.getElementById('editOrderNote').value;
+            
+            if (confirm('確認要儲存這些變更嗎？')) {
+                alert('訂單資料已更新');
+                bootstrap.Modal.getInstance(document.getElementById('editOrderModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Confirm Cancel Order
+        function confirmCancelOrder() {
+            const reason = document.getElementById('cancelReason').value;
+            const note = document.getElementById('cancelNote').value;
+            
+            if (!reason) {
+                alert('請選取取消原因');
+                return;
+            }
+            
+            if (confirm('確認要取消此訂單？')) {
+                alert('訂單已取消');
+                bootstrap.Modal.getInstance(document.getElementById('cancelOrderModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Print Order Function
+        function printOrder() {
+            alert('列印訂單功能開發中..');
+        }
+
+        // Export Orders Function
+        function exportOrders() {
+            alert('匯出訂單功能開發中..');
+        }
+
+        // Batch Process Function
+        function batchProcess() {
+            const selectedOrders = document.querySelectorAll('.order-checkbox:checked');
+            if (selectedOrders.length === 0) {
+                alert('請選擇要處理的訂單');
+                return;
+            }
+            alert('批次處理功能開發中..');
+        }
+
+        // Batch Confirm Function
+        function batchConfirm() {
+            const selectedOrders = document.querySelectorAll('.order-checkbox:checked');
+            if (selectedOrders.length === 0) {
+                alert('請選擇要確認的訂單');
+                return;
+            }
+            
+            if (confirm(`確認要批次確認 ${selectedOrders.length} 筆訂單？`)) {
+                alert('批次確認完成');
+                location.reload();
+            }
+        }
+
+        // Batch Ship Function
+        function batchShip() {
+            const selectedOrders = document.querySelectorAll('.order-checkbox:checked');
+            if (selectedOrders.length === 0) {
+                alert('請選擇要出貨的訂單');
+                return;
+            }
+            
+            if (confirm(`確認要批次出貨 ${selectedOrders.length} 筆訂單？`)) {
+                alert('批次出貨完成');
+                location.reload();
+            }
+        }
+
+        // Batch Cancel Function
+        function batchCancel() {
+            const selectedOrders = document.querySelectorAll('.order-checkbox:checked');
+            if (selectedOrders.length === 0) {
+                alert('請選擇要取消的訂單');
+                return;
+            }
+            
+            const reason = prompt('請輸入批次取消的原因');
+            if (reason && reason.trim()) {
+                if (confirm(`確認要批次取消 ${selectedOrders.length} 筆訂單？`)) {
+                    alert('批次取消完成');
+                    location.reload();
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dee2e6;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .timeline-title {
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .timeline-description {
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        .member-info, .product-info {
+            font-size: 13px;
+        }
+        
+        .member-info strong, .product-info strong {
+            font-size: 14px;
+        }
+        
+        .border-left-primary {
+            border-left: 0.25rem solid #4e73df !important;
+        }
+        
+        .border-left-success {
+            border-left: 0.25rem solid #1cc88a !important;
+        }
+        
+        .border-left-info {
+            border-left: 0.25rem solid #36b9cc !important;
+        }
+        
+        .border-left-warning {
+            border-left: 0.25rem solid #f6c23e !important;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購退款管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">團購管理</li>
+                    <li class="breadcrumb-item active">退款管理</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-undo me-2"></i>團購退款管理</h5>
+                            <div>
+                                <button class="btn btn-info me-2" onclick="exportRefunds()">
+                                    <i class="fas fa-download me-1"></i>匯出報表
+                                </button>
+                                <button class="btn btn-success" onclick="batchProcess()">
+                                    <i class="fas fa-tasks me-1"></i>批量處理
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Statistics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">待處理退款</h6>
+                                                    <h4 class="mb-0">23</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-clock fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">已完成退款</h6>
+                                                    <h4 class="mb-0">156</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-check-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-danger text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">退款失敗</h6>
+                                                    <h4 class="mb-0">8</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-times-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">退款總額</h6>
+                                                    <h4 class="mb-0">NT$ 89,450</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-dollar-sign fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-2">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="退款編號、會員姓名">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="refundStatus" class="form-label">退款狀態</label>
+                                    <select class="form-select" id="refundStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="pending">待審核</option>
+                                        <option value="approved">已核准</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="failed">失敗</option>
+                                        <option value="rejected">已拒絕</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="refundType" class="form-label">退款類型</label>
+                                    <select class="form-select" id="refundType">
+                                        <option value="">全部類型</option>
+                                        <option value="full">全額退款</option>
+                                        <option value="partial">部分退款</option>
+                                        <option value="fee_only">僅退手續費</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="refundReason" class="form-label">退款原因</label>
+                                    <select class="form-select" id="refundReason">
+                                        <option value="">全部原因</option>
+                                        <option value="customer_request">客戶要求</option>
+                                        <option value="product_defect">商品瑕疵</option>
+                                        <option value="delivery_issue">配送問題</option>
+                                        <option value="vendor_cancel">廠家取消</option>
+                                        <option value="system_error">系統錯誤</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateRange" class="form-label">申請時間</label>
+                                    <select class="form-select" id="dateRange">
+                                        <option value="">全部時間</option>
+                                        <option value="today">今天</option>
+                                        <option value="week">本週</option>
+                                        <option value="month">本月</option>
+                                        <option value="quarter">本季</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> 搜尋
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Refunds Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>退款編號</th>
+                                            <th>團購資訊</th>
+                                            <th>申請會員</th>
+                                            <th>申請金額</th>
+                                            <th>退款狀態</th>
+                                            <th>退款原因</th>
+                                            <th>申請時間</th>
+                                            <th>處理時間</th>
+                                            <th>狀態</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R001"></td>
+                                            <td class="fw-bold">R001</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">日本進口美妝團購</div>
+                                                        <small class="text-muted">G001 王美麗小姐</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>王小明</div>
+                                                <small class="text-muted">M001 wang@example.com</small>
+                                            </td>
+                                            <td class="fw-bold">NT$ 897</td>
+                                            <td class="fw-bold text-warning">NT$ 897</td>
+                                            <td><span class="badge bg-info">商品瑕疵</span></td>
+                                            <td>2024-01-16 10:30</td>
+                                            <td class="text-muted">-</td>
+                                            <td><span class="badge bg-warning">待處理</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="approveRefund('R001')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectRefund('R001')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R002"></td>
+                                            <td class="fw-bold">R002</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">韓國美妝保養團購</div>
+                                                        <small class="text-muted">G002 李美華女士</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>李大華</div>
+                                                <small class="text-muted">M002 lee@example.com</small>
+                                            </td>
+                                            <td class="fw-bold">NT$ 599</td>
+                                            <td class="fw-bold text-warning">NT$ 300</td>
+                                            <td><span class="badge bg-secondary">客戶要求</span></td>
+                                            <td>2024-01-15 14:20</td>
+                                            <td>2024-01-16 09:15</td>
+                                            <td><span class="badge bg-info">處理中</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="approveRefund('R002')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectRefund('R002')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R003"></td>
+                                            <td class="fw-bold">R003</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">3C電子團購</div>
+                                                        <small class="text-muted">G003 數位科技小舖</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>張小華</div>
+                                                <small class="text-muted">M003 zhang@example.com</small>
+                                            </td>
+                                            <td class="fw-bold">NT$ 2,598</td>
+                                            <td class="fw-bold text-success">NT$ 2,598</td>
+                                            <td><span class="badge bg-warning">配送問題</span></td>
+                                            <td>2024-01-14 11:45</td>
+                                            <td>2024-01-15 16:30</td>
+                                            <td><span class="badge bg-success">已完成</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info me-1" onclick="printRefund('R003')">
+                                                    <i class="fas fa-print"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" onclick="resendRefund('R003')">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R004"></td>
+                                            <td class="fw-bold">R004</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">服飾配件團購</div>
+                                                        <small class="text-muted">G004 時尚精品店</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>陳小明</div>
+                                                <small class="text-muted">M004 chen@example.com</small>
+                                            </td>
+                                            <td class="fw-bold">NT$ 1,995</td>
+                                            <td class="fw-bold text-danger">NT$ 1,995</td>
+                                            <td><span class="badge bg-danger">廠家取消</span></td>
+                                            <td>2024-01-13 16:20</td>
+                                            <td>2024-01-14 10:45</td>
+                                            <td><span class="badge bg-danger">失敗</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R004')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="retryRefund('R004')">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="contactMember('R004')">
+                                                    <i class="fas fa-phone"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions and Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchApprove()">
+                                        <i class="fas fa-check me-1"></i>批量核准
+                                    </button>
+                                    <button class="btn btn-info me-2" onclick="batchProcess()">
+                                        <i class="fas fa-cog me-1"></i>批量處理
+                                    </button>
+                                    <button class="btn btn-danger" onclick="batchReject()">
+                                        <i class="fas fa-times me-1"></i>批量拒絕
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="退款列表分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Refund Modal -->
+    <div class="modal fade" id="viewRefundModal" tabindex="-1" aria-labelledby="viewRefundModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewRefundModalLabel">退款詳細資訊</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>退款基本資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">退款編號</td>
+                                    <td id="modalRefundId">R001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">退款狀態</td>
+                                    <td id="modalRefundStatus">待審核</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">申請時間</td>
+                                    <td id="modalRefundTime">2024-01-16 10:30</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">退款類型</td>
+                                    <td id="modalRefundType">全額退款</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">原始金額</td>
+                                    <td id="modalOriginalAmount" class="fw-bold">NT$ 897</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">退款金額</td>
+                                    <td id="modalRefundAmount" class="fw-bold text-warning">NT$ 897</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">退款原因</td>
+                                    <td id="modalRefundReason">商品瑕疵</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>申請會員資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">會員姓名</td>
+                                    <td id="modalMemberName">王小明</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員編號</td>
+                                    <td id="modalMemberId">M001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">聯絡電話</td>
+                                    <td id="modalMemberPhone">0912-345-678</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">電子信箱</td>
+                                    <td id="modalMemberEmail">wang@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">退款帳戶</td>
+                                    <td id="modalRefundAccount">中國信託 ****1234</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>團購資訊</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://via.placeholder.com/80x80?text=團購" alt="團購" class="rounded me-3" style="width: 80px; height: 80px;">
+                                        <div>
+                                            <h6 class="mb-1" id="modalGroupTitle">日本進口美妝團購</h6>
+                                            <p class="text-muted mb-1" id="modalGroupId">團購編號：G001</p>
+                                            <p class="text-muted mb-0" id="modalGroupVendor">廠家：美食小舖</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>退款申請說明</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p id="modalRefundDescription">收到商品後發現，包裝有破損問題，希望申請退款。已拍照存證，可提供相關證明。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>退款處理歷程</h6>
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-info"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">退款申請</h6>
+                                        <p class="timeline-description">會員提交退款申請</p>
+                                        <small class="text-muted">2024-01-16 10:30</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-warning"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">待審核</h6>
+                                        <p class="timeline-description">系統自動分派給客服人員</p>
+                                        <small class="text-muted">2024-01-16 10:31</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-success" onclick="approveRefundFromModal()">核准退款</button>
+                    <button type="button" class="btn btn-danger" onclick="rejectRefundFromModal()">拒絕退款</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Refund Modal -->
+    <div class="modal fade" id="approveRefundModal" tabindex="-1" aria-labelledby="approveRefundModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approveRefundModalLabel">核准退款</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="approveRefundAmount" class="form-label">核准退款金額</label>
+                            <input type="number" class="form-control" id="approveRefundAmount" placeholder="請輸入退款金額" step="0.01">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="approveRefundMethod" class="form-label">退款方式</label>
+                            <select class="form-select" id="approveRefundMethod">
+                                <option value="original">原付款方式</option>
+                                <option value="bank_transfer">銀行轉帳</option>
+                                <option value="store_credit">商店信用</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="approveProcessingTime" class="form-label">預計處理時間</label>
+                            <select class="form-select" id="approveProcessingTime">
+                                <option value="1-3">1-3 個工作天</option>
+                                <option value="3-5">3-5 個工作天</option>
+                                <option value="5-7">5-7 個工作天</option>
+                                <option value="7-14">7-14 個工作天</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="approveNote" class="form-label">處理備註</label>
+                            <textarea class="form-control" id="approveNote" rows="3" placeholder="請輸入處理說明.."></textarea>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyMemberApprove">
+                            <label class="form-check-label" for="notifyMemberApprove">
+                                通知會員處理結果
+                            </label>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyVendorApprove">
+                            <label class="form-check-label" for="notifyVendorApprove">
+                                通知廠家退款資訊
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" onclick="confirmApprove()">確認核准</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Refund Modal -->
+    <div class="modal fade" id="rejectRefundModal" tabindex="-1" aria-labelledby="rejectRefundModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectRefundModalLabel">拒絕退款</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="rejectReason" class="form-label">拒絕原因</label>
+                            <select class="form-select" id="rejectReason">
+                                <option value="insufficient_evidence">證據不足</option>
+                                <option value="beyond_return_period">超過退款期限</option>
+                                <option value="product_used">商品已使用</option>
+                                <option value="policy_violation">違反退款政策</option>
+                                <option value="duplicate_request">重複申請</option>
+                                <option value="other">其他原因</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rejectNote" class="form-label">拒絕說明</label>
+                            <textarea class="form-control" id="rejectNote" rows="4" placeholder="請詳細說明拒絕退款的原因..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="alternativeSolution" class="form-label">替代解決方案</label>
+                            <textarea class="form-control" id="alternativeSolution" rows="3" placeholder="可提供其他替代解決方案..."></textarea>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyMemberReject">
+                            <label class="form-check-label" for="notifyMemberReject">
+                                通知會員處理結果
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmReject()">確認拒絕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.refund-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Refund Function
+        function viewRefund(refundId) {
+            // 模擬資料
+            const refundData = {
+                'R001': {
+                    id: 'R001',
+                    status: '待處理',
+                    time: '2024-01-16 10:30',
+                    type: '全額退款',
+                    originalAmount: 'NT$ 897',
+                    refundAmount: 'NT$ 897',
+                    reason: '商品瑕疵',
+                    memberName: '王美麗',
+                    memberId: 'M001',
+                    memberPhone: '0912-345-678',
+                    memberEmail: 'wang@example.com',
+                    refundAccount: '中國信託 ****1234',
+                    groupTitle: '日本進口美妝團購',
+                    groupId: 'G001',
+                    groupVendor: '美食小舖',
+                    description: '收到商品後發現，包裝有破損問題，希望申請退款。已拍照存證，可提供相關證明。'
+                }
+            };
+
+            const data = refundData[refundId];
+            if (data) {
+                document.getElementById('modalRefundId').textContent = data.id;
+                document.getElementById('modalRefundStatus').textContent = data.status;
+                document.getElementById('modalRefundTime').textContent = data.time;
+                document.getElementById('modalRefundType').textContent = data.type;
+                document.getElementById('modalOriginalAmount').textContent = data.originalAmount;
+                document.getElementById('modalRefundAmount').textContent = data.refundAmount;
+                document.getElementById('modalRefundReason').textContent = data.reason;
+                document.getElementById('modalMemberName').textContent = data.memberName;
+                document.getElementById('modalMemberId').textContent = data.memberId;
+                document.getElementById('modalMemberPhone').textContent = data.memberPhone;
+                document.getElementById('modalMemberEmail').textContent = data.memberEmail;
+                document.getElementById('modalRefundAccount').textContent = data.refundAccount;
+                document.getElementById('modalGroupTitle').textContent = data.groupTitle;
+                document.getElementById('modalGroupId').textContent = '團購編號：' + data.groupId;
+                document.getElementById('modalGroupVendor').textContent = '廠家：' + data.groupVendor;
+                document.getElementById('modalRefundDescription').textContent = data.description;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewRefundModal'));
+                modal.show();
+            }
+        }
+
+        // Approve Refund Function
+        function approveRefund(refundId) {
+            const modal = new bootstrap.Modal(document.getElementById('approveRefundModal'));
+            modal.show();
+        }
+
+        // Approve Refund from Modal
+        function approveRefundFromModal() {
+            bootstrap.Modal.getInstance(document.getElementById('viewRefundModal')).hide();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('approveRefundModal'));
+                modal.show();
+            }, 300);
+        }
+
+        // Confirm Approve
+        function confirmApprove() {
+            const amount = document.getElementById('approveRefundAmount').value;
+            const method = document.getElementById('approveRefundMethod').value;
+            const note = document.getElementById('approveNote').value;
+            
+            if (!amount || amount <= 0) {
+                alert('請輸入有效的退款金額');
+                return;
+            }
+            
+            if (confirm(`確認要核准退款 NT$ ${amount} 嗎？`)) {
+                alert('退款已核准，將進行處理');
+                bootstrap.Modal.getInstance(document.getElementById('approveRefundModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Reject Refund Function
+        function rejectRefund(refundId) {
+            const modal = new bootstrap.Modal(document.getElementById('rejectRefundModal'));
+            modal.show();
+        }
+
+        // Reject Refund from Modal
+        function rejectRefundFromModal() {
+            bootstrap.Modal.getInstance(document.getElementById('viewRefundModal')).hide();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('rejectRefundModal'));
+                modal.show();
+            }, 300);
+        }
+
+        // Confirm Reject
+        function confirmReject() {
+            const reason = document.getElementById('rejectReason').value;
+            const note = document.getElementById('rejectNote').value;
+            
+            if (!note.trim()) {
+                alert('請輸入拒絕說明');
+                return;
+            }
+            
+            if (confirm('確認要拒絕此退款申請嗎？')) {
+                alert('退款申請已拒絕');
+                bootstrap.Modal.getInstance(document.getElementById('rejectRefundModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Print Refund Function
+        function printRefund(refundId) {
+            alert('列印退款憑證功能開發中...');
+        }
+
+        // Resend Refund Function
+        function resendRefund(refundId) {
+            if (confirm('確認要重新發送退款嗎？')) {
+                alert('退款重新發送中...');
+                location.reload();
+            }
+        }
+
+        // Retry Refund Function
+        function retryRefund(refundId) {
+            if (confirm('確認要重試退款操作嗎？')) {
+                alert('退款重新處理中...');
+                location.reload();
+            }
+        }
+
+        // Contact Member Function
+        function contactMember(refundId) {
+            alert('聯絡會員功能開發中..');
+        }
+
+        // Export Refunds Function
+        function exportRefunds() {
+            alert('匯出報表功能開發中..');
+        }
+
+        // Batch Process Function
+        function batchProcess() {
+            alert('批量處理功能開發中..');
+        }
+
+        // Batch Approve Function
+        function batchApprove() {
+            const selectedRefunds = document.querySelectorAll('.refund-checkbox:checked');
+            if (selectedRefunds.length === 0) {
+                alert('請選擇要處理的退款申請');
+                return;
+            }
+            
+            if (confirm(`確認要批量核准 ${selectedRefunds.length} 個退款申請嗎？`)) {
+                alert('批量核准完成');
+                location.reload();
+            }
+        }
+
+        // Batch Reject Function
+        function batchReject() {
+            const selectedRefunds = document.querySelectorAll('.refund-checkbox:checked');
+            if (selectedRefunds.length === 0) {
+                alert('請選擇要處理的退款申請');
+                return;
+            }
+            
+            const reason = prompt('請輸入批量拒絕的原因');
+            if (reason && reason.trim()) {
+                if (confirm(`確認要批量拒絕 ${selectedRefunds.length} 個退款申請嗎？`)) {
+                    alert('批量拒絕完成');
+                    location.reload();
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dee2e6;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .timeline-title {
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .timeline-description {
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+    </style>
+</body>
+</html>

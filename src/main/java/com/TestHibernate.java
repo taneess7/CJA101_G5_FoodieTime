@@ -10,21 +10,19 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.foodietime.smg.model.SmgService;
 import com.foodietime.smg.model.SmgVO;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootApplication
 public class TestHibernate {
+    public static void main(String[] args) {
+        SpringApplication app = new SpringApplication(TestHibernate.class);
+        app.setWebApplicationType(WebApplicationType.NONE);
+        ConfigurableApplicationContext context = app.run(args);
 
-	public static void main(String[] args) {
-		// 啟動 Spring Boot 並取得 ApplicationContext
-//        ConfigurableApplicationContext context = SpringApplication.run(TestHibernateCampsiteOrder.class, args);
-		SpringApplication app = new SpringApplication(TestHibernate.class);
-		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
-		ConfigurableApplicationContext context = app.run(args);
-
-		SmgService smgService = context.getBean(SmgService.class);
-		List<SmgVO> smglist = smgService.findAllSmgs();
-		for (SmgVO smg : smglist) {
-			System.out.println(smg); // 前提是你有 override toString()
-		}
-	}
-
+        SmgService smgService = context.getBean(SmgService.class);
+        List<SmgVO> smglist = smgService.findAllSmgs();
+        for (SmgVO smg : smglist) {
+            System.out.println(smg);
+        }
+    }
 }

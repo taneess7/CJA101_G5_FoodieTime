@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廠家檢舉管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+</head>
+<body>
+    <!-- Sidebar -->
+   <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">廠家管理</li>
+                    <li class="breadcrumb-item active">檢舉功能</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-flag me-2"></i>廠家檢舉管理</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="廠家名稱、檢舉人、檢舉內容">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="reportStatus" class="form-label">處理狀態</label>
+                                    <select class="form-select" id="reportStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="pending">待處理</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="resolved">已解決</option>
+                                        <option value="rejected">已駁回</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="reportType" class="form-label">檢舉類型</label>
+                                    <select class="form-select" id="reportType">
+                                        <option value="">全部類型</option>
+                                        <option value="fraud">詐騙行為</option>
+                                        <option value="fake_product">假冒商品</option>
+                                        <option value="poor_service">服務不佳</option>
+                                        <option value="violation">違規行為</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateFrom" class="form-label">檢舉日期(起)</label>
+                                    <input type="date" class="form-control" id="dateFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateTo" class="form-label">檢舉日期(迄)</label>
+                                    <input type="date" class="form-control" id="dateTo">
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Reports Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>檢舉編號</th>
+                                            <th>被檢舉廠家</th>
+                                            <th>檢舉人</th>
+                                            <th>檢舉類型</th>
+                                            <th>檢舉內容</th>
+                                            <th>檢舉日期</th>
+                                            <th>處理狀態</th>
+                                            <th>處理人員</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R001"></td>
+                                            <td>R001</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="廠家" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">美食天堂</div>
+                                                        <small class="text-muted">V001</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div>王小明</div>
+                                                    <small class="text-muted">M001</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-danger">詐騙行為</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;" title="廠家收款後未出貨，疑似詐騙行為，已聯繫多次無回應">
+                                                    廠家收款後未出貨，疑似詐騙行為...
+                                                </div>
+                                            </td>
+                                            <td>2024-01-15</td>
+                                            <td><span class="badge bg-warning">待處理</span></td>
+                                            <td>-</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="processReport('R001')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectReport('R001')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R002"></td>
+                                            <td>R002</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="廠家" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">3C電子城</div>
+                                                        <small class="text-muted">V002</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div>王小明</div>
+                                                    <small class="text-muted">M002</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-warning">假冒商品</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;" title="販售假冒知名品牌，品質極差且價格虛高">
+                                                    販售假冒知名品牌，品質極差且價格虛高                                                </div>
+                                            </td>
+                                            <td>2024-01-14</td>
+                                            <td><span class="badge bg-info">處理中</span></td>
+                                            <td>張管理員</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="processReport('R002')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectReport('R002')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R003"></td>
+                                            <td>R003</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="廠家" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">時尚服飾店</div>
+                                                        <small class="text-muted">V003</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div>李小華</div>
+                                                    <small class="text-muted">M003</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-secondary">服務不佳</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;" title="客服態度惡劣，退換貨程序複雜">
+                                                    客服態度惡劣，退換貨程序複雜
+                                                </div>
+                                            </td>
+                                            <td>2024-01-13</td>
+                                            <td><span class="badge bg-success">已解決</span></td>
+                                            <td>李管理員</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary me-1" disabled>
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchProcess()">
+                                        <i class="fas fa-check me-1"></i>批量處理
+                                    </button>
+                                    <button class="btn btn-danger" onclick="batchReject()">
+                                        <i class="fas fa-times me-1"></i>批量駁回
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="檢舉列表分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Report Modal -->
+    <div class="modal fade" id="viewReportModal" tabindex="-1" aria-labelledby="viewReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewReportModalLabel">檢舉詳情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>檢舉資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">檢舉編號：</td>
+                                    <td id="modalReportId">R001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">檢舉日期：</td>
+                                    <td id="modalReportDate">2024-01-15</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">檢舉類型：</td>
+                                    <td id="modalReportType">詐騙行為</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">處理狀態：</td>
+                                    <td id="modalReportStatus">待處理</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>檢舉人資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">檢舉人：</td>
+                                    <td id="modalReporterName">王小明</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員編號：</td>
+                                    <td id="modalReporterId">M001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">聯絡電話：</td>
+                                    <td id="modalReporterPhone">0912-345-678</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">電子郵件：</td>
+                                    <td id="modalReporterEmail">wang@example.com</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>被檢舉廠家資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">廠家名稱：</td>
+                                    <td id="modalVendorName">美食天堂</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">廠家編號：</td>
+                                    <td id="modalVendorId">V001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">聯絡電話：</td>
+                                    <td id="modalVendorPhone">02-1234-5678</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">電子郵件：</td>
+                                    <td id="modalVendorEmail">vendor@example.com</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>檢舉內容</h6>
+                            <div class="border p-3 bg-light" id="modalReportContent">
+                                廠家收款後未出貨，疑似詐騙行為。已聯繫多次無回應。訂單編號：ORD20240115001，付款金額：NT$1,500，付款日期：2024-01-10，至今未收到商品且無法聯繫廠家。                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>處理註記</h6>
+                            <textarea class="form-control" id="processNote" rows="3" placeholder="請輸入處理註記.."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-danger me-2" onclick="rejectReportFromModal()">駁回檢舉</button>
+                    <button type="button" class="btn btn-success" onclick="processReportFromModal()">處理檢舉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.report-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Report Function
+        function viewReport(reportId) {
+            // 模擬資料
+            const reportData = {
+                'R001': {
+                    id: 'R001',
+                    date: '2024-01-15',
+                    type: '詐騙行為',
+                    status: '待處理',
+                    reporterName: '王小明',
+                    reporterId: 'M001',
+                    reporterPhone: '0912-345-678',
+                    reporterEmail: 'wang@example.com',
+                    vendorName: '美食天堂',
+                    vendorId: 'V001',
+                    vendorPhone: '02-1234-5678',
+                    vendorEmail: 'vendor@example.com',
+                    content: '廠家收款後未出貨，疑似詐騙行為。已聯繫多次無回應。訂單編號：ORD20240115001，付款金額：NT$1,500，付款日期：2024-01-10，至今未收到商品且無法聯繫廠家。'
+                }
+            };
+
+            const data = reportData[reportId];
+            if (data) {
+                document.getElementById('modalReportId').textContent = data.id;
+                document.getElementById('modalReportDate').textContent = data.date;
+                document.getElementById('modalReportType').textContent = data.type;
+                document.getElementById('modalReportStatus').textContent = data.status;
+                document.getElementById('modalReporterName').textContent = data.reporterName;
+                document.getElementById('modalReporterId').textContent = data.reporterId;
+                document.getElementById('modalReporterPhone').textContent = data.reporterPhone;
+                document.getElementById('modalReporterEmail').textContent = data.reporterEmail;
+                document.getElementById('modalVendorName').textContent = data.vendorName;
+                document.getElementById('modalVendorId').textContent = data.vendorId;
+                document.getElementById('modalVendorPhone').textContent = data.vendorPhone;
+                document.getElementById('modalVendorEmail').textContent = data.vendorEmail;
+                document.getElementById('modalReportContent').textContent = data.content;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewReportModal'));
+                modal.show();
+            }
+        }
+
+        // Process Report Function
+        function processReport(reportId) {
+            if (confirm('確定要處理此檢舉案件嗎？')) {
+                alert('檢舉案件已標記為處理中');
+                // 這裡可以加入實際的處理邏輯                location.reload();
+            }
+        }
+
+        // Reject Report Function
+        function rejectReport(reportId) {
+            if (confirm('確定要駁回此檢舉案件嗎？')) {
+                alert('檢舉案件已駁回');
+                // 這裡可以加入實際的處理邏輯                location.reload();
+            }
+        }
+
+        // Process Report from Modal
+        function processReportFromModal() {
+            const note = document.getElementById('processNote').value;
+            if (!note.trim()) {
+                alert('請輸入處理註記');
+                return;
+            }
+            
+            if (confirm('確定要處理此檢舉案件嗎？')) {
+                alert('檢舉案件已處理完成');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewReportModal'));
+                modal.hide();
+                location.reload();
+            }
+        }
+
+        // Reject Report from Modal
+        function rejectReportFromModal() {
+            const note = document.getElementById('processNote').value;
+            if (!note.trim()) {
+                alert('請輸入駁回原因');
+                return;
+            }
+            
+            if (confirm('確定要駁回此檢舉案件嗎？')) {
+                alert('檢舉案件已駁回');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewReportModal'));
+                modal.hide();
+                location.reload();
+            }
+        }
+
+        // Batch Process Function
+        function batchProcess() {
+            const selectedReports = document.querySelectorAll('.report-checkbox:checked');
+            if (selectedReports.length === 0) {
+                alert('請選擇要處理的檢舉案件');
+                return;
+            }
+            
+            if (confirm(`確定要批量處理 ${selectedReports.length} 個檢舉案件嗎？`)) {
+                alert('批量處理完成');
+                location.reload();
+            }
+        }
+
+        // Batch Reject Function
+        function batchReject() {
+            const selectedReports = document.querySelectorAll('.report-checkbox:checked');
+            if (selectedReports.length === 0) {
+                alert('請選擇要駁回的檢舉案件');
+                return;
+            }
+            
+            if (confirm(`確定要批量駁回 ${selectedReports.length} 個檢舉案件嗎？`)) {
+                alert('批量駁回完成');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
