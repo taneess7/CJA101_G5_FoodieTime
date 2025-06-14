@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購付款管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>團購付款管理</h5>
+                            <div>
+                                <button class="btn btn-info me-2" onclick="exportPayments()">
+                                    <i class="fas fa-download me-1"></i>匯出清單
+                                </button>
+                                <button class="btn btn-success" onclick="batchProcess()">
+                                    <i class="fas fa-tasks me-1"></i>批量處理
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Statistics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">待付款金額</h6>
+                                                    <h4 class="mb-0">NT$ 125,680</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-clock fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">已付款金額</h6>
+                                                    <h4 class="mb-0">NT$ 987,450</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-check-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">異常交易</h6>
+                                                    <h4 class="mb-0">12</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">付款總額</h6>
+                                                    <h4 class="mb-0">NT$ 1,113,130</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-chart-line fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-2">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="交易編號、團購名稱">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="paymentStatus" class="form-label">付款狀態</label>
+                                    <select class="form-select" id="paymentStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="pending">待付款</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="failed">失敗</option>
+                                        <option value="refunded">已退款</option>
+                                        <option value="disputed">爭議中</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="paymentMethod" class="form-label">付款方式</label>
+                                    <select class="form-select" id="paymentMethod">
+                                        <option value="">全部方式</option>
+                                        <option value="credit_card">信用卡</option>
+                                        <option value="bank_transfer">銀行轉帳</option>
+                                        <option value="mobile_payment">行動支付</option>
+                                        <option value="cash_on_delivery">貨到付款</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="amountRange" class="form-label">金額範圍</label>
+                                    <select class="form-select" id="amountRange">
+                                        <option value="">全部金額</option>
+                                        <option value="0-500">NT$ 0 - 500</option>
+                                        <option value="500-1000">NT$ 500 - 1,000</option>
+                                        <option value="1000-5000">NT$ 1,000 - 5,000</option>
+                                        <option value="5000+">NT$ 5,000+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateRange" class="form-label">交易日期</label>
+                                    <select class="form-select" id="dateRange">
+                                        <option value="">全部日期</option>
+                                        <option value="today">今天</option>
+                                        <option value="week">本週</option>
+                                        <option value="month">本月</option>
+                                        <option value="quarter">本季</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> 搜尋
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Payments Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>交易編號</th>
+                                            <th>團購資訊</th>
+                                            <th>付款會員</th>
+                                            <th>付款方式</th>
+                                            <th>交易金額</th>
+                                            <th>手續費</th>
+                                            <th>實收金額</th>
+                                            <th>交易時間</th>
+                                            <th>狀態</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input payment-checkbox" data-payment-id="P001"></td>
+                                            <td class="fw-bold">P001</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">日本進口零食團購</div>
+                                                        <small class="text-muted">G001 • 美食小舖</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>王小明</div>
+                                                <small class="text-muted">M001 • wang@example.com</small>
+                                            </td>
+                                            <td><span class="badge bg-primary">信用卡</span></td>
+                                            <td class="fw-bold">NT$ 897</td>
+                                            <td class="text-muted">NT$ 27</td>
+                                            <td class="fw-bold text-success">NT$ 870</td>
+                                            <td>2024-01-15 14:32</td>
+                                            <td><span class="badge bg-success">已完成</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPayment('P001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info me-1" onclick="processPayment('P001')">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="refundPayment('P001')">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input payment-checkbox" data-payment-id="P002"></td>
+                                            <td class="fw-bold">P002</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">韓國化妝品團購</div>
+                                                        <small class="text-muted">G002 • 美妝達人</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>李大華</div>
+                                                <small class="text-muted">M002 • lee@example.com</small>
+                                            </td>
+                                            <td><span class="badge bg-info">銀行轉帳</span></td>
+                                            <td class="fw-bold">NT$ 599</td>
+                                            <td class="text-muted">NT$ 15</td>
+                                            <td class="fw-bold text-success">NT$ 584</td>
+                                            <td>2024-01-15 10:15</td>
+                                            <td><span class="badge bg-warning">處理中</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPayment('P002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info me-1" onclick="processPayment('P002')">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="refundPayment('P002')">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input payment-checkbox" data-payment-id="P003"></td>
+                                            <td class="fw-bold">P003</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">3C產品團購</div>
+                                                        <small class="text-muted">G003 • 科技小舖</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>張美麗</div>
+                                                <small class="text-muted">M003 • zhang@example.com</small>
+                                            </td>
+                                            <td><span class="badge bg-success">行動支付</span></td>
+                                            <td class="fw-bold">NT$ 2,598</td>
+                                            <td class="text-muted">NT$ 78</td>
+                                            <td class="fw-bold text-success">NT$ 2,520</td>
+                                            <td>2024-01-14 16:45</td>
+                                            <td><span class="badge bg-success">已完成</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPayment('P003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info me-1" onclick="processPayment('P003')">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="refundPayment('P003')">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input payment-checkbox" data-payment-id="P004"></td>
+                                            <td class="fw-bold">P004</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">服飾配件團購</div>
+                                                        <small class="text-muted">G004 • 時尚館</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>陳小華</div>
+                                                <small class="text-muted">M004 • chen@example.com</small>
+                                            </td>
+                                            <td><span class="badge bg-danger">信用卡</span></td>
+                                            <td class="fw-bold">NT$ 1,995</td>
+                                            <td class="text-muted">NT$ 60</td>
+                                            <td class="fw-bold text-danger">NT$ 0</td>
+                                            <td>2024-01-14 09:20</td>
+                                            <td><span class="badge bg-danger">失敗</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPayment('P004')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info me-1" onclick="processPayment('P004')">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="refundPayment('P004')">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions and Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchConfirm()">
+                                        <i class="fas fa-check me-1"></i>批量確認
+                                    </button>
+                                    <button class="btn btn-info me-2" onclick="batchSettle()">
+                                        <i class="fas fa-money-bill-wave me-1"></i>批量結算
+                                    </button>
+                                    <button class="btn btn-warning" onclick="batchRefund()">
+                                        <i class="fas fa-undo me-1"></i>批量退款                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="付款清單分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Payment Modal -->
+    <div class="modal fade" id="viewPaymentModal" tabindex="-1" aria-labelledby="viewPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPaymentModalLabel">交易詳細資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>交易基本資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">交易編號</td>
+                                    <td id="modalPaymentId">P001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">交易狀態</td>
+                                    <td id="modalPaymentStatus">已完成</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">交易時間</td>
+                                    <td id="modalPaymentTime">2024-01-15 14:32</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">付款方式</td>
+                                    <td id="modalPaymentMethod">信用卡</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">交易金額</td>
+                                    <td id="modalPaymentAmount" class="fw-bold">NT$ 897</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">手續費</td>
+                                    <td id="modalPaymentFee" class="text-muted">NT$ 27</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">實收金額</td>
+                                    <td id="modalNetAmount" class="fw-bold text-success">NT$ 870</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>付款會員資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">會員姓名</td>
+                                    <td id="modalMemberName">王小明</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員編號</td>
+                                    <td id="modalMemberId">M001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">聯絡電話</td>
+                                    <td id="modalMemberPhone">0912-345-678</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">電子信箱</td>
+                                    <td id="modalMemberEmail">wang@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員等級</td>
+                                    <td id="modalMemberLevel">黃金會員</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>團購資訊</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://via.placeholder.com/80x80?text=團購" alt="團購" class="rounded me-3" style="width: 80px; height: 80px;">
+                                        <div>
+                                            <h6 class="mb-1" id="modalGroupTitle">日本進口零食團購</h6>
+                                            <p class="text-muted mb-1" id="modalGroupId">團購編號：G001</p>
+                                            <p class="text-muted mb-0" id="modalGroupVendor">商家：美食小舖</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>處理歷程</h6>
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">交易發起</h6>
+                                        <p class="timeline-description">會員發起付款請求</p>
+                                        <small class="text-muted">2024-01-15 14:30</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">銀行授權</h6>
+                                        <p class="timeline-description">銀行授權成功</p>
+                                        <small class="text-muted">2024-01-15 14:31</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">交易完成</h6>
+                                        <p class="timeline-description">款項已入帳</p>
+                                        <small class="text-muted">2024-01-15 14:32</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-info"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">待結算</h6>
+                                        <p class="timeline-description">等待商家結算</p>
+                                        <small class="text-muted">預計 2024-02-01</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-info" onclick="printPayment()">列印收據</button>
+                    <button type="button" class="btn btn-warning" onclick="processPaymentFromModal()">處理交易</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Payment Modal -->
+    <div class="modal fade" id="processPaymentModal" tabindex="-1" aria-labelledby="processPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="processPaymentModalLabel">處理交易</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="processAction" class="form-label">處理動作</label>
+                            <select class="form-select" id="processAction">
+                                <option value="confirm">確認交易</option>
+                                <option value="cancel">取消交易</option>
+                                <option value="refund">申請退款</option>
+                                <option value="dispute">標記爭議</option>
+                                <option value="settle">立即結算</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="processReason" class="form-label">處理原因</label>
+                            <textarea class="form-control" id="processReason" rows="3" placeholder="請輸入處理原因..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="processAmount" class="form-label">處理金額</label>
+                            <input type="number" class="form-control" id="processAmount" placeholder="請輸入處理金額...">
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyMemberPayment">
+                            <label class="form-check-label" for="notifyMemberPayment">
+                                通知會員處理結果
+                            </label>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyVendorPayment">
+                            <label class="form-check-label" for="notifyVendorPayment">
+                                通知商家處理結果
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmProcess()">確認處理</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refund Payment Modal -->
+    <div class="modal fade" id="refundPaymentModal" tabindex="-1" aria-labelledby="refundPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundPaymentModalLabel">申請退款</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="refundType" class="form-label">退款類型</label>
+                            <select class="form-select" id="refundType">
+                                <option value="full">全額退款</option>
+                                <option value="partial">部分退款</option>
+                                <option value="fee_only">僅退手續費</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="refundAmount" class="form-label">退款金額</label>
+                            <input type="number" class="form-control" id="refundAmount" placeholder="請輸入退款金額" step="0.01">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="refundReason" class="form-label">退款原因</label>
+                            <select class="form-select" id="refundReason">
+                                <option value="customer_request">客戶要求</option>
+                                <option value="product_defect">商品瑕疵</option>
+                                <option value="delivery_issue">配送問題</option>
+                                <option value="vendor_cancel">廠家取消</option>
+                                <option value="system_error">系統錯誤</option>
+                                <option value="other">其他原因</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="refundNote" class="form-label">退款備註</label>
+                            <textarea class="form-control" id="refundNote" rows="3" placeholder="請輸入退款備註說明..."></textarea>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifyRefund">
+                            <label class="form-check-label" for="notifyRefund">
+                                通知會員退款處理結果
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-warning" onclick="confirmRefund()">確認退款</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.payment-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Payment Function
+        function viewPayment(paymentId) {
+            // 模擬資料
+            const paymentData = {
+                'P001': {
+                    id: 'P001',
+                    status: '已完成',
+                    time: '2024-01-15 14:32',
+                    method: '信用卡',
+                    amount: 'NT$ 897',
+                    fee: 'NT$ 27',
+                    netAmount: 'NT$ 870',
+                    memberName: '王小明',
+                    memberId: 'M001',
+                    memberPhone: '0912-345-678',
+                    memberEmail: 'wang@example.com',
+                    memberLevel: '黃金會員',
+                    groupTitle: '日本進口零食團購',
+                    groupId: 'G001',
+                    groupVendor: '美食小舖'
+                }
+            };
+
+            const data = paymentData[paymentId];
+            if (data) {
+                document.getElementById('modalPaymentId').textContent = data.id;
+                document.getElementById('modalPaymentStatus').textContent = data.status;
+                document.getElementById('modalPaymentTime').textContent = data.time;
+                document.getElementById('modalPaymentMethod').textContent = data.method;
+                document.getElementById('modalPaymentAmount').textContent = data.amount;
+                document.getElementById('modalPaymentFee').textContent = data.fee;
+                document.getElementById('modalNetAmount').textContent = data.netAmount;
+                document.getElementById('modalMemberName').textContent = data.memberName;
+                document.getElementById('modalMemberId').textContent = data.memberId;
+                document.getElementById('modalMemberPhone').textContent = data.memberPhone;
+                document.getElementById('modalMemberEmail').textContent = data.memberEmail;
+                document.getElementById('modalMemberLevel').textContent = data.memberLevel;
+                document.getElementById('modalGroupTitle').textContent = data.groupTitle;
+                document.getElementById('modalGroupId').textContent = '團購編號：' + data.groupId;
+                document.getElementById('modalGroupVendor').textContent = '商家：' + data.groupVendor;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewPaymentModal'));
+                modal.show();
+            }
+        }
+
+        // Process Payment Function
+        function processPayment(paymentId) {
+            const modal = new bootstrap.Modal(document.getElementById('processPaymentModal'));
+            modal.show();
+        }
+
+        // Process Payment from Modal
+        function processPaymentFromModal() {
+            bootstrap.Modal.getInstance(document.getElementById('viewPaymentModal')).hide();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('processPaymentModal'));
+                modal.show();
+            }, 300);
+        }
+
+        // Confirm Process
+        function confirmProcess() {
+            const action = document.getElementById('processAction').value;
+            const reason = document.getElementById('processReason').value;
+            const amount = document.getElementById('processAmount').value;
+            
+            if (!reason.trim()) {
+                alert('請輸入處理原因');
+                return;
+            }
+            
+            if (confirm('確定要執行此處理動作嗎？')) {
+                alert('交易處理完成');
+                bootstrap.Modal.getInstance(document.getElementById('processPaymentModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Refund Payment Function
+        function refundPayment(paymentId) {
+            const modal = new bootstrap.Modal(document.getElementById('refundPaymentModal'));
+            modal.show();
+        }
+
+        // Confirm Refund
+        function confirmRefund() {
+            const type = document.getElementById('refundType').value;
+            const amount = document.getElementById('refundAmount').value;
+            const reason = document.getElementById('refundReason').value;
+            
+            if (!amount || amount <= 0) {
+                alert('請輸入有效的退款金額');
+                return;
+            }
+            
+            if (confirm(`確定要退款 NT$ ${amount} 嗎？`)) {
+                alert('退款申請已提交');
+                bootstrap.Modal.getInstance(document.getElementById('refundPaymentModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Print Payment Function
+        function printPayment() {
+            alert('列印收據功能開發中...');
+        }
+
+        // Export Payments Function
+        function exportPayments() {
+            alert('匯出報表功能開發中...');
+        }
+
+        // Batch Process Function
+        function batchProcess() {
+            alert('批量確認完成');
+        }
+
+        // Batch Confirm Function
+        function batchConfirm() {
+            const selectedPayments = document.querySelectorAll('.payment-checkbox:checked');
+            if (selectedPayments.length === 0) {
+                alert('請選擇要確認的交易');
+                return;
+            }
+            
+            if (confirm(`確定要批量確認 ${selectedPayments.length} 筆交易嗎？`)) {
+                alert('批量確認完成');
+                location.reload();
+            }
+        }
+
+        // Batch Settle Function
+        function batchSettle() {
+            const selectedPayments = document.querySelectorAll('.payment-checkbox:checked');
+            if (selectedPayments.length === 0) {
+                alert('請選擇要結算的交易');
+                return;
+            }
+            
+            if (confirm(`確定要批量結算 ${selectedPayments.length} 筆交易嗎？`)) {
+                alert('批量結算完成');
+                location.reload();
+            }
+        }
+
+        // Batch Refund Function
+        function batchRefund() {
+            const selectedPayments = document.querySelectorAll('.payment-checkbox:checked');
+            if (selectedPayments.length === 0) {
+                alert('請選擇要退款的交易');
+                return;
+            }
+            
+            const reason = prompt('請輸入批量退款原因');
+            if (reason && reason.trim()) {
+                if (confirm(`確定要批量退款 ${selectedPayments.length} 筆交易嗎？`)) {
+                    alert('批量退款申請已提交');
+                    location.reload();
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dee2e6;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .timeline-title {
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .timeline-description {
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+    </style>
+</body>
+</html>

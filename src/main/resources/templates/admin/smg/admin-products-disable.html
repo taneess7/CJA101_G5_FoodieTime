@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品下架管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+</head>
+<body>
+    <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">廠家管理</li>
+                    <li class="breadcrumb-item active">下架商品</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-times-circle me-2"></i>商品下架管理</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="商品名稱、商品編號、廠家名稱">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="productStatus" class="form-label">商品狀態</label>
+                                    <select class="form-select" id="productStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="active">上架中</option>
+                                        <option value="disabled">已下架</option>
+                                        <option value="pending">待審核</option>
+                                        <option value="violation">違規下架</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="productCategory" class="form-label">商品類別</label>
+                                    <select class="form-select" id="productCategory">
+                                        <option value="">全部類別</option>
+                                        <option value="food">美食</option>
+                                        <option value="electronics">3C商品</option>
+                                        <option value="fashion">服飾配件</option>
+                                        <option value="home">居家生活</option>
+                                        <option value="beauty">美妝保養</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="vendorName" class="form-label">廠家篩選</label>
+                                    <input type="text" class="form-control" id="vendorName" placeholder="廠家名稱">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateFrom" class="form-label">上架日期(起)</label>
+                                    <input type="date" class="form-control" id="dateFrom">
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Products Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>商品資訊</th>
+                                            <th>廠家</th>
+                                            <th>類別</th>
+                                            <th>價格</th>
+                                            <th>庫存</th>
+                                            <th>上架日期</th>
+                                            <th>狀態</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input product-checkbox" data-product-id="P001"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/60x60" alt="商品" class="rounded me-3" style="width: 60px; height: 60px;">
+                                                    <div>
+                                                        <div class="fw-bold">高級牛排套餐</div>
+                                                        <small class="text-muted">P001</small>
+                                                        <div class="text-truncate" style="max-width: 200px;">
+                                                            <small>精選澳洲牛排，美味可口</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div class="fw-bold">美食天堂</div>
+                                                    <small class="text-muted">V001</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-success">美食</span></td>
+                                            <td>NT$ 1,200</td>
+                                            <td>50</td>
+                                            <td>2024-01-10</td>
+                                            <td><span class="badge bg-success">上架中</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewProduct('P001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1" onclick="disableProduct('P001')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="editProduct('P001')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input product-checkbox" data-product-id="P002"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/60x60" alt="商品" class="rounded me-3" style="width: 60px; height: 60px;">
+                                                    <div>
+                                                        <div class="fw-bold">高級牛排套餐</div>
+                                                        <small class="text-muted">P002</small>
+                                                        <div class="text-truncate" style="max-width: 200px;">
+                                                            <small>高音質牛排，美味可口</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div class="fw-bold">3C電子</div>
+                                                    <small class="text-muted">V002</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-info">3C電子</span></td>
+                                            <td>NT$ 2,500</td>
+                                            <td>30</td>
+                                            <td>2024-01-08</td>
+                                            <td><span class="badge bg-success">上架中</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewProduct('P002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1" onclick="disableProduct('P002')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="editProduct('P002')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input product-checkbox" data-product-id="P003"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/60x60" alt="商品" class="rounded me-3" style="width: 60px; height: 60px; opacity: 0.5;">
+                                                    <div>
+                                                        <div class="fw-bold text-muted">時尚手錶</div>
+                                                        <small class="text-muted">P003</small>
+                                                        <div class="text-truncate" style="max-width: 200px;">
+                                                            <small class="text-danger">商品已下架</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div class="fw-bold text-muted">時尚飾品</div>
+                                                    <small class="text-muted">V003</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-secondary">服飾配件</span></td>
+                                            <td>NT$ 5,000</td>
+                                            <td>0</td>
+                                            <td>2024-01-05</td>
+                                            <td><span class="badge bg-danger">違規下架</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewProduct('P003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="enableProduct('P003')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input product-checkbox" data-product-id="P004"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/60x60" alt="商品" class="rounded me-3" style="width: 60px; height: 60px;">
+                                                    <div>
+                                                        <div class="fw-bold">有機蔬菜</div>
+                                                        <small class="text-muted">P004</small>
+                                                        <div class="text-truncate" style="max-width: 200px;">
+                                                            <small>新鮮蔬菜，產地直送</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div class="fw-bold">綠色農場</div>
+                                                    <small class="text-muted">V004</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-success">美食</span></td>
+                                            <td>NT$ 800</td>
+                                            <td>100</td>
+                                            <td>2024-01-12</td>
+                                            <td><span class="badge bg-warning">待審核</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewProduct('P004')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="approveProduct('P004')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectProduct('P004')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-danger me-2" onclick="batchDisable()">
+                                        <i class="fas fa-times me-1"></i>批量下架
+                                    </button>
+                                    <button class="btn btn-success me-2" onclick="batchEnable()">
+                                        <i class="fas fa-check me-1"></i>批量上架
+                                    </button>
+                                    <button class="btn btn-warning" onclick="batchApprove()">
+                                        <i class="fas fa-check-circle me-1"></i>批量審核通過
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="商品列表分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Product Modal -->
+    <div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewProductModalLabel">商品詳情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="https://via.placeholder.com/300x300" alt="商品圖片" class="img-fluid rounded" id="modalProductImage">
+                        </div>
+                        <div class="col-md-8">
+                            <h6>基本資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">商品名稱：</td>
+                                    <td id="modalProductName">高級牛排套餐</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">商品編號：</td>
+                                    <td id="modalProductId">P001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">廠家：</td>
+                                    <td id="modalVendorName">美食天堂</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">類別：</td>
+                                    <td id="modalProductCategory">美食</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">價格：</td>
+                                    <td id="modalProductPrice">NT$ 1,200</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">庫存：</td>
+                                    <td id="modalProductStock">50</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">狀態：</td>
+                                    <td id="modalProductStatus">上架中</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">上架時間：</td>
+                                    <td id="modalProductDate">2024-01-10</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>商品描述</h6>
+                            <div class="border p-3 bg-light" id="modalProductDescription">
+                                精選澳洲牛排，搭配新鮮蔬菜精心製作，提供頂級用餐體驗。套餐包含主菜、湯品、飲料和甜點。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3" id="disableReasonSection" style="display: none;">
+                        <div class="col-12">
+                            <h6>下架原因</h6>
+                            <textarea class="form-control" id="disableReason" rows="3" placeholder="請輸入下架原因"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">下架</button>
+                    <button type="button" class="btn btn-danger" id="disableBtn" onclick="disableProductFromModal()">下架</button>
+                    <button type="button" class="btn btn-success" id="enableBtn" onclick="enableProductFromModal()" style="display: none;">上架</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Product Function
+        function viewProduct(productId) {
+            // 模擬資料
+            const productData = {
+                'P001': {
+                    name: '高級牛排套餐',
+                    id: 'P001',
+                    vendor: '美食天堂',
+                    category: '美食',
+                    price: 'NT$ 1,200',
+                    stock: '50',
+                    status: '上架中',
+                    date: '2024-01-10',
+                    description: '精選澳洲牛肉，搭配新鮮蔬菜精心製作，提供頂級用餐體驗。套餐包含主菜、湯品、沙拉及甜點。',
+                    image: 'https://via.placeholder.com/300x300'
+                }
+            };
+
+            const data = productData[productId];
+            if (data) {
+                document.getElementById('modalProductName').textContent = data.name;
+                document.getElementById('modalProductId').textContent = data.id;
+                document.getElementById('modalVendorName').textContent = data.vendor;
+                document.getElementById('modalProductCategory').textContent = data.category;
+                document.getElementById('modalProductPrice').textContent = data.price;
+                document.getElementById('modalProductStock').textContent = data.stock;
+                document.getElementById('modalProductStatus').textContent = data.status;
+                document.getElementById('modalProductDate').textContent = data.date;
+                document.getElementById('modalProductDescription').textContent = data.description;
+                document.getElementById('modalProductImage').src = data.image;
+                
+                // 根據狀態顯示按鈕
+                const disableBtn = document.getElementById('disableBtn');
+                const enableBtn = document.getElementById('enableBtn');
+                const disableReasonSection = document.getElementById('disableReasonSection');
+                
+                if (data.status === '上架中') {
+                    disableBtn.style.display = 'inline-block';
+                    enableBtn.style.display = 'none';
+                    disableReasonSection.style.display = 'none';
+                } else {
+                    disableBtn.style.display = 'none';
+                    enableBtn.style.display = 'inline-block';
+                    disableReasonSection.style.display = 'block';
+                }
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewProductModal'));
+                modal.show();
+            }
+        }
+
+        // Disable Product Function
+        function disableProduct(productId) {
+            if (confirm('確定要下架此產品嗎？')) {
+                alert('產品已下架');
+                location.reload();
+            }
+        }
+
+        // Enable Product Function
+        function enableProduct(productId) {
+            if (confirm('確定要重新上架此產品嗎？')) {
+                alert('產品已重新上架');
+                location.reload();
+            }
+        }
+
+        // Approve Product Function
+        function approveProduct(productId) {
+            if (confirm('確定要審核通過此產品嗎？')) {
+                alert('產品審核通過，已上架');
+                location.reload();
+            }
+        }
+
+        // Reject Product Function
+        function rejectProduct(productId) {
+            const reason = prompt('請輸入拒絕理由');
+            if (reason && reason.trim()) {
+                alert('產品審核被拒絕');
+                location.reload();
+            }
+        }
+
+        // Edit Product Function
+        function editProduct(productId) {
+            alert('編輯產品功能開發中...');
+        }
+
+        // Disable Product from Modal
+        function disableProductFromModal() {
+            const reason = document.getElementById('disableReason').value;
+            if (!reason.trim()) {
+                alert('請輸入下架原因');
+                return;
+            }
+            
+            if (confirm('確定要下架此產品嗎？')) {
+                alert('產品已下架');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
+                modal.hide();
+                location.reload();
+            }
+        }
+
+        // Enable Product from Modal
+        function enableProductFromModal() {
+            if (confirm('確定要重新上架此產品嗎？')) {
+                alert('產品已重新上架');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
+                modal.hide();
+                location.reload();
+            }
+        }
+
+        // Batch Disable Function
+        function batchDisable() {
+            const selectedProducts = document.querySelectorAll('.product-checkbox:checked');
+            if (selectedProducts.length === 0) {
+                alert('請選擇下架的產品');
+                return;
+            }
+            
+            if (confirm(`確定要批次下架 ${selectedProducts.length} 個產品？`)) {
+                alert('批量下架完成');
+                location.reload();
+            }
+        }
+
+        // Batch Enable Function
+        function batchEnable() {
+            const selectedProducts = document.querySelectorAll('.product-checkbox:checked');
+            if (selectedProducts.length === 0) {
+                alert('請選擇要上架的產品');
+                return;
+            }
+            
+            if (confirm(`確定要批次上架 ${selectedProducts.length} 個商品？`)) {
+                alert('商品上架完成');
+                location.reload();
+            }
+        }
+
+        // Batch Approve Function
+        function batchApprove() {
+            const selectedProducts = document.querySelectorAll('.product-checkbox:checked');
+            if (selectedProducts.length === 0) {
+                alert('請選擇要審核的商品');
+                return;
+            }
+            
+            if (confirm(`確定要批次審核通過 ${selectedProducts.length} 個商品？`)) {
+                alert('商品審核通過完成');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

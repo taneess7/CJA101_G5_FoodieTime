@@ -24,20 +24,25 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"accrec", "smgauths", "directMessages"})
 @Table(name = "servermanager")
 public class SmgVO implements Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SMGR_ID")
+	@EqualsAndHashCode.Include
     private Integer smgrId;
 	
 	@NotNull(message = "records 不可為空")
 	@OneToMany(mappedBy = "serverManager")
-    private List<AccrecVO> accrec;
+    private List<AccrecVO> accrec= new ArrayList<>();
 	
     @Email(message = "Email 格式錯誤")
     @NotBlank(message = "Email 不可為空")
@@ -45,12 +50,12 @@ public class SmgVO implements Serializable {
     private String smgrEmail;
 
     @NotBlank(message = "帳號不可為空")
-    @Size(max = 45, message = "帳號長度不可超過 45 字")
-    @Pattern(regexp = "^[a-zA-Z0-9]{8,45}$", message = "帳號只能包含英數字及底線，長度需為 4~45 字")
+    @Size(min = 4, max = 45, message = "帳號長度需介於 4 到 45 字")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,45}$", message = "帳號只能包含英數字，長度需為 4~45 字")
     @Column(name = "SMGR_ACCOUNT", length = 45)
     private String smgrAccount;
 
-    @NotBlank(message = "密碼不可為空")
+
     @Size(min = 6, max = 128, message = "密碼長度需介於 6 到 128 字")
     @Column(name = "SMGR_PASSWORD", length = 128)
     private String smgrPassword;
@@ -70,7 +75,7 @@ public class SmgVO implements Serializable {
 
     // 與 SmgauthVO (權限關聯) 一對多  
     @OneToMany(mappedBy = "smg", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<SmgauthVO> smgauths;
+    private List<SmgauthVO> smgauths= new ArrayList<>();
     
     @OneToMany(mappedBy = "smgr", cascade = CascadeType.ALL)
     private List<DirectMessageVO> directMessages = new ArrayList<>();
@@ -78,68 +83,6 @@ public class SmgVO implements Serializable {
     
     
     
-	public Integer getSmgrId() {
-		return smgrId;
-	}
 
-	public void setSmgrId(Integer smgrId) {
-		this.smgrId = smgrId;
-	}
-
-	public String getSmgrEmail() {
-		return smgrEmail;
-	}
-
-	public void setSmgrEmail(String smgrEmail) {
-		this.smgrEmail = smgrEmail;
-	}
-
-	public String getSmgrAccount() {
-		return smgrAccount;
-	}
-
-	public void setSmgrAccount(String smgrAccount) {
-		this.smgrAccount = smgrAccount;
-	}
-
-	public String getSmgrPassword() {
-		return smgrPassword;
-	}
-
-	public void setSmgrPassword(String smgrPassword) {
-		this.smgrPassword = smgrPassword;
-	}
-
-	public String getSmgrName() {
-		return smgrName;
-	}
-
-	public void setSmgrName(String smgrName) {
-		this.smgrName = smgrName;
-	}
-
-	public String getSmgrPhone() {
-		return smgrPhone;
-	}
-
-	public void setSmgrPhone(String smgrPhone) {
-		this.smgrPhone = smgrPhone;
-	}
-
-	public Byte getSmgrStatus() {
-		return smgrStatus;
-	}
-
-	public void setSmgrStatus(Byte smgrStatus) {
-		this.smgrStatus = smgrStatus;
-	}
-
-	public Set<SmgauthVO> getSmgauths() {
-		return smgauths;
-	}
-
-	public void setSmgauths(Set<SmgauthVO> smgauths) {
-		this.smgauths = smgauths;
-	}
     
 }

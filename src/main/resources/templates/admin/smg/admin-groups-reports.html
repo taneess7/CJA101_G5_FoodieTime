@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購檢舉審核管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定義CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+
+</head>
+<body>
+    <!-- Sidebar -->    
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">團購管理</li>
+                    <li class="breadcrumb-item active">檢舉審核管理</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-flag me-2"></i>團購檢舉審核管理</h5>
+                            <div>
+                                <button class="btn btn-info me-2" onclick="exportReports()">
+                                    <i class="fas fa-download me-1"></i>匯出報告
+                                </button>
+                                <button class="btn btn-warning" onclick="batchProcess()">
+                                    <i class="fas fa-tasks me-1"></i>批量處理
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Statistics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-danger text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">待處理檢舉</h6>
+                                                    <h4 class="mb-0">23</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">處理中</h6>
+                                                    <h4 class="mb-0">8</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-clock fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">處理已完成</h6>
+                                                    <h4 class="mb-0">156</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-check-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">平均處理時間</h6>
+                                                    <h4 class="mb-0">2.5小時</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-stopwatch fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="團購名稱、檢舉內容">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="reportStatus" class="form-label">處理狀態</label>
+                                    <select class="form-select" id="reportStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="pending">待處理</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="resolved">已處理</option>
+                                        <option value="rejected">已駁回</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="reportType" class="form-label">檢舉類型</label>
+                                    <select class="form-select" id="reportType">
+                                        <option value="">全部類型</option>
+                                        <option value="fraud">詐騙行為</option>
+                                        <option value="fake">虛假商品</option>
+                                        <option value="quality">品質問題</option>
+                                        <option value="service">服務態度</option>
+                                        <option value="delivery">配送問題</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="priority" class="form-label">優先級</label>
+                                    <select class="form-select" id="priority">
+                                        <option value="">全部優先級</option>
+                                        <option value="high">高</option>
+                                        <option value="medium">中</option>
+                                        <option value="low">低</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateRange" class="form-label">檢舉日期</label>
+                                    <select class="form-select" id="dateRange">
+                                        <option value="">全部日期</option>
+                                        <option value="today">今天</option>
+                                        <option value="week">本週</option>
+                                        <option value="month">本月</option>
+                                        <option value="quarter">本季</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Reports Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>檢舉編號</th>
+                                            <th>被檢舉團購</th>
+                                            <th>檢舉人</th>
+                                            <th>檢舉類型</th>
+                                            <th>檢舉內容</th>
+                                            <th>檢舉時間</th>
+                                            <th>優先級</th>
+                                            <th>狀態</th>
+                                            <th>處理人員</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R001"></td>
+                                            <td class="fw-bold">R001</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">日本進口美食團購</div>
+                                                        <small class="text-muted">G001 - 美食小舖</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>王小明</div>
+                                                <small class="text-muted">M001</small>
+                                            </td>
+                                            <td><span class="badge bg-danger">詐�?行為</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;">商品描述不符，疑似詐騙。收到商品與網站描述差距極大，品質極差。賣家拒絕退換貨，態度惡劣。</div>
+                                            </td>
+                                            <td>2024-01-15 14:30</td>
+                                            <td><span class="badge bg-danger">高</span></td>
+                                            <td><span class="badge bg-warning">待處理</span></td>
+                                            <td>-</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="processReport('R001')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectReport('R001')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R002"></td>
+                                            <td class="fw-bold">R002</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">韓國美妝團購</div>
+                                                        <small class="text-muted">G002 - 美妝達人</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>李大華</div>
+                                                <small class="text-muted">M002</small>
+                                            </td>
+                                            <td><span class="badge bg-warning">品質問題</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;">收到商品有破損，包裝不完整..</div>
+                                            </td>
+                                            <td>2024-01-15 10:15</td>
+                                            <td><span class="badge bg-warning">中</span></td>
+                                            <td><span class="badge bg-info">處理中</span></td>
+                                            <td>客服專員A</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="processReport('R002')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectReport('R002')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R003"></td>
+                                            <td class="fw-bold">R003</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">3C數位團購</div>
+                                                        <small class="text-muted">G003 - 科技小舖</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>張美玲</div>
+                                                <small class="text-muted">M003</small>
+                                            </td>
+                                            <td><span class="badge bg-info">配送問題</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;">配送延遲，無法聯繫配送員...</div>
+                                            </td>
+                                            <td>2024-01-14 16:45</td>
+                                            <td><span class="badge bg-secondary">低</span></td>
+                                            <td><span class="badge bg-success">已處理</span></td>
+                                            <td>系統管理員</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="viewResolution('R003')">
+                                                    <i class="fas fa-file-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input report-checkbox" data-report-id="R004"></td>
+                                            <td class="fw-bold">R004</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">服飾配件團購</div>
+                                                        <small class="text-muted">G004 - 時尚館</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>王小明</div>
+                                                <small class="text-muted">M004</small>
+                                            </td>
+                                            <td><span class="badge bg-secondary">服務態度</span></td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;">服務態度惡劣，拒絕協助退換貨...</div>
+                                            </td>
+                                            <td>2024-01-14 09:20</td>
+                                            <td><span class="badge bg-warning">中</span></td>
+                                            <td><span class="badge bg-warning">待處理</span></td>
+                                            <td>-</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewReport('R004')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="processReport('R004')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectReport('R004')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions and Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchApprove()">
+                                        <i class="fas fa-check me-1"></i>批量處理
+                                    </button>
+                                    <button class="btn btn-danger me-2" onclick="batchReject()">
+                                        <i class="fas fa-times me-1"></i>批量駁回
+                                    </button>
+                                    <button class="btn btn-warning" onclick="batchAssign()">
+                                        <i class="fas fa-user-plus me-1"></i>批量指派
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="檢舉列表分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Report Modal -->
+    <div class="modal fade" id="viewReportModal" tabindex="-1" aria-labelledby="viewReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewReportModalLabel">檢舉詳細資訊</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>檢舉資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">檢舉編號</td>
+                                    <td id="modalReportId">R001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">檢舉時間</td>
+                                    <td id="modalReportTime">2024-01-15 14:30</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">檢舉類型</td>
+                                    <td id="modalReportType">詐騙行為</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">優先級別</td>
+                                    <td id="modalReportPriority">高</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">處理狀態</td>
+                                    <td id="modalReportStatus">待處理</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>檢舉人資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">檢舉人姓名</td>
+                                    <td id="modalReporterName">張小華</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員編號</td>
+                                    <td id="modalReporterId">M001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">聯絡方式</td>
+                                    <td id="modalReporterContact">wang@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員等級</td>
+                                    <td id="modalReporterLevel">黃金會員</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>被檢舉團購資訊</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://via.placeholder.com/80x80?text=團購" alt="團購" class="rounded me-3" style="width: 80px; height: 80px;">
+                                        <div>
+                                            <h6 class="mb-1" id="modalGroupTitle">日本進口零食團購</h6>
+                                            <p class="text-muted mb-1" id="modalGroupId">團購編號：G001</p>
+                                            <p class="text-muted mb-0" id="modalGroupVendor">賣家：美食天堂</p>
+                                        </div>
+                                    </div>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">團購價格</td>
+                                            <td id="modalGroupPrice">NT$ 299</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">參與人數</td>
+                                            <td id="modalGroupMembers">45人</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">團購狀態</td>
+                                            <td id="modalGroupStatus">進行中</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">結束時間</td>
+                                            <td id="modalGroupEndTime">2024-01-20 23:59</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>檢舉內容</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p id="modalReportContent">商品描述不符，疑似詐騙。收到商品與網站描述差距極大，品質極差。賣家拒絕退換貨，態度惡劣。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>檢舉證據</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="https://via.placeholder.com/150x150?text=證據1" alt="證據" class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-3">
+                                    <img src="https://via.placeholder.com/150x150?text=證據2" alt="證據" class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-3">
+                                    <img src="https://via.placeholder.com/150x150?text=證據3" alt="證據" class="img-fluid rounded">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-success" onclick="processReportFromModal()">處理檢舉</button>
+                    <button type="button" class="btn btn-danger" onclick="rejectReportFromModal()">駁回檢舉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Report Modal -->
+    <div class="modal fade" id="processReportModal" tabindex="-1" aria-labelledby="processReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="processReportModalLabel">處理檢舉</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="processAction" class="form-label">處理動作</label>
+                        <select class="form-select" id="processAction">
+                            <option value="warning">警告賣家</option>
+                            <option value="suspend">暫停團購</option>
+                            <option value="ban">封鎖賣家</option>
+                            <option value="refund">協助退款</option>
+                            <option value="mediate">居中調解</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="processNote" class="form-label">處理說明</label>
+                        <textarea class="form-control" id="processNote" rows="4" placeholder="請輸入處理說明及後續追蹤..."></textarea>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="notifyReporter">
+                        <label class="form-check-label" for="notifyReporter">
+                            通知檢舉人處理結果
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="notifyVendor">
+                        <label class="form-check-label" for="notifyVendor">
+                            通知被檢舉賣家
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" onclick="confirmProcessReport()">確認處理</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.report-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Report Function
+        function viewReport(reportId) {
+            // 模擬資料
+            const reportData = {
+                'R001': {
+                    id: 'R001',
+                    time: '2024-01-15 14:30',
+                    type: '詐騙行為',
+                    priority: '高',
+                    status: '待處理',
+                    reporterName: '張小華',
+                    reporterId: 'M001',
+                    reporterContact: 'wang@example.com',
+                    reporterLevel: '黃金會員',
+                    groupTitle: '日本進口零食團購',
+                    groupId: 'G001',
+                    groupVendor: '美食天堂',
+                    groupPrice: 'NT$ 299',
+                    groupMembers: '45人',
+                    groupStatus: '進行中',
+                    groupEndTime: '2024-01-20 23:59',
+                    content: '商品描述不符，疑似詐騙。收到商品與網站描述差距極大，品質極差。賣家拒絕退換貨，態度惡劣。'
+                }
+            };
+
+            const data = reportData[reportId];
+            if (data) {
+                document.getElementById('modalReportId').textContent = data.id;
+                document.getElementById('modalReportTime').textContent = data.time;
+                document.getElementById('modalReportType').textContent = data.type;
+                document.getElementById('modalReportPriority').textContent = data.priority;
+                document.getElementById('modalReportStatus').textContent = data.status;
+                document.getElementById('modalReporterName').textContent = data.reporterName;
+                document.getElementById('modalReporterId').textContent = data.reporterId;
+                document.getElementById('modalReporterContact').textContent = data.reporterContact;
+                document.getElementById('modalReporterLevel').textContent = data.reporterLevel;
+                document.getElementById('modalGroupTitle').textContent = data.groupTitle;
+                document.getElementById('modalGroupId').textContent = '團購編號：' + data.groupId;
+                document.getElementById('modalGroupVendor').textContent = '賣家：' + data.groupVendor;
+                document.getElementById('modalGroupPrice').textContent = data.groupPrice;
+                document.getElementById('modalGroupMembers').textContent = data.groupMembers;
+                document.getElementById('modalGroupStatus').textContent = data.groupStatus;
+                document.getElementById('modalGroupEndTime').textContent = data.groupEndTime;
+                document.getElementById('modalReportContent').textContent = data.content;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewReportModal'));
+                modal.show();
+            }
+        }
+
+        // Process Report Function
+        function processReport(reportId) {
+            const modal = new bootstrap.Modal(document.getElementById('processReportModal'));
+            modal.show();
+        }
+
+        // Reject Report Function
+        function rejectReport(reportId) {
+            const reason = prompt('請輸入駁回原因：');
+            if (reason && reason.trim()) {
+                if (confirm('確定要駁回此檢舉嗎？')) {
+                    alert('檢舉已駁回');
+                    location.reload();
+                }
+            }
+        }
+
+        // Process Report from Modal
+        function processReportFromModal() {
+            bootstrap.Modal.getInstance(document.getElementById('viewReportModal')).hide();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('processReportModal'));
+                modal.show();
+            }, 300);
+        }
+
+        // Reject Report from Modal
+        function rejectReportFromModal() {
+            const reason = prompt('請輸入駁回原因：');
+            if (reason && reason.trim()) {
+                if (confirm('確定要駁回此檢舉嗎？')) {
+                    alert('檢舉已駁回');
+                    bootstrap.Modal.getInstance(document.getElementById('viewReportModal')).hide();
+                    location.reload();
+                }
+            }
+        }
+
+        // Confirm Process Report
+        function confirmProcessReport() {
+            const action = document.getElementById('processAction').value;
+            const note = document.getElementById('processNote').value;
+            
+            if (!note.trim()) {
+                alert('請輸入處理說明');
+                return;
+            }
+            
+            if (confirm('確定要執行此處理動作嗎？')) {
+                alert('檢舉處理完成');
+                bootstrap.Modal.getInstance(document.getElementById('processReportModal')).hide();
+                location.reload();
+            }
+        }
+
+        // View Resolution Function
+        function viewResolution(reportId) {
+            alert('查看處理結果功能開發中..');
+        }
+
+        // Export Reports Function
+        function exportReports() {
+            alert('匯出報告功能開發中..');
+        }
+
+        // Batch Process Function
+        function batchProcess() {
+            alert('批量處理功能開發中..');
+        }
+
+        // Batch Approve Function
+        function batchApprove() {
+            const selectedReports = document.querySelectorAll('.report-checkbox:checked');
+            if (selectedReports.length === 0) {
+                alert('請選擇要處理的檢舉');
+                return;
+            }
+            
+            if (confirm(`確定要批量處理 ${selectedReports.length} 個檢舉嗎？`)) {
+                alert('批量處理完成');
+                location.reload();
+            }
+        }
+
+        // Batch Reject Function
+        function batchReject() {
+            const selectedReports = document.querySelectorAll('.report-checkbox:checked');
+            if (selectedReports.length === 0) {
+                alert('請選擇要駁回的檢舉');
+                return;
+            }
+            
+            const reason = prompt('請輸入批量駁回原因：');
+            if (reason && reason.trim()) {
+                if (confirm(`確定要批量駁回 ${selectedReports.length} 個檢舉嗎？`)) {
+                    alert('批量駁回完成');
+                    location.reload();
+                }
+            }
+        }
+
+        // Batch Assign Function
+        function batchAssign() {
+            const selectedReports = document.querySelectorAll('.report-checkbox:checked');
+            if (selectedReports.length === 0) {
+                alert('請選擇要指派的檢舉');
+                return;
+            }
+            
+            const assignee = prompt('請輸入指派給處理人員：');
+            if (assignee && assignee.trim()) {
+                if (confirm(`確定要將 ${selectedReports.length} 個檢舉指派給 ${assignee} 嗎？`)) {
+                    alert('批量指派完成');
+                    location.reload();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

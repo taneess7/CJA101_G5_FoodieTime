@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購啟用/停用管理 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自訂CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">團購管理</li>
+                    <li class="breadcrumb-item active">啟用/停用</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-toggle-on me-2"></i>團購啟用/停用管理</h5>
+                            <div>
+                                <button class="btn btn-success me-2" onclick="batchEnable()">
+                                    <i class="fas fa-play me-1"></i>批量啟用
+                                </button>
+                                <button class="btn btn-warning" onclick="batchDisable()">
+                                    <i class="fas fa-pause me-1"></i>批量停用
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Statistics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">進行中團購</h6>
+                                                    <h4 class="mb-0">156</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-play-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">已暫停</h6>
+                                                    <h4 class="mb-0">23</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-pause-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-danger text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">已停用</h6>
+                                                    <h4 class="mb-0">8</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-stop-circle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">總團購數</h6>
+                                                    <h4 class="mb-0">187</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-users fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Search and Filter Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="團購名稱、廠家名稱">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="groupStatus" class="form-label">團購狀態</label>
+                                    <select class="form-select" id="groupStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="active">進行中</option>
+                                        <option value="paused">已暫停</option>
+                                        <option value="disabled">已停用</option>
+                                        <option value="completed">已完成</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="category" class="form-label">商品分類</label>
+                                    <select class="form-select" id="category">
+                                        <option value="">全部分類</option>
+                                        <option value="food">美食</option>
+                                        <option value="beauty">美妝</option>
+                                        <option value="fashion">服飾</option>
+                                        <option value="electronics">3C</option>
+                                        <option value="home">居家</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="vendor" class="form-label">廠家</label>
+                                    <select class="form-select" id="vendor">
+                                        <option value="">全部廠家</option>
+                                        <option value="V001">美食小舖</option>
+                                        <option value="V002">美妝達人</option>
+                                        <option value="V003">科技小站</option>
+                                        <option value="V004">時尚館</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateRange" class="form-label">建立時間</label>
+                                    <select class="form-select" id="dateRange">
+                                        <option value="">全部時間</option>
+                                        <option value="today">今天</option>
+                                        <option value="week">本週</option>
+                                        <option value="month">本月</option>
+                                        <option value="quarter">本季</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Groups Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>團購編號</th>
+                                            <th>團購資訊</th>
+                                            <th>廠家</th>
+                                            <th>分類</th>
+                                            <th>價格</th>
+                                            <th>參與人數</th>
+                                            <th>建立時間</th>
+                                            <th>結束時間</th>
+                                            <th>狀態</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input group-checkbox" data-group-id="G001"></td>
+                                            <td class="fw-bold">G001</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/50x50?text=團購" alt="團購" class="rounded me-2" style="width: 50px; height: 50px;">
+                                                    <div>
+                                                        <div class="fw-bold">日本進口美食團購</div>
+                                                        <small class="text-muted">限量100份，售完為止</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>美食小舖</div>
+                                                <small class="text-muted">V001</small>
+                                            </td>
+                                            <td><span class="badge bg-primary">美食</span></td>
+                                            <td class="fw-bold text-success">NT$ 299</td>
+                                            <td>
+                                                <div>45/100</div>
+                                                <div class="progress" style="height: 5px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: 45%"></div>
+                                                </div>
+                                            </td>
+                                            <td>2024-01-10 09:00</td>
+                                            <td>2024-01-20 23:59</td>
+                                            <td><span class="badge bg-success">進行中</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewGroup('G001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="pauseGroup('G001')">
+                                                    <i class="fas fa-pause"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="disableGroup('G001')">
+                                                    <i class="fas fa-stop"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input group-checkbox" data-group-id="G002"></td>
+                                            <td class="fw-bold">G002</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/50x50?text=團購" alt="團購" class="rounded me-2" style="width: 50px; height: 50px;">
+                                                    <div>
+                                                        <div class="fw-bold">美妝保養團購</div>
+                                                        <small class="text-muted">品質保證，滿額免運</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>美妝達人</div>
+                                                <small class="text-muted">V002</small>
+                                            </td>
+                                            <td><span class="badge bg-info">美妝</span></td>
+                                            <td class="fw-bold text-success">NT$ 599</td>
+                                            <td>
+                                                <div>28/50</div>
+                                                <div class="progress" style="height: 5px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: 56%"></div>
+                                                </div>
+                                            </td>
+                                            <td>2024-01-12 14:30</td>
+                                            <td>2024-01-22 23:59</td>
+                                            <td><span class="badge bg-warning">已暫停</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewGroup('G002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="enableGroup('G002')">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="disableGroup('G002')">
+                                                    <i class="fas fa-stop"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input group-checkbox" data-group-id="G003"></td>
+                                            <td class="fw-bold">G003</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/50x50?text=團購" alt="團購" class="rounded me-2" style="width: 50px; height: 50px;">
+                                                    <div>
+                                                        <div class="fw-bold">服飾配件團購</div>
+                                                        <small class="text-muted">最新潮流，多款選擇</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>科技小舖</div>
+                                                <small class="text-muted">V003</small>
+                                            </td>
+                                            <td><span class="badge bg-secondary">3C</span></td>
+                                            <td class="fw-bold text-success">NT$ 1,299</td>
+                                            <td>
+                                                <div>15/30</div>
+                                                <div class="progress" style="height: 5px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: 50%"></div>
+                                                </div>
+                                            </td>
+                                            <td>2024-01-08 11:20</td>
+                                            <td>2024-01-18 23:59</td>
+                                            <td><span class="badge bg-danger">已停用</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewGroup('G003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="enableGroup('G003')">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="viewDisableReason('G003')">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input group-checkbox" data-group-id="G004"></td>
+                                            <td class="fw-bold">G004</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/50x50?text=團購" alt="團購" class="rounded me-2" style="width: 50px; height: 50px;">
+                                                    <div>
+                                                        <div class="fw-bold">服飾配件團購</div>
+                                                        <small class="text-muted">時尚潮流，多款選擇</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>時尚小舖</div>
+                                                <small class="text-muted">V004</small>
+                                            </td>
+                                            <td><span class="badge bg-warning">服飾</span></td>
+                                            <td class="fw-bold text-success">NT$ 399</td>
+                                            <td>
+                                                <div>67/80</div>
+                                                <div class="progress" style="height: 5px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: 84%"></div>
+                                                </div>
+                                            </td>
+                                            <td>2024-01-14 16:45</td>
+                                            <td>2024-01-24 23:59</td>
+                                            <td><span class="badge bg-success">進行中</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewGroup('G004')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="pauseGroup('G004')">
+                                                    <i class="fas fa-pause"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="disableGroup('G004')">
+                                                    <i class="fas fa-stop"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions and Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchEnable()">
+                                        <i class="fas fa-play me-1"></i>批量啟用
+                                    </button>
+                                    <button class="btn btn-warning me-2" onclick="batchPause()">
+                                        <i class="fas fa-pause me-1"></i>批量暫停
+                                    </button>
+                                    <button class="btn btn-danger" onclick="batchDisable()">
+                                        <i class="fas fa-stop me-1"></i>批量停用
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="團購列表分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Group Modal -->
+    <div class="modal fade" id="viewGroupModal" tabindex="-1" aria-labelledby="viewGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewGroupModalLabel">團購詳細資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>基本資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">團購編號：</td>
+                                    <td id="modalGroupId">G001</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">團購名稱：</td>
+                                    <td id="modalGroupName">日本進口牛肉團購</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">廠家：</td>
+                                    <td id="modalGroupVendor">美食小舖</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">分類：</td>
+                                    <td id="modalGroupCategory">美食</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">價格：</td>
+                                    <td id="modalGroupPrice">NT$ 299</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>狀態資訊</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">當前狀態：</td>
+                                    <td id="modalGroupStatus">進行中</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">參與人數：</td>
+                                    <td id="modalGroupMembers">45/100</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">建立時間：</td>
+                                    <td id="modalGroupCreateTime">2024-01-10 09:00</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">結束時間：</td>
+                                    <td id="modalGroupEndTime">2024-01-20 23:59</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">最後更新：</td>
+                                    <td id="modalGroupUpdateTime">2024-01-15 14:30</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>團購描述</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p id="modalGroupDescription">日本直送進口牛肉，多種口味任選。限量100份，滿50人開團活動。品質保證，新鮮美味。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>商品圖片</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="https://via.placeholder.com/150x150?text=商品1" alt="商品" class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-3">
+                                    <img src="https://via.placeholder.com/150x150?text=商品2" alt="商品" class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-3">
+                                    <img src="https://via.placeholder.com/150x150?text=商品3" alt="商品" class="img-fluid rounded">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-warning" onclick="pauseGroupFromModal()">暫停團購</button>
+                    <button type="button" class="btn btn-danger" onclick="disableGroupFromModal()">停用團購</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disable Group Modal -->
+    <div class="modal fade" id="disableGroupModal" tabindex="-1" aria-labelledby="disableGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="disableGroupModalLabel">停用團購</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="disableReason" class="form-label">停用原因</label>
+                        <select class="form-select" id="disableReason">
+                            <option value="violation">違反平台規定</option>
+                            <option value="complaint">客戶投訴過多</option>
+                            <option value="quality">商品品質問題</option>
+                            <option value="fraud">疑似詐騙行為</option>
+                            <option value="vendor_request">廠家要求停用</option>
+                            <option value="other">其他原因</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="disableNote" class="form-label">詳細說明</label>
+                        <textarea class="form-control" id="disableNote" rows="4" placeholder="請輸入停用原因詳細說明..."></textarea>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="notifyVendor">
+                        <label class="form-check-label" for="notifyVendor">
+                            通知廠家停用原因
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="notifyMembers">
+                        <label class="form-check-label" for="notifyMembers">
+                            通知參與會員
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="processRefund">
+                        <label class="form-check-label" for="processRefund">
+                            處理退款事宜                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDisableGroup()">確認停用</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定義JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.group-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Group Function
+        function viewGroup(groupId) {
+            // 模擬資料
+            const groupData = {
+                'G001': {
+                    id: 'G001',
+                    name: '日本進口牛肉團購',
+                    vendor: '美食小舖',
+                    category: '美食',
+                    price: 'NT$ 299',
+                    status: '進行中',
+                    members: '45/100',
+                    createTime: '2024-01-10 09:00',
+                    endTime: '2024-01-20 23:59',
+                    updateTime: '2024-01-15 14:30',
+                    description: '日本直送進口牛肉，多種口味任選。限量100份，滿50人開團活動。品質保證，新鮮美味。'
+                }
+            };
+
+            const data = groupData[groupId];
+            if (data) {
+                document.getElementById('modalGroupId').textContent = data.id;
+                document.getElementById('modalGroupName').textContent = data.name;
+                document.getElementById('modalGroupVendor').textContent = data.vendor;
+                document.getElementById('modalGroupCategory').textContent = data.category;
+                document.getElementById('modalGroupPrice').textContent = data.price;
+                document.getElementById('modalGroupStatus').textContent = data.status;
+                document.getElementById('modalGroupMembers').textContent = data.members;
+                document.getElementById('modalGroupCreateTime').textContent = data.createTime;
+                document.getElementById('modalGroupEndTime').textContent = data.endTime;
+                document.getElementById('modalGroupUpdateTime').textContent = data.updateTime;
+                document.getElementById('modalGroupDescription').textContent = data.description;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewGroupModal'));
+                modal.show();
+            }
+        }
+
+        // Enable Group Function
+        function enableGroup(groupId) {
+            if (confirm('確認要啟用此團購嗎？')) {
+                alert('團購已啟用');
+                location.reload();
+            }
+        }
+
+        // Pause Group Function
+        function pauseGroup(groupId) {
+            const reason = prompt('請輸入暫停原因：');
+            if (reason && reason.trim()) {
+                if (confirm('確認要暫停此團購嗎？')) {
+                    alert('團購已暫停');
+                    location.reload();
+                }
+            }
+        }
+
+        // Disable Group Function
+        function disableGroup(groupId) {
+            const modal = new bootstrap.Modal(document.getElementById('disableGroupModal'));
+            modal.show();
+        }
+
+        // View Disable Reason Function
+        function viewDisableReason(groupId) {
+            alert('停用原因：違反平台規定\n詳細說明：商品描述與實際不符，多次收到用戶投訴\n停用時間：2024-01-15 10:30\n操作人員：系統管理員');
+        }
+
+        // Pause Group from Modal
+        function pauseGroupFromModal() {
+            const reason = prompt('請輸入暫停原因：');
+            if (reason && reason.trim()) {
+                if (confirm('確認要暫停此團購嗎？')) {
+                    alert('團購已暫停');
+                    bootstrap.Modal.getInstance(document.getElementById('viewGroupModal')).hide();
+                    location.reload();
+                }
+            }
+        }
+
+        // Disable Group from Modal
+        function disableGroupFromModal() {
+            bootstrap.Modal.getInstance(document.getElementById('viewGroupModal')).hide();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('disableGroupModal'));
+                modal.show();
+            }, 300);
+        }
+
+        // Confirm Disable Group
+        function confirmDisableGroup() {
+            const reason = document.getElementById('disableReason').value;
+            const note = document.getElementById('disableNote').value;
+            
+            if (!note.trim()) {
+                alert('請輸入詳細說明');
+                return;
+            }
+            
+            if (confirm('確認要停用此團購嗎？此操作無法復原！')) {
+                alert('團購已停用');
+                bootstrap.Modal.getInstance(document.getElementById('disableGroupModal')).hide();
+                location.reload();
+            }
+        }
+
+        // Batch Enable Function
+        function batchEnable() {
+            const selectedGroups = document.querySelectorAll('.group-checkbox:checked');
+            if (selectedGroups.length === 0) {
+                alert('請選擇要啟用的團購');
+                return;
+            }
+            
+            if (confirm(`確認要批量啟用 ${selectedGroups.length} 個團購嗎？`)) {
+                alert('批量啟用完成');
+                location.reload();
+            }
+        }
+
+        // Batch Pause Function
+        function batchPause() {
+            const selectedGroups = document.querySelectorAll('.group-checkbox:checked');
+            if (selectedGroups.length === 0) {
+                alert('請選擇要暫停的團購');
+                return;
+            }
+            
+            const reason = prompt('請輸入批量暫停原因：');
+            if (reason && reason.trim()) {
+                if (confirm(`確認要批量暫停 ${selectedGroups.length} 個團購嗎？`)) {
+                    alert('批量暫停完成');
+                    location.reload();
+                }
+            }
+        }
+
+        // Batch Disable Function
+        function batchDisable() {
+            const selectedGroups = document.querySelectorAll('.group-checkbox:checked');
+            if (selectedGroups.length === 0) {
+                alert('請選擇要停用的團購');
+                return;
+            }
+            
+            const reason = prompt('請輸入批量停用原因：');
+            if (reason && reason.trim()) {
+                if (confirm(`確認要批量停用 ${selectedGroups.length} 個團購嗎？此操作無法復原！`)) {
+                    alert('批量停用完成');
+                    location.reload();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

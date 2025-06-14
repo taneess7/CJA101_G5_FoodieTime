@@ -16,15 +16,20 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
+@ToString(exclude = {"smgauthList"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "servermanagefunction")
 public class SmgfcVO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SMGEFUNC_ID")
+    @EqualsAndHashCode.Include
     private Integer smgFuncId;
 
     @NotBlank(message = "功能名稱不可為空")

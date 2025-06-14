@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員查詢與篩選 - 後台管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自訂CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo text-center">
+            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>儀表板</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">討論區管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">管理員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-users-add}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>新增管理員</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理員權限管理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
+                    <i class="fas fa-check-circle"></i>
+                    <span>審核廠家</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                    <i class="fas fa-store-alt"></i>
+                    <span>廠家帳號查詢/編輯</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉功能</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
+                    <i class="fas fa-ban"></i>
+                    <span>黑名單管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
+                    <i class="fas fa-times-circle"></i>
+                    <span>下架商品</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
+                    <i class="fas fa-key"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">會員管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                    <i class="fas fa-users"></i>
+                    <span>會員查詢與篩選</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>權限變更</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">團購管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
+                    <i class="fas fa-flag"></i>
+                    <span>檢舉審核管理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>啟用/停用</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
+                    <i class="fas fa-undo"></i>
+                    <span>退款</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>月結付款</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">訂單管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>訂單詳情檢視</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
+                    <i class="fas fa-credit-card"></i>
+                    <span>付款處理</span>
+                </a>
+            </li>
+            
+            <li class="nav-item section-title">客服管理</li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
+                    <i class="fas fa-headset"></i>
+                    <span>表單回覆</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link logout-btn" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>登出</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">會員管理</li>
+                    <li class="breadcrumb-item active">會員查詢與篩選</li>
+                </ol>
+            </nav>
+            <div class="user-dropdown dropdown">
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+                    <span class="user-name">系統管理員</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-users me-2"></i>會員查詢與篩選</h5>
+                            <button class="btn btn-primary" onclick="exportMembers()">
+                                <i class="fas fa-download me-1"></i>匯出資料
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Advanced Search Form -->
+                            <form class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                    <input type="text" class="form-control" id="searchKeyword" placeholder="姓名、電子郵件、電話">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="memberStatus" class="form-label">會員狀態</label>
+                                    <select class="form-select" id="memberStatus">
+                                        <option value="">全部狀態</option>
+                                        <option value="active">啟用</option>
+                                        <option value="suspended">停用</option>
+                                        <option value="banned">封鎖</option>
+                                        <option value="pending">待審核</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="memberLevel" class="form-label">會員等級</label>
+                                    <select class="form-select" id="memberLevel">
+                                        <option value="">全部等級</option>
+                                        <option value="bronze">銅牌會員</option>
+                                        <option value="silver">銀牌會員</option>
+                                        <option value="gold">金牌會員</option>
+                                        <option value="platinum">白金會員</option>
+                                        <option value="diamond">鑽石會員</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="ageRange" class="form-label">年齡範圍</label>
+                                    <select class="form-select" id="ageRange">
+                                        <option value="">全部年齡</option>
+                                        <option value="18-25">18-25歲</option>
+                                        <option value="26-35">26-35歲</option>
+                                        <option value="36-45">36-45歲</option>
+                                        <option value="46-55">46-55歲</option>
+                                        <option value="56+">56歲以上</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="gender" class="form-label">性別</label>
+                                    <select class="form-select" id="gender">
+                                        <option value="">全部性別</option>
+                                        <option value="male">男性</option>
+                                        <option value="female">女性</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <!-- Additional Filters -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-2">
+                                    <label for="registrationDateFrom" class="form-label">註冊日期(起)</label>
+                                    <input type="date" class="form-control" id="registrationDateFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="registrationDateTo" class="form-label">註冊日期(迄)</label>
+                                    <input type="date" class="form-control" id="registrationDateTo">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="lastLoginFrom" class="form-label">最後登入日期</label>
+                                    <input type="date" class="form-control" id="lastLoginFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="orderCountMin" class="form-label">訂單數量(最少)</label>
+                                    <input type="number" class="form-control" id="orderCountMin" placeholder="0">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="totalSpentMin" class="form-label">消費金額(最少)</label>
+                                    <input type="number" class="form-control" id="totalSpentMin" placeholder="0">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                        <i class="fas fa-times me-1"></i>清除
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Statistics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">總會員數</h6>
+                                                    <h4 class="mb-0">12,456</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-users fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">活躍會員</h6>
+                                                    <h4 class="mb-0">8,923</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-user-check fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">新增會員</h6>
+                                                    <h4 class="mb-0">234</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-user-plus fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-danger text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6 class="card-title">異常帳號</h6>
+                                                    <h4 class="mb-0">45</h4>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Members Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="form-check-input" id="selectAll">
+                                            </th>
+                                            <th>會員資料</th>
+                                            <th>聯絡資訊</th>
+                                            <th>等級</th>
+                                            <th>註冊日期</th>
+                                            <th>最後登入</th>
+                                            <th>訂單數</th>
+                                            <th>消費金額</th>
+                                            <th>狀態</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M001"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">王小美</div>
+                                                        <small class="text-muted">M001</small>
+                                                        <div><small class="text-muted">女性，28歲</small></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>wang@example.com</div>
+                                                <small class="text-muted">0912-345-678</small>
+                                            </td>
+                                            <td><span class="badge bg-warning">銅牌會員</span></td>
+                                            <td>2023-05-15</td>
+                                            <td>2024-01-14</td>
+                                            <td>25</td>
+                                            <td>NT$ 45,600</td>
+                                            <td><span class="badge bg-success">啟用</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M001')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editMember('M001')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M001')">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M002"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">李大明</div>
+                                                        <small class="text-muted">M002</small>
+                                                        <div><small class="text-muted">男性，35歲</small></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>lee@example.com</div>
+                                                <small class="text-muted">0923-456-789</small>
+                                            </td>
+                                            <td><span class="badge bg-info">銀牌會員</span></td>
+                                            <td>2023-03-20</td>
+                                            <td>2024-01-15</td>
+                                            <td>42</td>
+                                            <td>NT$ 89,200</td>
+                                            <td><span class="badge bg-success">啟用</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M002')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editMember('M002')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M002')">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M003"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px; opacity: 0.5;">
+                                                    <div>
+                                                        <div class="fw-bold text-muted">張小華</div>
+                                                        <small class="text-muted">M003</small>
+                                                        <div><small class="text-muted">女性，24歲</small></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-muted">zhang@example.com</div>
+                                                <small class="text-muted">0934-567-890</small>
+                                            </td>
+                                            <td><span class="badge bg-secondary">基本會員</span></td>
+                                            <td>2024-01-10</td>
+                                            <td>2024-01-12</td>
+                                            <td>2</td>
+                                            <td>NT$ 1,200</td>
+                                            <td><span class="badge bg-danger">停用</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M003')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success me-1" onclick="activateMember('M003')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M003')">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M004"></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
+                                                    <div>
+                                                        <div class="fw-bold">陳志強</div>
+                                                        <small class="text-muted">M004</small>
+                                                        <div><small class="text-muted">男性，42歲</small></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>chen@example.com</div>
+                                                <small class="text-muted">0945-678-901</small>
+                                            </td>
+                                            <td><span class="badge bg-dark">鑽石會員</span></td>
+                                            <td>2022-08-12</td>
+                                            <td>2024-01-15</td>
+                                            <td>156</td>
+                                            <td>NT$ 256,800</td>
+                                            <td><span class="badge bg-success">啟用</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M004')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editMember('M004')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M004')">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Batch Actions -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="batchActivate()">
+                                        <i class="fas fa-check me-1"></i>批量啟用
+                                    </button>
+                                    <button class="btn btn-warning me-2" onclick="batchSuspend()">
+                                        <i class="fas fa-pause me-1"></i>批量停用
+                                    </button>
+                                    <button class="btn btn-info me-2" onclick="batchMessage()">
+                                        <i class="fas fa-envelope me-1"></i>批量發送訊息
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="batchExport()">
+                                        <i class="fas fa-download me-1"></i>批量匯出
+                                    </button>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="會員列表分頁">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">上一頁</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Member Modal -->
+    <div class="modal fade" id="viewMemberModal" tabindex="-1" aria-labelledby="viewMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewMemberModalLabel">會員詳細資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="會員頭像" class="rounded-circle mb-3" style="width: 120px; height: 120px;" id="modalMemberAvatar">
+                            <h6 id="modalMemberName">王小美</h6>
+                            <p class="text-muted" id="modalMemberId">M001</p>
+                        </div>
+                        <div class="col-md-8">
+                            <h6>基本資料</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">電子郵件：</td>
+                                    <td id="modalMemberEmail">wang@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">電話：</td>
+                                    <td id="modalMemberPhone">0912-345-678</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">性別：</td>
+                                    <td id="modalMemberGender">女性</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">年齡：</td>
+                                    <td id="modalMemberAge">28歲</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">會員等級：</td>
+                                    <td id="modalMemberLevel">銅牌會員</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">註冊日期：</td>
+                                    <td id="modalMemberRegDate">2023-05-15</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">最後登入：</td>
+                                    <td id="modalMemberLastLogin">2024-01-14</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">狀態：</td>
+                                    <td id="modalMemberStatus">啟用</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>購買統計</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">總訂單數：</td>
+                                    <td id="modalMemberOrders">25</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">總消費金額：</td>
+                                    <td id="modalMemberSpent">NT$ 45,600</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">平均訂單金額：</td>
+                                    <td id="modalMemberAvgOrder">NT$ 1,824</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">最後購買：</td>
+                                    <td id="modalMemberLastOrder">2024-01-10</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>偏好設定</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold">偏好類別：</td>
+                                    <td>美妝保養</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">常用付款：</td>
+                                    <td>信用卡</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">活躍時段：</td>
+                                    <td>晚上 8-10點</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">推薦人數：</td>
+                                    <td>3人</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-primary" onclick="editMemberFromModal()">編輯會員</button>
+                    <button type="button" class="btn btn-info" onclick="sendMessageFromModal()">發送訊息</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自訂JS -->
+    <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <script>
+        // Select All Checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.member-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // View Member Function
+        function viewMember(memberId) {
+            // 模擬資料
+            const memberData = {
+                'M001': {
+                    name: '王小美',
+                    id: 'M001',
+                    email: 'wang@example.com',
+                    phone: '0912-345-678',
+                    gender: '女性',
+                    age: '28歲',
+                    level: '銅牌會員',
+                    regDate: '2023-05-15',
+                    lastLogin: '2024-01-14',
+                    status: '啟用',
+                    orders: '25',
+                    spent: 'NT$ 45,600',
+                    avgOrder: 'NT$ 1,824',
+                    lastOrder: '2024-01-10',
+                    avatar: 'https://randomuser.me/api/portraits/women/1.jpg'
+                }
+            };
+
+            const data = memberData[memberId];
+            if (data) {
+                document.getElementById('modalMemberName').textContent = data.name;
+                document.getElementById('modalMemberId').textContent = data.id;
+                document.getElementById('modalMemberEmail').textContent = data.email;
+                document.getElementById('modalMemberPhone').textContent = data.phone;
+                document.getElementById('modalMemberGender').textContent = data.gender;
+                document.getElementById('modalMemberAge').textContent = data.age;
+                document.getElementById('modalMemberLevel').textContent = data.level;
+                document.getElementById('modalMemberRegDate').textContent = data.regDate;
+                document.getElementById('modalMemberLastLogin').textContent = data.lastLogin;
+                document.getElementById('modalMemberStatus').textContent = data.status;
+                document.getElementById('modalMemberOrders').textContent = data.orders;
+                document.getElementById('modalMemberSpent').textContent = data.spent;
+                document.getElementById('modalMemberAvgOrder').textContent = data.avgOrder;
+                document.getElementById('modalMemberLastOrder').textContent = data.lastOrder;
+                document.getElementById('modalMemberAvatar').src = data.avatar;
+                
+                const modal = new bootstrap.Modal(document.getElementById('viewMemberModal'));
+                modal.show();
+            }
+        }
+
+        // Edit Member Function
+        function editMember(memberId) {
+            alert('編輯會員功能開發中...');
+        }
+
+        // Send Message Function
+        function sendMessage(memberId) {
+            alert('發送訊息功能開發中...');
+        }
+
+        // Activate Member Function
+        function activateMember(memberId) {
+            if (confirm('確定要啟用此會員嗎？')) {
+                alert('會員已啟用');
+                location.reload();
+            }
+        }
+
+        // Edit Member from Modal
+        function editMemberFromModal() {
+            alert('編輯會員功能開發中...');
+        }
+
+        // Send Message from Modal
+        function sendMessageFromModal() {
+            alert('發送訊息功能開發中...');
+        }
+
+        // Clear Filters Function
+        function clearFilters() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('memberStatus').value = '';
+            document.getElementById('memberLevel').value = '';
+            document.getElementById('ageRange').value = '';
+            document.getElementById('gender').value = '';
+            document.getElementById('registrationDateFrom').value = '';
+            document.getElementById('registrationDateTo').value = '';
+            document.getElementById('lastLoginFrom').value = '';
+            document.getElementById('orderCountMin').value = '';
+            document.getElementById('totalSpentMin').value = '';
+        }
+
+        // Export Members Function
+        function exportMembers() {
+            alert('匯出會員資料功能開發中...');
+        }
+
+        // Batch Activate Function
+        function batchActivate() {
+            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('請選擇要啟用的會員');
+                return;
+            }
+            
+            if (confirm(`確定要批量啟用 ${selectedMembers.length} 位會員嗎？`)) {
+                alert('批量啟用完成');
+                location.reload();
+            }
+        }
+
+        // Batch Suspend Function
+        function batchSuspend() {
+            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('請選擇要停用的會員');
+                return;
+            }
+            
+            const reason = prompt('請輸入停用原因');
+            if (reason && reason.trim()) {
+                if (confirm(`確定要批量停用 ${selectedMembers.length} 位會員嗎？`)) {
+                    alert('批量停用完成');
+                    location.reload();
+                }
+            }
+        }
+
+        // Batch Message Function
+        function batchMessage() {
+            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('請選擇要發送訊息的會員');
+                return;
+            }
+            
+            alert('批量發送訊息功能開發中...');
+        }
+
+        // Batch Export Function
+        function batchExport() {
+            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('請選擇要匯出的會員');
+                return;
+            }
+            
+            alert('批量匯出功能開發中...');
+        }
+    </script>
+</body>
+</html>
