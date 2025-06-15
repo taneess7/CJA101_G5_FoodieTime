@@ -371,9 +371,7 @@
 }
 
 /* 結帳表單 */
-.checkout-container {
-    display: none;
-}
+
 
 .checkout-content {
     display: grid;
@@ -582,31 +580,105 @@ textarea {
     padding: var(--space-4);
 }
 
+/* 結帳商品容器 */
 .checkout-items {
-    margin-bottom: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 8px);
+    margin-bottom: var(--space-3, 16px);
+    padding: var(--space-3, 16px);
+    background-color: var(--neutral-50, #FAFAFA);
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--neutral-200, #EEEEEE);
 }
 
+/* 結帳商品項目 */
 .checkout-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: var(--space-2);
+    align-items: center;
+    padding: var(--space-2, 8px) var(--space-3, 16px);
+    background-color: var(--bg-light, #FFFFFF);
+    border: 1px solid var(--neutral-200, #EEEEEE);
+    border-radius: var(--radius-sm, 4px);
     font-size: 0.875rem;
+    min-height: 40px;
+    transition: background-color var(--transition-fast, 0.15s ease);
 }
 
+.checkout-item:hover {
+    background-color: var(--neutral-100, #F5F5F5);
+}
+
+/* 結帳商品名稱 */
 .checkout-item-name {
     flex: 1;
+    font-weight: 500;
+    color: var(--text-primary, #212121);
+    margin-right: var(--space-2, 8px);
+    word-break: break-word;
 }
 
+/* 結帳商品數量 */
 .checkout-item-quantity {
-    color: var(--neutral-600);
-    margin: 0 var(--space-2);
+    color: var(--neutral-600, #757575);
+    margin: 0 var(--space-2, 8px);
+    font-size: 0.8125rem;
+    min-width: 40px;
+    text-align: center;
+    background-color: var(--neutral-100, #F5F5F5);
+    padding: 2px 8px;
+    border-radius: var(--radius-full, 9999px);
 }
 
 /* 訂單確認頁面 */
 .confirmation-container {
     display: none;
 }
+/* 結帳商品價格 */
+.checkout-item-price {
+    font-weight: 600;
+    color: var(--primary-color, #FF5722);
+    font-size: 0.875rem;
+    min-width: 80px;
+    text-align: right;
+}
 
+/* 訂單摘要容器增強 */
+.order-summary {
+    background-color: var(--bg-light, #FFFFFF);
+    border-radius: var(--radius-md, 8px);
+    box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24));
+    padding: var(--space-4, 24px);
+    border: 1px solid var(--neutral-200, #EEEEEE);
+}
+
+.summary-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--space-3, 16px);
+    color: var(--neutral-900, #212121);
+    border-bottom: 2px solid var(--primary-color, #FF5722);
+    padding-bottom: var(--space-1, 4px);
+}
+
+/* 結帳側邊欄增強 */
+.checkout-sidebar {
+    align-self: flex-start;
+    position: sticky;
+    top: 80px;
+    min-width: 300px;
+}
+
+/* 空購物車狀態 */
+.checkout-items:empty::before {
+    content: "您的購物車是空的";
+    display: block;
+    text-align: center;
+    color: var(--neutral-500, #9E9E9E);
+    font-style: italic;
+    padding: var(--space-4, 24px);
+}
 .confirmation-content {
     max-width: 800px;
     margin: 0 auto;
