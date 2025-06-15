@@ -5,38 +5,27 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //
-//import com.foodietime.member.model.MemService;
 //import com.foodietime.member.model.MemberVO;
-//import com.foodietime.postcategory.model.PostCategoryService;
 //import com.foodietime.postcategory.model.PostCategoryVO;
 //
-//@Service
+//@Service("PostService")
 //public class PostService {
 //
 //	@Autowired
-//	PostRepository repository;
-//
-//	@Autowired
-//	private MemService memService; // 新增這兩個 Service
-//
-//	@Autowired
-//	private PostCategoryService postCategoryService;
-///*
-//	public PostService() {
-//		dao = new PostDAOImpl();
-//		memService = new MemService();
-//		postCategoryService = new PostCategoryService();
-//	}
+//	private PostRepository repository;
 //
 //	public PostVO addPost(Integer memId, Integer postCateId, java.sql.Timestamp postDate, byte postStatus,
 //			java.sql.Timestamp editDate, String postTitle, String postContent, Integer likeCount, Integer views) {
 //		PostVO postVO = new PostVO();
 //
-////		MemberVO member = memService.getOneMember(memId);
-//		PostCategoryVO postCategory = postCategoryService.getOnePostCategory(postCateId);
+//		MemberVO member = new MemberVO();
+//		member.setMemId(memId);
 //
-////		postVO.setMemId(member);
-//		postVO.setPostCateId(postCategory);
+//		PostCategoryVO postCategory = new PostCategoryVO();
+//		postCategory.setPostCateId(postCateId);
+//
+//		postVO.setMember(member);
+//		postVO.setPostCate(postCategory);
 //		postVO.setPostDate(postDate);
 //		postVO.setPostStatus(postStatus);
 //		postVO.setEditDate(editDate);
@@ -44,8 +33,7 @@
 //		postVO.setPostContent(postContent); // longtext
 //		postVO.setLikeCount(likeCount);
 //		postVO.setViews(views);
-//		dao.insert(postVO);
-//		return postVO;
+//		return repository.save(postVO);
 //	}
 //
 //	public PostVO updatePost(Integer postId, Integer memId, Integer postCateId, java.sql.Timestamp postDate,
@@ -53,11 +41,14 @@
 //			Integer views) {
 //		PostVO postVO = new PostVO();
 //
-////		MemberVO member = memService.getOneMember(memId);
-//		PostCategoryVO postCategory = postCategoryService.getOnePostCategory(postCateId);
+//		MemberVO member = new MemberVO();
+//		member.setMemId(memId);
+//
+//		PostCategoryVO postCategory = new PostCategoryVO();
+//		postCategory.setPostCateId(postCateId);
 //
 //		postVO.setPostId(postId);
-////		postVO.setMemId(member);
+//		postVO.setMemId(member);
 //		postVO.setPostCateId(postCategory);
 //		postVO.setPostDate(postDate);
 //		postVO.setPostStatus(postStatus);
@@ -71,15 +62,15 @@
 //	}
 //
 //	public void deletePost(Integer postId) {
-//		dao.delete(postId);
+//		repository.deleteById(postId);
 //	}
 //
 //	public PostVO getOnePost(Integer postId) {
-//		return dao.findByPK(postId);
+//		return repository.findById(postId).orElse(null);
 //	}
 //
 //	public List<PostVO> getAll() {
-//		return dao.getAll();
+//		return repository.findAll();
 //	}
-//*/
+//
 //}
