@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>結帳資訊 - FoodieTime 食刻</title>
   <meta name="description" content="FoodieTime 食刻結帳 - 安全便捷的付款流程。">
-  <link rel="stylesheet" th:href="@{css/common/style.css}">
-  <link rel="stylesheet" th:href="@{css/front/cart/cart.css}">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/front/cart/cart.css}">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
   <!-- PWA 支援 -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#FF5722">
-  <link rel="apple-touch-icon" th:href="@{images/icons/icon-192x192.png}">
+  <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
 <!-- 保持原有的header -->
@@ -35,11 +35,11 @@
     </div>
     <nav class="main-nav">
       <ul class="nav-list">
-        <li class="nav-item"><a th:href="@{front/map.html}" class="nav-link">地圖</a></li>
-        <li class="nav-item"><a th:href="@{front/group-order.html}" class="nav-link">團購</a></li>
-        <li class="nav-item"><a th:href="@{front/deals.html}" class="nav-link">優惠</a></li>
-        <li class="nav-item"><a th:href="@{front/cart.html}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
-        <li class="nav-item"><a th:href="@{front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
+        <li class="nav-item"><a th:href="@{/front/map.html}" class="nav-link">地圖</a></li>
+        <li class="nav-item"><a th:href="@{/front/group-order.html}" class="nav-link">團購</a></li>
+        <li class="nav-item"><a th:href="@{/front/deals.html}" class="nav-link">優惠</a></li>
+        <li class="nav-item"><a th:href="@{/front/cart.html}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
+        <li class="nav-item"><a th:href="@{/front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
       </ul>
       <button class="menu-toggle" aria-label="開啟選單">
         <i class="material-icons-outlined">menu</i>
@@ -73,7 +73,7 @@
 
       <div class="checkout-content">
         <div class="checkout-form">
-          <form id="checkout-form" th:action="@{/front/order-confirmation.html}" method="post">
+          <form id="checkout-form" th:action="@{/cart/order-confirmation}" method="post">
             <!-- 聯絡資訊 -->
             <div class="form-section">
               <h2 class="section-title">聯絡資訊</h2>
@@ -194,7 +194,7 @@
               <!-- Line Pay 支付介面 -->
               <div id="line-pay-form" class="payment-details" style="display: none;">
                 <div class="payment-qrcode-container">
-                  <img th:src="@{images/payment/line-pay-qrcode.svg}" alt="Line Pay QR Code" class="payment-qrcode">
+                  <img th:src="@{/images/payment/line-pay-qrcode.svg}" alt="Line Pay QR Code" class="payment-qrcode">
                   <p class="payment-instruction">請使用 Line 應用程式掃描上方 QR Code 完成支付</p>
                 </div>
               </div>
@@ -211,17 +211,17 @@
 
               <!-- 支援的支付方式圖示 -->
               <div class="payment-icons">
-                <img th:src="@{images/payment/visa.svg}" alt="Visa" class="payment-icon">
-                <img th:src="@{images/payment/mastercard.svg}" alt="MasterCard" class="payment-icon">
-                <img th:src="@{images/payment/jcb.svg}" alt="JCB" class="payment-icon">
-                <img th:src="@{images/payment/line-pay.svg}" alt="Line Pay" class="payment-icon">
-                <img th:src="@{images/payment/apple-pay.svg}" alt="Apple Pay" class="payment-icon">
+                <img th:src="@{/images/payment/visa.svg}" alt="Visa" class="payment-icon">
+                <img th:src="@{//payment/mastercard.svg}" alt="MasterCard" class="payment-icon">
+                <img th:src="@{/images/payment/jcb.svg}" alt="JCB" class="payment-icon">
+                <img th:src="@{/images/payment/line-pay.svg}" alt="Line Pay" class="payment-icon">
+                <img th:src="@{/images/payment/apple-pay.svg}" alt="Apple Pay" class="payment-icon">
               </div>
             </div>
 
             <!-- 按鈕 - 修改為頁面跳轉 -->
             <div class="form-actions">
-              <a th:href="@{/front/cart.html}" class="btn btn-text">返回購物車</a>
+              <a th:href="@{/cart/cart}" class="btn btn-text">返回購物車</a>
               <button type="submit" class="btn btn-primary">確認訂單</button>
             </div>
           </form>
@@ -263,35 +263,35 @@
   <div class="footer-container">
     <div class="footer-top">
       <div class="footer-logo">
-        <img th:src="@{img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+        <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
         <span class="logo-text">FoodieTime 食刻</span>
       </div>
       <div class="footer-nav">
         <div class="footer-nav-group">
           <h4 class="footer-nav-title">功能</h4>
           <ul class="footer-nav-list">
-            <li><a th:href="@{front/map.html}">地圖搜尋</a></li>
-            <li><a th:href="@{front/group-order.html}">團購功能</a></li>
-            <li><a th:href="@{front/deals.html}">比價優惠</a></li>
-            <li><a th:href="@{front/collections.html}">收藏管理</a></li>
+            <li><a th:href="@{/front/map.html}">地圖搜尋</a></li>
+            <li><a th:href="@{/front/group-order.html}">團購功能</a></li>
+            <li><a th:href="@{/front/deals.html}">比價優惠</a></li>
+            <li><a th:href="@{/front/collections.html}">收藏管理</a></li>
           </ul>
         </div>
         <div class="footer-nav-group">
           <h4 class="footer-nav-title">關於我們</h4>
           <ul class="footer-nav-list">
-            <li><a th:href="@{front/about.html}">公司簡介</a></li>
-            <li><a th:href="@{front/team.html}">團隊成員</a></li>
-            <li><a th:href="@{front/careers.html}">加入我們</a></li>
-            <li><a th:href="@{front/press.html}">媒體報導</a></li>
+            <li><a th:href="@{/front/about.html}">公司簡介</a></li>
+            <li><a th:href="@{/front/team.html}">團隊成員</a></li>
+            <li><a th:href="@{/front/careers.html}">加入我們</a></li>
+            <li><a th:href="@{/front/press.html}">媒體報導</a></li>
           </ul>
         </div>
         <div class="footer-nav-group">
           <h4 class="footer-nav-title">幫助</h4>
           <ul class="footer-nav-list">
-            <li><a th:href="@{front/faq.html}">常見問題</a></li>
-            <li><a th:href="@{front/contact.html}">聯絡我們</a></li>
-            <li><a th:href="@{front/terms.html}">使用條款</a></li>
-            <li><a th:href="@{front/privacy.html}">隱私政策</a></li>
+            <li><a th:href="@{/front/faq.html}">常見問題</a></li>
+            <li><a th:href="@{/front/contact.html}">聯絡我們</a></li>
+            <li><a th:href="@{/front/terms.html}">使用條款</a></li>
+            <li><a th:href="@{/front/privacy.html}">隱私政策</a></li>
           </ul>
         </div>
       </div>
@@ -309,7 +309,7 @@
 </footer>
 
 
-<script th:src="@{js/common/main.js}"></script>
-<script th:src="@{js/front/cart/checkout.js}"></script>
+<script th:src="@{/js/common/main.js}"></script>
+<script th:src="@{/js/front/cart/checkout.js}"></script>
 </body>
 </html>
