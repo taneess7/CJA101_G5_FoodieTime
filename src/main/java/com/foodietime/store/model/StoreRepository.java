@@ -23,8 +23,7 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
 	@Query(value = "from StoreVO where storDeliver =?1 and storOpen =?2 order by storId")
 	List<StoreVO> findByOthers(byte storDeliver, byte storOpen);
 
-	//查出所有屬於該店家 ID 的商品
-		List<ProductVO> findByStorIdProd(Integer storId);
+	
 	
 	StoreVO findByStorEmail(String email);
 }
