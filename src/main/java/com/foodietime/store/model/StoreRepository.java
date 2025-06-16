@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import com.foodietime.product.model.ProductVO;
 import com.foodietime.storeCate.model.StoreCateVO;
 
 public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
@@ -23,7 +23,8 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
 	@Query(value = "from StoreVO where storDeliver =?1 and storOpen =?2 order by storId")
 	List<StoreVO> findByOthers(byte storDeliver, byte storOpen);
 
-	
+	//查某店家的所有商品
+		List<ProductVO> findByStorIdProd(Integer storId);
 	
 	StoreVO findByStorEmail(String email);
 }
