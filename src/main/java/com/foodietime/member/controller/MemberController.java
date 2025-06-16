@@ -8,41 +8,87 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.foodietime.member.model.MemberVO;
 
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
 import com.foodietime.member.model.MemService;
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/front/member")
 public class MemberController {
 
     @Autowired
     private MemService memService;
+    
+    // ✅ 初始化預設值（讓驗證不會失敗）
+    @ModelAttribute("member")
+    public MemberVO prepareMember() {
+        MemberVO member = new MemberVO();
+        member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
+        member.setMemNoSpeak(MemberVO.NoSpeakStatus.INACTIVE);
+        member.setMemNoPost(MemberVO.NoPostStatus.INACTIVE);
+        member.setMemNoGroup(MemberVO.NoGroupStatus.INACTIVE);
+        member.setMemNoJoingroup(MemberVO.NoJoingroupStatus.INACTIVE);
+        member.setTotalStarNum(0);
+        member.setTotalReviews(0);
+        member.setMemTime(Timestamp.from(Instant.now()));
+        return member;
+    }
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-    	model.addAttribute("member", new MemberVO()); // 表單綁定使用
+    	 if (!model.containsAttribute("member")) {
+    	        MemberVO member = new MemberVO();
+    	        member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
+    	        member.setMemNoSpeak(MemberVO.NoSpeakStatus.INACTIVE);
+    	        member.setMemNoPost(MemberVO.NoPostStatus.INACTIVE);
+    	        member.setMemNoGroup(MemberVO.NoGroupStatus.INACTIVE);
+    	        member.setMemNoJoingroup(MemberVO.NoJoingroupStatus.INACTIVE);
+    	        member.setTotalStarNum(0);
+    	        member.setTotalReviews(0);
+    	        member.setMemTime(Timestamp.from(Instant.now()));
+    	        model.addAttribute("member", member); // 這行不能少！
+    	    }
         return "front/member/register"; // 對應 src/main/resources/templates/member/register.html
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute MemberVO member,
-                           @RequestParam("mem_avatar") MultipartFile memAvatarFile,
+    public String register( @Valid @ModelAttribute("member") MemberVO member,
+    		 				BindingResult result,
+    		 				 @RequestParam(value = "confirmPassword") String confirmPassword,
+    						@RequestParam(value = "mem_avatar", required = false) MultipartFile memAvatarFile,
                            @RequestParam(value = "isStore", required = false) Boolean isStore,
                            HttpSession session,
                            Model model) throws IOException {
-
+    	
+    	 System.out.println("【DEBUG】是否有錯誤: " + result.hasErrors());
+        if (result.hasErrors()) {
+            return "front/member/register";
+        }
+        
+        // ✅ 密碼與確認密碼不一致時手動加錯誤訊息
+        if (!member.getMemPassword().equals(confirmPassword)) {
+            model.addAttribute("passwordError", "兩次輸入的密碼不一致");
+            return "front/member/register";
+        }
+    	
     	// 帳號或 Email 重複檢查
         if (memService.isAccountExists(member.getMemAccount())) {
             model.addAttribute("member", member);
             model.addAttribute("error", "帳號已存在，請選擇其他帳號");
             return "front/member/register";
         }
-
+        if (memAvatarFile != null && !memAvatarFile.isEmpty()) {
+    	    member.setMemAvatar(memAvatarFile.getBytes());
+    	}
+        
+        
         if (memService.isEmailExists(member.getMemEmail())) {
             model.addAttribute("member", member);
             model.addAttribute("error", "Email 已註冊過，請使用其他信箱");
@@ -54,21 +100,27 @@ public class MemberController {
             member.setMemAvatar(memAvatarFile.getBytes());
         }
 
-        member.setMemTime(Timestamp.from(Instant.now())); // 設定當下註冊時間
+        
         memService.save(member);
 
         session.setAttribute("loggedInMember", member);
-
+        model.addAttribute("nickname", member.getMemNickname());
+  
+        
         if (Boolean.TRUE.equals(isStore)) {
             return "redirect:/front/store/register"; // ⬅️ 第二階段：前往填寫店家資料
         }
 
-        return "redirect:/front/member/success"; // ⬅️ 原有流程：一般會員註冊成功
+        return "front/member/success"; // ⬅️ 原有流程：一般會員註冊成功
     }
 
     @GetMapping("/success")
-    public String registerSuccess() {
-        return "front/member/success"; // 自行建立 success 畫面
+    public String registerSuccess(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member != null) {
+            model.addAttribute("nickname", member.getMemNickname());
+        }
+        return "front/member/success";
     }
     
     @GetMapping("/login")
