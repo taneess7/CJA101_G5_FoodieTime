@@ -10,109 +10,127 @@
 
 <body class="bg-gradient-to-br from-red-100 to-orange-200 min-h-screen flex items-center justify-center">
     <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-2xl flex flex-col items-center mb-6">
-        <img th:src="@{/images/logo.jpg}" alt="Logo" class="h-24 w-25 rounded-full shadow-md">
+        <img th:src="@{/images/icons/logo.png}" alt="Logo" class="h-24 w-25 rounded-full shadow-md">
         <h2 class="text-3xl font-bold text-orange-700 text-center">會員註冊</h2>
         <hr class="mb-6 border-blue-300">
-		<div th:if="${error}" class="text-red-600 text-center font-semibold mb-4">
-    		<p th:text="${error}"></p>
-		</div>
-        <form th:action="@{/member/register}" method="POST" enctype="multipart/form-data" th:object="${member}"
-            class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <!-- 帳號 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">帳號</label>
-                <input type="text" th:field="*{memAccount}" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <form th:action="@{/front/member/register}" method="POST" enctype="multipart/form-data" th:object="${member}"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <!-- Email -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                <input type="email" th:field="*{memEmail}" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+ 
 
-            <!-- 密碼 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">密碼</label>
-                <input type="password" th:field="*{memPassword}" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 帳號 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">帳號</label>
+        <input type="text" th:field="*{memAccount}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memAccount')}" th:errors="*{memAccount}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 確認密碼（前端驗證用，不綁定 VO） -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">確認密碼</label>
-                <input type="password" name="confirmPassword" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- Email -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+        <input type="email" th:field="*{memEmail}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memEmail')}" th:errors="*{memEmail}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 姓名 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">姓名</label>
-                <input type="text" th:field="*{memName}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 密碼 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">密碼</label>
+        <input type="password" th:field="*{memPassword}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memPassword')}" th:errors="*{memPassword}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 暱稱 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">暱稱</label>
-                <input type="text" th:field="*{memNickname}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 確認密碼 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">確認密碼</label>
+        <input type="password" name="confirmPassword" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+ 		<p th:if="${passwordError}" th:text="${passwordError}" class="text-red-500 text-xs mt-1"></p>   
+    </div>
 
-            <!-- 電話 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">電話</label>
-                <input type="tel" th:field="*{memPhone}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 姓名 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">姓名</label>
+        <input type="text" th:field="*{memName}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memName')}" th:errors="*{memName}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 性別 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">性別</label>
-                <select th:field="*{memGender}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-                    <option value="0">男生</option>
-                    <option value="1">女生</option>
-                    <option value="2">其他</option>
-                </select>
-            </div>
+    <!-- 暱稱 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">暱稱</label>
+        <input type="text" th:field="*{memNickname}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memNickname')}" th:errors="*{memNickname}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">城市</label>
-                <input type="text" th:field="*{memCity}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 電話 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">電話</label>
+        <input type="tel" th:field="*{memPhone}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memPhone')}" th:errors="*{memPhone}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 鄉鎮市區 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">鄉鎮市區</label>
-                <input type="text" th:field="*{memCityarea}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 性別 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">性別</label>
+        <select th:field="*{memGender}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            <option value="MALE">男生</option>
+            <option value="FEMALE">女生</option>
+            <option value="NOT_REVEAL">不透露</option>
+        </select>
+        <p th:if="${#fields.hasErrors('memGender')}" th:errors="*{memGender}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 街道 -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">街道名稱</label>
-                <input type="text" th:field="*{memAddress}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+    <!-- 城市 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">城市</label>
+        <input type="text" th:field="*{memCity}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memCity')}" th:errors="*{memCity}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 上傳頭像 -->
-            <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-1">上傳大頭照</label>
-                <div
-                    class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-sm text-gray-500 bg-gray-50">
-                    <input type="file" name="mem_avatar" accept="image/*" class="mx-auto"
-                        onchange="previewImage(event)">
-                    <div id="avatarPreviewContainer" class="mt-4 flex justify-center">
-                        <img id="avatarPreview" src="" alt="預覽圖片" class="h-24 w-24 rounded-full shadow-md hidden" />
-                    </div>
-                </div>
-            </div>
+    <!-- 鄉鎮市區 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">鄉鎮市區</label>
+        <input type="text" th:field="*{memCityarea}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memCityarea')}" th:errors="*{memCityarea}" class="text-red-500 text-xs mt-1"></p>
+    </div>
 
-            <!-- 提交按鈕 -->
-            <div class="md:col-span-2">
-                <button type="submit"
-                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300">
-                    註冊
-                </button>
+    <!-- 街道 -->
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">街道名稱</label>
+        <input type="text" th:field="*{memAddress}" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        <p th:if="${#fields.hasErrors('memAddress')}" th:errors="*{memAddress}" class="text-red-500 text-xs mt-1"></p>
+    </div>
+
+    <!-- 上傳頭像 -->
+    <div class="md:col-span-2">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">上傳大頭照</label>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-sm text-gray-500 bg-gray-50">
+            <input type="file" name="mem_avatar" accept="image/*" class="mx-auto" onchange="previewImage(event)">
+            <div id="avatarPreviewContainer" class="mt-4 flex justify-center">
+                <img id="avatarPreview" src="" alt="預覽圖片" class="h-24 w-24 rounded-full shadow-md hidden" />
             </div>
-        </form>
+        </div>
+    </div>
+
+    <!-- 是否店家 -->
+    <div class="flex items-center mt-4">
+        <input type="checkbox" id="isStore" name="isStore" class="h-4 w-4 accent-orange-500 rounded border-gray-300">
+        <label for="isStore" class="ml-2 text-sm text-gray-700">我是店家</label>
+    </div>
+
+    <p class="text-sm text-gray-500 mt-2 md:col-span-2">
+        如果您是店家，勾選並按註冊後會自動導向填寫店家資料頁面。
+    </p>
+
+    <!-- 提交按鈕 -->
+    <div class="md:col-span-2">
+        <button type="submit"
+                class="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-orange-700 transition duration-300">
+            註冊
+        </button>
+    </div>
+</form>
+
+
     </div>
 
 

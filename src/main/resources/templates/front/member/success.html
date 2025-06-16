@@ -14,9 +14,15 @@
             歡迎，<span th:text="${nickname}" class="font-semibold text-green-900"></span>，您的帳號已建立成功。
         </p>
         <div class="flex justify-center gap-4">
-            <a href="/" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">回首頁</a>
-            <a href="/login"
-                class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">前往登入</a>
+            <a href="/" 
+               class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+               回首頁
+            </a>
+            
+            <a th:href="@{/front/member/login}" 
+               class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">
+               前往登入
+            </a>
         </div>
     </div>
 </body>
