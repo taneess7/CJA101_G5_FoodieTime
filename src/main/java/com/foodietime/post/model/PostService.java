@@ -48,8 +48,8 @@
 //		postCategory.setPostCateId(postCateId);
 //
 //		postVO.setPostId(postId);
-//		postVO.setMemId(member);
-//		postVO.setPostCateId(postCategory);
+//		postVO.setMember(member);
+//        postVO.setPostCate(postCategory);
 //		postVO.setPostDate(postDate);
 //		postVO.setPostStatus(postStatus);
 //		postVO.setEditDate(editDate);
@@ -57,8 +57,8 @@
 //		postVO.setPostContent(postContent); // longtext
 //		postVO.setLikeCount(likeCount);
 //		postVO.setViews(views);
-//		dao.update(postVO);
-//		return postVO;
+//		
+//		return repository.save(postVO);
 //	}
 //
 //	public void deletePost(Integer postId) {
