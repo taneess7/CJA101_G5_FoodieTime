@@ -1,5 +1,6 @@
 package com.foodietime.member.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -33,31 +34,36 @@ public class MemberVO implements Serializable {
 	private Integer memId;
 	
 	@Column(name = "mem_email", nullable = false)
-	@NotNull(message="不可為空")
-	@Pattern(regexp = "^(?!\\\\.)[\\\\w!#$%&'*+/=?^`{|}~.-]+(?<!\\\\.)@([A-Za-z0-9-]+\\\\.)+[A-Za-z]{2,}$", message = "信箱格式不符合")
+	@NotBlank(message="不可為空")
+	@Pattern(
+		    regexp = "^(?!\\.)[\\w!#$%&'*+/=?^`{|}~.-]+(?<!\\.)@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$",
+		    message = "信箱格式不符合"
+		)
 	private String memEmail;
 	
 	@Column(name = "mem_account", nullable = false, unique = true)
-	@NotNull(message="帳號請勿空白")
+	@NotBlank(message="帳號請勿空白")
 	private String memAccount;
 	
 	@Column(name = "mem_password", nullable = false)
-	@NotNull(message="密碼請勿空白")
+	@NotBlank(message="密碼請勿空白")
 	private String memPassword;
 	
 	@Column(name = "mem_nickname", nullable = false)
-	@NotNull(message="暱稱請勿空白")
-	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "會員暱稱: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
+	@NotBlank(message="暱稱請勿空白")
+	@Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z0-9_]{2,10}$", message = "會員暱稱: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
 	private String memNickname;
 	
 	@Column(name = "mem_name", nullable = false)
-	@NotNull(message="姓名請勿空白")
-	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "會員姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
+	@NotBlank(message="姓名請勿空白")
+	@Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z0-9_]{2,10}$", message = "會員姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
 	private String memName;
 	
 	@Column(name = "mem_phone", nullable = false)
-	@NotNull(message="手機請勿空白")
-	@Pattern(regexp = "^(?:\\\\(?0\\\\d{1,2}\\\\)?[-\\\\s]?)?\\\\d{6,8}$|^09\\\\d{2}[-\\\\s]?\\\\d{3}[-\\\\s]?\\\\d{3}$", message = "手機格式錯誤")
+	@NotBlank(message="手機請勿空白")
+	@Pattern(
+		    regexp = "^(?:\\(?0\\d{1,2}\\)?[-\\s]?)?\\d{6,8}$|^09\\d{2}[-\\s]?\\d{3}[-\\s]?\\d{3}$",
+		    message = "手機格式錯誤")
 	private String memPhone;
 	
 	@Column(name = "mem_gender", nullable = false)
@@ -66,15 +72,15 @@ public class MemberVO implements Serializable {
 	private Gender memGender;
 	
 	@Column(name = "mem_city", nullable = false)
-	@NotNull(message="縣市請勿空白")
+	@NotBlank(message="縣市請勿空白")
 	private String memCity;
 	
 	@Column(name = "mem_cityarea", nullable = false)
-	@NotNull(message="鄉鎮市區請勿空白")
+	@NotBlank(message="鄉鎮市區請勿空白")
 	private String memCityarea;
 	
 	@Column(name = "mem_address", nullable = false)
-	@NotNull(message="居住街道請勿空白")
+	@NotBlank(message="居住街道請勿空白")
 	private String memAddress;
 	
 	@Column(name = "mem_code", nullable = false)
