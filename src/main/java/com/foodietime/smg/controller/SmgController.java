@@ -63,8 +63,9 @@ public class SmgController {
     	return "admin/smg/admin-forum-reports"; 
     }
     @GetMapping("/admin-users-add")
-    public String adminusersadd() {
-    	return "admin/smg/admin-users-add"; 
+    public String adminusersadd(Model model) {
+        model.addAttribute("smg", new SmgVO()); // 傳空 VO 讓表單能綁定
+        return "admin/smg/admin-users-add";
     }
     @GetMapping("/admin-users-edit/{id}")
     public String editSmg(@PathVariable("id") Integer id, Model model) {
@@ -78,13 +79,10 @@ public class SmgController {
     @PostMapping("/update")
     public String updateSmg(@Valid @ModelAttribute("smg") SmgVO smgVO,
                             BindingResult result,
-                            @RequestParam(required = false) String newPassword,
                             Model model) {
         
         System.out.println("=== 開始更新管理員資料 ===");
         System.out.println("接收到的 smgVO: " + smgVO);
-        System.out.println("新密碼: " + (newPassword != null ? "[已提供]" : "[未提供]"));
-        
         if (result.hasErrors()) {
             System.out.println("表單驗證錯誤: " + result.getAllErrors());
             result.getAllErrors().forEach(error -> {
@@ -95,56 +93,77 @@ public class SmgController {
             return "admin/smg/admin-users-edit";
         }
 
-        try {
-            // 取得現有的管理員資料
-            SmgVO existingSmg = smgSvc.findById(smgVO.getSmgrId());
-            if (existingSmg == null) {
-                System.out.println("找不到 ID 為 " + smgVO.getSmgrId() + " 的管理員");
-                model.addAttribute("error", "找不到指定的管理員");
-                model.addAttribute("smg", smgVO);
-                return "admin/smg/admin-users-edit";
-            }
-            
-            // 更新基本資料
-            existingSmg.setSmgrName(smgVO.getSmgrName());
-            existingSmg.setSmgrEmail(smgVO.getSmgrEmail());
-            existingSmg.setSmgrPhone(smgVO.getSmgrPhone());
-            existingSmg.setSmgrStatus(smgVO.getSmgrStatus());
-            
-            System.out.println("更新後的資料: Name=" + existingSmg.getSmgrName() + 
-                             ", Email=" + existingSmg.getSmgrEmail() + 
-                             ", Phone=" + existingSmg.getSmgrPhone() + 
-                             ", Status=" + existingSmg.getSmgrStatus());
-            
-            // 處理密碼更新
-            if (newPassword != null && !newPassword.trim().isEmpty()) {
-                System.out.println("更新密碼");
-                // TODO: 這裡應該加密密碼
-                existingSmg.setSmgrPassword(newPassword);
-            } else {
-                System.out.println("保留原密碼");
-                // 保留原密碼，不做任何變更
-            }
-            
-            System.out.println("準備儲存的資料: " + existingSmg);
-            SmgVO savedSmg = smgSvc.save(existingSmg);
-            System.out.println("儲存成功: " + savedSmg);
-            
-        } catch (Exception e) {
-            System.out.println("儲存時發生錯誤: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "儲存失敗: " + e.getMessage());
+        // 取得現有的管理員資料
+        SmgVO existingSmg = smgSvc.findById(smgVO.getSmgrId());
+        if (existingSmg == null) {
+            System.out.println("找不到 ID 為 " + smgVO.getSmgrId() + " 的管理員");
+            model.addAttribute("error", "找不到指定的管理員");
             model.addAttribute("smg", smgVO);
             return "admin/smg/admin-users-edit";
         }
+        
+        // 更新基本資料
+        existingSmg.setSmgrName(smgVO.getSmgrName());
+        existingSmg.setSmgrEmail(smgVO.getSmgrEmail());
+        existingSmg.setSmgrPhone(smgVO.getSmgrPhone());
+        existingSmg.setSmgrStatus(smgVO.getSmgrStatus());
+        
+        System.out.println("更新後的資料: Name=" + existingSmg.getSmgrName() + 
+                         ", Email=" + existingSmg.getSmgrEmail() + 
+                         ", Phone=" + existingSmg.getSmgrPhone() + 
+                         ", Status=" + existingSmg.getSmgrStatus());
+        
+        String newPassword = smgVO.getNewPassword();
+        // 處理密碼更新
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
+            System.out.println("更新密碼");
+            // TODO: 這裡應該加密密碼
+            existingSmg.setSmgrPassword(newPassword);
+        } else {
+            System.out.println("保留原密碼");
+            // 保留原密碼，不做任何變更
+        }
+        
+        System.out.println("準備儲存的資料: " + existingSmg);
+        SmgVO savedSmg = smgSvc.save(existingSmg);
+        System.out.println("儲存成功: " + savedSmg);
 
         System.out.println("=== 更新完成，重導向到列表頁 ===");
         return "redirect:/smg/admin-users-permissions";
     }
     
-    
-    
-    
+    @PostMapping("/add")
+    public String addSmg(@Valid @ModelAttribute("smg") SmgVO smgVO,
+            BindingResult result,
+            Model model) {
+    	if (result.hasErrors()) {
+            System.out.println("表單驗證錯誤: " + result.getAllErrors());
+            result.getAllErrors().forEach(error -> {
+                System.out.println("錯誤詳情: " + error.getDefaultMessage());
+            });
+            model.addAttribute("error", "表單驗證失敗，請檢查輸入資料");
+            model.addAttribute("smg", smgVO);
+            return "admin/smg/admin-users-add";
+        }
+    	// 密碼與確認密碼是否一致
+        if (!smgVO.getSmgrPassword().equals(smgVO.getConfirmPassword())) {
+            result.rejectValue("confirmPassword", "error.confirmPassword", "密碼與確認密碼不一致");
+            model.addAttribute("error", "密碼與確認密碼不一致");
+            return "admin/smg/admin-users-add";
+        }
+        SmgVO existing = smgSvc.findBySmgrAccount(smgVO.getSmgrAccount());
+        if (existing != null) {
+            result.rejectValue("smgrAccount", "error.smgrAccount", "此帳號已被使用");
+            model.addAttribute("error", "此帳號已存在");
+            return "admin/smg/admin-users-add";
+        }
+        // 儲存資料
+        smgSvc.save(smgVO);
+
+        // 導向列表頁
+        return "redirect:/smg/admin-users-permissions";
+    	
+    }   
     
     @GetMapping("/admin-users-permissions")
     public String adminuserspermissions(Model model) {

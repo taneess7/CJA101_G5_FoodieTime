@@ -35,4 +35,8 @@ public class SmgService {
         }
         return null;
     }
+
+	public SmgVO findBySmgrAccount(String smgrAccount) {
+		return smgRepository.findBySmgrAccount(smgrAccount);
+	}
 }

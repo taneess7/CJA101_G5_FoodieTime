@@ -8,6 +8,7 @@ import java.util.Set;
 import com.foodietime.accrec.model.AccrecVO;
 import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.smgauth.model.SmgauthVO;
+import com.foodietime.validation.PasswordPatternIfPresent;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -56,7 +58,7 @@ public class SmgVO implements Serializable {
     private String smgrAccount;
 
 
-    @Size(min = 6, max = 128, message = "密碼長度需介於 6 到 128 字")
+    @Size(min = 6, max = 20, message = "密碼長度需介於 6 到 20 字")
     @Column(name = "SMGR_PASSWORD", length = 128)
     private String smgrPassword;
 
@@ -80,9 +82,13 @@ public class SmgVO implements Serializable {
     @OneToMany(mappedBy = "smgr", cascade = CascadeType.ALL)
     private List<DirectMessageVO> directMessages = new ArrayList<>();
     
+    @PasswordPatternIfPresent
+    @Transient // 不存入資料庫
+    private String newPassword;
     
-    
-    
+    @Transient  // JPA 不會將它映射進資料表
+    //對新增的確認
+    private String confirmPassword;
 
     
 }

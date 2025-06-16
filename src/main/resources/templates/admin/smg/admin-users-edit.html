@@ -211,12 +211,7 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <!-- 錯誤訊息顯示區域 -->
-                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span th:text="${error}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+                    
                     
                     <form id="editAdminForm" th:action="@{/smg/update}"  th:object="${smg}" method="post">
                         <!-- 隱藏欄位 -->
@@ -244,14 +239,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="smgrName" class="form-label">姓名 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="smgrName" name="smgrName" 
-                                       th:value="${smg.smgrName}" required>
+                                <input type="text" class="form-control" th:field="*{smgrName}" required>
                                 <div th:if="${#fields.hasErrors('smgrName')}" class="text-danger" th:errors="*{smgrName}"></div>       
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="smgrEmail" class="form-label">電子郵件 <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="smgrEmail" name="smgrEmail" 
-                                       th:value="${smg.smgrEmail}" required>
+                                <input type="email" class="form-control" th:field="*{smgrEmail}" required>
                                 <div th:if="${#fields.hasErrors('smgrEmail')}" class="text-danger" th:errors="*{smgrEmail}"></div>       
                             </div>
                         </div>
@@ -259,15 +252,14 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="smgrPhone" class="form-label">電話 <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" id="smgrPhone" name="smgrPhone" 
-                                       th:value="${smg.smgrPhone}" required>
+                                <input type="tel" class="form-control" th:field="*{smgrPhone}" required>
                                  <div th:if="${#fields.hasErrors('smgrPhone')}" class="text-danger" th:errors="*{smgrPhone}"></div>      
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="smgrStatus" class="form-label">狀態 <span class="text-danger">*</span></label>
-                                <select class="form-select" id="smgrStatus" name="smgrStatus" required>
-                                    <option value="1" th:selected="${smg.smgrStatus == 1}">啟用</option>
-                                    <option value="0" th:selected="${smg.smgrStatus == 0}">停用</option>
+                                <select class="form-select" th:field="*{smgrStatus}" required>
+                                    <option value="1">啟用</option>
+                                    <option value="0">停用</option>
                                 </select>
                             </div>
                         </div>
@@ -282,9 +274,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="newPassword" class="form-label">新密碼</label>
-                                <input type="password" class="form-control" id="newPassword" name="newPassword" 
+                                <input type="password" class="form-control" th:field="*{newPassword}" 
                                        placeholder="留空表示不修改密碼">
-                                <div th:if="${#fields.hasErrors('smgrPassword')}" class="text-danger" th:errors="*{smgrPassword}"></div>       
+                                <div th:if="${#fields.hasErrors('newPassword')}" class="text-danger">
+							        <span th:errors="*{newPassword}"></span>
+							    </div>       
                                 <div class="form-text">如需重設密碼，請輸入新密碼，否則請留空</div>
                             </div>
                             <div class="col-md-6 mb-3">

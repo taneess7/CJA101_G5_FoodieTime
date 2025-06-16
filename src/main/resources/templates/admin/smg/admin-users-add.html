@@ -201,219 +201,129 @@
                     <h6 class="m-0 font-weight-bold">新增管理員</h6>
                 </div>
                 <div class="card-body">
-                    <form id="addAdminForm">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="username" class="form-label">帳號 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                                <div class="form-text">帳號長度須為 6-20 個字元，只能包含英文字母、數字、底線</div>
+                    <!-- 錯誤訊息顯示 -->
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span th:text="${error}"></span>
+                    </div>
+                    
+                    <form id="addAdminForm" th:action="@{/smg/add}" th:object="${smg}" method="post">
+                        <!-- 基本資訊 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-user me-2"></i>基本資訊
+                                </h5>
                             </div>
-                            <div class="col-md-6">
-                                <label for="name" class="form-label">姓氏 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="smgrName" class="form-label">姓名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{smgrName}" required>
+                                <div th:if="${#fields.hasErrors('smgrName')}" class="text-danger mt-1" th:errors="*{smgrName}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="smgrAccount" class="form-label">帳號 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{smgrAccount}" required>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    帳號長度須為 6-20 個字元，只能包含英文字母、數字、底線
+                                </div>
+                                <div th:if="${#fields.hasErrors('smgrAccount')}" class="text-danger mt-1" th:errors="*{smgrAccount}"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 密碼設定 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-lock me-2"></i>密碼設定
+                                </h5>
                             </div>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="password" class="form-label">密碼 <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                                <div class="form-text">密碼長度須為 8-20 個字元，必須包含一個大寫字母、一個小寫字母、一個數字及一個特殊符號</div>
+                                <label for="smgrPassword" class="form-label">密碼 <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" th:field="*{smgrPassword}" required>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    密碼長度須為 6-20 個字元，必須包含一個大寫字母、一個小寫字母、一個數字
+                                
+                                <div th:if="${#fields.hasErrors('smgrPassword')}" class="text-danger mt-1" th:errors="*{smgrPassword}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="confirmPassword" class="form-label">確認密碼 <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                <div id="passwordMatchError" class="text-danger mt-1" style="display: none;">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    密碼確認不一致
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 聯絡資訊 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-address-book me-2"></i>聯絡資訊
+                                </h5>
                             </div>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="email" class="form-label">電子郵件 <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <label for="smgrEmail" class="form-label">電子郵件 <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" th:field="*{smgrEmail}" required>
+                                <div th:if="${#fields.hasErrors('smgrEmail')}" class="text-danger mt-1" th:errors="*{smgrEmail}"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="phone" class="form-label">聯絡電話</label>
-                                <input type="tel" class="form-control" id="phone" name="phone">
+                                <label for="smgrPhone" class="form-label">聯絡電話</label>
+                                <input type="tel" class="form-control" th:field="*{smgrPhone}" required>
+                                <div th:if="${#fields.hasErrors('smgrPhone')}" class="text-danger mt-1" th:errors="*{smgrPhone}"></div>
                             </div>
                         </div>
                         
-                        <div class="row mb-3">
+                        <!-- 帳號設定 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-cog me-2"></i>帳號設定
+                                </h5>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="role" class="form-label">角色 <span class="text-danger">*</span></label>
-                                <select class="form-select" id="role" name="role" required>
-                                    <option value="">請選擇</option>
-                                    <option value="manager">一般管理員</option>
-                                    <option value="service">客服人員</option>
+                                <label for="smgrStatus" class="form-label">狀態 <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{smgrStatus}" required>
+                                    <option value="1">啟用</option>
+                                    <option value="0">停用</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label for="status" class="form-label">狀態 <span class="text-danger">*</span></label>
-                                <select class="form-select" id="status" name="status" required>
-                                    <option value="active">啟用</option>
-                                    <option value="inactive">停用</option>
-                                </select>
-                            </div>
                         </div>
                         
-                        <div class="mb-4">
-                            <label class="form-label">權限設定 <span class="text-danger">*</span></label>
-                            
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">
-                                    <div class="form-check">
-                                        <input class="form-check-input section-checkbox" type="checkbox" id="discussionSection">
-                                        <label class="form-check-label fw-bold" for="discussionSection">討論區管理</label>
+                        <!-- 按鈕區域 -->
+                        <div class="row">
+                            <div class="col-12">
+                                <hr class="my-4">
+                                <div class="d-flex justify-content-between">
+                                    <a th:href="@{/smg/admin-users-permissions}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>返回列表
+                                    </a>
+                                    <div>
+                                        <button type="reset" class="btn btn-outline-secondary me-2">
+                                            <i class="fas fa-undo me-2"></i>重置
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-2"></i>新增管理員
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="form-check">
-                                        <input class="form-check-input permission-checkbox" type="checkbox" id="discussionReports" name="permissions[]" value="discussion_reports">
-                                        <label class="form-check-label" for="discussionReports">檢舉審核管理</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">
-                                    <div class="form-check">
-                                        <input class="form-check-input section-checkbox" type="checkbox" id="vendorSection">
-                                        <label class="form-check-label fw-bold" for="vendorSection">廠家管理</label>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="vendorReview" name="permissions[]" value="vendor_review">
-                                                <label class="form-check-label" for="vendorReview">審核廠家</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="vendorEdit" name="permissions[]" value="vendor_edit">
-                                                <label class="form-check-label" for="vendorEdit">廠家帳號查詢/編輯</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="vendorReports" name="permissions[]" value="vendor_reports">
-                                                <label class="form-check-label" for="vendorReports">檢舉功能</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="vendorBlacklist" name="permissions[]" value="vendor_blacklist">
-                                                <label class="form-check-label" for="vendorBlacklist">黑名單管理</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="productDisable" name="permissions[]" value="product_disable">
-                                                <label class="form-check-label" for="productDisable">下架商品</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="vendorPermissions" name="permissions[]" value="vendor_permissions">
-                                                <label class="form-check-label" for="vendorPermissions">權限變更</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">
-                                    <div class="form-check">
-                                        <input class="form-check-input section-checkbox" type="checkbox" id="memberSection">
-                                        <label class="form-check-label fw-bold" for="memberSection">會員管理</label>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input permission-checkbox" type="checkbox" id="memberSearch" name="permissions[]" value="member_search">
-                                        <label class="form-check-label" for="memberSearch">會員查詢與篩選</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input permission-checkbox" type="checkbox" id="memberPermissions" name="permissions[]" value="member_permissions">
-                                        <label class="form-check-label" for="memberPermissions">權限變更</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">
-                                    <div class="form-check">
-                                        <input class="form-check-input section-checkbox" type="checkbox" id="groupSection">
-                                        <label class="form-check-label fw-bold" for="groupSection">團購管理</label>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="groupReports" name="permissions[]" value="group_reports">
-                                                <label class="form-check-label" for="groupReports">檢舉審核管理</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="groupStatus" name="permissions[]" value="group_status">
-                                                <label class="form-check-label" for="groupStatus">啟用/停用</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="groupOrders" name="permissions[]" value="group_orders">
-                                                <label class="form-check-label" for="groupOrders">訂單詳情檢視</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="groupPayments" name="permissions[]" value="group_payments">
-                                                <label class="form-check-label" for="groupPayments">付款處理</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="groupRefunds" name="permissions[]" value="group_refunds">
-                                                <label class="form-check-label" for="groupRefunds">退款</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input permission-checkbox" type="checkbox" id="groupMonthly" name="permissions[]" value="group_monthly">
-                                                <label class="form-check-label" for="groupMonthly">月結付款</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">
-                                    <div class="form-check">
-                                        <input class="form-check-input section-checkbox" type="checkbox" id="orderSection">
-                                        <label class="form-check-label fw-bold" for="orderSection">訂單管理</label>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input permission-checkbox" type="checkbox" id="orderView" name="permissions[]" value="order_view">
-                                        <label class="form-check-label" for="orderView">訂單詳情檢視</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input permission-checkbox" type="checkbox" id="orderPayments" name="permissions[]" value="order_payments">
-                                        <label class="form-check-label" for="orderPayments">付款處理</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">
-                                    <div class="form-check">
-                                        <input class="form-check-input section-checkbox" type="checkbox" id="serviceSection">
-                                        <label class="form-check-label fw-bold" for="serviceSection">客服管理</label>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-check">
-                                        <input class="form-check-input permission-checkbox" type="checkbox" id="serviceTickets" name="permissions[]" value="service_tickets">
-                                        <label class="form-check-label" for="serviceTickets">表單處理</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between">
-                            <a href="admin-dashboard.html" class="btn btn-outline-secondary">返回</a>
-                            <div>
-                                <button type="reset" class="btn btn-outline-secondary me-2">重置</button>
-                                <button type="submit" class="btn btn-primary">新增管理員</button>
                             </div>
                         </div>
                     </form>
@@ -424,94 +334,51 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- 自訂JavaScript -->
-    <script th:src="@{/js/admin/admin-script.js}"></script>
     
-    <!-- 表單驗證腳本 -->
+    <!-- 表單驗證 JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 區塊全選功能
-            const sectionCheckboxes = document.querySelectorAll('.section-checkbox');
-            sectionCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const cardBody = this.closest('.card-header').nextElementSibling;
-                    const permissionCheckboxes = cardBody.querySelectorAll('.permission-checkbox');
-                    permissionCheckboxes.forEach(permCheckbox => {
-                        permCheckbox.checked = this.checked;
-                    });
-                });
-            });
-            
-            // 權限選項影響區塊選項
-            const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
-            permissionCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const cardBody = this.closest('.card-body');
-                    const cardHeader = cardBody.previousElementSibling;
-                    const sectionCheckbox = cardHeader.querySelector('.section-checkbox');
-                    const allPermissionCheckboxes = cardBody.querySelectorAll('.permission-checkbox');
-                    const allChecked = Array.from(allPermissionCheckboxes).every(cb => cb.checked);
-                    const anyChecked = Array.from(allPermissionCheckboxes).some(cb => cb.checked);
-                    
-                    sectionCheckbox.checked = anyChecked;
-                    sectionCheckbox.indeterminate = anyChecked && !allChecked;
-                });
-            });
-            
-            // 表單驗證
             const form = document.getElementById('addAdminForm');
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
+            const passwordField = document.querySelector('input[name="smgrPassword"]');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            const passwordMatchError = document.getElementById('passwordMatchError');
+            
+            // 密碼確認驗證
+            function validatePasswordMatch() {
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
                 
-                // 驗證帳號
-                const username = document.getElementById('username').value;
-                const usernameRegex = /^[a-zA-Z0-9_]{6,20}$/;
-                if (!usernameRegex.test(username)) {
-                    alert('帳號格式不正確，請輸入6-20個英文字母、數字或底線');
-                    return;
+                if (confirmPassword && password !== confirmPassword) {
+                    passwordMatchError.style.display = 'block';
+                    confirmPasswordField.classList.add('is-invalid');
+                    return false;
+                } else {
+                    passwordMatchError.style.display = 'none';
+                    confirmPasswordField.classList.remove('is-invalid');
+                    return true;
                 }
-                
-                // 驗證密碼
-                const password = document.getElementById('password').value;
-                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
-                if (!passwordRegex.test(password)) {
-                    alert('密碼格式不正確，請確保包含大小寫字母、數字及特殊符號，長度為8-20個字元');
-                    return;
+            }
+            
+            // 即時驗證
+            confirmPasswordField.addEventListener('input', validatePasswordMatch);
+            passwordField.addEventListener('input', validatePasswordMatch);
+            
+            // 表單提交驗證
+            form.addEventListener('submit', function(e) {
+                if (!validatePasswordMatch()) {
+                    e.preventDefault();
+                    confirmPasswordField.focus();
                 }
-                
-                // 驗證確認密碼
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                if (password !== confirmPassword) {
-                    alert('兩次輸入的密碼不一致');
-                    return;
-                }
-                
-                // 驗證電子郵件
-                const email = document.getElementById('email').value;
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    alert('電子郵件格式不正確');
-                    return;
-                }
-                
-                // 驗證角色選擇
-                const role = document.getElementById('role').value;
-                if (!role) {
-                    alert('請選擇角色');
-                    return;
-                }
-                
-                // 驗證至少選擇一個權限                const permissions = document.querySelectorAll('input[name="permissions[]"]:checked');
-                if (permissions.length === 0) {
-                    alert('請至少選擇一個權限');
-                    return;
-                }
-                
-                // 模擬表單提交成功
-                alert('管理員新增成功！');
-                window.location.href = 'admin-dashboard.html';
+            });
+            
+            // 重置按鈕功能
+            const resetBtn = document.querySelector('button[type="reset"]');
+            resetBtn.addEventListener('click', function() {
+                passwordMatchError.style.display = 'none';
+                confirmPasswordField.classList.remove('is-invalid');
             });
         });
     </script>
+
 </body>
 </html>
