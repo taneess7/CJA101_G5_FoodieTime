@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的收藏 - FoodieTime 食刻</title>
     <meta name="description" content="查看您收藏的餐廳和美食。FoodieTime 食刻讓您輕鬆管理喜愛的美食和餐廳，隨時查看並分享。">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/restaurant-categories.css">
-    <link rel="stylesheet" href="css/food-categories.css">
-    <link rel="stylesheet" href="css/member-favorites.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/member-favorites.css}">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- PWA 支援 -->
-    <link rel="manifest" href="manifest.json">
+<!--     <link rel="manifest" href="manifest.json"> -->
     <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
                 <a href="index.html" class="logo">
-                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
             </div>
@@ -54,7 +54,7 @@
             <div class="container">
                 <div class="profile-header">
                     <div class="profile-avatar">
-                        <img src="images/avatar-placeholder.svg" alt="會員頭像" class="avatar-img">
+                        <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="會員頭像" class="avatar-img">
                     </div>
                     <div class="profile-info">
                         <h1 class="profile-name">王小明</h1>
@@ -107,7 +107,7 @@
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
-                        <img src="images/restaurants/placeholder.svg" alt="築地市場" class="restaurant-image">
+                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="築地市場" class="restaurant-image">
                         <div class="restaurant-info">
                             <h3 class="restaurant-name">築地市場</h3>
                             <span class="cuisine-tag cuisine-japanese">日式料理</span>
@@ -135,7 +135,7 @@
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
-                        <img src="images/restaurants/placeholder.svg" alt="江南美食" class="restaurant-image">
+                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="江南美食" class="restaurant-image">
                         <div class="restaurant-info">
                             <h3 class="restaurant-name">江南美食</h3>
                             <span class="cuisine-tag cuisine-chinese">中式料理</span>
@@ -168,7 +168,7 @@
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
-                        <img src="images/food/pasta.svg" alt="義大利麵" class="restaurant-image">
+                        <img th:src="@{/images/restaurant/pasta.svg}" alt="義大利麵" class="restaurant-image">
                         <div class="restaurant-info">
                             <h3 class="restaurant-name">經典義大利麵</h3>
                             <span class="cuisine-tag cuisine-italian">義式料理</span>
@@ -196,7 +196,7 @@
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
-                        <img src="images/food/beef-noodle.svg" alt="牛肉麵" class="restaurant-image">
+                        <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="牛肉麵" class="restaurant-image">
                         <div class="restaurant-info">
                             <h3 class="restaurant-name">傳統牛肉麵</h3>
                             <span class="cuisine-tag cuisine-chinese">中式料理</span>

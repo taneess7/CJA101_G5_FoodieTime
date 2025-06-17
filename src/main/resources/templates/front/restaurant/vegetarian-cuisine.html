@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>素食料理 - FoodieTime 食刻</title>
     <meta name="description" content="探索各種素食料理，尋找您喜愛的健康美食。FoodieTime 食刻提供多樣化的素食餐廳選擇，滿足您的味蕾需求。">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/restaurant-categories.css">
-    <link rel="stylesheet" href="css/food-categories.css">
-    <link rel="stylesheet" href="css/vegetarian-cuisine.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/vegetarian-cuisine.css}">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- PWA 支援 -->
-    <link rel="manifest" href="manifest.json">
+<!--     <link rel="manifest" href="manifest.json"> -->
     <meta name="theme-color" content="#00796B">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
                 <a href="index.html" class="logo">
-                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
             </div>
@@ -85,7 +85,7 @@
                 <article class="restaurant-detail">
                     <div class="restaurant-header">
                         <div class="restaurant-main-info">
-                            <img src="images/food/vegetarian-restaurant.svg" alt="健康蔬食餐廳" class="restaurant-image">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="健康蔬食餐廳" class="restaurant-image">
                             <div class="restaurant-primary-info">
                                 <h2 class="restaurant-name">健康蔬食餐廳</h2>
                                 <span class="cuisine-tag cuisine-vegetarian">素食料理</span>
@@ -153,7 +153,7 @@
                             </div>
                             <div class="menu-items">
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-salad.svg" alt="彩虹蔬菜沙拉" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="彩虹蔬菜沙拉" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">彩虹蔬菜沙拉</h3>
                                         <p class="menu-item-description">新鮮蔬菜搭配特製油醋醬</p>
@@ -164,7 +164,7 @@
                                     </button>
                                 </div>
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-curry.svg" alt="香料蔬食咖哩" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="香料蔬食咖哩" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">香料蔬食咖哩</h3>
                                         <p class="menu-item-description">多種蔬菜與香料熬煮，搭配糙米飯</p>
@@ -175,7 +175,7 @@
                                     </button>
                                 </div>
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-pasta.svg" alt="松露野菇義大利麵" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="松露野菇義大利麵" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">松露野菇義大利麵</h3>
                                         <p class="menu-item-description">多種野菇與松露醬拌炒全麥義大利麵</p>
@@ -186,7 +186,7 @@
                                     </button>
                                 </div>
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-soup.svg" alt="蔬菜濃湯" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="蔬菜濃湯" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">蔬菜濃湯</h3>
                                         <p class="menu-item-description">新鮮蔬菜熬煮，濃郁香醇</p>
@@ -252,7 +252,7 @@
                             <div class="user-reviews">
                                 <div class="review-item">
                                     <div class="reviewer-info">
-                                        <img src="images/avatars/avatar1.svg" alt="用戶頭像" class="reviewer-avatar">
+                                        <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                         <div>
                                             <h4 class="reviewer-name">林小綠</h4>
                                             <div class="review-rating">
@@ -269,13 +269,13 @@
                                     </div>
                                     <p class="review-text">食材非常新鮮，每道菜都能吃出蔬菜的原味，服務也很親切。特別推薦他們的香料蔬食咖哩，香料搭配得恰到好處，不會過於辛辣又能品嚐到豐富的層次感。</p>
                                     <div class="review-photos">
-                                        <img src="images/food/vegetarian-review1.svg" alt="評價照片" class="review-photo">
-                                        <img src="images/food/vegetarian-review2.svg" alt="評價照片" class="review-photo">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
                                     </div>
                                 </div>
                                 <div class="review-item">
                                     <div class="reviewer-info">
-                                        <img src="images/avatars/avatar2.svg" alt="用戶頭像" class="reviewer-avatar">
+                                        <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                         <div>
                                             <h4 class="reviewer-name">王健康</h4>
                                             <div class="review-rating">
@@ -296,14 +296,14 @@
                         </div>
                         <div class="tab-content" id="photos">
                             <div class="photo-gallery">
-                                <img src="images/food/vegetarian-gallery1.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery2.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery3.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery4.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery5.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery6.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery7.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery8.svg" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
                             </div>
                         </div>
                         <div class="tab-content" id="info">
@@ -356,7 +356,7 @@
                             <div class="info-section">
                                 <h3 class="info-title">位置</h3>
                                 <div class="map-container">
-                                    <img src="images/maps/vegetarian-map.svg" alt="餐廳位置地圖" class="location-map">
+                                    <img th:src="@{/images/restaurant/map-placeholder.svg}" alt="餐廳位置地圖" class="location-map">
                                 </div>
                             </div>
                         </div>
@@ -367,7 +367,7 @@
                 <article class="restaurant-detail">
                     <div class="restaurant-header">
                         <div class="restaurant-main-info">
-                            <img src="images/food/creative-vegetarian.svg" alt="創意素食料理" class="restaurant-image">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="創意素食料理" class="restaurant-image">
                             <div class="restaurant-primary-info">
                                 <h2 class="restaurant-name">創意素食料理</h2>
                                 <span class="cuisine-tag cuisine-vegetarian">素食料理</span>
@@ -434,7 +434,7 @@
                             </div>
                             <div class="menu-items">
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-burger.svg" alt="素食漢堡" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="素食漢堡" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">素食漢堡</h3>
                                         <p class="menu-item-description">自製豆類素肉排，搭配新鮮蔬菜與特製醬料</p>
@@ -445,7 +445,7 @@
                                     </button>
                                 </div>
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-pizza.svg" alt="蔬菜披薩" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="蔬菜披薩" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">蔬菜披薩</h3>
                                         <p class="menu-item-description">全麥薄餅，搭配時令蔬菜與素起司</p>
@@ -456,7 +456,7 @@
                                     </button>
                                 </div>
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-sushi.svg" alt="素食壽司拼盤" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="素食壽司拼盤" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">素食壽司拼盤</h3>
                                         <p class="menu-item-description">多種蔬菜壽司組合，搭配芥末與醬油</p>
@@ -467,7 +467,7 @@
                                     </button>
                                 </div>
                                 <div class="menu-item">
-                                    <img src="images/food/vegetarian-dessert.svg" alt="無蛋奶提拉米蘇" class="menu-item-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="無蛋奶提拉米蘇" class="menu-item-image">
                                     <div class="menu-item-info">
                                         <h3 class="menu-item-name">無蛋奶提拉米蘇</h3>
                                         <p class="menu-item-description">使用豆奶與椰子油製作，口感綿密</p>
@@ -533,7 +533,7 @@
                             <div class="user-reviews">
                                 <div class="review-item">
                                     <div class="reviewer-info">
-                                        <img src="images/avatars/avatar3.svg" alt="用戶頭像" class="reviewer-avatar">
+                                        <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                         <div>
                                             <h4 class="reviewer-name">陳美食</h4>
                                             <div class="review-rating">
@@ -550,14 +550,14 @@
                                     </div>
                                     <p class="review-text">這家餐廳徹底顛覆了我對素食的印象！素食漢堡的口感非常接近真肉，但更健康更環保。餐廳的裝潢也很有設計感，服務人員很專業，會詳細介紹每道菜的食材來源和製作方式。強烈推薦給所有人，不管是不是素食者！</p>
                                     <div class="review-photos">
-                                        <img src="images/food/vegetarian-review3.svg" alt="評價照片" class="review-photo">
-                                        <img src="images/food/vegetarian-review4.svg" alt="評價照片" class="review-photo">
-                                        <img src="images/food/vegetarian-review5.svg" alt="評價照片" class="review-photo">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
                                     </div>
                                 </div>
                                 <div class="review-item">
                                     <div class="reviewer-info">
-                                        <img src="images/avatars/avatar4.svg" alt="用戶頭像" class="reviewer-avatar">
+                                        <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                         <div>
                                             <h4 class="reviewer-name">李創意</h4>
                                             <div class="review-rating">
@@ -578,14 +578,14 @@
                         </div>
                         <div class="tab-content" id="photos">
                             <div class="photo-gallery">
-                                <img src="images/food/vegetarian-gallery9.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery10.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery11.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery12.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery13.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery14.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery15.svg" alt="餐廳照片" class="gallery-image">
-                                <img src="images/food/vegetarian-gallery16.svg" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
                             </div>
                         </div>
                         <div class="tab-content" id="info">
@@ -634,7 +634,7 @@
                             <div class="info-section">
                                 <h3 class="info-title">位置</h3>
                                 <div class="map-container">
-                                    <img src="images/maps/vegetarian-map2.svg" alt="餐廳位置地圖" class="location-map">
+                                    <img th:src="@{/images/restaurant/map-placeholder.svg}" alt="餐廳位置地圖" class="location-map">
                                 </div>
                             </div>
                         </div>

@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>韓式料理 - FoodieTime 食刻</title>
     <meta name="description" content="探索各種韓式料理，尋找您喜愛的韓國美食。FoodieTime 食刻提供多樣化的韓式餐廳選擇，滿足您的味蕾需求。">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/restaurant-categories.css">
-    <link rel="stylesheet" href="css/food-categories.css">
-    <link rel="stylesheet" href="css/korean-cuisine.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/korean-cuisine.css}">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- PWA 支援 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
                 <a href="index.html" class="logo">
-                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
             </div>
@@ -84,7 +84,7 @@
                 <article class="restaurant-detail">
                     <div class="restaurant-header">
                         <div class="restaurant-main-info">
-                            <img src="images/food/korean-bbq.svg" alt="首爾韓式燒肉" class="restaurant-image">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="首爾韓式燒肉" class="restaurant-image">
                             <div class="restaurant-primary-info">
                                 <h2 class="restaurant-name">首爾韓式燒肉</h2>
                                 <span class="cuisine-tag cuisine-korean">韓式料理</span>
@@ -147,7 +147,7 @@
                                 </div>
                                 <div class="menu-items">
                                     <div class="menu-item">
-                                        <img src="images/food/beef.svg" alt="特選牛五花" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="特選牛五花" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">特選牛五花</h3>
                                             <p class="menu-item-description">精選上等牛五花，肉質鮮嫩多汁，搭配特製醬料</p>
@@ -158,7 +158,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/kimchi-stew.svg" alt="泡菜鍋" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="泡菜鍋" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">道地泡菜鍋</h3>
                                             <p class="menu-item-description">使用正宗韓國泡菜熬煮，搭配豬肉、豆腐及多種蔬菜</p>
@@ -169,7 +169,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/bibimbap.svg" alt="石鍋拌飯" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="石鍋拌飯" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">石鍋拌飯</h3>
                                             <p class="menu-item-description">熱騰騰的石鍋中盛裝白飯，上面鋪滿蔬菜、牛肉和蛋黃</p>
@@ -180,7 +180,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/pancake.svg" alt="海鮮煎餅" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="海鮮煎餅" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">海鮮煎餅</h3>
                                             <p class="menu-item-description">外酥內軟的煎餅，內含蔥花、海鮮，搭配特製醬料</p>
@@ -248,7 +248,7 @@
                                 <div class="user-reviews">
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="images/avatars/user1.jpg" alt="用戶頭像" class="reviewer-avatar">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                             <div>
                                                 <h4 class="reviewer-name">王小明</h4>
                                                 <div class="rating-stars">
@@ -263,13 +263,13 @@
                                         </div>
                                         <p class="review-text">牛五花真的超級好吃！肉質鮮嫩多汁，醬料也很道地。服務態度很好，環境乾淨舒適。強烈推薦給喜歡韓式燒肉的朋友！</p>
                                         <div class="review-photos">
-                                            <img src="images/reviews/korean-bbq1.jpg" alt="評價照片" class="review-photo">
-                                            <img src="images/reviews/korean-bbq2.jpg" alt="評價照片" class="review-photo">
+                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
+                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
                                         </div>
                                     </div>
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="images/avatars/user2.jpg" alt="用戶頭像" class="reviewer-avatar">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                             <div>
                                                 <h4 class="reviewer-name">林小華</h4>
                                                 <div class="rating-stars">
@@ -290,12 +290,12 @@
                             <!-- 照片內容 -->
                             <div class="tab-content" id="photos">
                                 <div class="photo-gallery">
-                                    <img src="images/gallery/korean1.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean2.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean3.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean4.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean5.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean6.jpg" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
                                 </div>
                             </div>
                             
@@ -368,7 +368,7 @@
                                 <div class="info-section">
                                     <h3 class="info-title">位置</h3>
                                     <div class="map-container">
-                                        <img src="images/maps/korean-map.jpg" alt="餐廳位置地圖" class="location-map">
+                                        <img th:src="@{/images/restaurant/map-placeholder.svg}" alt="餐廳位置地圖" class="location-map">
                                     </div>
                                 </div>
                             </div>
@@ -380,7 +380,7 @@
                 <article class="restaurant-detail">
                     <div class="restaurant-header">
                         <div class="restaurant-main-info">
-                            <img src="images/food/korean-chicken.svg" alt="韓式炸雞專門店" class="restaurant-image">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="韓式炸雞專門店" class="restaurant-image">
                             <div class="restaurant-primary-info">
                                 <h2 class="restaurant-name">韓式炸雞專門店</h2>
                                 <span class="cuisine-tag cuisine-korean">韓式料理</span>
@@ -442,7 +442,7 @@
                                 </div>
                                 <div class="menu-items">
                                     <div class="menu-item">
-                                        <img src="images/food/fried-chicken.svg" alt="招牌炸雞" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="招牌炸雞" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">招牌韓式炸雞</h3>
                                             <p class="menu-item-description">外酥內嫩的炸雞，搭配特製醬料，香辣可口</p>
@@ -453,7 +453,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/spicy-chicken.svg" alt="辣味炸雞" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="辣味炸雞" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">辣味炸雞</h3>
                                             <p class="menu-item-description">使用特製辣醬醃製，辣度適中，風味獨特</p>
@@ -464,7 +464,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/beer.svg" alt="韓國啤酒" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="韓國啤酒" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">韓國進口啤酒</h3>
                                             <p class="menu-item-description">韓國原裝進口啤酒，清爽順口，搭配炸雞絕配</p>
@@ -475,7 +475,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/kimchi.svg" alt="道地泡菜" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="道地泡菜" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">道地泡菜</h3>
                                             <p class="menu-item-description">正宗韓國泡菜，酸辣適中，開胃爽口</p>
@@ -543,7 +543,7 @@
                                 <div class="user-reviews">
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="images/avatars/user3.jpg" alt="用戶頭像" class="reviewer-avatar">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                             <div>
                                                 <h4 class="reviewer-name">陳大明</h4>
                                                 <div class="rating-stars">
@@ -558,13 +558,13 @@
                                         </div>
                                         <p class="review-text">這家的炸雞真的太好吃了！外皮酥脆，肉質多汁，醬料也很特別。辣味炸雞的辣度剛剛好，不會太辣但很夠味。搭配韓國啤酒簡直完美！</p>
                                         <div class="review-photos">
-                                            <img src="images/reviews/korean-chicken1.jpg" alt="評價照片" class="review-photo">
-                                            <img src="images/reviews/korean-chicken2.jpg" alt="評價照片" class="review-photo">
+                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
+                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="評價照片" class="review-photo">
                                         </div>
                                     </div>
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="images/avatars/user4.jpg" alt="用戶頭像" class="reviewer-avatar">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                             <div>
                                                 <h4 class="reviewer-name">李小芳</h4>
                                                 <div class="rating-stars">
@@ -585,12 +585,12 @@
                             <!-- 照片內容 -->
                             <div class="tab-content" id="photos">
                                 <div class="photo-gallery">
-                                    <img src="images/gallery/korean-chicken1.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean-chicken2.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean-chicken3.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean-chicken4.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean-chicken5.jpg" alt="餐廳照片" class="gallery-image">
-                                    <img src="images/gallery/korean-chicken6.jpg" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
+                                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳照片" class="gallery-image">
                                 </div>
                             </div>
                             
@@ -659,7 +659,7 @@
                                 <div class="info-section">
                                     <h3 class="info-title">位置</h3>
                                     <div class="map-container">
-                                        <img src="images/maps/korean-chicken-map.jpg" alt="餐廳位置地圖" class="location-map">
+                                        <img th:src="@{/images/restaurant/map-placeholder.svg}" alt="餐廳位置地圖" class="location-map">
                                     </div>
                                 </div>
                             </div>

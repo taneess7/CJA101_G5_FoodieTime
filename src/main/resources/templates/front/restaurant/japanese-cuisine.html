@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日式料理 - FoodieTime 食刻</title>
     <meta name="description" content="探索各種日式料理，尋找您喜愛的日本美食。FoodieTime 食刻提供多樣化的日式餐廳選擇，滿足您的味蕾需求。">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/restaurant-categories.css">
-    <link rel="stylesheet" href="css/food-categories.css">
-    <link rel="stylesheet" href="css/japanese-cuisine.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/japanese-cuisine.css}">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- PWA 支援 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
                 <a href="index.html" class="logo">
-                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
             </div>
@@ -85,7 +85,7 @@
                 <article class="restaurant-detail">
                     <div class="restaurant-header">
                         <div class="restaurant-main-info">
-                            <img src="images/food/placeholder.svg" alt="精緻壽司" class="restaurant-image">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="精緻壽司" class="restaurant-image">
                             <div class="restaurant-primary-info">
                                 <h2 class="restaurant-name">精緻壽司</h2>
                                 <span class="cuisine-tag cuisine-japanese">日式料理</span>
@@ -151,7 +151,7 @@
                                 </div>
                                 <div class="menu-items">
                                     <div class="menu-item">
-                                        <img src="images/food/placeholder.svg" alt="綜合握壽司" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="綜合握壽司" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">綜合握壽司</h3>
                                             <p class="menu-item-description">嚴選新鮮海鮮，包含鮪魚、鮭魚、比目魚等8貫</p>
@@ -162,7 +162,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/placeholder.svg" alt="炙燒鮭魚握壽司" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="炙燒鮭魚握壽司" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">炙燒鮭魚握壽司</h3>
                                             <p class="menu-item-description">挪威進口鮭魚，表面炙燒，搭配特製醬汁，4貫</p>
@@ -173,7 +173,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/placeholder.svg" alt="豪華海鮮丼" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="豪華海鮮丼" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">豪華海鮮丼</h3>
                                             <p class="menu-item-description">多種新鮮生魚片搭配日本進口米飯，附味噌湯</p>
@@ -241,7 +241,7 @@
                                 <div class="user-reviews">
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="images/avatar-placeholder.svg" alt="用戶頭像" class="reviewer-avatar">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                             <div class="reviewer-details">
                                                 <h4 class="reviewer-name">王小明</h4>
                                                 <div class="review-rating">
@@ -258,12 +258,12 @@
                                         </div>
                                         <p class="review-text">壽司的魚肉新鮮度很高，米飯也很有彈性，師傅的刀工非常精細。服務態度親切，環境也很舒適。價格雖然稍高，但很值得！</p>
                                         <div class="review-photos">
-                                            <img src="images/food/placeholder.svg" alt="食物照片" class="review-photo">
+                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="食物照片" class="review-photo">
                                         </div>
                                     </div>
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="images/avatar-placeholder.svg" alt="用戶頭像" class="reviewer-avatar">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
                                             <div class="reviewer-details">
                                                 <h4 class="reviewer-name">林小華</h4>
                                                 <div class="review-rating">
@@ -287,19 +287,19 @@
                             <div class="tab-content" id="photos-content">
                                 <div class="photo-gallery">
                                     <div class="gallery-item">
-                                        <img src="images/food/placeholder.svg" alt="綜合握壽司" class="gallery-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="綜合握壽司" class="gallery-image">
                                     </div>
                                     <div class="gallery-item">
-                                        <img src="images/food/placeholder.svg" alt="炙燒鮭魚握壽司" class="gallery-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="炙燒鮭魚握壽司" class="gallery-image">
                                     </div>
                                     <div class="gallery-item">
-                                        <img src="images/food/placeholder.svg" alt="豪華海鮮丼" class="gallery-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="豪華海鮮丼" class="gallery-image">
                                     </div>
                                     <div class="gallery-item">
-                                        <img src="images/food/placeholder.svg" alt="店內環境" class="gallery-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="店內環境" class="gallery-image">
                                     </div>
                                     <div class="gallery-item">
-                                        <img src="images/food/placeholder.svg" alt="料理過程" class="gallery-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="料理過程" class="gallery-image">
                                     </div>
                                 </div>
                             </div>
@@ -367,7 +367,7 @@
                                 <div class="info-section">
                                     <h3 class="info-title">店家位置</h3>
                                     <div class="map-container">
-                                        <img src="images/map-placeholder.svg" alt="地圖" class="location-map">
+                                        <img th:src="@{/images/restaurant/map-placeholder.svg}" alt="地圖" class="location-map">
                                     </div>
                                 </div>
                             </div>
@@ -379,7 +379,7 @@
                 <article class="restaurant-detail">
                     <div class="restaurant-header">
                         <div class="restaurant-main-info">
-                            <img src="images/food/placeholder.svg" alt="道地拉麵" class="restaurant-image">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="道地拉麵" class="restaurant-image">
                             <div class="restaurant-primary-info">
                                 <h2 class="restaurant-name">道地拉麵</h2>
                                 <span class="cuisine-tag cuisine-japanese">日式料理</span>
@@ -445,7 +445,7 @@
                                 </div>
                                 <div class="menu-items">
                                     <div class="menu-item">
-                                        <img src="images/food/placeholder.svg" alt="豚骨拉麵" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="豚骨拉麵" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">豚骨拉麵</h3>
                                             <p class="menu-item-description">熬煮12小時的濃郁豚骨湯頭，搭配自製細麵和叉燒</p>
@@ -456,7 +456,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/placeholder.svg" alt="味噌拉麵" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="味噌拉麵" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">味噌拉麵</h3>
                                             <p class="menu-item-description">北海道風味味噌湯底，搭配粗麵和蔬菜</p>
@@ -467,7 +467,7 @@
                                         </button>
                                     </div>
                                     <div class="menu-item">
-                                        <img src="images/food/placeholder.svg" alt="炸豬排丼" class="menu-item-image">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="炸豬排丼" class="menu-item-image">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name">炸豬排丼</h3>
                                             <p class="menu-item-description">酥脆炸豬排搭配特製醬汁和溫泉蛋</p>
