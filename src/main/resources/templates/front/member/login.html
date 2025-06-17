@@ -7,24 +7,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-br from-red-100 to-orange-200 min-h-screen flex items-center justify-center">
+<body class="bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 min-h-screen flex items-center justify-center font-sans">
 
-    <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md">
-        <h2 class="text-3xl font-bold text-center text-orange-700 mb-6">會員登入</h2>
-        <form action="/member/login" method="post" class="space-y-6">
+    <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md transition-all duration-300">
+        <h2 class="text-4xl font-bold text-center text-orange-700 mb-8 tracking-wide">會員登入</h2>
+
+        <form action="/front/member/login" method="post" class="space-y-6">
+            
+            <!-- 帳號 -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">帳號</label>
-                <input type="text" name="mem_account" required
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400">
+                <label for="mem_account" class="block text-sm font-semibold text-gray-700 mb-1">帳號</label>
+                <input type="text" name="mem_account" id="mem_account"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition" required>
             </div>
 
+            <!-- 密碼 -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">密碼</label>
-                <input type="password" name="mem_password" required
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400">
+                <label for="mem_password" class="block text-sm font-semibold text-gray-700 mb-1">密碼</label>
+                <input type="password" name="mem_password" id="mem_password"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition" required>
             </div>
 
-            <!-- ✅ 新增店家身份勾選 -->
+            <!-- 我是店家 -->
             <div class="flex items-center">
                 <input type="checkbox" id="isStore" name="isStore"
                     class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
@@ -33,15 +37,25 @@
                 </label>
             </div>
 
+            <!-- 錯誤提示 -->
+            <div th:if="${error}" class="bg-red-50 border border-red-400 text-red-700 px-4 py-2 rounded-lg text-sm text-center shadow-sm">
+                ⚠️ <span th:text="${error}"></span>
+            </div>
+
+            <!-- 登入按鈕 -->
             <div>
                 <button type="submit"
-                    class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition">
-                    登入
+                    class="w-full bg-orange-600 text-white py-2 rounded-xl shadow-md hover:bg-orange-700 transition duration-300 font-semibold">
+                    🔐 登入
                 </button>
             </div>
 
-            <div th:if="${error}" class="text-red-600 text-sm text-center">
-                <p th:text="${error}"></p>
+            <!-- 註冊連結 -->
+            <div class="text-sm text-center mt-2">
+                還沒有帳號？
+                <a href="/front/member/register" class="text-orange-600 hover:underline font-medium">
+                    點此註冊
+                </a>
             </div>
         </form>
     </div>
