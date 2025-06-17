@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>廠家帳號新增/編輯 - 團購樂後台管理系統</title>
+    <title>商家帳號新增/編輯 - 團購樂後台管理系統</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -48,17 +48,17 @@
                 </a>
             </li>
             
-            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item section-title">商家管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
                     <i class="fas fa-check-circle"></i>
-                    <span>審核廠家</span>
+                    <span>審核商家</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
                     <i class="fas fa-store-alt"></i>
-                    <span>廠家帳號查詢/編輯</span>
+                    <span>商家帳號查詢/編輯</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -178,15 +178,16 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
-                    <li class="breadcrumb-item">廠家管理</li>
-                    <li class="breadcrumb-item active">廠家帳號新增/編輯</li>
+                    <li class="breadcrumb-item">商家管理</li>
+                    <li class="breadcrumb-item active">商家帳號新增/編輯</li>
                 </ol>
             </nav>
             <div class="user-dropdown dropdown">
-                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-                    <span class="user-name">系統管理員</span>
-                </a>
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
+				   role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
+				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
@@ -201,16 +202,16 @@
             <!-- 搜尋選擇廠家 -->
             <div class="card mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold">搜尋選擇廠家</h6>
+                    <h6 class="m-0 font-weight-bold">搜尋選擇商家</h6>
                 </div>
                 <div class="card-body">
                     <form class="row g-3">
                         <div class="col-md-4">
                             <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                            <input type="text" class="form-control" id="searchKeyword" placeholder="廠家名稱、統一編號或廠家ID">
+                            <input type="text" class="form-control" id="searchKeyword" placeholder="商家名稱、統一編號或商家ID">
                         </div>
                         <div class="col-md-3">
-                            <label for="filterCategory" class="form-label">廠家類別</label>
+                            <label for="filterCategory" class="form-label">商家類別</label>
                             <select class="form-select" id="filterCategory">
                                 <option value="">全部</option>
                                 <option value="food">食品</option>
@@ -222,7 +223,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="filterStatus" class="form-label">廠家狀態</label>
+                            <label for="filterStatus" class="form-label">商家狀態</label>
                             <select class="form-select" id="filterStatus">
                                 <option value="">全部</option>
                                 <option value="active">啟用</option>
@@ -247,10 +248,10 @@
                         <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>廠家 ID</th>
-                                    <th>廠家名稱</th>
+                                    <th>商家 ID</th>
+                                    <th>商家名稱</th>
                                     <th>統一編號</th>
-                                    <th>廠家類別</th>
+                                    <th>商家類別</th>
                                     <th>狀態</th>
                                     <th>操作</th>
                                 </tr>
@@ -266,9 +267,9 @@
             <!-- 廠家編輯表單 -->
             <div class="card">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold" id="formTitle">新增廠家</h6>
+                    <h6 class="m-0 font-weight-bold" id="formTitle">新增商家</h6>
                     <button type="button" class="btn btn-sm btn-outline-secondary" id="clearFormBtn">
-                        <i class="fas fa-plus"></i> 新增廠家
+                        <i class="fas fa-plus"></i> 新增商家
                     </button>
                 </div>
                 <div class="card-body">
@@ -281,7 +282,7 @@
                                 <h6 class="text-primary mb-3"><i class="fas fa-info-circle"></i> 基本資料</h6>
                             </div>
                             <div class="col-md-6">
-                                <label for="vendorName" class="form-label">廠家名稱 <span class="text-danger">*</span></label>
+                                <label for="vendorName" class="form-label">商家名稱 <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="vendorName" name="vendorName" required>
                             </div>
                             <div class="col-md-6">
@@ -289,7 +290,7 @@
                                 <input type="text" class="form-control" id="vendorTaxId" name="vendorTaxId" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="vendorCategory" class="form-label">廠家類別 <span class="text-danger">*</span></label>
+                                <label for="vendorCategory" class="form-label">商家類別 <span class="text-danger">*</span></label>
                                 <select class="form-select" id="vendorCategory" name="vendorCategory" required>
                                     <option value="">請選擇類別</option>
                                     <option value="food">食品</option>
@@ -301,7 +302,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="vendorStatus" class="form-label">廠家狀態</label>
+                                <label for="vendorStatus" class="form-label">商家狀態</label>
                                 <select class="form-select" id="vendorStatus" name="vendorStatus">
                                     <option value="active">啟用</option>
                                     <option value="inactive">停用</option>
@@ -309,8 +310,8 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label for="vendorDescription" class="form-label">廠家簡介</label>
-                                <textarea class="form-control" id="vendorDescription" name="vendorDescription" rows="3" placeholder="請輸入廠家簡介.."></textarea>
+                                <label for="vendorDescription" class="form-label">商家簡介</label>
+                                <textarea class="form-control" id="vendorDescription" name="vendorDescription" rows="3" placeholder="請輸入商家簡介.."></textarea>
                             </div>
                         </div>
                         
@@ -399,7 +400,7 @@
             const vendorListCard = document.getElementById('vendorListCard');
             const vendorTableBody = document.getElementById('vendorTableBody');
             
-            // 模擬廠家資料
+            // 模擬商家資料
             const mockVendors = [
                 {
                     id: 'V1001',
@@ -471,7 +472,7 @@
                 vendorTableBody.innerHTML = '';
                 
                 if (vendors.length === 0) {
-                    vendorTableBody.innerHTML = '<tr><td colspan="6" class="text-center">沒有找到符合條件的廠家</td></tr>';
+                    vendorTableBody.innerHTML = '<tr><td colspan="6" class="text-center">沒有找到符合條件的商家</td></tr>';
                 } else {
                     vendors.forEach(vendor => {
                         const statusBadge = getStatusBadge(vendor.status);
@@ -509,7 +510,7 @@
                 });
             }
             
-            // 載入廠家資料到表單
+            // 載入商家資料到表單
             function loadVendorData(vendor) {
                 document.getElementById('vendorId').value = vendor.id;
                 document.getElementById('vendorName').value = vendor.name;
@@ -528,7 +529,7 @@
                 document.getElementById('accountName').value = vendor.accountName || '';
                 document.getElementById('accountNumber').value = vendor.accountNumber || '';
                 
-                formTitle.textContent = `編輯廠家 - ${vendor.name}`;
+                formTitle.textContent = `編輯商家 - ${vendor.name}`;
                 
                 // 滾動到表單
                 document.getElementById('vendorForm').scrollIntoView({ behavior: 'smooth' });
@@ -538,7 +539,7 @@
             function clearForm() {
                 vendorForm.reset();
                 document.getElementById('vendorId').value = '';
-                formTitle.textContent = '新增廠家';
+                formTitle.textContent = '新增商家';
             }
             
             // 清空表單按鈕
@@ -577,7 +578,7 @@
                 const isEdit = vendorData.vendorId !== '';
                 const action = isEdit ? '更新' : '新增';
                 
-                alert(`廠家資料${action}成功！`);
+                alert(`商家資料${action}成功！`);
                 
                 // 清空表單
                 clearForm();

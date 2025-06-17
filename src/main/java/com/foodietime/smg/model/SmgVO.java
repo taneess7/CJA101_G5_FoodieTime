@@ -76,7 +76,7 @@ public class SmgVO implements Serializable {
     private Byte smgrStatus;
 
     // 與 SmgauthVO (權限關聯) 一對多  
-    @OneToMany(mappedBy = "smg", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "smg", fetch = FetchType.LAZY)
     private List<SmgauthVO> smgauths= new ArrayList<>();
     
     @OneToMany(mappedBy = "smgr", cascade = CascadeType.ALL)
@@ -89,6 +89,50 @@ public class SmgVO implements Serializable {
     @Transient  // JPA 不會將它映射進資料表
     //對新增的確認
     private String confirmPassword;
+    
+    @Transient // 用於接收表單的權限字符串列表
+    private List<String> permissions;
+    
+    // 獲取權限字符串列表（用於表單顯示）
+    public List<String> getPermissions() {
+        if (permissions == null) {
+            permissions = new ArrayList<>();
+            if (smgauths != null) {
+                for (SmgauthVO smgauth : smgauths) {
+                    if (smgauth.getSmgfc() != null) {
+                        permissions.add(smgauth.getSmgfc().getSmgFunc());
+                    }
+                }
+            }
+        }
+        return permissions;
+    }
+    
+    public void setPermissions(List<String> permissions) {
+        this.permissions = permissions;
+    }
+    
+    // 輔助方法：根據權限字符串創建 SmgauthVO 列表
+    public void setPermissionsFromStrings(List<String> permissionStrings, com.foodietime.smgfc.model.SmgfcService smgfcService) {
+        // 創建新的權限列表，避免操作已刪除的關聯
+        List<SmgauthVO> newSmgauths = new ArrayList<>();
+        if (permissionStrings != null) {
+            for (String permission : permissionStrings) {
+                com.foodietime.smgfc.model.SmgfcVO smgfc = smgfcService.findByFunctionName(permission);
+                if (smgfc != null) {
+                    SmgauthVO smgauth = new SmgauthVO();
+                    com.foodietime.smgauth.model.SmgauthId id = new com.foodietime.smgauth.model.SmgauthId(smgfc.getSmgFuncId(), this.smgrId);
+                    smgauth.setId(id);
+                    // 不設置反向關聯，避免級聯衝突
+                    // smgauth.setSmg(this);
+                    smgauth.setSmgfc(smgfc);
+                    newSmgauths.add(smgauth);
+                }
+            }
+        }
+        // 直接替換整個列表，避免clear()操作
+        this.smgauths = newSmgauths;
+    }
 
     
 }

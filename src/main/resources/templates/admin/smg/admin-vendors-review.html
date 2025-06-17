@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>審核廠家 - 團購樂後台管理系統</title>
+    <title>審核商家 - 團購樂後台管理系統</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -48,17 +48,17 @@
                 </a>
             </li>
             
-            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item section-title">商家管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
                     <i class="fas fa-check-circle"></i>
-                    <span>審核廠家</span>
+                    <span>審核商家</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
                     <i class="fas fa-store-alt"></i>
-                    <span>廠家帳號查詢/編輯</span>
+                    <span>商家帳號查詢/編輯</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -178,15 +178,16 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
-                    <li class="breadcrumb-item">廠家管理</li>
-                    <li class="breadcrumb-item active">審核廠家</li>
+                    <li class="breadcrumb-item">商家管理</li>
+                    <li class="breadcrumb-item active">審核商家</li>
                 </ol>
             </nav>
             <div class="user-dropdown dropdown">
-                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-                    <span class="user-name">系統管理員</span>
-                </a>
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
+				   role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
+				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
@@ -204,7 +205,7 @@
                     <form class="row g-3">
                         <div class="col-md-3">
                             <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                            <input type="text" class="form-control" id="searchKeyword" placeholder="廠家名稱或統一編號">
+                            <input type="text" class="form-control" id="searchKeyword" placeholder="商家名稱或統一編號">
                         </div>
                         <div class="col-md-2">
                             <label for="filterStatus" class="form-label">審核狀態</label>
@@ -216,7 +217,7 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label for="filterCategory" class="form-label">廠家類別</label>
+                            <label for="filterCategory" class="form-label">商家類別</label>
                             <select class="form-select" id="filterCategory">
                                 <option value="">全部</option>
                                 <option value="food">食品</option>
@@ -242,10 +243,10 @@
                 </div>
             </div>
             
-            <!-- 待審核廠家列表 -->
+            <!-- 待審核商家列表 -->
             <div class="card mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold">待審核廠家列表</h6>
+                    <h6 class="m-0 font-weight-bold">待審核商家列表</h6>
                     <div>
                         <button class="btn btn-sm btn-outline-success me-2" id="batchApproveBtn">
                             <i class="fas fa-check"></i> 批量核准
@@ -265,10 +266,10 @@
                                             <input class="form-check-input" type="checkbox" id="selectAll">
                                         </div>
                                     </th>
-                                    <th>廠家 ID</th>
-                                    <th>廠家名稱</th>
+                                    <th>商家 ID</th>
+                                    <th>商家名稱</th>
                                     <th>統一編號</th>
-                                    <th>廠家類別</th>
+                                    <th>商家類別</th>
                                     <th>聯絡人</th>
                                     <th>申請日期</th>
                                     <th>狀態</th>
@@ -422,7 +423,7 @@
                 </div>
             </div>
             
-            <!-- 已審核廠家列表 -->
+            <!-- 已審核商家列表 -->
             <div class="card mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold">最近審核記錄</h6>
@@ -432,10 +433,10 @@
                         <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>廠家 ID</th>
-                                    <th>廠家名稱</th>
+                                    <th>商家 ID</th>
+                                    <th>商家名稱</th>
                                     <th>統一編號</th>
-                                    <th>廠家類別</th>
+                                    <th>商家類別</th>
                                     <th>聯絡人</th>
                                     <th>審核日期</th>
                                     <th>審核結果</th>
@@ -768,10 +769,10 @@
             approveButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const vendorId = this.getAttribute('data-id');
-                    if (confirm(`確定要核准廠家 ${vendorId}？`)) {
+                    if (confirm(`確定要核准商家 ${vendorId}？`)) {
                         // 這裡可以發送核准請求到後端
                         // 現在使用模擬示範
-                        alert(`廠家 ${vendorId} 已成功核准！`);
+                        alert(`商家 ${vendorId} 已成功核准！`);
                         
                         // 更新表格中的狀態
                         const row = this.closest('tr');
@@ -787,10 +788,10 @@
             rejectButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const vendorId = this.getAttribute('data-id');
-                    if (confirm(`確定要拒絕廠家 ${vendorId}？`)) {
+                    if (confirm(`確定要拒絕商家 ${vendorId}？`)) {
                         // 這裡可以發送拒絕請求到後端
                         // 現在使用模擬示範
-                        alert(`廠家 ${vendorId} 已拒絕！`);
+                        alert(`商家 ${vendorId} 已拒絕！`);
                         
                         // 更新表格中的狀態
                         const row = this.closest('tr');
@@ -805,14 +806,14 @@
             document.getElementById('batchApproveBtn').addEventListener('click', function() {
                 const selectedCheckboxes = document.querySelectorAll('.vendor-checkbox:checked');
                 if (selectedCheckboxes.length === 0) {
-                    alert('請至少選擇一個廠家');
+                    alert('請至少選擇一個商家');
                     return;
                 }
                 
-                if (confirm(`確定要批量核准 ${selectedCheckboxes.length} 個廠家？`)) {
+                if (confirm(`確定要批量核准 ${selectedCheckboxes.length} 個商家？`)) {
                     // 這裡可以發送批量核准請求到後端
                     // 現在使用模擬示範
-                    alert(`已成功核准 ${selectedCheckboxes.length} 個廠家！`);
+                    alert(`已成功核准 ${selectedCheckboxes.length} 個商家！`);
                     
                     // 更新表格中的狀態
                     selectedCheckboxes.forEach(checkbox => {
@@ -832,10 +833,10 @@
                     return;
                 }
                 
-                if (confirm(`確定要批量拒絕 ${selectedCheckboxes.length} 個廠家？`)) {
+                if (confirm(`確定要批量拒絕 ${selectedCheckboxes.length} 個商家？`)) {
                     // 這裡可以發送批量拒絕請求到後端
                     // 現在使用模擬示範
-                    alert(`已拒絕 ${selectedCheckboxes.length} 個廠家！`);
+                    alert(`已拒絕 ${selectedCheckboxes.length} 個商家！`);
                     
                     // 更新表格中的狀態
                     selectedCheckboxes.forEach(checkbox => {

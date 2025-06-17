@@ -44,17 +44,17 @@
                     </a>
                 </li>
                 
-                <li class="nav-item section-title">廠家管理</li>
+                <li class="nav-item section-title">商家管理</li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
                         <i class="fas fa-check-circle"></i>
-                        <span>審核廠家</span>
+                        <span>審核商家</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
                         <i class="fas fa-store-alt"></i>
-                        <span>廠家帳號查詢/編輯</span>
+                        <span>商家帳號查詢/編輯</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -179,10 +179,11 @@
                 </ol>
             </nav>
             <div class="user-dropdown dropdown">
-                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-                    <span class="user-name">系統管理員</span>
-                </a>
+                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
+				   role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
+				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>

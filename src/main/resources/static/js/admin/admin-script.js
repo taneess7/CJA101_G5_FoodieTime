@@ -25,8 +25,22 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', handleResize);
     handleResize();
     
-    
-   
+    // 側邊欄導航點擊處理
+    const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // 移除所有active類別
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            // 為當前點擊的連結添加active類別
+            this.classList.add('active');
+            
+            // 如果是錨點連結（href="#"），阻止默認行為
+            if (this.getAttribute('href') === '#' || this.getAttribute('href') === '') {
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
     
     // 登出功能
     const logoutBtn = document.querySelector('.logout-btn');

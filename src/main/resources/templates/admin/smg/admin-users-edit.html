@@ -185,10 +185,10 @@
             </nav>
             <div class="user-dropdown dropdown">
                 <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
-                    role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-                    <span class="user-name">系統管理員</span>
-                </a>
+				   role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
+				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
+				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
@@ -301,14 +301,15 @@
                                 <div class="card-header bg-light">
                                     <div class="form-check">
                                         <input class="form-check-input section-checkbox" type="checkbox"
-                                            id="discussionSection" checked>
+                                            id="discussionSection">
                                         <label class="form-check-label fw-bold" for="discussionSection">討論區管理</label>
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-check">
                                         <input class="form-check-input permission-checkbox" type="checkbox"
-                                            id="discussionReports" name="permissions[]" value="discussion_reports" checked>
+                                            id="discussionReports" name="permissions" value="discussion_reports"
+                                            th:checked="${smg.permissions != null and smg.permissions.contains('discussion_reports')}">
                                         <label class="form-check-label" for="discussionReports">檢舉審核管理</label>
                                     </div>
                                 </div>
@@ -319,7 +320,7 @@
                                 <div class="card-header bg-light">
                                     <div class="form-check">
                                         <input class="form-check-input section-checkbox" type="checkbox"
-                                            id="vendorSection" checked>
+                                            id="vendorSection">
                                         <label class="form-check-label fw-bold" for="vendorSection">廠家管理</label>
                                     </div>
                                 </div>
@@ -328,34 +329,40 @@
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="vendorReview" name="permissions[]" value="vendor_review" checked>
+                                                    id="vendorReview" name="permissions" value="vendor_review"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('vendor_review')}">
                                                 <label class="form-check-label" for="vendorReview">審核廠家</label>
                                             </div>
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="vendorEdit" name="permissions[]" value="vendor_edit" checked>
+                                                    id="vendorEdit" name="permissions" value="vendor_edit"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('vendor_edit')}">
                                                 <label class="form-check-label" for="vendorEdit">廠家帳號查詢/編輯</label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="vendorReports" name="permissions[]" value="vendor_reports" checked>
+                                                    id="vendorReports" name="permissions" value="vendor_reports"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('vendor_reports')}">
                                                 <label class="form-check-label" for="vendorReports">檢舉功能</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="vendorBlacklist" name="permissions[]" value="vendor_blacklist">
+                                                    id="vendorBlacklist" name="permissions" value="vendor_blacklist"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('vendor_blacklist')}">
                                                 <label class="form-check-label" for="vendorBlacklist">黑名單管理</label>
                                             </div>
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="productDisable" name="permissions[]" value="product_disable" checked>
+                                                    id="productDisable" name="permissions" value="product_disable"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('product_disable')}">
                                                 <label class="form-check-label" for="productDisable">下架商品</label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="vendorPermissions" name="permissions[]" value="vendor_permissions">
+                                                    id="vendorPermissions" name="permissions" value="vendor_permissions"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('vendor_permissions')}">
                                                 <label class="form-check-label" for="vendorPermissions">權限變更</label>
                                             </div>
                                         </div>
@@ -377,14 +384,16 @@
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="memberSearch" name="permissions[]" value="member_search">
+                                                    id="memberSearch" name="permissions" value="member_search"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('member_search')}">
                                                 <label class="form-check-label" for="memberSearch">會員查詢與篩選</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="memberPermissions" name="permissions[]" value="member_permissions">
+                                                    id="memberPermissions" name="permissions" value="member_permissions"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('member_permissions')}">
                                                 <label class="form-check-label" for="memberPermissions">權限變更</label>
                                             </div>
                                         </div>
@@ -406,34 +415,40 @@
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="groupReports" name="permissions[]" value="group_reports">
+                                                    id="groupReports" name="permissions" value="group_reports"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('group_reports')}">
                                                 <label class="form-check-label" for="groupReports">檢舉審核管理</label>
                                             </div>
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="groupStatus" name="permissions[]" value="group_status">
+                                                    id="groupStatus" name="permissions" value="group_status"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('group_status')}">
                                                 <label class="form-check-label" for="groupStatus">啟用/停用</label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="groupOrders" name="permissions[]" value="group_orders">
+                                                    id="groupOrders" name="permissions" value="group_orders"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('group_orders')}">
                                                 <label class="form-check-label" for="groupOrders">訂單詳情檢視</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="groupPayments" name="permissions[]" value="group_payments">
+                                                    id="groupPayments" name="permissions" value="group_payments"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('group_payments')}">
                                                 <label class="form-check-label" for="groupPayments">付款處理</label>
                                             </div>
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="groupRefunds" name="permissions[]" value="group_refunds">
+                                                    id="groupRefunds" name="permissions" value="group_refunds"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('group_refunds')}">
                                                 <label class="form-check-label" for="groupRefunds">退款</label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="groupMonthly" name="permissions[]" value="group_monthly">
+                                                    id="groupMonthly" name="permissions" value="group_monthly"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('group_monthly')}">
                                                 <label class="form-check-label" for="groupMonthly">月結付款</label>
                                             </div>
                                         </div>
@@ -455,14 +470,16 @@
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="orderView" name="permissions[]" value="order_view">
+                                                    id="orderView" name="permissions" value="order_view"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('order_view')}">
                                                 <label class="form-check-label" for="orderView">訂單詳情檢視</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input permission-checkbox" type="checkbox"
-                                                    id="orderPayments" name="permissions[]" value="order_payments">
+                                                    id="orderPayments" name="permissions" value="order_payments"
+                                                    th:checked="${smg.permissions != null and smg.permissions.contains('order_payments')}">
                                                 <label class="form-check-label" for="orderPayments">付款處理</label>
                                             </div>
                                         </div>
@@ -482,7 +499,8 @@
                                 <div class="card-body">
                                     <div class="form-check">
                                         <input class="form-check-input permission-checkbox" type="checkbox"
-                                            id="serviceTickets" name="permissions[]" value="service_tickets">
+                                            id="serviceTickets" name="permissions" value="service_tickets"
+                                            th:checked="${smg.permissions != null and smg.permissions.contains('service_tickets')}">
                                         <label class="form-check-label" for="serviceTickets">表單回覆</label>
                                     </div>
                                 </div>
