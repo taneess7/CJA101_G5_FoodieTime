@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>會員中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-orange-100 to-rose-200 min-h-screen py-10 px-4 font-sans">
+
+    <div class="max-w-4xl mx-auto bg-white p-10 rounded-3xl shadow-2xl transition-all duration-300">
+        <h2 class="text-4xl font-bold text-orange-700 mb-8 text-center tracking-wide">會員中心</h2>
+
+        <!-- 大頭貼 -->
+        <div class="flex flex-col items-center mb-10 space-y-2">
+            <img th:src="${member.memAvatar != null} ? 
+                         @{/front/member/avatar/{id}(id=${member.memId})} : 
+                         @{/images/icons/logo.png}"
+                 alt="大頭照"
+                 class="w-32 h-32 rounded-full object-cover shadow-md border-4 border-orange-200 hover:scale-105 transition-transform duration-300" />
+            <span class="text-sm text-gray-500"></span>
+        </div>
+
+        <!-- 會員基本資料 -->
+        <div class="mb-10">
+            <h3 class="text-xl font-semibold text-orange-600 mb-4 border-b pb-2">基本資料</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 text-[16px] leading-relaxed">
+                <div><strong>暱稱：</strong><span th:text="${member.memNickname}"></span></div>
+                <div><strong>姓名：</strong><span th:text="${member.memName}"></span></div>
+                <div><strong>Email：</strong><span th:text="${member.memEmail}"></span></div>
+                <div><strong>電話：</strong><span th:text="${member.memPhone}"></span></div>
+                <div><strong>城市：</strong><span th:text="${member.memCity} + ' ' + ${member.memCityarea}"></span></div>
+                <div><strong>地址：</strong><span th:text="${member.memAddress}"></span></div>
+            </div>
+        </div>
+
+        <!-- 狀態欄位 -->
+        <div class="mb-10">
+            <h3 class="text-xl font-semibold text-red-600 mb-4 border-b pb-2">帳號狀態</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 text-sm md:text-base">
+                <div class="bg-red-50 p-4 rounded-xl shadow-sm">
+                    <span class="font-semibold">帳號狀態：</span>
+                    <span th:text="${member.memStatus == T(com.foodietime.member.model.MemberVO.MemberStatus).ACTIVE ? '正常' : '黑名單'}"></span>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl shadow-sm">
+                    <span class="font-semibold">禁言狀態：</span>
+                    <span th:text="${member.memNoSpeak == T(com.foodietime.member.model.MemberVO.NoSpeakStatus).INACTIVE ? '未禁言' : '已禁言'}"></span>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl shadow-sm">
+                    <span class="font-semibold">禁貼文狀態：</span>
+                    <span th:text="${member.memNoPost == T(com.foodietime.member.model.MemberVO.NoPostStatus).INACTIVE ? '未禁貼文' : '已禁貼文'}"></span>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl shadow-sm">
+                    <span class="font-semibold">禁開團狀態：</span>
+                    <span th:text="${member.memNoGroup == T(com.foodietime.member.model.MemberVO.NoGroupStatus).INACTIVE ? '未禁開團' : '已禁開團'}"></span>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl shadow-sm">
+                    <span class="font-semibold">禁加團狀態：</span>
+                    <span th:text="${member.memNoJoingroup == T(com.foodietime.member.model.MemberVO.NoJoingroupStatus).INACTIVE ? '未禁加團' : '已禁加團'}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按鈕 -->
+        <div class="mt-8 flex flex-col items-center space-y-4">
+            <a href="/front/member/edit_profile"
+               class="inline-flex items-center bg-orange-600 text-white px-6 py-2 rounded-xl hover:bg-orange-700 transition duration-300 shadow">
+                ✏️ 修改會員資料
+            </a>
+            <a href="/index"
+               class="inline-flex items-center bg-gray-300 text-gray-800 px-6 py-2 rounded-xl hover:bg-gray-400 transition duration-300 shadow">
+                ⬅️ 返回首頁
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
