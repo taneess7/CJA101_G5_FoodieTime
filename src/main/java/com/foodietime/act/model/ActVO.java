@@ -26,6 +26,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -93,7 +94,8 @@ public class ActVO implements Serializable {
 	private Byte actDiscount; 
 	
 	// 11.折扣值  
-	@NotBlank(message="折扣值: 請勿空白")
+	@NotNull(message = "折扣值不可為空")
+	@DecimalMin(value = "0.01", message = "折扣值必須大於 0")
 	@Column(name = "ACT_DISCOUNT_VALUE")
 	private Double actDiscValue; 
 	
