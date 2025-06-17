@@ -5,6 +5,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -12,7 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.foodietime.member.model.MemberVO;
-
+import com.foodietime.store.model.StoreService;
+import com.foodietime.store.model.StoreVO;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -25,6 +30,10 @@ public class MemberController {
 
     @Autowired
     private MemService memService;
+    
+    @Autowired
+    private StoreService storeService;
+
     
     // ✅ 初始化預設值（讓驗證不會失敗）
     @ModelAttribute("member")
@@ -39,6 +48,32 @@ public class MemberController {
         member.setTotalReviews(0);
         member.setMemTime(Timestamp.from(Instant.now()));
         return member;
+    }
+    
+    @GetMapping("/storeregister")
+    public String showStoreForm(HttpSession session, Model model) {
+        model.addAttribute("store", new StoreVO());
+        
+        MemberVO member = (MemberVO) session.getAttribute("registeringStore");
+        if (member != null) {
+            System.out.println("準備為會員 ID " + member.getMemId() + " 建立店家資料");
+            // 你也可以在 StoreVO 中預設 storEmail = member.getMemEmail() 這類邏輯
+        }
+
+        return "front/member/storeregister";
+    }
+    
+    @PostMapping("/storeregister")
+    public String processStoreForm(@ModelAttribute("store") StoreVO store,
+                                   BindingResult result,
+                                   Model model) {
+
+        if (result.hasErrors()) {
+            return "front/member/storeregister";
+        }
+
+        storeService.addStore(store); // ✅ 儲存 storeVO
+        return "redirect:/front/member/success";
     }
 
     @GetMapping("/register")
@@ -73,7 +108,7 @@ public class MemberController {
         }
         
         // ✅ 密碼與確認密碼不一致時手動加錯誤訊息
-        if (!member.getMemPassword().equals(confirmPassword)) {
+        if (member.getMemPassword() == null || !member.getMemPassword().equals(confirmPassword)) {
             model.addAttribute("passwordError", "兩次輸入的密碼不一致");
             return "front/member/register";
         }
@@ -95,11 +130,6 @@ public class MemberController {
             return "front/member/register";
         }
 
-
-        if (!memAvatarFile.isEmpty()) {
-            member.setMemAvatar(memAvatarFile.getBytes());
-        }
-
         
         memService.save(member);
 
@@ -108,7 +138,8 @@ public class MemberController {
   
         
         if (Boolean.TRUE.equals(isStore)) {
-            return "redirect:/front/store/register"; // ⬅️ 第二階段：前往填寫店家資料
+        	session.setAttribute("registeringStore", member); // 傳遞到 store 註冊
+            return "redirect:/front/member/storeregister"; // ⬅️ 第二階段：前往填寫店家資料
         }
 
         return "front/member/success"; // ⬅️ 原有流程：一般會員註冊成功
@@ -154,7 +185,7 @@ public class MemberController {
             return "redirect:/store/";         // 導向店家頁面
         } else {
             session.setAttribute("loginRole", "member"); // 設定身份為一般會員
-            return "redirect:/member/home";              // 導向會員頁面
+            return "redirect:/front/member/member_center";              // 導向會員頁面
         }
     }
 
@@ -165,13 +196,13 @@ public class MemberController {
     public String showEditForm(HttpSession session, Model model) {
         MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
         if (member == null) {
-            return "redirect:/member/login";
+            return "redirect:/front/member/login";
         }
 
         // 重新查詢最新資料（保險做法）
         MemberVO fullMember = memService.getById(member.getMemId());
         model.addAttribute("member", fullMember);
-        return "member/edit_profile"; // 對應 templates/member/edit.html
+        return "front/member/edit_profile"; 
     }
 
     // ✅ 接收表單送出更新
@@ -191,7 +222,7 @@ public class MemberController {
         MemberVO member = memService.getById(memId);
         if (member == null) {
             model.addAttribute("error", "查無會員資料");
-            return "member/edit_profile";
+            return "front/member/edit_profile";
         }
 
         member.setMemNickname(nickname);
@@ -200,15 +231,15 @@ public class MemberController {
         member.setMemCity(city);
         member.setMemCityarea(cityarea);
         member.setMemAddress(address);
-
-        // 如果上傳新圖片
-        if (!avatarFile.isEmpty()) {
+        
+        // ✅ 處理大頭照（如果有上傳
+        if (avatarFile != null && !avatarFile.isEmpty()) {
             try {
                 member.setMemAvatar(avatarFile.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
                 model.addAttribute("error", "圖片上傳失敗");
-                return "member/edit_profile";
+                return "front/member/edit_profile";
             }
         }
 
@@ -217,7 +248,35 @@ public class MemberController {
         session.setAttribute("loggedInMember", member); // 更新 session 中資料
         model.addAttribute("member", member);
         model.addAttribute("success", "資料已更新");
-        return "member/edit_profile";
+        return "front/member/member_center";
+    }
+    
+    @GetMapping("/avatar/{memId}")
+    public ResponseEntity<byte[]> getAvatar(@PathVariable Integer memId) {
+        MemberVO member = memService.getById(memId);
+        
+        if (member == null || member.getMemAvatar() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG); // 根據實際圖片格式調整
+        return new ResponseEntity<>(member.getMemAvatar(), headers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/index")
+    public String index() {
+        return "index";
+    }
+    
+    @GetMapping("/member_center")
+    public String showMemberCenter(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "redirect:/front/member/login";
+        }
+        model.addAttribute("member", member);
+        return "front/member/member_center"; // 要有這個 HTML
     }
 
 }
