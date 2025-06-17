@@ -1,4 +1,4 @@
-//package com.foodietime;
+//package com.foodietime.store.controller;
 //
 //import java.io.IOException;
 //import java.sql.Time;
@@ -24,13 +24,8 @@
 //import org.springframework.web.bind.annotation.RequestParam;
 //import org.springframework.web.multipart.MultipartFile;
 //
-//import com.foodietime.apicoupon.coupon.CouponService;
-//import com.foodietime.apicoupon.coupon.CouponVO;
-//import com.foodietime.apicoupon.store.StoreCateService;
 //import com.foodietime.apicoupon.store.StoreCateVO;
-//import com.foodietime.apicoupon.store.StoreService;
 //import com.foodietime.apicoupon.store.StoreVO;
-//
 //
 //import jakarta.servlet.http.HttpSession;
 //import jakarta.validation.Valid;
@@ -163,49 +158,29 @@
 //    }
 //    
 //    
-//    //測試4--更新全部欄位
-//    @PostMapping("/updateAll")
-//    public String updateStore(
-//            @Valid @ModelAttribute("storeVO") StoreVO storeVO,
-//            BindingResult result,
-//            Model model,
-//            @RequestParam("upFiles") MultipartFile[] parts,
-//            @RequestParam("storWeeklyOffDay") String[] offDays // 公休日欄位：多選
-//    ) throws IOException {
-//
-//        System.out.println("[後端進入 update]");
-//        System.out.println("接收到 ID：" + storeVO.getStorId());
-//
-//        // 1. 若有驗證錯誤（來自 @NotBlank, @Email 等），就返回原頁
-//        if (result.hasErrors()) {
-//            model.addAttribute("storeVO", storeVO);
-//            model.addAttribute("error", "請檢查欄位輸入");
-//            model.addAttribute("storCatNameList", storeCateSvc.getAll());
-//            return "store_edit2"; // 下一頁
-//        }
-//
-//        // 2. 處理圖片欄位（若未上傳新圖片，保留舊圖）
-//        if (parts[0].isEmpty()) {
-//            byte[] originalPhoto = storeSvc.findById(storeVO.getStorId()).getStorPhoto();
-//            storeVO.setStorPhoto(originalPhoto);
-//        } else {
-//            byte[] photo = parts[0].getBytes();
-//            storeVO.setStorPhoto(photo);
-//        }
-//        
-//       //放入所有類別 
-//        List<StoreCateVO> storCatNameList = storeCateSvc.getAll(); 
-//        model.addAttribute("storCatNameList", storCatNameList);
-//        
-//        // 3. 公休日多選 → 字串儲存（如 "1,6"）
-//        String joinedOffDays = String.join(",", offDays);
-//        storeVO.setStorOffDay(joinedOffDays);
-//
-//        // 4. 更新
-//        storeSvc.updateStore(storeVO);
-//
-//        return "redirect:/"; // 或你想回去的頁面
+// // 2.1 處理經緯度欄位（若為 null 則保留原本資料）
+//    StoreVO originalStore = storeSvc.findById(storeVO.getStorId());
+//    if (storeVO.getStorLat() == null) {
+//        storeVO.setStorLat(originalStore.getStorLat());
 //    }
+//    if (storeVO.getStorLon() == null) {
+//        storeVO.setStorLon(originalStore.getStorLon());
+//    }
+//    
+//   //放入所有類別 
+//    List<StoreCateVO> storCatNameList = storeCateSvc.getAll(); 
+//    model.addAttribute("storCatNameList", storCatNameList);
+//    
+//    // 3. 公休日多選 → 字串儲存（如 "1,6"）
+//    String joinedOffDays = String.join(",", offDays);
+//    storeVO.setStorOffDay(joinedOffDays);
+//
+//    // 4. 更新
+//    storeSvc.updateStore(storeVO);
+//
+//    return "redirect:/"; // 或你想回去的頁面
+//}
+//
 //    /*-----------------------------------------------------------整合頁面-------------------------------------------------------*/
 //    
 //    //店家整合編輯
@@ -410,4 +385,4 @@
 //    
 // 
 //}
-
+//

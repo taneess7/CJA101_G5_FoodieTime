@@ -26,7 +26,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -49,23 +52,23 @@ public class ActVO implements Serializable {
 
 	
 	// 3.活動類型
-	@NotEmpty(message="活動類型: 請勿空白")
+	@NotBlank(message="活動類型: 請勿空白")
 	@Column(name = "ACT_CATE", length = 50)
 	private String actCate; 
 	
 
 	// 4.活動名稱
-	@NotEmpty(message="活動名稱: 請勿空白")
+	@NotBlank(message="活動名稱: 請勿空白")
 	@Column(name = "ACT_NAME")
 	private String actName; 
 	
 	// 5.活動內容
-	@NotEmpty(message="活動內容: 請勿空白")
+	@NotBlank(message="活動內容: 請勿空白")
 	@Column(name = "ACT_CONTENT", length = 255)
 	private String actContent; 
 	
 	// 6.活動建立時間
-	@NotEmpty
+	@NotNull
 	@CreationTimestamp
 	@Column(name = "ACT_LAUNCHTIME" , updatable = false)
 	private Timestamp actSetTime; 
@@ -73,12 +76,12 @@ public class ActVO implements Serializable {
 	 
 	//使用活動折扣需同時符合:活動狀態上架、活動開始時間
 	// 7.活動開始時間
-	@NotEmpty(message="活動開始時間: 請勿空白")
+	@NotNull(message="活動開始時間: 請勿空白")
 	@Column(name = "ACT_STARTTIME")
 	private Timestamp actStartTime; 
 	
 	// 8.活動結束時間 
-	@NotEmpty(message="活動結束時間: 請勿空白")
+	@NotNull(message="活動結束時間: 請勿空白")
 	@Column(name = "ACT_ENDTIME")
 	private Timestamp actEndTime; 
 	
@@ -91,11 +94,13 @@ public class ActVO implements Serializable {
 	private Byte actDiscount; 
 	
 	// 11.折扣值  
-	@NotEmpty(message="折扣值: 請勿空白")
+	@NotNull(message = "折扣值不可為空")
+	@DecimalMin(value = "0.01", message = "折扣值必須大於 0")
 	@Column(name = "ACT_DISCOUNT_VALUE")
 	private Double actDiscValue; 
 	
 	// 12.活動圖片
+	@Lob
 	@Column(name = "ACT_PHOTO")
 	private byte[] actPhoto; 
 	
@@ -113,6 +118,6 @@ public class ActVO implements Serializable {
 	// 取得or設置
 	public ActVO() {
 		super();
-	}
+	} 
 
 }
