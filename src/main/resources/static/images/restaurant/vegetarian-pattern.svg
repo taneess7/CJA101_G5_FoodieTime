@@ -1,0 +1,64 @@
+<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="800" height="200" fill="#E0F2F1"/>
+  
+  <!-- 裝飾圖案 -->
+  <!-- 蔬菜圖案 -->
+  <!-- 葉子 1 -->
+  <path d="M50,30 C70,10 100,20 90,50 C80,70 50,60 50,30" fill="#4DB6AC" opacity="0.7"/>
+  <!-- 葉子 2 -->
+  <path d="M150,40 C170,20 200,30 190,60 C180,80 150,70 150,40" fill="#26A69A" opacity="0.7"/>
+  <!-- 葉子 3 -->
+  <path d="M250,20 C270,0 300,10 290,40 C280,60 250,50 250,20" fill="#00897B" opacity="0.7"/>
+  <!-- 葉子 4 -->
+  <path d="M350,30 C370,10 400,20 390,50 C380,70 350,60 350,30" fill="#00796B" opacity="0.7"/>
+  <!-- 葉子 5 -->
+  <path d="M450,40 C470,20 500,30 490,60 C480,80 450,70 450,40" fill="#00695C" opacity="0.7"/>
+  <!-- 葉子 6 -->
+  <path d="M550,20 C570,0 600,10 590,40 C580,60 550,50 550,20" fill="#004D40" opacity="0.7"/>
+  <!-- 葉子 7 -->
+  <path d="M650,30 C670,10 700,20 690,50 C680,70 650,60 650,30" fill="#4DB6AC" opacity="0.7"/>
+  <!-- 葉子 8 -->
+  <path d="M750,40 C770,20 800,30 790,60 C780,80 750,70 750,40" fill="#26A69A" opacity="0.7"/>
+  
+  <!-- 胡蘿蔔 -->
+  <path d="M100,120 L110,100 L120,120 L110,170 Z" fill="#FF7043" opacity="0.8"/>
+  <path d="M110,100 L110,90 C110,85 115,85 115,90 L115,95 C115,100 105,100 105,95 L105,90 C105,85 110,85 110,90 Z" fill="#66BB6A" opacity="0.8"/>
+  
+  <!-- 蘑菇 -->
+  <ellipse cx="200" cy="130" rx="20" ry="10" fill="#BCAAA4" opacity="0.8"/>
+  <rect x="195" y="130" width="10" height="20" fill="#BCAAA4" opacity="0.8"/>
+  <ellipse cx="200" cy="130" rx="15" ry="7" fill="#EFEBE9" opacity="0.8"/>
+  <circle cx="195" cy="128" r="2" fill="#BCAAA4" opacity="0.8"/>
+  <circle cx="205" cy="127" r="2" fill="#BCAAA4" opacity="0.8"/>
+  <circle cx="200" cy="132" r="2" fill="#BCAAA4" opacity="0.8"/>
+  
+  <!-- 豆類 -->
+  <ellipse cx="300" cy="140" rx="10" ry="15" fill="#81C784" opacity="0.8"/>
+  <ellipse cx="320" cy="140" rx="10" ry="15" fill="#81C784" opacity="0.8"/>
+  <ellipse cx="310" cy="130" rx="10" ry="15" fill="#81C784" opacity="0.8"/>
+  
+  <!-- 番茄 -->
+  <circle cx="400" cy="140" r="15" fill="#EF5350" opacity="0.8"/>
+  <path d="M400,125 L400,115 C400,110 405,110 405,115 L405,120" fill="#66BB6A" opacity="0.8"/>
+  
+  <!-- 花椰菜 -->
+  <circle cx="500" cy="140" r="15" fill="#A5D6A7" opacity="0.8"/>
+  <circle cx="495" cy="135" r="5" fill="#A5D6A7" opacity="0.8"/>
+  <circle cx="505" cy="135" r="5" fill="#A5D6A7" opacity="0.8"/>
+  <circle cx="495" cy="145" r="5" fill="#A5D6A7" opacity="0.8"/>
+  <circle cx="505" cy="145" r="5" fill="#A5D6A7" opacity="0.8"/>
+  <rect x="498" y="155" width="4" height="10" fill="#66BB6A" opacity="0.8"/>
+  
+  <!-- 水果 -->
+  <circle cx="600" cy="140" r="15" fill="#FFD54F" opacity="0.8"/>
+  <path d="M600,125 L600,115 C600,110 605,110 605,115 L605,120" fill="#66BB6A" opacity="0.8"/>
+  
+  <!-- 豆芽 -->
+  <path d="M700,150 L700,130 L705,120 M700,130 L695,120 M700,140 L705,130 M700,140 L695,130" stroke="#A5D6A7" stroke-width="2" fill="none" opacity="0.8"/>
+  <ellipse cx="700" cy="150" rx="5" ry="3" fill="#FFF9C4" opacity="0.8"/>
+  
+  <!-- 素食文字 -->
+  <text x="400" y="80" font-family="Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="#00796B">素食料理</text>
+  <text x="400" y="100" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#00796B">健康、環保、美味</text>
+</svg>

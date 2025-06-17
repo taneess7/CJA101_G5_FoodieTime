@@ -1,25 +1,33 @@
-//package com.foodietime.memfavlist.controller;
-//
-//import com.foodietime.memfavlist.model.FavoriteListService;
-//import com.foodietime.memfavlist.model.FavoriteListVO;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.Arrays;
-//import java.util.List;
-//
-//@Controller
-//@RequestMapping("/favorite")
-//public class FavoriteListController {
-//
-//	private final FavoriteListService favoriteListService;
-//
-//	@Autowired
-//	public FavoriteListController(FavoriteListService favoriteListService) {
-//		this.favoriteListService = favoriteListService;
-//	}
+package com.foodietime.memfavlist.controller;
+
+import com.foodietime.memfavlist.model.FavoriteListService;
+import com.foodietime.memfavlist.model.FavoriteListVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Controller
+@RequestMapping("/favorite")
+public class FavoriteListController {
+
+	private final FavoriteListService favoriteListService;
+
+	@Autowired
+	public FavoriteListController(FavoriteListService favoriteListService) {
+		this.favoriteListService = favoriteListService;
+	}
+	@GetMapping("/member-favorites")
+	public String index() {
+		return "/front/favoritelist/member-favorites";
+  }
+	
+	
+	
+	
 //
 //	// 主頁
 //    @GetMapping("/select_page")
@@ -92,4 +100,4 @@
 //        model.addAttribute("favoriteList", list);
 //        return "favorite/listAllFavorite";
 //    }
-//}
+}

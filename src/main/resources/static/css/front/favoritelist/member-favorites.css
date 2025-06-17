@@ -1,0 +1,240 @@
+/* 會員收藏頁面樣式 */
+
+/* 會員資料區塊 */
+.member-profile {
+    background-color: var(--primary-color-light);
+    padding: var(--space-5) 0;
+    margin-bottom: var(--space-5);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--bg-light);
+    box-shadow: var(--shadow-1);
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: var(--space-1);
+}
+
+.profile-level {
+    color: var(--text-white);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.level-badge {
+    background-color: var(--warning);
+    color: var(--text-white);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* 收藏統計 */
+.favorites-stats {
+    display: flex;
+    justify-content: space-around;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-1);
+}
+
+.stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.stats-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stats-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* 收藏區塊標題 */
+.favorites-section {
+    margin-bottom: var(--space-6);
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--primary-color-light);
+}
+
+/* 收藏卡片樣式 */
+.favorite-card {
+    position: relative;
+}
+
+.favorite-actions {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    display: flex;
+    gap: var(--space-2);
+    z-index: 10;
+}
+
+.favorite-btn,
+.share-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-1);
+}
+
+.favorite-btn i {
+    color: var(--neutral-400);
+    font-size: 1.125rem;
+}
+
+.favorite-btn.active i {
+    color: var(--error);
+}
+
+.share-btn i {
+    color: var(--primary-color);
+    font-size: 1.125rem;
+}
+
+.favorite-btn:hover,
+.share-btn:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-2);
+}
+
+/* 優惠券卡片 */
+.coupon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.coupon-card {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    border-left: 4px solid var(--primary-color);
+}
+
+.coupon-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-3);
+}
+
+.coupon-content {
+    padding: var(--space-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.coupon-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+    color: var(--text-primary);
+}
+
+.coupon-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.coupon-validity {
+    font-size: 0.75rem;
+    color: var(--warning);
+}
+
+.use-coupon-btn {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border: none;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition-normal);
+}
+
+.use-coupon-btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .favorites-category-list {
+        overflow-x: auto;
+        padding-bottom: var(--space-2);
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .favorites-category-list::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .favorites-category-list::-webkit-scrollbar-thumb {
+        background-color: var(--neutral-300);
+        border-radius: var(--radius-full);
+    }
+    
+    .favorites-stats {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    
+    .coupon-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}

@@ -1,0 +1,60 @@
+/* 美食分類頁面額外樣式 */
+
+/* 泰式料理標籤 */
+.cuisine-thai {
+    background-color: #FFF8E1;
+    color: #FF8F00;
+}
+
+/* 甜點飲料標籤 */
+.cuisine-dessert {
+    background-color: #F3E5F5;
+    color: #8E24AA;
+}
+
+/* 韓式料理標籤 */
+.cuisine-korean {
+    background-color: #E1F5FE;
+    color: #0288D1;
+}
+
+/* 美式料理標籤 */
+.cuisine-american {
+    background-color: #FFEBEE;
+    color: #C62828;
+}
+
+/* 義式料理標籤 */
+.cuisine-italian {
+    background-color: #E8F5E9;
+    color: #388E3C;
+}
+
+/* 素食料理標籤 */
+.cuisine-vegetarian {
+    background-color: #E0F2F1;
+    color: #00796B;
+}
+
+/* 美食卡片特定樣式 */
+.food-card .restaurant-image {
+    height: 180px;
+}
+
+/* 美食分類頁面特定響應式設計 */
+@media (max-width: 768px) {
+    .food-category-list {
+        overflow-x: auto;
+        padding-bottom: var(--space-2);
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .food-category-list::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .food-category-list::-webkit-scrollbar-thumb {
+        background-color: var(--neutral-300);
+        border-radius: var(--radius-full);
+    }
+}

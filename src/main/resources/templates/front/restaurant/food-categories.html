@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美食分類 - FoodieTime 食刻</title>
+    <meta name="description" content="探索各種美食分類，尋找您喜愛的料理類型。FoodieTime 食刻提供多樣化的美食選擇，滿足您的味蕾需求。">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- PWA 支援 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="index.html" class="logo">
+                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                    <span class="logo-text">FoodieTime 食刻</span>
+                </a>
+            </div>
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="material-icons-outlined search-icon">search</i>
+                    <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+                    <i class="material-icons-outlined mic-icon">mic</i>
+                    <i class="material-icons-outlined camera-icon">photo_camera</i>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
+                    <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
+                    <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
+                    <li class="nav-item"><a href="login.html" class="nav-link login-btn">登入/註冊</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="開啟選單">
+                    <i class="material-icons-outlined">menu</i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <nav class="category-nav">
+            <div class="container">
+                <ul class="category-list food-category-list">
+                    <li class="category-item active">所有美食</li>
+                    <li class="category-item">中式料理</li>
+                    <li class="category-item">日式料理</li>
+                    <li class="category-item">韓式料理</li>
+                    <li class="category-item">泰式料理</li>
+                    <li class="category-item">義式料理</li>
+                    <li class="category-item">美式料理</li>
+                    <li class="category-item">甜點飲料</li>
+                    <li class="category-item">素食料理</li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="restaurant-grid food-grid">
+                <!-- 中式料理 -->
+                <article class="restaurant-card food-card">
+                    <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="牛肉麵" class="restaurant-image">
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">傳統牛肉麵</h3>
+                        <span class="cuisine-tag cuisine-chinese">中式料理</span>
+                        <p class="restaurant-category">麵食 • 湯品 • 小菜</p>
+                        <div class="restaurant-rating">
+                            <span class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </span>
+                            <span>4.5 (238則評價)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 日式料理 -->
+                <article class="restaurant-card food-card">
+                    <img th:src="@{/images/restaurant/placeholder.svg}" alt="壽司" class="restaurant-image">
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">精緻壽司</h3>
+                        <span class="cuisine-tag cuisine-japanese">日式料理</span>
+                        <p class="restaurant-category">壽司 • 生魚片 • 海鮮丼</p>
+                        <div class="restaurant-rating">
+                            <span class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </span>
+                            <span>4.0 (186則評價)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 義式料理 -->
+                <article class="restaurant-card food-card">
+                    <img th:src="@{/images/restaurant/pasta.svg}" alt="義大利麵" class="restaurant-image">
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">經典義大利麵</h3>
+                        <span class="cuisine-tag cuisine-italian">義式料理</span>
+                        <p class="restaurant-category">義大利麵 • 燉飯 • 前菜</p>
+                        <div class="restaurant-rating">
+                            <span class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </span>
+                            <span>4.8 (312則評價)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 美式料理 -->
+                <article class="restaurant-card food-card">
+                    <img th:src="@{/images/restaurant/pizza.svg}" alt="披薩" class="restaurant-image">
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">美式披薩</h3>
+                        <span class="cuisine-tag cuisine-american">美式料理</span>
+                        <p class="restaurant-category">披薩 • 漢堡 • 炸雞</p>
+                        <div class="restaurant-rating">
+                            <span class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </span>
+                            <span>4.2 (156則評價)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 泰式料理 -->
+                <article class="restaurant-card food-card">
+                    <img th:src="@{/images/restaurant/green-curry.svg}" alt="綠咖哩" class="restaurant-image">
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">泰式綠咖哩</h3>
+                        <span class="cuisine-tag cuisine-thai">泰式料理</span>
+                        <p class="restaurant-category">咖哩 • 酸辣湯 • 炒河粉</p>
+                        <div class="restaurant-rating">
+                            <span class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </span>
+                            <span>4.6 (278則評價)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 甜點飲料 -->
+                <article class="restaurant-card food-card">
+                    <img th:src="@{/images/restaurant/bubble-tea.svg}" alt="珍珠奶茶" class="restaurant-image">
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">手工珍珠奶茶</h3>
+                        <span class="cuisine-tag cuisine-dessert">甜點飲料</span>
+                        <p class="restaurant-category">奶茶 • 咖啡 • 甜點</p>
+                        <div class="restaurant-rating">
+                            <span class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </span>
+                            <span>4.9 (198則評價)</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 分類切換功能
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelector('.category-item.active').classList.remove('active');
+                this.classList.add('active');
+                // 這裡可以添加過濾顯示對應分類的美食邏輯
+            });
+        });
+    </script>
+</body>
+</html>

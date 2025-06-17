@@ -17,13 +17,59 @@ public class ProductCategoryController {
     private ProductCategoryService categoryService;
 
     // 查全部
-    @GetMapping("/list")
-    public String listAll(Model model) {
-        List<ProductCategoryVO> list = categoryService.getAllCategories();
-        model.addAttribute("categoryList", list);
-        return "category/listAllCategory";
+    @GetMapping("/food-categories")
+    public String listAll() {
+        
+        return "/front/restaurant/food-categories";
     }
-
+    //中式料理
+    @GetMapping("/chinese-cuisine")
+    public String listChinese() {
+        
+        return "/front/restaurant/chinese-cuisine";
+    }
+    //日式料理
+    @GetMapping("/japanese-cuisine")
+    public String listJapanese() {
+        
+        return "/front/restaurant/japanese-cuisine";
+    }
+    //韓式料理
+    @GetMapping("/korean-cuisine")
+    public String listKorean() {
+        
+        return "/front/restaurant/korean-cuisine";
+    }
+    //泰式料理
+    @GetMapping("/thai-cuisine")
+    public String listThai() {
+        
+        return "/front/restaurant/thai-cuisine";
+    }
+    //義式料理
+    @GetMapping("/italian-cuisine")
+    public String listItalian() {
+        
+        return "/front/restaurant/italian-cuisine";
+    }
+    //美式料理
+    @GetMapping("/american-cuisine")
+    public String listAmerican() {
+        
+        return "/front/restaurant/american-cuisine";
+    }
+    //甜點飲料
+    @GetMapping("/dessert-drinks")
+    public String listDessert() {
+        
+        return "/front/restaurant/dessert-drinks";
+    }
+    //素食料理
+    @GetMapping("/vegetarian-cuisine")
+    public String listVegetarian() {
+        
+        return "/front/restaurant/vegetarian-cuisine";
+    }
 //    // 顯示新增頁面
 //    @GetMapping("/add")
 //    public String showAddForm(Model model) {
@@ -43,35 +89,35 @@ public class ProductCategoryController {
 //            return "category/addCategory";
 //        }
 //    }
-
-    // 顯示修改表單
-    @GetMapping("/edit")
-    public String showEditForm(@RequestParam Integer prodCateId, Model model) {
-        ProductCategoryVO vo = categoryService.getCategoryById(prodCateId);
-        model.addAttribute("categoryVO", vo);
-        return "category/editCategory";
-    }
+//
+//    // 顯示修改表單
+//    @GetMapping("/edit")
+//    public String showEditForm(@RequestParam Integer prodCateId, Model model) {
+//        ProductCategoryVO vo = categoryService.getCategoryById(prodCateId);
+//        model.addAttribute("categoryVO", vo);
+//        return "category/editCategory";
+//    }
 
     // 修改分類
-    @PostMapping("/edit")
-    public String update(@RequestParam Integer prodCateId,
-                         @RequestParam String prodCate,
-                         Model model) {
-        try {
-            ProductCategoryVO vo = categoryService.updateCategory(prodCateId, prodCate);
-            model.addAttribute("categoryVO", vo);
-            return "category/listOneCategory";
-        } catch (RuntimeException e) {
-            model.addAttribute("errorMsg", e.getMessage());
-            return "category/editCategory";
-        }
-    }
-
-    // 刪除分類
-    @PostMapping("/delete")
-    public String delete(@RequestParam Integer prodCateId, Model model) {
-        categoryService.deleteCategory(prodCateId);
-        return "redirect:/category/list";
-    }
+//    @PostMapping("/edit")
+//    public String update(@RequestParam Integer prodCateId,
+//                         @RequestParam String prodCate,
+//                         Model model) {
+//        try {
+//            ProductCategoryVO vo = categoryService.updateCategory(prodCateId, prodCate);
+//            model.addAttribute("categoryVO", vo);
+//            return "category/listOneCategory";
+//        } catch (RuntimeException e) {
+//            model.addAttribute("errorMsg", e.getMessage());
+//            return "category/editCategory";
+//        }
+//    }
+//
+//    // 刪除分類
+//    @PostMapping("/delete")
+//    public String delete(@RequestParam Integer prodCateId, Model model) {
+//        categoryService.deleteCategory(prodCateId);
+//        return "redirect:/category/list";
+//    }
 
 }
