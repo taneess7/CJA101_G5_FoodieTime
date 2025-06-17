@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -52,8 +53,7 @@ public class PostVO implements Serializable {
 
 	@Column(name = "POST_TITLE")
 	@NotNull(message = "標題請勿空白")
-	@Min(value=1, message="最小1")
-    @Max(value=100, message="最大100")
+	@Size(min = 1, max = 100, message = "標題長度需介於1到100字")
 	private String postTitle;
 
 	@Lob
