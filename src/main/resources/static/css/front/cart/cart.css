@@ -1,17 +1,67 @@
 /**
- * FoodieTime 食刻 - 購物車樣式
- * 實現購物車和結帳流程的 Material Design 風格
+ * FoodieTime 食刻 - 購物車頁面樣式（最終修正版）
+ * 修正推薦商品區塊跑版問題，並加固整體佈局
  */
 
-/* 購物車頁面基本樣式 */
-.cart-page {
-    padding: var(--space-4) 0 var(--space-6);
+/* ========== 基礎變數設定 ========== */
+:root {
+    --primary-color: #FF5722;
+    --primary-dark: #E64A19;
+    --primary-light: #FFCCBC;
+    --accent-green: #4CAF50;
+    --accent-blue: #2196F3;
+    --error: #F44336;
+    --success: #4CAF50;
+    --warning: #FF9800;
+
+    --bg-light: #FFFFFF;
+    --neutral-50: #FAFAFA;
+    --neutral-100: #F5F5F5;
+    --neutral-200: #EEEEEE;
+    --neutral-300: #E0E0E0;
+    --neutral-400: #BDBDBD;
+    --neutral-500: #9E9E9E;
+    --neutral-600: #757575;
+    --neutral-700: #616161;
+    --neutral-800: #424242;
+    --neutral-900: #212121;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+
+    --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
 }
 
-/* 購物流程指示器 */
+/* ========== 購物車頁面基本結構 ========== */
+.cart-page {
+    padding: var(--space-4) 0 var(--space-6);
+    min-height: calc(100vh - 200px);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+/* ========== 購物流程指示器 ========== */
 .checkout-stepper {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: var(--space-4) 0 var(--space-5);
     max-width: 600px;
     margin-left: auto;
@@ -23,8 +73,8 @@
     content: '';
     position: absolute;
     top: 24px;
-    left: 40px;
-    right: 40px;
+    left: 60px;
+    right: 60px;
     height: 2px;
     background-color: var(--neutral-300);
     z-index: 1;
@@ -36,6 +86,8 @@
     align-items: center;
     position: relative;
     z-index: 2;
+    background-color: var(--bg-light);
+    padding: 0 var(--space-2);
 }
 
 .step-counter {
@@ -59,6 +111,7 @@
     font-size: 0.875rem;
     font-weight: 500;
     transition: color var(--transition-normal);
+    text-align: center;
 }
 
 .stepper-item.active .step-counter {
@@ -73,27 +126,216 @@
     font-weight: 600;
 }
 
-.stepper-item.completed .step-counter {
-    background-color: var(--accent-green);
-    color: white;
-    border-color: var(--accent-green);
+/* ========== 購物車主內容佈局 ========== */
+.cart-content {
+    display: grid;
+    grid-template-columns: 1fr 340px; /* 主內容與側邊欄比例 */
+    gap: var(--space-4);
+    align-items: start;
+    margin-top: var(--space-4);
 }
 
-.stepper-item.completed .step-name {
-    color: var(--accent-green);
+.cart-items {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
 }
 
-/* 頁面標題 */
-.page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: var(--space-4);
-    color: var(--neutral-900);
+/* ========== 單個購物車項目 (重點修正) ========== */
+.cart-item {
+    display: grid;
+    grid-template-columns: 120px 1fr; /* 圖片與內容分離 */
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item:hover {
+    background-color: #fdfaf9;
+}
+.form-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* 可選，用來製造間距 */
+}
+
+/* 圖片區域 */
+.item-image {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-md);
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 商品詳情與控制項的容器 */
+.item-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 將內容撐開，一部分在頂部，一部分在底部 */
+    gap: var(--space-3);
+    min-height: 120px; /* 確保有足夠高度 */
+}
+
+/* 商品資訊：名稱、描述、價格 */
+.item-info {
+    flex-grow: 1; /* 佔據多餘空間 */
+}
+
+.item-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 var(--space-1);
+}
+
+.item-description {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 0 0 var(--space-2);
+}
+
+.item-price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+
+/* ========== 控制項區域 (核心修正) ========== */
+.item-controls {
+    /* ✅ 關鍵修正 1: 使用 Flexbox 橫向排列 */
+    display: flex;
+    flex-direction: row; /* 確保是橫向 */
+    justify-content: space-between; /* 將子項目平均分佈 */
+    align-items: center; /* 垂直置中對齊 */
+    flex-wrap: wrap; /* 在小螢幕時允許換行 */
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--border-color); /* 添加分隔線 */
+}
+
+/* 數量控制 */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.quantity-label, .subtotal-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+.quantity-input-group {
+    display: inline-block;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.quantity-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #f7f7f7;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    transition: background-color 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #e9e9e9;
+}
+
+.quantity-input {
+    width: 50px;
+    height: 36px;
+    border: none;
     text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    -moz-appearance: textfield; /* 隱藏 number 輸入框的箭頭 */
 }
 
-/* 空購物車提示 */
-.empty-cart {
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.update-btn {
+    height: 36px;
+    padding: 0 var(--space-3);
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+/* 小計 */
+.item-subtotal {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* 刪除按鈕 */
+.item-controls form {
+    margin: 0; /* 重置表單的預設邊距 */
+}
+
+.delete-btn {
+    background-color: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.9rem;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: #fff1f1;
+    color: var(--error);
+}
+
+
+
+/* ========== 空購物車提示 ========== */
+.empty-cart-message {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -108,186 +350,11 @@
     margin-bottom: var(--space-3);
 }
 
-.empty-cart h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: var(--space-2);
-    color: var(--neutral-800);
-}
-
-.empty-cart p {
-    color: var(--neutral-600);
-    margin-bottom: var(--space-4);
-    max-width: 400px;
-}
-
-/* 購物車內容 */
-.cart-content {
-    display: none;
-    grid-template-columns: 1fr 320px;
-    gap: var(--space-4);
-}
-
-/* 購物車項目 */
-.cart-items {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
-    overflow: hidden;
-}
-
-.cart-item {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    padding: var(--space-3);
-    border-bottom: 1px solid var(--neutral-200);
-    position: relative;
-    transition: background-color var(--transition-fast);
-}
-
-.cart-item:hover {
-    background-color: var(--neutral-50);
-}
-
-.cart-item:last-child {
-    border-bottom: none;
-}
-
-.item-image-container {
-    width: 80px;
-    height: 80px;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    margin-right: var(--space-3);
-}
-
-.item-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.item-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-1);
-}
-
-.item-name {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutral-900);
-    margin: 0;
-}
-
-.item-remove {
-    color: var(--neutral-500);
-    background: none;
-    border: none;
-    padding: 4px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.item-remove:hover {
-    color: var(--error);
-    background-color: rgba(244, 67, 54, 0.1);
-}
-
-.item-restaurant {
-    font-size: 0.875rem;
-    color: var(--neutral-600);
-    margin-bottom: var(--space-1);
-}
-
-.item-options {
-    font-size: 0.875rem;
-    color: var(--neutral-700);
-    margin-bottom: var(--space-2);
-}
-
-.item-option {
-    display: inline-block;
-    background-color: var(--neutral-100);
-    padding: 2px 8px;
-    border-radius: var(--radius-sm);
-    margin-right: 4px;
-    margin-bottom: 4px;
-}
-
-.item-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-}
-
-.quantity-control {
-    display: flex;
-    align-items: center;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-full);
-    overflow: hidden;
-}
-
-.quantity-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--neutral-100);
-    border: none;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.quantity-btn:hover {
-    background-color: var(--neutral-200);
-}
-
-.quantity-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.quantity-input {
-    width: 40px;
-    height: 32px;
-    border: none;
-    text-align: center;
-    font-size: 0.875rem;
-    font-weight: 500;
-    -moz-appearance: textfield;
-}
-
-.quantity-input::-webkit-outer-spin-button,
-.quantity-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.item-price {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutral-900);
-}
-
-/* 購物車側邊欄 */
+/* ========== 購物車側邊欄 ========== */
 .cart-sidebar {
-    align-self: flex-start;
     position: sticky;
-    top: 80px;
+    top: 100px;
+    align-self: start;
 }
 
 .cart-summary {
@@ -301,14 +368,12 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: var(--space-3);
-    color: var(--neutral-900);
 }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: var(--space-2);
-    font-size: 0.9375rem;
 }
 
 .summary-divider {
@@ -320,505 +385,72 @@
 .total-row {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--neutral-900);
 }
 
-.discount-row {
-    color: var(--accent-green);
-}
-
-/* 優惠碼輸入 */
-.coupon-container {
-    margin: var(--space-4) 0;
-}
-
-.coupon-input-group {
-    display: flex;
-    margin-bottom: var(--space-2);
-}
-
-.coupon-input {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid var(--neutral-300);
+/* ========== 按鈕樣式 ========== */
+.btn {
+    padding: 12px 24px;
+    border: none;
     border-radius: var(--radius-sm);
-    font-size: 0.875rem;
-    transition: border-color var(--transition-fast);
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.coupon-input:focus {
-    border-color: var(--primary-color);
-    outline: none;
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
 }
 
-.coupon-message {
-    font-size: 0.75rem;
-    min-height: 18px;
+.btn-text {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
 }
 
-.coupon-message.success {
-    color: var(--success);
-}
-
-.coupon-message.error {
-    color: var(--error);
-}
-
-/* 按鈕 */
 .btn-block {
     width: 100%;
     margin-bottom: var(--space-2);
 }
 
-/* 結帳表單 */
-
-
-.checkout-content {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: var(--space-4);
-}
-
-.checkout-form {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
-    padding: var(--space-4);
-}
-
-.form-section {
-    margin-bottom: var(--space-4);
-}
-
-.section-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: var(--space-3);
-    color: var(--neutral-900);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-}
-
-.form-group {
-    margin-bottom: var(--space-3);
-}
-
-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: var(--space-1);
-    color: var(--neutral-700);
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="datetime-local"],
-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-sm);
-    font-size: 0.9375rem;
-    transition: border-color var(--transition-fast);
-}
-
-input:focus,
-textarea:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.2);
-}
-
-textarea {
-    resize: vertical;
-}
-
-/* 飲食需求選項 */
-.dietary-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
-}
-
-.dietary-option {
-    display: flex;
-    align-items: center;
-    background-color: var(--neutral-100);
-    padding: var(--space-2);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-    border: 1px solid var(--neutral-200);
-}
-
-.dietary-option:hover {
-    background-color: var(--primary-light);
-    border-color: var(--primary-color);
-}
-
-.dietary-option input[type="checkbox"] {
-    margin-right: var(--space-2);
-    accent-color: var(--primary-color);
-    width: 18px;
-    height: 18px;
-}
-
-.dietary-option label {
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* 付款方式 */
-.payment-methods {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-}
-
-.payment-method {
-    display: flex;
-    align-items: center;
-    background-color: var(--neutral-100);
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-    border: 1px solid var(--neutral-200);
-}
-
-.payment-method:hover {
-    background-color: var(--primary-light);
-    border-color: var(--primary-color);
-}
-
-.payment-method input[type="radio"] {
-    margin-right: var(--space-2);
-    accent-color: var(--primary-color);
-    width: 18px;
-    height: 18px;
-}
-
-.payment-method label {
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.payment-method label::before {
-    content: '';
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-right: var(--space-2);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.payment-method label[for="credit-card"]::before {
-    background-image: url('../images/payment/visa.svg');
-}
-
-.payment-method label[for="line-pay"]::before {
-    background-image: url('../images/payment/line-pay.svg');
-}
-
-.payment-method label[for="apple-pay"]::before {
-    background-image: url('../images/payment/apple-pay.svg');
-}
-
-.payment-method label[for="cash"]::before {
-    content: '💰';
-    font-size: 18px;
-}
-
-.payment-details {
-    margin-top: var(--space-3);
-    padding: var(--space-3);
-    background-color: var(--neutral-50);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--neutral-200);
-}
-
-.payment-icons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
-}
-
-.payment-icon {
-    height: 32px;
-    width: auto;
-}
-
-/* 表單操作按鈕 */
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: var(--space-4);
-}
-
-/* 結帳側邊欄 */
-.checkout-sidebar {
-    align-self: flex-start;
-    position: sticky;
-    top: 80px;
-}
-
-.order-summary {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
-    padding: var(--space-4);
-}
-
-/* 結帳商品容器 */
-.checkout-items {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2, 8px);
-    margin-bottom: var(--space-3, 16px);
-    padding: var(--space-3, 16px);
-    background-color: var(--neutral-50, #FAFAFA);
-    border-radius: var(--radius-md, 8px);
-    border: 1px solid var(--neutral-200, #EEEEEE);
-}
-
-/* 結帳商品項目 */
-.checkout-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-2, 8px) var(--space-3, 16px);
-    background-color: var(--bg-light, #FFFFFF);
-    border: 1px solid var(--neutral-200, #EEEEEE);
-    border-radius: var(--radius-sm, 4px);
-    font-size: 0.875rem;
-    min-height: 40px;
-    transition: background-color var(--transition-fast, 0.15s ease);
-}
-
-.checkout-item:hover {
-    background-color: var(--neutral-100, #F5F5F5);
-}
-
-/* 結帳商品名稱 */
-.checkout-item-name {
-    flex: 1;
-    font-weight: 500;
-    color: var(--text-primary, #212121);
-    margin-right: var(--space-2, 8px);
-    word-break: break-word;
-}
-
-/* 結帳商品數量 */
-.checkout-item-quantity {
-    color: var(--neutral-600, #757575);
-    margin: 0 var(--space-2, 8px);
-    font-size: 0.8125rem;
-    min-width: 40px;
-    text-align: center;
-    background-color: var(--neutral-100, #F5F5F5);
-    padding: 2px 8px;
-    border-radius: var(--radius-full, 9999px);
-}
-
-/* 訂單確認頁面 */
-.confirmation-container {
-    display: none;
-}
-/* 結帳商品價格 */
-.checkout-item-price {
-    font-weight: 600;
-    color: var(--primary-color, #FF5722);
-    font-size: 0.875rem;
-    min-width: 80px;
-    text-align: right;
-}
-
-/* 訂單摘要容器增強 */
-.order-summary {
-    background-color: var(--bg-light, #FFFFFF);
-    border-radius: var(--radius-md, 8px);
-    box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24));
-    padding: var(--space-4, 24px);
-    border: 1px solid var(--neutral-200, #EEEEEE);
-}
-
-.summary-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: var(--space-3, 16px);
-    color: var(--neutral-900, #212121);
-    border-bottom: 2px solid var(--primary-color, #FF5722);
-    padding-bottom: var(--space-1, 4px);
-}
-
-/* 結帳側邊欄增強 */
-.checkout-sidebar {
-    align-self: flex-start;
-    position: sticky;
-    top: 80px;
-    min-width: 300px;
-}
-
-/* 空購物車狀態 */
-.checkout-items:empty::before {
-    content: "您的購物車是空的";
-    display: block;
-    text-align: center;
-    color: var(--neutral-500, #9E9E9E);
-    font-style: italic;
-    padding: var(--space-4, 24px);
-}
-.confirmation-content {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
-    padding: var(--space-5);
-}
-
-.confirmation-header {
-    text-align: center;
-    margin-bottom: var(--space-5);
-}
-
-.confirmation-icon {
-    font-size: 4rem;
-    color: var(--accent-green);
-    margin-bottom: var(--space-2);
-}
-
-.confirmation-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: var(--space-2);
-    color: var(--neutral-900);
-}
-
-.confirmation-message {
-    font-size: 1.125rem;
-    color: var(--neutral-700);
-}
-
-.order-details,
-.delivery-info {
-    margin-bottom: var(--space-5);
-}
-
-.order-info {
-    background-color: var(--neutral-50);
-    border-radius: var(--radius-md);
-    padding: var(--space-3);
-    margin-bottom: var(--space-4);
-}
-
-.info-row {
-    display: flex;
-    margin-bottom: var(--space-2);
-}
-
-.info-row:last-child {
-    margin-bottom: 0;
-}
-
-.info-label {
-    width: 120px;
-    font-weight: 500;
-    color: var(--neutral-700);
-}
-
-.info-value {
-    flex: 1;
-}
-
-.subsection-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: var(--space-2);
-    color: var(--neutral-800);
-}
-
-.confirmation-items {
-    margin-bottom: var(--space-4);
-}
-
-.confirmation-item {
-    display: flex;
-    justify-content: space-between;
-    padding: var(--space-2) 0;
-    border-bottom: 1px solid var(--neutral-200);
-}
-
-.confirmation-item:last-child {
-    border-bottom: none;
-}
-
-.confirmation-item-details {
-    flex: 1;
-}
-
-.confirmation-item-name {
-    font-weight: 500;
-}
-
-.confirmation-item-options {
-    font-size: 0.875rem;
-    color: var(--neutral-600);
-}
-
-.confirmation-item-price {
-    text-align: right;
-    font-weight: 500;
-}
-
-.confirmation-summary {
-    background-color: var(--neutral-50);
-    border-radius: var(--radius-md);
-    padding: var(--space-3);
-}
-
-.confirmation-actions {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
-}
-
-/* 推薦商品區塊 */
+/* ========== 推薦商品區域 (重點修正) ========== */
 .recommendations-section {
     margin-top: var(--space-6);
     padding: var(--space-5) 0;
+    border-radius: 20px;
     background-color: var(--neutral-50);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    color: var(--neutral-900);
+    text-align: center;
 }
 
 .recommendations-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-3);
-    margin-top: var(--space-3);
+    gap: var(--space-4);
 }
 
 .recommendation-card {
     background-color: var(--bg-light);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-1);
     overflow: hidden;
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* ✅ 關鍵修正 1：使用Flexbox確保卡片內部結構一致 */
+    display: flex;
+    flex-direction: column;
 }
 
 .recommendation-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-2);
 }
 
@@ -826,17 +458,18 @@ textarea {
     height: 160px;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0; /* 防止圖片容器在flex佈局中被壓縮 */
 }
 
 .recommendation-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-normal);
+    transition: transform 0.3s ease;
 }
 
 .recommendation-card:hover .recommendation-image {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .add-to-cart-btn {
@@ -863,220 +496,78 @@ textarea {
 }
 
 .recommendation-details {
-    padding: var(--space-2);
+    padding: var(--space-3);
+
+    /* ✅ 關鍵修正 2：讓此區塊填滿剩餘空間，實現垂直對齊 */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .recommendation-name {
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 4px;
     color: var(--neutral-900);
+    line-height: 1.4;
+    /* 確保即使只有一行也能佔據固定高度 */
+    min-height: 2.8em; /* 1.4 * 2 (兩行的高度) */
+    /* 處理過長文字，顯示省略號 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 最多顯示兩行 */
+    -webkit-box-orient: vertical;
 }
 
 .recommendation-restaurant {
     font-size: 0.875rem;
     color: var(--neutral-600);
-    margin-bottom: 4px;
+    margin: var(--space-1) 0;
+
+    /* ✅ 關鍵修正 3：填滿中間的空間，將價格推到底部 */
+    flex-grow: 1;
 }
 
 .recommendation-price {
     font-weight: 600;
     color: var(--primary-color);
+    font-size: 1.125rem;
+
+    /* ✅ 關鍵修正 4：自動邊距將價格推到底部 */
+    margin-top: auto;
+    padding-top: var(--space-2);
 }
 
-/* 響應式設計 */
+
+/* ========== 響應式設計 ========== */
 @media (max-width: 992px) {
-    .cart-content,
-    .checkout-content {
+    .cart-content {
         grid-template-columns: 1fr;
     }
-    
-    .cart-sidebar,
-    .checkout-sidebar {
+
+    .cart-sidebar {
         position: static;
         margin-top: var(--space-4);
     }
 }
 
 @media (max-width: 768px) {
-    .page-title {
-        font-size: 1.75rem;
-    }
-    
-    .checkout-stepper::before {
-        left: 30px;
-        right: 30px;
-    }
-    
-    .step-counter {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-    
-    .step-name {
-        font-size: 0.75rem;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-        gap: var(--space-2);
-    }
-    
-    .form-actions .btn {
-        width: 100%;
-    }
-    
-    .confirmation-content {
-        padding: var(--space-3);
+    .cart-item {
+        grid-template-columns: 100px 1fr;
     }
 }
 
 @media (max-width: 576px) {
     .cart-item {
-        grid-template-columns: 80px 1fr;
+        grid-template-columns: 1fr;
+        text-align: center;
     }
-    
-    .item-image-container {
-        width: 70px;
-        height: 70px;
+
+    .item-image {
+        margin: 0 auto var(--space-2);
     }
-    
-    .item-actions {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-2);
+
+    .item-controls {
+        align-items: center;
     }
-    
-    .item-price {
-        align-self: flex-end;
-    }
-    
-    .dietary-options,
-    .payment-methods {
-        grid-template-columns: 1fr 1fr;
-    }
-    
-    .info-row {
-        flex-direction: column;
-    }
-    
-    .info-label {
-        width: 100%;
-        margin-bottom: 2px;
-    }
-    
-    .confirmation-actions {
-        flex-direction: column;
-    }
-    
-    .confirmation-actions .btn {
-        width: 100%;
-    }
-}
-
-/* 動畫效果 */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.cart-container,
-.checkout-container,
-.confirmation-container {
-    animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
-}
-
-/* 無障礙設計 */
-:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
-
-/* 高對比模式支援 */
-@media (prefers-contrast: more) {
-    :root {
-        --primary-color: #D32F2F;
-        --primary-dark: #B71C1C;
-        --accent-green: #2E7D32;
-        --accent-blue: #1565C0;
-    }
-    
-    .cart-item,
-    .checkout-item,
-    .confirmation-item {
-        border-color: #000;
-    }
-    
-    input, textarea, select {
-        border-color: #000;
-    }
-}
-
-/* Apple Pay 按鈕樣式 */
-.apple-pay-button {
-    display: inline-block;
-    width: 100%;
-    height: 50px;
-    border-radius: 8px;
-    background-color: #000;
-    background-image: -webkit-named-image(apple-pay-logo-white);
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    background-size: 60% 60%;
-    background-origin: content-box;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-.apple-pay-button:hover {
-    background-color: #333;
-}
-
-.apple-pay-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-.apple-pay-button-container {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.payment-qrcode-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.payment-qrcode {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 15px;
-}
-
-.payment-instruction {
-    text-align: center;
-    color: #666;
-    font-size: 14px;
-    margin-top: 10px;
 }

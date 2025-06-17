@@ -38,7 +38,7 @@
                 <li class="nav-item"><a th:href="@{/front/map.html}" class="nav-link">地圖</a></li>
                 <li class="nav-item"><a th:href="@{/front/group-order.html}" class="nav-link">團購</a></li>
                 <li class="nav-item"><a th:href="@{/front/deals.html}" class="nav-link">優惠</a></li>
-                <li class="nav-item"><a th:href="@{/front/cart.html}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
+                <li class="nav-item"><a th:href="@{/front/cart/cart}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
                 <li class="nav-item"><a th:href="@{/front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
             </ul>
             <button class="menu-toggle" aria-label="開啟選單">
@@ -67,64 +67,120 @@
             </div>
         </div>
 
-        <!-- 購物車內容 -->
-        <div class="cart-container">
-            <h1 class="page-title">您的購物車</h1>
+        <div class="cart-content">
+        <div class="cart-items" id="cart-items">
+            <!-- 使用 Thymeleaf 循環顯示購物車項目 -->
+            <th:block th:each="cartVO, iterStat : ${cartListData}">
+                <div class="cart-item" th:attr="data-shop-id=${cartVO.shopId}">
 
-            <!-- 購物車為空的提示 -->
-            <div class="empty-cart" id="empty-cart">
+                    <!-- 商品圖片 -->
+                    <div class="item-image">
+                        <img th:src="@{/product/image/} + ${cartVO.product.prodId}"
+                             th:alt="${cartVO.product.prodName}"
+                             class="product-image"
+                             onerror="this.src='/images/default-product.jpg'">
+                    </div>
+
+                    <!-- 商品詳細資訊 -->
+                    <div class="item-details">
+                        <div class="item-info">
+                            <!-- 商品名稱 -->
+                            <h3 class="item-name" th:text="${cartVO.product.prodName}">商品名稱</h3>
+
+                            <!-- 商品描述 -->
+                            <p class="item-description" th:text="${cartVO.product.prodDesc}">商品描述</p>
+
+                            <!-- 商品單價 -->
+                            <div class="item-price">
+                                <span class="price-label">單價：</span>
+                                <span class="price-value" th:text="'NT$ ' + ${cartVO.product.prodPrice}">NT$ 0</span>
+                            </div>
+                        </div>
+
+                        <!-- 操作控制 -->
+                        <div class="item-controls">
+                            <!-- 數量控制 -->
+                            <div class="quantity-controls">
+                                <span class="quantity-label">數量：</span>
+                                <form class="form-btn" method="post" th:action="@{/cart/updateQuantity}" >
+                                    <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
+                                    <div class="quantity-input-group">
+                                        <button type="submit" class="quantity-btn minus">-</button>
+                                        <input type="number" name="newQuantity"
+                                               th:value="${cartVO.prodN}"
+                                               min="1" max="99"
+                                               class="quantity-input">
+                                        <button type="submit" class="quantity-btn plus">+</button>
+                                    </div>
+<!--                                    <button type="submit" class="btn btn-sm btn-primary update-btn">更新</button>-->
+                                </form>
+                            </div>
+
+                            <!-- 小計 -->
+                            <div class="item-subtotal">
+                                <span class="subtotal-label">小計：</span>
+                                <span class="subtotal-value"
+                                      th:text="'NT$ ' + ${cartVO.product.prodPrice * cartVO.prodN}">NT$ 0</span>
+                            </div>
+
+                            <!-- 刪除按鈕 -->
+                            <form method="post" th:action="@{/cart/delete}" style="display: inline;">
+                                <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
+                                <button type="submit" class="btn btn-danger btn-sm delete-btn"
+                                        onclick="return confirm('確定要刪除此商品嗎？')">
+                                    <i class="material-icons-outlined">delete</i>
+                                    刪除
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </th:block>
+
+            <!-- 購物車為空時的提示 -->
+            <div class="empty-cart-message" th:if="${cartListData == null or #lists.isEmpty(cartListData)}">
                 <i class="material-icons-outlined empty-cart-icon">shopping_cart</i>
                 <h2>您的購物車是空的</h2>
                 <p>瀏覽我們的美食選擇，將喜歡的餐點加入購物車</p>
-                <a href="index.html" class="btn btn-primary">探索美食</a>
-            </div>
-
-            <!-- 購物車內容 -->
-            <div class="cart-content" id="cart-content">
-                <div class="cart-items" id="cart-items">
-                    <!-- 購物車項目將由JavaScript動態生成 -->
-                </div>
-
-                <div class="cart-sidebar">
-                    <div class="cart-summary">
-                        <h2 class="summary-title">訂單摘要</h2>
-                        <div class="summary-row">
-                            <span>小計</span>
-                            <span id="subtotal">NT$ 0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>運費</span>
-                            <span id="shipping">NT$ 0</span>
-                        </div>
-                        <div class="summary-row discount-row" id="discount-row">
-                            <span>折扣</span>
-                            <span id="discount">-NT$ 0</span>
-                        </div>
-                        <div class="summary-divider"></div>
-                        <div class="summary-row total-row">
-                            <span>總計</span>
-                            <span id="total">NT$ 0</span>
-                        </div>
-
-                        <!-- 優惠碼輸入 -->
-                        <div class="coupon-container">
-                            <div class="coupon-input-group">
-                                <input type="text" id="coupon-code" placeholder="輸入優惠碼" class="coupon-input">
-                                <button id="apply-coupon" class="btn btn-text">套用</button>
-                            </div>
-                            <div class="coupon-message" id="coupon-message"></div>
-                        </div>
-
-                        <!-- 修改：改為連結到下一頁 -->
-                        <a th:href="@{/cart/checkout}" class="btn btn-primary btn-block">前往結帳</a>
-                        <a th:href="@{/index}" class="btn btn-text btn-block">繼續購物</a>
-                    </div>
-                </div>
+                <a th:href="@{/index}" class="btn btn-primary">探索美食</a>
             </div>
         </div>
-    </div>
 
-    <!-- 推薦商品 -->
+        <!-- 購物車摘要也需要使用 Thymeleaf -->
+        <div class="cart-sidebar" th:if="${cartListData != null and !#lists.isEmpty(cartListData)}">
+            <div class="cart-summary">
+                <h2 class="summary-title">訂單摘要</h2>
+
+                <div class="summary-row">
+                    <span>商品總數</span>
+                    <span th:text="${totalQuantity} + ' 件'">0 件</span>
+                </div>
+                <div class="summary-row">
+                    <span>小計</span>
+                    <span id="subtotal" th:text="'NT$ ' + ${totalAmount}">NT$ 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>運費</span>
+                    <span id="shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total-row">
+                    <span>總計</span>
+                    <span id="total" th:text="'NT$ ' + ${finalTotal}">NT$ 0</span>
+                </div>
+
+                <!-- 結帳按鈕 -->
+                <a th:href="@{/cart/checkout}" class="btn btn-primary btn-block">前往結帳</a>
+                <a th:href="@{/index}" class="btn btn-text btn-block">繼續購物</a>
+            </div>
+        </div>
+        </div>
+
+
+
+
+        <!-- 推薦商品 -->
     <section class="recommendations-section">
         <div class="container">
             <h2 class="section-title">您可能也喜歡</h2>
