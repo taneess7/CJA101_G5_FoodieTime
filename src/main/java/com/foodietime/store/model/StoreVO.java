@@ -2,8 +2,11 @@ package com.foodietime.store.model;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.foodietime.accrec.model.AccrecVO;
 import com.foodietime.act.model.ActVO;
@@ -30,6 +33,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -58,17 +62,17 @@ public class StoreVO implements Serializable {
 
 	
 	// 3.店家名稱
-	@NotEmpty(message="店家名稱: 請勿空白")
+	@NotBlank(message="店家名稱: 請勿空白")
 	@Column(name = "STOR_NAME", length = 255)
 	private String storName; 
 	
 	// 4.店家敘述
-	@NotEmpty(message="店家敘述: 請勿空白")
+	@NotBlank(message="店家敘述: 請勿空白")
 	@Column(name = "STOR_DESC", length = 255)
 	private String storDesc; 
 	
 	// 5.店家地址
-	@NotEmpty(message="店家地址: 請勿空白")
+	@NotBlank(message="店家地址: 請勿空白")
 	@Column(name = "STOR_ADDR")
 	private String storAddr; 
 	
@@ -81,7 +85,7 @@ public class StoreVO implements Serializable {
 	private Double storLat; 
 	
 	// 8.店家電話
-	@NotEmpty(message="店家電話: 請勿空白")
+	@NotBlank(message="店家電話: 請勿空白")
 	@Column(name = "STOR_PHONE", length = 20)
 	private String storPhone; 
 	
@@ -90,14 +94,16 @@ public class StoreVO implements Serializable {
 	private String storWeb; 
 	
 	// 10.店家開店時間
-	@NotEmpty(message="開店時間: 請勿空白")
+	@NotBlank(message="開店時間: 請勿空白")
+	@DateTimeFormat(pattern = "HH:mm")
 	@Column(name = "STOR_OPEN_TIME")
-	private Time storOnTime;
+	private LocalTime storOnTime;
 	
 	// 11.店家關店時間
-	@NotEmpty(message="關店時間: 請勿空白")
+	@NotBlank(message="關店時間: 請勿空白")
+	@DateTimeFormat(pattern = "HH:mm")
 	@Column(name = "STOR_CLOSE_TIME")
-	private Time storOffTime; 
+	private LocalTime storOffTime; 
 	
 	// 12.店家公休日 (0:星期日,1:星期一, 2:星期二,3:星期三,4:星期四,5:星期五,6:星期六)
 	@Column(name = "STOR_WEEKLY_OFF_DAY")
@@ -136,7 +142,7 @@ public class StoreVO implements Serializable {
 	
 	// 20.店家信箱
 	@Pattern(regexp = "^(?!\\\\.)[\\\\w!#$%&'*+/=?^`{|}~.-]+(?<!\\\\.)@([A-Za-z0-9-]+\\\\.)+[A-Za-z]{2,}$", message = "信箱格式不正確")
-	@NotEmpty(message="Email: 請勿空白")
+	@NotBlank(message="Email: 請勿空白")
 	@Column(name = "STOR_EMAIL", updatable = false)
 	private String storEmail; 
 	
@@ -170,7 +176,7 @@ public class StoreVO implements Serializable {
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 
-	// 取得or設置
+	// 取得or設置 
 
 	
 }
