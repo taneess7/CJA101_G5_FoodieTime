@@ -50,17 +50,17 @@
                 </a>
             </li>
             
-            <li class="nav-item section-title">廠家管理</li>
+            <li class="nav-item section-title">商家管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
                     <i class="fas fa-check-circle"></i>
-                    <span>審核廠家</span>
+                    <span>審核商家</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
                     <i class="fas fa-store-alt"></i>
-                    <span>廠家帳號查詢/編輯</span>
+                    <span>商家帳號查詢/編輯</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -188,7 +188,6 @@
                 <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
                     role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-                    <span class="user-name">系統管理員</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
@@ -206,29 +205,22 @@
             <!-- 搜尋篩選 -->
             <div class="card mb-4">
                 <div class="card-body">
-                    <form class="row g-3">
+                    <form class="row g-3" th:action="@{/smg/search}">
                         <div class="col-md-3">
                             <label for="searchAccount" class="form-label">帳號</label>
-                            <input type="text" class="form-control" id="searchAccount" placeholder="請輸入帳號">
+                            <input type="text" class="form-control" id="searchAccount" name="smgrAccount" placeholder="請輸入帳號">
                         </div>
                         <div class="col-md-3">
                             <label for="searchName" class="form-label">姓名</label>
-                            <input type="text" class="form-control" id="searchName" placeholder="請輸入姓名">
+                            <input type="text" class="form-control" id="searchName" name="smgrName" placeholder="請輸入姓名">
                         </div>
                         <div class="col-md-3">
                             <label for="searchEmail" class="form-label">電子郵件</label>
-                            <input type="email" class="form-control" id="searchEmail" placeholder="請輸入電子郵件">
+                            <input type="email" class="form-control" id="searchEmail" name="smgrEmail" placeholder="請輸入電子郵件">
                         </div>
-                        <div class="col-md-3">
-                            <label for="filterStatus" class="form-label">狀態</label>
-                            <select class="form-select" id="filterStatus">
-                                <option value="">全部</option>
-                                <option value="1">啟用</option>
-                                <option value="0">停用</option>
-                            </select>
-                        </div>
+                      	
                         <div class="col-12 d-flex justify-content-end">
-                            <button type="button" class="btn btn-primary">搜尋</button>
+                            <button type="submit" class="btn btn-primary">搜尋</button>
                         </div>
                     </form>
                 </div>
@@ -258,22 +250,43 @@
                                 </tr>
                             </thead>
                             <tbody id="adminTableBody">
-                                <tr th:each="smg : ${smgList}">
-							        <td th:text="${smg.smgrId}">1</td>
-							        <td th:text="${smg.smgrAccount}">admin</td>
-							        <td th:text="${smg.smgrPassword}">••••••</td>
-							        <td th:text="${smg.smgrName}">王小明</td>
-							        <td th:text="${smg.smgrEmail}">admin@example.com</td>
-							        <td th:text="${smg.smgrPhone}">0912345678</td>
-							        <td th:text="${smg.smgrStatus}">啟用</td>
-						       		<td>
-							            <a th:href="@{/smg/admin-users-edit/{id}(id=${smg.smgrId})}" class="btn btn-sm btn-warning">
-							                <i class="fas fa-edit"></i> 編輯
-							            </a>
-							        </td>
-							    </tr>
+                                <tr th:each="smg, iterStat : ${smgList}" class="admin-row" th:attr="data-index=${iterStat.index}" style="display: none;">
+				        <td th:text="${smg.smgrId}">1</td>
+				        <td th:text="${smg.smgrAccount}">admin</td>
+				        <td th:text="${smg.smgrPassword}">••••••</td>
+				        <td th:text="${smg.smgrName}">王小明</td>
+				        <td th:text="${smg.smgrEmail}">admin@example.com</td>
+				        <td th:text="${smg.smgrPhone}">0912345678</td>
+				        <td th:text="${smg.smgrStatus}">啟用</td>
+		       		<td>
+		            <a th:href="@{/smg/admin-users-edit/{id}(id=${smg.smgrId})}" class="btn btn-sm btn-warning">
+		                <i class="fas fa-edit"></i> 編輯
+		            </a>
+		        </td>
+		    </tr>
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- 分頁導航 -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="pagination-info">
+                            <span>顯示第 <span id="startRecord">1</span> 到 <span id="endRecord">5</span> 筆，共 <span id="totalRecords">0</span> 筆</span>
+                        </div>
+                        <nav aria-label="分頁導航">
+                            <ul class="pagination mb-0" id="pagination">
+                                <li class="page-item" id="prevPage">
+                                    <a class="page-link" href="#" aria-label="上一頁">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item" id="nextPage">
+                                    <a class="page-link" href="#" aria-label="下一頁">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -286,6 +299,116 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- 自定義JavaScript -->
     <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+    <!-- 分頁功能JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rowsPerPage = 5;
+            let currentPage = 1;
+            const adminRows = document.querySelectorAll('.admin-row');
+            const totalRecords = adminRows.length;
+            const totalPages = Math.ceil(totalRecords / rowsPerPage);
+            
+            // 更新分頁資訊
+            function updatePaginationInfo() {
+                const startRecord = (currentPage - 1) * rowsPerPage + 1;
+                const endRecord = Math.min(currentPage * rowsPerPage, totalRecords);
+                
+                document.getElementById('startRecord').textContent = totalRecords > 0 ? startRecord : 0;
+                document.getElementById('endRecord').textContent = endRecord;
+                document.getElementById('totalRecords').textContent = totalRecords;
+            }
+            
+            // 顯示指定頁面的資料
+            function showPage(page) {
+                // 隱藏所有行
+                adminRows.forEach(row => {
+                    row.style.display = 'none';
+                });
+                
+                // 顯示當前頁面的行
+                const startIndex = (page - 1) * rowsPerPage;
+                const endIndex = startIndex + rowsPerPage;
+                
+                for (let i = startIndex; i < endIndex && i < totalRecords; i++) {
+                    if (adminRows[i]) {
+                        adminRows[i].style.display = 'table-row';
+                    }
+                }
+                
+                updatePaginationInfo();
+                updatePaginationButtons();
+            }
+            
+            // 更新分頁按鈕狀態
+            function updatePaginationButtons() {
+                const prevPage = document.getElementById('prevPage');
+                const nextPage = document.getElementById('nextPage');
+                const pagination = document.getElementById('pagination');
+                
+                // 清除現有的頁碼按鈕
+                const pageNumbers = pagination.querySelectorAll('.page-number');
+                pageNumbers.forEach(btn => btn.remove());
+                
+                // 更新上一頁按鈕
+                if (currentPage === 1) {
+                    prevPage.classList.add('disabled');
+                } else {
+                    prevPage.classList.remove('disabled');
+                }
+                
+                // 添加頁碼按鈕
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageItem = document.createElement('li');
+                    pageItem.className = 'page-item page-number';
+                    if (i === currentPage) {
+                        pageItem.classList.add('active');
+                    }
+                    
+                    const pageLink = document.createElement('a');
+                    pageLink.className = 'page-link';
+                    pageLink.href = '#';
+                    pageLink.textContent = i;
+                    pageLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        currentPage = i;
+                        showPage(currentPage);
+                    });
+                    
+                    pageItem.appendChild(pageLink);
+                    nextPage.parentNode.insertBefore(pageItem, nextPage);
+                }
+                
+                // 更新下一頁按鈕
+                if (currentPage === totalPages || totalPages === 0) {
+                    nextPage.classList.add('disabled');
+                } else {
+                    nextPage.classList.remove('disabled');
+                }
+            }
+            
+            // 上一頁事件
+            document.getElementById('prevPage').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            });
+            
+            // 下一頁事件
+            document.getElementById('nextPage').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+            
+            // 初始化顯示第一頁
+            showPage(1);
+        });
+    </script>
 
 </body>
 

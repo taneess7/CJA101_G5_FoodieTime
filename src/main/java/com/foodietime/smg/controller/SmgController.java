@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.foodietime.smg.model.SmgService;
 import com.foodietime.smg.model.SmgVO;
+import com.foodietime.smgfc.model.SmgfcService;
+import com.foodietime.smgfc.model.SmgfcVO;
+import com.foodietime.smgauth.model.SmgauthService;
+import com.foodietime.smgauth.model.SmgauthVO;
+import com.foodietime.smgauth.model.SmgauthId;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -26,7 +32,14 @@ import jakarta.validation.Valid;
 public class SmgController {
 	@Autowired
 	SmgService smgSvc;
-
+	@Autowired
+	SmgfcService smgfcService;
+	@Autowired
+	SmgauthService smgauthService;
+	@GetMapping("/login")
+	public String showLoginPage() {
+	    return "admin/smg/admin-login"; // 對應到你的 Thymeleaf 登入頁面
+	}
 	@PostMapping("/login")
     public String login(@RequestParam String account,
                         @RequestParam String password,
@@ -71,18 +84,22 @@ public class SmgController {
     public String editSmg(@PathVariable("id") Integer id, Model model) {
         SmgVO smg = smgSvc.findById(id); // 這裡記得你要自己定義 findById 方法
         if (smg == null) {
-            return "redirect:/admin-users-permissions"; // 找不到資料時回列表頁
+            return "redirect:/smg/admin-users-permissions"; // 找不到資料時回列表頁
         }
         model.addAttribute("smg", smg); // 放入 Thymeleaf 模型
         return "admin/smg/admin-users-edit"; // 回傳畫面
     }
     @PostMapping("/update")
+    @Transactional
     public String updateSmg(@Valid @ModelAttribute("smg") SmgVO smgVO,
                             BindingResult result,
+                            @RequestParam(value = "permissions", required = false) List<String> permissions,
                             Model model) {
         
         System.out.println("=== 開始更新管理員資料 ===");
         System.out.println("接收到的 smgVO: " + smgVO);
+        System.out.println("接收到的權限: " + permissions);
+        
         if (result.hasErrors()) {
             System.out.println("表單驗證錯誤: " + result.getAllErrors());
             result.getAllErrors().forEach(error -> {
@@ -124,8 +141,27 @@ public class SmgController {
             // 保留原密碼，不做任何變更
         }
         
+        // 處理權限更新 - 分離事務避免級聯衝突
+        if (permissions != null) {
+            System.out.println("更新權限: " + permissions);
+            // 先清除現有權限
+            smgauthService.deleteBySmgrId(existingSmg.getSmgrId());
+            // 清空集合避免級聯衝突
+            existingSmg.getSmgauths().clear();
+        } else {
+            System.out.println("未選擇任何權限，清除所有權限");
+            smgauthService.deleteBySmgrId(existingSmg.getSmgrId());
+            existingSmg.getSmgauths().clear();
+        }
+        
+        // 先保存基本資料，不包含權限
         System.out.println("準備儲存的資料: " + existingSmg);
         SmgVO savedSmg = smgSvc.save(existingSmg);
+        
+        // 在新的事務中創建權限
+        if (permissions != null) {
+            smgauthService.createPermissions(savedSmg.getSmgrId(), permissions, smgfcService);
+        }
         System.out.println("儲存成功: " + savedSmg);
 
         System.out.println("=== 更新完成，重導向到列表頁 ===");
@@ -135,6 +171,7 @@ public class SmgController {
     @PostMapping("/add")
     public String addSmg(@Valid @ModelAttribute("smg") SmgVO smgVO,
             BindingResult result,
+            @RequestParam(value = "permissions", required = false) List<String> permissions,
             Model model) {
     	if (result.hasErrors()) {
             System.out.println("表單驗證錯誤: " + result.getAllErrors());
@@ -157,8 +194,24 @@ public class SmgController {
             model.addAttribute("error", "此帳號已存在");
             return "admin/smg/admin-users-add";
         }
-        // 儲存資料
-        smgSvc.save(smgVO);
+        
+        // 先儲存管理員基本資料
+        SmgVO savedSmg = smgSvc.save(smgVO);
+        
+        // 處理權限資料
+        if (permissions != null && !permissions.isEmpty()) {
+            for (String permission : permissions) {
+                SmgfcVO smgfc = smgfcService.findByFunctionName(permission);
+                if (smgfc != null) {
+                    SmgauthVO smgauth = new SmgauthVO();
+                    SmgauthId id = new SmgauthId(smgfc.getSmgFuncId(), savedSmg.getSmgrId());
+                    smgauth.setId(id);
+                    smgauth.setSmg(savedSmg);
+                    smgauth.setSmgfc(smgfc);
+                    smgauthService.save(smgauth);
+                }
+            }
+        }
 
         // 導向列表頁
         return "redirect:/smg/admin-users-permissions";
@@ -171,6 +224,17 @@ public class SmgController {
         model.addAttribute("smgList", smgList); // 加入模型供 Thymeleaf 使用
     	return "admin/smg/admin-users-permissions"; 
     }
+    @GetMapping("/search")
+    public String searchSmg(@RequestParam(required = false) String smgrAccount,
+				             @RequestParam(required = false) String smgrName,
+				             @RequestParam(required = false) String smgrEmail,				             
+				             Model model) {
+    	List<SmgVO> smgList = smgSvc.searchByConditions(smgrAccount, smgrName, smgrEmail);
+        model.addAttribute("smgList", smgList); // 加入模型供 Thymeleaf 使用
+    	return "admin/smg/admin-users-permissions"; 
+    }
+    
+    
     @GetMapping("/admin-vendors-review")
     public String adminvendorsreview() {
     	return "admin/smg/admin-vendors-review"; 
@@ -195,14 +259,7 @@ public class SmgController {
     public String adminvendorspermissions() {
     	return "admin/smg/admin-vendors-permissions"; 
     }	
-    @GetMapping("/admin-members-search")
-    public String adminmemberssearch() {
-    	return "admin/smg/admin-members-search"; 
-    }
-    @GetMapping("/admin-members-permissions")
-    public String adminmemberspermissions() {
-    	return "admin/smg/admin-members-permissions"; 
-    }
+   
     @GetMapping("/admin-groups-reports")
     public String admingroupsreports() {
     	return "admin/smg/admin-vendors-blacklist"; 

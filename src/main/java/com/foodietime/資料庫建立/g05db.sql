@@ -1124,3 +1124,66 @@ MODIFY SMGR_ID INT NOT NULL,
 ADD CONSTRAINT fk_acr_smgr
     FOREIGN KEY (SMGR_ID)
     REFERENCES servermanager(SMGR_ID);
+    
+INSERT INTO SERVERMANAGEFUNCTION (SMGEFUNC)
+VALUES 
+('discussion_reports'),
+('vendor_review'),
+('vendor_edit'),
+('vendor_reports'),
+('vendor_blacklist'),
+('product_disable'),
+('vendor_permissions'),
+('member_search'),
+('member_permissions'),
+('group_reports'),
+('group_status'),
+('group_orders'),
+('group_payments'),
+('group_refunds'),
+('group_monthly'),
+('order_view'),
+('order_payments'),
+('service_tickets');
+-- 步驟一：關閉安全模式
+SET SQL_SAFE_UPDATES = 0;
+
+-- 步驟二：清空現有權限配置
+DELETE FROM SERVERMANAGERAUTH;
+
+-- 步驟三：插入新的權限配置
+INSERT INTO SERVERMANAGERAUTH (SMGEFUNC_ID, SMGR_ID)
+VALUES 
+-- 管理員1：超級管理員，擁有所有新權限
+(11, 1), (12, 1), (13, 1), (14, 1), (15, 1), (16, 1), (17, 1), (18, 1),
+(19, 1), (20, 1), (21, 1), (22, 1), (23, 1), (24, 1), (25, 1), (26, 1), (27, 1), (28, 1),
+
+-- 管理員2：店家管理專員
+(12, 2), (13, 2), (14, 2), (15, 2), (16, 2), (17, 2),
+
+-- 管理員3：會員管理專員
+(18, 3), (19, 3), (11, 3), (28, 3),
+
+-- 管理員4：訂單管理專員
+(26, 4), (27, 4),
+
+-- 管理員5：團購管理專員
+(20, 5), (21, 5), (22, 5), (23, 5), (24, 5), (25, 5),
+
+-- 管理員6：客服專員
+(28, 6), (11, 6), (18, 6),
+
+-- 管理員7：店家審核專員
+(12, 7), (14, 7), (16, 7),
+
+-- 管理員8：會員服務專員
+(18, 8), (19, 8), (28, 8),
+
+-- 管理員9：團購監控專員
+(20, 9), (21, 9), (22, 9),
+
+-- 管理員10：綜合業務專員
+(26, 10), (27, 10), (20, 10), (28, 10);
+
+-- 步驟四：重新開啟安全模式
+SET SQL_SAFE_UPDATES = 1;
