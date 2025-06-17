@@ -6,29 +6,47 @@ import java.util.Objects;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.member.model.MemberVO;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.Data;
 
+
+@Embeddable
 public class GroupBuyingCollectionListId implements Serializable {
 
-    private GroupBuyingCasesVO groupBuyingCase;  // 團購編號
-    private MemberVO member;  // 會員編號
+	@Column(name = "MEM_ID")
+    private Integer memId;  // 會員編號
+	@Column(name = "GB_ID")
+    private Integer gbId;   // 團購編號
 
-    // Constructors, equals, hashCode
     public GroupBuyingCollectionListId() {  // 無參數建構子
 
     }
 
-    public GroupBuyingCollectionListId(GroupBuyingCasesVO groupBuyingCase, MemberVO member) {
-        this.groupBuyingCase = groupBuyingCase;
-        this.member = member;
+    public GroupBuyingCollectionListId(Integer memId, Integer gbId) {
+        this.memId = memId;
+        this.gbId = gbId;
     }
+    
 
-
-    //equals and hashCode 需要正確重寫
-	@Override
-	public int hashCode() {
-		return Objects.hash(groupBuyingCase, member);
+    
+    public Integer getMemId() {
+		return memId;
 	}
 
+	public void setMemId(Integer memId) {
+		this.memId = memId;
+	}
+
+	public Integer getGbId() {
+		return gbId;
+	}
+
+	public void setGbId(Integer gbId) {
+		this.gbId = gbId;
+	}
+
+	//equals and hashCode 需要正確重寫
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -38,8 +56,20 @@ public class GroupBuyingCollectionListId implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		GroupBuyingCollectionListId other = (GroupBuyingCollectionListId) obj;
-		return Objects.equals(groupBuyingCase, other.groupBuyingCase) && Objects.equals(member, other.member);
+		return Objects.equals(gbId, other.gbId) && Objects.equals(memId, other.memId);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(gbId, memId);
+	}
+    
+    
+    
+	
+	
+
+	
 
 
 }

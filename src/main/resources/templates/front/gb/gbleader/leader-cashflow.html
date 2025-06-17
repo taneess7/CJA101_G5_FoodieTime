@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>收貨地址 - 團購樂</title>
+    <title>金流管理 - 團購樂</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -53,6 +53,19 @@
             text-align: center;
         }
 
+        .profile-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
         .profile-avatar {
             width: 100px;
             height: 100px;
@@ -62,49 +75,31 @@
             border: 3px solid #ff6b6b;
         }
 
-        .profile-content {
-            background-color: white;
+        .profile-stats {
+            background-color: #f8f9fa;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-        }
-
-        .address-card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
             padding: 15px;
-            margin-bottom: 15px;
-            position: relative;
+            margin-bottom: 25px;
         }
 
-        .address-card.default {
-            border-color: #ff6b6b;
+        .stat-item {
+            text-align: center;
+            padding: 10px;
         }
 
-        .address-card.default::after {
-            content: '預設';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #ff6b6b;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-
-        .address-name {
+        .stat-number {
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            color: #ff6b6b;
         }
 
-        .address-phone {
+        .stat-label {
             color: #6c757d;
-            margin-bottom: 5px;
+            font-size: 0.9rem;
         }
 
-        .address-detail {
-            margin-bottom: 10px;
+        .form-label {
+            font-weight: 500;
         }
 
         .btn-primary {
@@ -125,14 +120,6 @@
         .btn-outline-secondary:hover {
             background-color: #f8f9fa;
             color: #6c757d;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 0.6rem;
-            padding: 0.2rem 0.4rem;
         }
 
         .footer {
@@ -169,13 +156,6 @@
             color: white;
             font-size: 1.5rem;
             margin-right: 15px;
-        }
-
-        .address-form {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -226,12 +206,12 @@
                             <span>林小美</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="leader.html"><i class="bi bi-person"></i> 我是團長</a></li>
-                            <li><a class="dropdown-item" href="leader-groups.html"><i class="bi bi-box"></i> 團購管理</a></li>
-                            <li><a class="dropdown-item" href="leader-orders.html"><i class="bi bi-bag"></i> 訂單管理</a></li>
-                            <li><a class="dropdown-item" href="leader-cashflow.html"><i class="bi bi-credit-card"></i> 金流管理</a></li>
-                            <li><a class="dropdown-item" href="leader-address.html"><i class="bi bi-geo-alt"></i> 收貨地址</a></li>
-                            <li><a class="dropdown-item" href="leader-notifications.html"><i class="bi bi-bell"></i> 通知管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader}"><i class="bi bi-person"></i> 我是團長</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-groups}"><i class="bi bi-box"></i> 團購管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-orders}"><i class="bi bi-bag"></i> 訂單管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-cashflow}"><i class="bi bi-credit-card"></i> 金流管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-address}"><i class="bi bi-geo-alt"></i> 收貨地址</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-notifications}"><i class="bi bi-bell"></i> 通知管理</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> 幫助中心</a></li>
                             <li><a class="dropdown-item text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a></li>
@@ -256,12 +236,12 @@
                     </div>
                     
                     <nav class="nav flex-column">
-                        <a class="nav-link" href="leader.html"><i class="bi bi-person"></i> 我是團長</a>
-                        <a class="nav-link" href="leader-groups.html"><i class="bi bi-box"></i> 團購管理</a>
-                        <a class="nav-link" href="leader-orders.html"><i class="bi bi-bag"></i> 訂單管理</a>
-                        <a class="nav-link" href="leader-cashflow.html"><i class="bi bi-credit-card"></i> 金流管理</a>
-                        <a class="nav-link active" href="leader-address.html"><i class="bi bi-geo-alt"></i> 收貨地址</a>
-                        <a class="nav-link" href="leader-notifications.html"><i class="bi bi-bell"></i> 通知管理</a>
+                        <a class="nav-link" th:href="@{/gb/leader}"><i class="bi bi-person"></i> 我是團長</a>
+                        <a class="nav-link" th:href="@{/gb/leader-groups}"><i class="bi bi-box"></i> 團購管理</a>
+                        <a class="nav-link" th:href="@{/gb/leader-orders}"><i class="bi bi-bag"></i> 訂單管理</a>
+                        <a class="nav-link active" th:href="@{/gb/leader-cashflow}"><i class="bi bi-credit-card"></i> 金流管理</a>
+                        <a class="nav-link" th:href="@{/gb/leader-address}"><i class="bi bi-geo-alt"></i> 收貨地址</a>
+                        <a class="nav-link" th:href="@{/gb/leader-notifications}"><i class="bi bi-bell"></i> 通知管理</a>
                         <a class="nav-link text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a>
                     </nav>
                 </div>
@@ -270,106 +250,58 @@
             <!-- 主要內容 -->
             <div class="col-lg-9">
                 <div class="profile-content">
-                    <h3 class="mb-4">收貨地址</h3>
-                    <p>在這裡您可以管理您的團購地址，並設置預設地址。</p>
-                    <button class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#addAddressForm">
-                        <i class="bi bi-plus-lg"></i> 新增地址
-                    </button>
+                    <h3 class="mb-4">金流管理</h3>
 
-                    <!-- 新增地址表單 -->
-                    <div class="collapse mb-4" id="addAddressForm">
-                        <div class="address-form">
-                            <h5 class="mb-3">新增收貨地址</h5>
-                            <form>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="receiverName" class="form-label">收件人姓名</label>
-                                        <input type="text" class="form-control" id="receiverName" placeholder="請輸入收件人姓名">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="receiverPhone" class="form-label">聯絡電話</label>
-                                        <input type="text" class="form-control" id="receiverPhone" placeholder="請輸入聯絡電話">
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label for="city" class="form-label">縣市</label>
-                                        <select class="form-select" id="city">
-                                            <option selected disabled>請選擇縣市</option>
-                                            <option value="taipei">台北市</option>
-                                            <option value="newtaipei">新北市</option>
-                                            <option value="taoyuan">桃園市</option>
-                                            <option value="taichung">台中市</option>
-                                            <option value="tainan">台南市</option>
-                                            <option value="kaohsiung">高雄市</option>
-                                            <option value="other">其他縣市</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="district" class="form-label">區域</label>
-                                        <select class="form-select" id="district">
-                                            <option selected disabled>請選擇區域</option>
-                                            <option value="xinyi">信義區</option>
-                                            <option value="daan">大安區</option>
-                                            <option value="zhongshan">中山區</option>
-                                            <option value="zhongzheng">中正區</option>
-                                            <option value="songshan">松山區</option>
-                                            <option value="other">其他區域</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="zipcode" class="form-label">郵遞區號</label>
-                                        <input type="text" class="form-control" id="zipcode" placeholder="請輸入郵遞區號">
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">詳細地址</label>
-                                    <input type="text" class="form-control" id="address" placeholder="請輸入詳細地址">
-                                </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="defaultAddress">
-                                    <label class="form-check-label" for="defaultAddress">設為預設收貨地址</label>
-                                </div>
-                                <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="collapse" data-bs-target="#addAddressForm">取消</button>
-                                    <button type="submit" class="btn btn-primary">儲存</button>
-                                </div>
-                            </form>
+                    <!-- 可提領金額 -->
+                    <div class="payment-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5>可提領金額</h5>
+                            <button class="btn btn-primary">提款</button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="text-muted">當前可提領金額：</span>
+                            <span class="text-success">NT$5,000</span>
                         </div>
                     </div>
 
-                    <!-- 已儲存的地址 -->
-                    <div class="address-card default">
-                        <div class="address-name">林小美</div>
-                        <div class="address-phone">0912-345-678</div>
-                        <div class="address-detail">台北市信義區松高路1號 11樓</div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
-                            <button class="btn btn-sm btn-outline-danger">刪除</button>
+                    <!-- 交易紀錄 -->
+                    <div class="payment-card">
+                        <h5>交易紀錄</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>2023-06-01 交易成功</span>
+                                <span class="text-success">NT$2,000</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>2023-06-05 交易成功</span>
+                                <span class="text-success">NT$1,500</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>2023-06-10 交易成功</span>
+                                <span class="text-success">NT$500</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 我的進帳 -->
+                    <div class="payment-card">
+                        <h5>我的進帳</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>即將撥款</span>
+                                    <span class="text-warning">NT$3,000</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>已撥款</span>
+                                    <span class="text-muted">NT$2,500</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="address-card">
-                        <div class="address-name">林小美 (公司)</div>
-                        <div class="address-phone">0912-345-678</div>
-                        <div class="address-detail">台北市中山區南京東路三段219號 5樓</div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary me-2">設為預設</button>
-                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
-                            <button class="btn btn-sm btn-outline-danger">刪除</button>
-                        </div>
-                    </div>
-
-                    <div class="address-card">
-                        <div class="address-name">林小美 (父母家)</div>
-                        <div class="address-phone">0987-654-321</div>
-                        <div class="address-detail">新北市板橋區縣民大道二段7號</div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary me-2">設為預設</button>
-                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
-                            <button class="btn btn-sm btn-outline-danger">刪除</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
