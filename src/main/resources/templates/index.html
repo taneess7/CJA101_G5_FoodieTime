@@ -6,18 +6,18 @@
     <title>FoodieTime 食刻 - 探索、分享、省錢的美食平台</title>
     <meta name="description" content="FoodieTime 食刻美食地圖平台讓您省錢、省時、便利地探索、記錄、推薦與交流美食資訊。支援多元飲食需求、比價、團購與個人化記錄。">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <!-- PWA 支援 -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" th:href="@{/manifest.json}">
     <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/icon-192x192.png}">
 </head>
 <body>
     <header class="app-header">
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                 <span class="logo-text">FoodieTime 食刻</span>
             </a>
             <div class="search-container">
@@ -30,10 +30,10 @@
             </div>
             <nav class="main-nav">
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
-                    <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
-                    <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a href="login.html" class="nav-link login-btn">登入/註冊</a></li>
+                    <li class="nav-item"><a th:href="@{/cart/cart}" class="nav-link">地圖</a></li>
+                    <li class="nav-item"><a th:href="@{/group-order}" class="nav-link">團購</a></li>
+                    <li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
+                    <li class="nav-item"><a th:href="@{/login}" class="nav-link login-btn">登入/註冊</a></li>
                 </ul>
             </nav>
         </div>
@@ -45,12 +45,12 @@
                 <h1 class="hero-title">發現您附近的美食寶藏</h1>
                 <p class="hero-subtitle">省錢、省時、便利地探索、記錄、推薦與交流美食資訊</p>
                 <div class="hero-actions">
-                    <a href="map.html" class="btn btn-primary">探索地圖</a>
-                    <a href="register.html" class="btn btn-secondary">加入我們</a>
+                    <a th:href="@{/map.html}" class="btn btn-primary">探索地圖</a>
+                    <a th:href="@{/register.html}" class="btn btn-secondary">加入我們</a>
                 </div>
             </div>
             <div class="hero-image">
-                <img src="images/hero-image.svg" alt="美食探索" class="responsive-img">
+                <img th:src="@{/images/hero-image.svg}" alt="美食探索" class="responsive-img">
             </div>
         </section>
         <!-- 特色功能區塊 -->
@@ -84,22 +84,22 @@
             <h2 class="section-title">適合各種需求的美食夥伴</h2>
             <div class="users-grid">
                 <div class="user-card">
-                    <img src="images/student.svg" alt="學生" class="user-img">
+                    <img th:src="@{/images/student.svg}" alt="學生" class="user-img">
                     <h3 class="user-title">學生族</h3>
                     <p class="user-desc">發掘高CP值美食，省錢省時的最佳選擇</p>
                 </div>
                 <div class="user-card">
-                    <img src="images/office-worker.svg" alt="上班族" class="user-img">
+                    <img th:src="@{/office-worker.svg}" alt="上班族" class="user-img">
                     <h3 class="user-title">上班族</h3>
                     <p class="user-desc">快速決策，提升午餐和聚餐效率</p>
                 </div>
                 <div class="user-card">
-                    <img src="images/traveler.svg" alt="旅客" class="user-img">
+                    <img th:src="@{/images/traveler.svg}" alt="旅客" class="user-img">
                     <h3 class="user-title">旅客</h3>
                     <p class="user-desc">獲取在地推薦，體驗道地美食文化</p>
                 </div>
                 <div class="user-card">
-                    <img src="images/foodie.svg" alt="美食愛好者" class="user-img">
+                    <img th:src="@{/images/foodie.svg}" alt="美食愛好者" class="user-img">
                     <h3 class="user-title">美食愛好者</h3>
                     <p class="user-desc">分享美食體驗，建立個人美食檔案</p>
                 </div>
@@ -109,7 +109,7 @@
         <section class="popular-section container">
             <div class="section-header">
                 <h2 class="section-title">熱門餐廳</h2>
-                <a href="map.html" class="view-all">查看全部 <i class="material-icons-outlined">arrow_forward</i></a>
+                <a th:href="@{/map.html}" class="view-all">查看全部 <i class="material-icons-outlined">arrow_forward</i></a>
             </div>
             <div class="restaurant-grid">
                 <div class="restaurant-card skeleton"></div>
@@ -122,7 +122,7 @@
         <section class="reviews-section container">
             <div class="section-header">
                 <h2 class="section-title">最新評論</h2>
-                <a href="reviews.html" class="view-all">查看全部 <i class="material-icons-outlined">arrow_forward</i></a>
+                <a th:href="@{/reviews}" class="view-all">查看全部 <i class="material-icons-outlined">arrow_forward</i></a>
             </div>
             <div class="reviews-slider">
                 <div class="review-card skeleton"></div>
@@ -137,15 +137,15 @@
                 <p class="download-desc">下載我們的應用程式，享受更完整的功能和離線瀏覽</p>
                 <div class="download-buttons">
                     <a href="#" class="download-btn">
-                        <img src="images/google-play.svg" alt="Google Play下載" class="store-img">
+                        <img th:src="@{/images/google-play.svg}" alt="Google Play下載" class="store-img">
                     </a>
                     <a href="#" class="download-btn">
-                        <img src="images/app-store.svg" alt="App Store下載" class="store-img">
+                        <img th:src="@{/images/app-store.svg}" alt="App Store下載" class="store-img">
                     </a>
                 </div>
             </div>
             <div class="download-image">
-                <img src="images/app-preview.svg" alt="應用程式預覽" class="responsive-img">
+                <img th:src="@{/images/app-preview.svg}" alt="應用程式預覽" class="responsive-img">
             </div>
         </section>
     </main>
@@ -153,26 +153,26 @@
         <div class="footer-container">
             <div class="footer-top">
                 <div class="footer-logo">
-                    <img src="images/logo.svg" alt="FoodieTime 食刻" class="logo-img">
+                    <img th:src="@{/images/logo.svg}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </div>
                 <div class="footer-nav">
                     <div class="footer-nav-group">
                         <h4 class="footer-nav-title">功能</h4>
                         <ul class="footer-nav-list">
-                            <li><a href="map.html">地圖搜尋</a></li>
-                            <li><a href="group-order.html">團購功能</a></li>
-                            <li><a href="deals.html">比價優惠</a></li>
-                            <li><a href="collections.html">收藏管理</a></li>
+                            <li><a th:href="@{/map}">地圖搜尋</a></li>
+                            <li><a th:href="@{/group-order}">團購功能</a></li>
+                            <li><a th:href="@{/deals}">比價優惠</a></li>
+                            <li><a th:href="@{/collections}">收藏管理</a></li>
                         </ul>
                     </div>
                     <div class="footer-nav-group">
                         <h4 class="footer-nav-title">關於</h4>
                         <ul class="footer-nav-list">
-                            <li><a href="about.html">關於我們</a></li>
-                            <li><a href="privacy.html">隱私政策</a></li>
-                            <li><a href="terms.html">使用條款</a></li>
-                            <li><a href="contact.html">聯絡我們</a></li>
+                            <li><a th:href="@{/about}">關於我們</a></li>
+                            <li><a th:href="@{/privacy}">隱私政策</a></li>
+                            <li><a th:href="@{/terms}">使用條款</a></li>
+                            <li><a th:href="@{/contact}">聯絡我們</a></li>
                         </ul>
                     </div>
                     <div class="footer-nav-group">
@@ -212,7 +212,7 @@
         <div class="spinner"></div>
     </div>
     <!-- JavaScript 文件 -->
-    <script src="js/main.js"></script>
+    <script th:src="@{/js/main.js}"></script>
     <!-- Service Worker 註冊 -->
     <script>
         if ('serviceWorker' in navigator) {
