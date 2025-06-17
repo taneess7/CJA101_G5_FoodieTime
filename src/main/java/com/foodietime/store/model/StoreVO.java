@@ -28,6 +28,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
@@ -118,6 +119,7 @@ public class StoreVO implements Serializable {
 	private Byte storOpen; 
 	
 	// 15.店家照片
+	@Lob
 	@Column(name = "STOR_PHOTO", columnDefinition = "longblob")
 	private byte[] storPhoto; 
 	
