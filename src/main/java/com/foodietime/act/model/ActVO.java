@@ -28,6 +28,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -66,7 +67,7 @@ public class ActVO implements Serializable {
 	private String actContent; 
 	
 	// 6.活動建立時間
-	@NotBlank
+	@NotNull
 	@CreationTimestamp
 	@Column(name = "ACT_LAUNCHTIME" , updatable = false)
 	private Timestamp actSetTime; 
@@ -74,12 +75,12 @@ public class ActVO implements Serializable {
 	 
 	//使用活動折扣需同時符合:活動狀態上架、活動開始時間
 	// 7.活動開始時間
-	@NotBlank(message="活動開始時間: 請勿空白")
+	@NotNull(message="活動開始時間: 請勿空白")
 	@Column(name = "ACT_STARTTIME")
 	private Timestamp actStartTime; 
 	
 	// 8.活動結束時間 
-	@NotBlank(message="活動結束時間: 請勿空白")
+	@NotNull(message="活動結束時間: 請勿空白")
 	@Column(name = "ACT_ENDTIME")
 	private Timestamp actEndTime; 
 	
