@@ -1,0 +1,26 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#f5f5f5"/>
+  <circle cx="100" cy="100" r="70" fill="#FFF8E1"/>
+  
+  <!-- 盤子 -->
+  <ellipse cx="100" cy="120" rx="60" ry="20" fill="#FFFFFF" stroke="#DDDDDD" stroke-width="2"/>
+  <ellipse cx="100" cy="120" rx="50" ry="15" fill="#FAFAFA" stroke="#EEEEEE" stroke-width="1"/>
+  
+  <!-- 義大利麵 -->
+  <path d="M70,110 C80,100 90,120 100,110 C110,100 120,120 130,110" fill="none" stroke="#FFF176" stroke-width="5" stroke-linecap="round"/>
+  <path d="M65,115 C75,105 85,125 95,115 C105,105 115,125 125,115" fill="none" stroke="#FFF176" stroke-width="5" stroke-linecap="round"/>
+  <path d="M75,105 C85,95 95,115 105,105 C115,95 125,115 135,105" fill="none" stroke="#FFF176" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- 蘑菇 -->
+  <circle cx="85" cy="105" r="6" fill="#8D6E63"/>
+  <circle cx="115" cy="105" r="6" fill="#8D6E63"/>
+  <circle cx="100" cy="95" r="6" fill="#8D6E63"/>
+  
+  <!-- 香草 -->
+  <circle cx="80" cy="100" r="3" fill="#4CAF50"/>
+  <circle cx="120" cy="100" r="3" fill="#4CAF50"/>
+  <circle cx="90" cy="110" r="3" fill="#4CAF50"/>
+  <circle cx="110" cy="110" r="3" fill="#4CAF50"/>
+  
+  <text x="100" y="170" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle">松露野菇義大利麵</text>
+</svg>

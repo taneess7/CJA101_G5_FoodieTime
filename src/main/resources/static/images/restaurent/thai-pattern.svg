@@ -1,0 +1,112 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="800" height="400" fill="#FFF8E1" opacity="0.8"/>
+  
+  <!-- 泰式花紋圖案 -->
+  <g opacity="0.15">
+    <!-- 蓮花圖案 -->
+    <g transform="translate(100, 100) scale(0.8)">
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(0)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(45)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(90)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(135)"/>
+      <circle cx="0" cy="0" r="15" fill="#FFC107"/>
+    </g>
+    
+    <!-- 重複蓮花圖案 -->
+    <g transform="translate(300, 200) scale(0.8)">
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(0)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(45)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(90)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(135)"/>
+      <circle cx="0" cy="0" r="15" fill="#FFC107"/>
+    </g>
+    
+    <g transform="translate(500, 100) scale(0.8)">
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(0)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(45)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(90)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(135)"/>
+      <circle cx="0" cy="0" r="15" fill="#FFC107"/>
+    </g>
+    
+    <g transform="translate(700, 300) scale(0.8)">
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(0)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(45)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(90)"/>
+      <path d="M0,0 C10,-20 30,-25 50,-20 C70,-25 90,-20 100,0 C90,20 70,25 50,20 C30,25 10,20 0,0 Z" fill="#FF8F00" transform="rotate(135)"/>
+      <circle cx="0" cy="0" r="15" fill="#FFC107"/>
+    </g>
+    
+    <!-- 泰式辣椒圖案 -->
+    <g transform="translate(200, 300)">
+      <path d="M0,0 C5,-10 10,-30 5,-40 C0,-30 -5,-10 0,0 Z" fill="#FF5722" transform="rotate(10)"/>
+      <path d="M0,0 C5,-10 10,-30 5,-40 C0,-30 -5,-10 0,0 Z" fill="#FF5722" transform="rotate(30)"/>
+      <path d="M0,0 C5,-10 10,-30 5,-40 C0,-30 -5,-10 0,0 Z" fill="#FF5722" transform="rotate(50)"/>
+    </g>
+    
+    <g transform="translate(600, 200)">
+      <path d="M0,0 C5,-10 10,-30 5,-40 C0,-30 -5,-10 0,0 Z" fill="#FF5722" transform="rotate(10)"/>
+      <path d="M0,0 C5,-10 10,-30 5,-40 C0,-30 -5,-10 0,0 Z" fill="#FF5722" transform="rotate(30)"/>
+      <path d="M0,0 C5,-10 10,-30 5,-40 C0,-30 -5,-10 0,0 Z" fill="#FF5722" transform="rotate(50)"/>
+    </g>
+    
+    <!-- 泰式香料圖案 -->
+    <g transform="translate(400, 100)">
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(0)"/>
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(45)"/>
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(90)"/>
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(135)"/>
+    </g>
+    
+    <g transform="translate(150, 200)">
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(0)"/>
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(45)"/>
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(90)"/>
+      <path d="M0,0 L5,15 L0,30 L-5,15 Z" fill="#8D6E63" transform="rotate(135)"/>
+    </g>
+    
+    <!-- 泰式裝飾線條 -->
+    <path d="M50,50 C100,70 150,30 200,50 C250,70 300,30 350,50 C400,70 450,30 500,50 C550,70 600,30 650,50 C700,70 750,30 800,50" stroke="#FF8F00" stroke-width="2" fill="none"/>
+    
+    <path d="M50,350 C100,330 150,370 200,350 C250,330 300,370 350,350 C400,330 450,370 500,350 C550,330 600,370 650,350 C700,330 750,370 800,350" stroke="#FF8F00" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- 泰式食物圖標 -->
+  <g opacity="0.2">
+    <!-- 冬陰功湯 -->
+    <g transform="translate(100, 250)">
+      <circle cx="0" cy="0" r="25" fill="#FF8F00"/>
+      <path d="M-15,-5 C-10,-15 10,-15 15,-5 L15,10 C15,15 -15,15 -15,10 Z" fill="#FFF8E1"/>
+      <path d="M-10,0 L10,0 M-5,-5 L5,-5" stroke="#FF5722" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- 泰式炒河粉 -->
+    <g transform="translate(400, 300)">
+      <rect x="-20" y="-15" width="40" height="30" rx="5" fill="#FFF8E1"/>
+      <path d="M-15,-5 C-5,5 5,-5 15,5 M-15,5 C-5,-5 5,5 15,-5" stroke="#FF8F00" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- 綠咖哩 -->
+    <g transform="translate(700, 150)">
+      <circle cx="0" cy="0" r="25" fill="#FFF8E1"/>
+      <path d="M-15,-5 C-10,-15 10,-15 15,-5 L15,10 C15,15 -15,15 -15,10 Z" fill="#66BB6A"/>
+      <path d="M-10,0 L10,0 M-5,-5 L5,-5" stroke="#FFF8E1" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- 青木瓜沙拉 -->
+    <g transform="translate(250, 150)">
+      <rect x="-20" y="-15" width="40" height="30" rx="5" fill="#FFF8E1"/>
+      <path d="M-15,-10 L15,-10 M-15,0 L15,0 M-15,10 L15,10" stroke="#FF8F00" stroke-width="2" fill="none"/>
+      <circle cx="-5" cy="-5" r="3" fill="#FF5722"/>
+      <circle cx="5" cy="5" r="3" fill="#FF5722"/>
+    </g>
+    
+    <!-- 泰式奶茶 -->
+    <g transform="translate(550, 350)">
+      <path d="M-10,-20 L10,-20 L15,15 L-15,15 Z" fill="#795548"/>
+      <path d="M-8,-20 L8,-20 L10,-10 L-10,-10 Z" fill="#FFF8E1"/>
+      <rect x="-5" y="-25" width="10" height="5" fill="#FF8F00"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,132 @@
+/* 餐廳分類頁面樣式 */
+
+/* 分類導航 */
+.category-nav {
+    background-color: var(--bg-light);
+    padding: var(--space-4) 0;
+    margin-bottom: var(--space-5);
+}
+
+.category-list {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.category-item {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    background-color: var(--neutral-100);
+    color: var(--text-primary);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+}
+
+.category-item:hover,
+.category-item.active {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+}
+
+/* 餐廳卡片網格 */
+.restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+}
+
+.restaurant-card {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.restaurant-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-3);
+}
+
+.restaurant-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.restaurant-info {
+    padding: var(--space-3);
+}
+
+.restaurant-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.restaurant-category {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-2);
+}
+
+.restaurant-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.rating-stars {
+    color: var(--warning);
+}
+
+/* 分類標籤 */
+.cuisine-tag {
+    display: inline-block;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    margin-right: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.cuisine-japanese {
+    background-color: #FFE4E1;
+    color: #D32F2F;
+}
+
+.cuisine-chinese {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.cuisine-western {
+    background-color: #E3F2FD;
+    color: #1976D2;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .category-list {
+        gap: var(--space-2);
+    }
+
+    .category-item {
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.875rem;
+    }
+
+    .restaurant-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: var(--space-3);
+    }
+
+    .restaurant-image {
+        height: 160px;
+    }
+}

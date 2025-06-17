@@ -1,0 +1,167 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="800" height="400" fill="#E1F5FE" opacity="0.8"/>
+  
+  <!-- 幾何圖案 - 韓式風格格子 -->
+  <g opacity="0.1">
+    <path d="M0 0 L800 0 L800 400 L0 400 Z" fill="none" stroke="#0288D1" stroke-width="2"/>
+    <path d="M100 0 L100 400" stroke="#0288D1" stroke-width="1"/>
+    <path d="M200 0 L200 400" stroke="#0288D1" stroke-width="1"/>
+    <path d="M300 0 L300 400" stroke="#0288D1" stroke-width="1"/>
+    <path d="M400 0 L400 400" stroke="#0288D1" stroke-width="1"/>
+    <path d="M500 0 L500 400" stroke="#0288D1" stroke-width="1"/>
+    <path d="M600 0 L600 400" stroke="#0288D1" stroke-width="1"/>
+    <path d="M700 0 L700 400" stroke="#0288D1" stroke-width="1"/>
+    
+    <path d="M0 50 L800 50" stroke="#0288D1" stroke-width="1"/>
+    <path d="M0 100 L800 100" stroke="#0288D1" stroke-width="1"/>
+    <path d="M0 150 L800 150" stroke="#0288D1" stroke-width="1"/>
+    <path d="M0 200 L800 200" stroke="#0288D1" stroke-width="1"/>
+    <path d="M0 250 L800 250" stroke="#0288D1" stroke-width="1"/>
+    <path d="M0 300 L800 300" stroke="#0288D1" stroke-width="1"/>
+    <path d="M0 350 L800 350" stroke="#0288D1" stroke-width="1"/>
+  </g>
+  
+  <!-- 韓式圖案元素 -->
+  <g opacity="0.15">
+    <!-- 左上角泡菜圖案 -->
+    <g transform="translate(50, 50) rotate(15)">
+      <path d="M0 0 C10 -10, 20 -15, 30 -10 C40 -5, 50 0, 60 -5 C70 -10, 80 -5, 90 0" 
+            fill="none" stroke="#01579B" stroke-width="2"/>
+      
+      <!-- 泡菜葉 -->
+      <g transform="translate(30, -10)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(30)"/>
+      </g>
+      <g transform="translate(60, -5)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(-20)"/>
+      </g>
+      <g transform="translate(90, 0)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(15)"/>
+      </g>
+    </g>
+    
+    <!-- 右上角泡菜圖案 -->
+    <g transform="translate(700, 80) rotate(-30)">
+      <path d="M0 0 C10 -10, 20 -15, 30 -10 C40 -5, 50 0, 60 -5 C70 -10, 80 -5, 90 0" 
+            fill="none" stroke="#01579B" stroke-width="2"/>
+      
+      <!-- 泡菜葉 -->
+      <g transform="translate(30, -10)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(30)"/>
+      </g>
+      <g transform="translate(60, -5)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(-20)"/>
+      </g>
+      <g transform="translate(90, 0)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(15)"/>
+      </g>
+    </g>
+    
+    <!-- 左下角泡菜圖案 -->
+    <g transform="translate(100, 320) rotate(15)">
+      <path d="M0 0 C10 -10, 20 -15, 30 -10 C40 -5, 50 0, 60 -5 C70 -10, 80 -5, 90 0" 
+            fill="none" stroke="#01579B" stroke-width="2"/>
+      
+      <!-- 泡菜葉 -->
+      <g transform="translate(30, -10)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(30)"/>
+      </g>
+      <g transform="translate(60, -5)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(-20)"/>
+      </g>
+      <g transform="translate(90, 0)">
+        <ellipse cx="0" cy="0" rx="8" ry="3" fill="#F44336" transform="rotate(15)"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 韓式料理圖案 -->
+  <g opacity="0.2">
+    <!-- 右側韓式燒肉圖案 -->
+    <g transform="translate(650, 200)">
+      <!-- 燒烤網 -->
+      <rect x="-40" y="-30" width="80" height="60" rx="5" ry="5" fill="none" stroke="#01579B" stroke-width="2"/>
+      <line x1="-40" y1="-10" x2="40" y2="-10" stroke="#01579B" stroke-width="1"/>
+      <line x1="-40" y1="10" x2="40" y2="10" stroke="#01579B" stroke-width="1"/>
+      <line x1="-20" y1="-30" x2="-20" y2="30" stroke="#01579B" stroke-width="1"/>
+      <line x1="0" y1="-30" x2="0" y2="30" stroke="#01579B" stroke-width="1"/>
+      <line x1="20" y1="-30" x2="20" y2="30" stroke="#01579B" stroke-width="1"/>
+      
+      <!-- 肉片 -->
+      <ellipse cx="-25" cy="-15" rx="10" ry="5" fill="#FFCCBC" transform="rotate(30)"/>
+      <ellipse cx="5" cy="-5" rx="12" ry="6" fill="#FFCCBC" transform="rotate(-15)"/>
+      <ellipse cx="-15" cy="15" rx="8" ry="4" fill="#FFCCBC" transform="rotate(10)"/>
+      <ellipse cx="25" cy="15" rx="10" ry="5" fill="#FFCCBC" transform="rotate(-20)"/>
+    </g>
+    
+    <!-- 左側拌飯圖案 -->
+    <g transform="translate(150, 150)">
+      <!-- 碗 -->
+      <ellipse cx="0" cy="0" rx="30" ry="15" fill="white" stroke="#01579B" stroke-width="2"/>
+      <path d="M-30 0 C-30 20, 30 20, 30 0" fill="white" stroke="#01579B" stroke-width="2"/>
+      
+      <!-- 拌飯內容 -->
+      <ellipse cx="0" cy="-2" rx="25" ry="10" fill="#FFF9C4"/> <!-- 米飯 -->
+      <circle cx="-10" cy="-5" r="5" fill="#81C784"/> <!-- 蔬菜 -->
+      <circle cx="10" cy="-5" r="4" fill="#EF5350"/> <!-- 辣椒醬 -->
+      <ellipse cx="0" cy="-8" rx="4" ry="2" fill="#FFC107"/> <!-- 蛋黃 -->
+      <path d="M-15 -3 C-10 -1, -5 -2, 0 -3 C5 -4, 10 -3, 15 -2" fill="none" stroke="#795548" stroke-width="1"/> <!-- 牛肉 -->
+    </g>
+  </g>
+  
+  <!-- 韓國國旗色彩裝飾 -->
+  <g opacity="0.1">
+    <rect x="0" y="0" width="10" height="400" fill="#0288D1"/> <!-- 藍色 -->
+    <rect x="790" y="0" width="10" height="400" fill="#F44336"/> <!-- 紅色 -->
+  </g>
+  
+  <!-- 韓式料理圖案 -->
+  <g opacity="0.15">
+    <!-- 簡化的泡菜鍋 -->
+    <g transform="translate(400, 100) scale(0.5)">
+      <circle cx="0" cy="0" r="30" fill="#FFEBEE" stroke="#F44336" stroke-width="2"/>
+      <path d="M-30 0 A30 10 0 0 0 30 0" fill="none" stroke="#F44336" stroke-width="2"/>
+      <path d="M-20 -5 C-10 -15, 10 -15, 20 -5" fill="none" stroke="#F44336" stroke-width="2"/>
+      <circle cx="-10" cy="-5" r="3" fill="#F44336"/> <!-- 泡菜 -->
+      <circle cx="10" cy="-5" r="3" fill="#F44336"/> <!-- 泡菜 -->
+      <circle cx="0" cy="5" r="3" fill="#F44336"/> <!-- 泡菜 -->
+      <circle cx="-15" cy="0" r="2" fill="#81C784"/> <!-- 蔬菜 -->
+      <circle cx="15" cy="0" r="2" fill="#81C784"/> <!-- 蔬菜 -->
+    </g>
+    
+    <!-- 簡化的韓式炸雞 -->
+    <g transform="translate(200, 250) scale(0.5)">
+      <path d="M-20 -10 C-15 -20, -5 -15, 0 -20 C5 -15, 15 -20, 20 -10 C25 0, 20 10, 10 15 C0 20, -10 15, -20 5 C-25 0, -25 -5, -20 -10Z" 
+            fill="#FFCC80" stroke="#E65100" stroke-width="2"/>
+      <path d="M-10 -5 L-5 -10 L0 -5 L5 -10 L10 -5" fill="none" stroke="#E65100" stroke-width="1"/> <!-- 炸雞紋理 -->
+      <path d="M-15 0 L-10 -2 L-5 0 L0 -2 L5 0 L10 -2 L15 0" fill="none" stroke="#E65100" stroke-width="1"/> <!-- 炸雞紋理 -->
+      <path d="M-10 5 L-5 3 L0 5 L5 3 L10 5" fill="none" stroke="#E65100" stroke-width="1"/> <!-- 炸雞紋理 -->
+    </g>
+    
+    <!-- 簡化的韓式冷麵 -->
+    <g transform="translate(500, 300) scale(0.4)">
+      <ellipse cx="0" cy="0" rx="30" ry="15" fill="white" stroke="#01579B" stroke-width="2"/>
+      <path d="M-30 0 C-30 20, 30 20, 30 0" fill="white" stroke="#01579B" stroke-width="2"/>
+      
+      <!-- 冷麵 -->
+      <path d="M-20 -5 C-15 -10, -10 -5, -5 -10 C0 -5, 5 -10, 10 -5 C15 -10, 20 -5, 25 -10" 
+            fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-25 0 C-20 -5, -15 0, -10 -5 C-5 0, 0 -5, 5 0 C10 -5, 15 0, 20 -5" 
+            fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-20 5 C-15 0, -10 5, -5 0 C0 5, 5 0, 10 5 C15 0, 20 5, 25 0" 
+            fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round"/>
+      
+      <!-- 配料 -->
+      <circle cx="-15" cy="-3" r="3" fill="#F44336"/> <!-- 辣椒 -->
+      <circle cx="5" cy="-7" r="3" fill="#81C784"/> <!-- 蔬菜 -->
+      <circle cx="15" cy="2" r="3" fill="#FFCCBC"/> <!-- 肉片 -->
+    </g>
+  </g>
+  
+  <!-- 韓文字體 -->
+  <g opacity="0.2" transform="translate(400, 200)">
+    <text font-family="Arial, sans-serif" font-size="24" fill="#01579B" text-anchor="middle">한식 요리</text>
+    <text font-family="Arial, sans-serif" font-size="16" fill="#0288D1" text-anchor="middle" y="30">맛있고 건강한 음식</text>
+  </g>
+</svg>
