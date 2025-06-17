@@ -13,43 +13,66 @@ import com.foodietime.member.model.MemberVO;
 @Service
 public class GroupBuyingCollectionListService {
 
-	private final GroupBuyingCollectionListRepository repo;
 
-	@Autowired
-	public GroupBuyingCollectionListService(GroupBuyingCollectionListRepository repo) {
-		this.repo = repo;
-	}
-
-	// 新增收藏
-	public GroupBuyingCollectionListVO addCollection(GroupBuyingCasesVO gbId, MemberVO memId) {
-		// 設置複合主鍵
-
-        GroupBuyingCollectionListVO collection = new GroupBuyingCollectionListVO();
-        collection.setGroupBuyingCase(gbId);
-        collection.setMember(memId);
-        collection.setCreateAt(LocalDateTime.now());  // 設置創建時間
-
-        return repo.save(collection);  // 使用 save() 進行新增
-    }
-
-	// 刪除收藏
-	public void deleteCollection(Integer gbId, Integer memId) {
-		repo.deleteById_GbIdAndId_MemId(gbId, memId);
-	}
-
-	// 查詢單筆收藏（判斷是否已收藏）
-	public GroupBuyingCollectionListVO getOneCollection(Integer gbId, Integer memId) {
-		return repo.findById_GbIdAndId_MemId(gbId, memId);
-	}
-
-	// 查詢所有收藏
-	public List<GroupBuyingCollectionListVO> getAll() {
-		return repo.findAll();
-	}
-
-	// 查詢某會員的所有收藏
-	public List<GroupBuyingCollectionListVO> getByMemId(Integer memId) {
-		return repo.findById_MemId(memId);
-	}
-
+	 @Autowired
+	    private GroupBuyingCollectionListRepository repository;
+	    
+	    // 查詢單筆收藏
+	    public GroupBuyingCollectionListVO findByMemIdAndGbId(Integer memId, Integer gbId) {
+	        return repository.findByMemIdAndGbId(memId, gbId).orElse(null);
+	    }
+	    
+	    // 檢查是否已收藏
+	    public boolean isAlreadyInCollection(Integer memId, Integer gbId) {
+	        return repository.existsByMemIdAndGbId(memId, gbId);
+	    }
+	    
+	    // 新增收藏
+	    public GroupBuyingCollectionListVO addToCollection(Integer memId, Integer gbId) {
+	        if (isAlreadyInCollection(memId, gbId)) {
+	            throw new RuntimeException("此商品已在收藏清單中");
+	        }
+	        
+	        GroupBuyingCollectionListId id = new GroupBuyingCollectionListId(memId, gbId);
+	        GroupBuyingCollectionListVO collection = new GroupBuyingCollectionListVO();
+	        collection.setId(id);
+	        collection.setCreateAt(LocalDateTime.now());
+	        
+	        return repository.save(collection);
+	    }
+	    
+	    // 刪除
+	    public boolean removeFromCollection(Integer memId, Integer gbId) {
+	        if (!isAlreadyInCollection(memId, gbId)) {
+	            return false;
+	        }
+	        repository.deleteByMemIdAndGbId(memId, gbId);
+	        return true;
+	    }
+	    // 查詢會員收藏
+	    public List<GroupBuyingCollectionListVO> findByMemId(Integer memId) {
+	        return repository.findByMemId(memId);
+	    }
+	    
+	    // 查詢會員收藏（包含詳細資料）
+	    public List<GroupBuyingCollectionListVO> findByMemIdWithDetails(Integer memId) {
+	        return repository.findByMemIdWithDetails(memId);
+	    }
+	    
+	    // 其他方法...
+//	    public long countByMemId(Integer memId) {
+//	        return repository.countByMemId(memId);
+//	    }
+//	    
+//	    public long countByGbId(Integer gbId) {
+//	        return repository.countByGbId(gbId);
+//	    }
+	    
+	    public List<GroupBuyingCollectionListVO> findAll() {
+	        return repository.findAll();
+	    }
+	    
+	    public GroupBuyingCollectionListVO save(GroupBuyingCollectionListVO collection) {
+	        return repository.save(collection);
+	    }
 }
