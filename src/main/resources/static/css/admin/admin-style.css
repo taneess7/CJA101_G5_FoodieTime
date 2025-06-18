@@ -30,6 +30,13 @@ body {
     overflow-y: auto; /* 添加垂直滾動功能 */
 }
 
+.container-fluid {
+    margin-left: 250px;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
 .sidebar .logo {
     padding: 0 15px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);

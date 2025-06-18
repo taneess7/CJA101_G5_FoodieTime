@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
 
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
@@ -25,7 +27,7 @@
                     <span>儀表板</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">討論區管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-forum-reports}">
@@ -33,7 +35,7 @@
                     <span>檢舉審核管理</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">管理員管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-users-add}">
@@ -47,7 +49,7 @@
                     <span>管理員權限管理</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">廠家管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
@@ -56,7 +58,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
+                <a class="nav-link" th:href="@{/smg/admin-vendors-edit}">
                     <i class="fas fa-store-alt"></i>
                     <span>廠家帳號查詢/編輯</span>
                 </a>
@@ -85,7 +87,7 @@
                     <span>權限變更</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">會員管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-members-search}">
@@ -99,7 +101,7 @@
                     <span>權限變更</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">團購管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
@@ -114,7 +116,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                <a class="nav-link" th:href="@{/smg/admin-groups-orders}">
                     <i class="fas fa-clipboard-list"></i>
                     <span>訂單詳情檢視</span>
                 </a>
@@ -137,7 +139,7 @@
                     <span>月結付款</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">訂單管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-orders-view}">
@@ -151,7 +153,7 @@
                     <span>付款處理</span>
                 </a>
             </li>
-            
+
             <li class="nav-item section-title">客服管理</li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
@@ -168,284 +170,171 @@
         </ul>
     </div>
 
-        <!-- Page Content -->
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>會員權限變更</h5>
-                            <button class="btn btn-primary" onclick="batchPermissionUpdate()">
-                                <i class="fas fa-users-cog me-1"></i>批量權限變更
-                            </button>
+    <!-- Page Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>會員權限變更</h5>
+                        <button class="btn btn-primary" onclick="batchPermissionUpdate()">
+                            <i class="fas fa-users-cog me-1"></i>批量權限變更
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Search and Filter Form -->
+                        <form class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+                                <input type="text" class="form-control" id="searchKeyword" placeholder="會員姓名或電子郵件">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="memberStatus" class="form-label">會員狀態</label>
+                                <select class="form-select" id="memberStatus">
+                                    <option value="">全部狀態</option>
+                                    <option value="active">啟用</option>
+                                    <option value="suspended">停用</option>
+                                    <option value="banned">封鎖</option>
+                                    <option value="pending">待審核</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="permissionLevel" class="form-label">權限等級</label>
+                                <select class="form-select" id="permissionLevel">
+                                    <option value="">全部等級</option>
+                                    <option value="basic">基本會員</option>
+                                    <option value="premium">高級會員</option>
+                                    <option value="vip">VIP會員</option>
+                                    <option value="restricted">限制會員</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="memberLevel" class="form-label">會員等級</label>
+                                <select class="form-select" id="memberLevel">
+                                    <option value="">全部等級</option>
+                                    <option value="bronze">銅牌會員</option>
+                                    <option value="silver">銀牌會員</option>
+                                    <option value="gold">金牌會員</option>
+                                    <option value="platinum">白金會員</option>
+                                    <option value="diamond">鑽石會員</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="lastModified" class="form-label">最後修改</label>
+                                <select class="form-select" id="lastModified">
+                                    <option value="">全部時間</option>
+                                    <option value="today">今天</option>
+                                    <option value="week">本週</option>
+                                    <option value="month">本月</option>
+                                    <option value="quarter">本季</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Members Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" class="form-check-input" id="selectAll">
+                                        </th>
+                                        <th>會員資料</th>
+                                        <th>聯絡資訊</th>
+                                        <th>會員等級</th>
+                                        <th>註冊日期</th>
+                                        <th>狀態</th>
+                                        <th>權限等級</th>
+                                        <th>最後修改</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                               <tbody>
+    <tr th:each="member : ${members}">
+        <td>
+            <input type="checkbox" class="form-check-input member-checkbox"
+                   th:data-member-id="${member.memId}">
+        </td>
+        <td>
+            <div class="d-flex align-items-center">
+                <img th:src="@{/smg/admin-members-permissions/member-avatar/{memId}(memId=${member.memId})}"
+     					alt="會員"
+     					class="rounded-circle me-3" style="width: 40px; height: 40px;">
+                <div>
+                    <div class="fw-bold" th:text="${member.memName}">會員姓名</div>
+                    <small class="text-muted">ID: <span th:text="${member.memId}">1</span></small>
+                </div>
+            </div>
+        </td>
+        <td>
+            <div th:text="${member.memEmail}">email@example.com</div>
+            <small class="text-muted" th:text="${member.memPhone}">09xx-xxx-xxx</small>
+        </td>
+        <td>
+            <span class="badge bg-warning">銅牌會員</span> <!-- 會員等級你可以改 -->
+        </td>
+        <td th:text="${#dates.format(member.memTime, 'yyyy-MM-dd')}">註冊日期</td>
+        <td>
+            <span th:classappend="${member.memStatus.ordinal() == 1} ? 'badge bg-success' : 'badge bg-danger'">
+                <span th:text="${member.memStatus.ordinal() == 1} ? '啟用' : '停用'"></span>
+            </span>
+        </td>
+        <td>
+            <span class="badge bg-primary">VIP會員</span> <!-- 權限等級可改 -->
+        </td>
+        <td>
+            <div>2024-01-10</div>
+            <small class="text-muted">系統管理員</small>
+        </td>
+        <td>
+            <button class="btn btn-sm btn-outline-primary me-1"
+                    th:attr="onclick=|editPermissions(${member.memId}, true)|">
+                <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-warning"
+                    th:attr="onclick=|editPermissions(${member.memId}, false)|">
+                <i class="fas fa-edit"></i>
+            </button>
+        </td>
+    </tr>
+</tbody>
+
+                            </table>
                         </div>
-                        <div class="card-body">
-                            <!-- Search and Filter Form -->
-                            <form class="row g-3 mb-4">
-                                <div class="col-md-3">
-                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                                    <input type="text" class="form-control" id="searchKeyword" placeholder="會員姓名或電子郵件">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="memberStatus" class="form-label">會員狀態</label>
-                                    <select class="form-select" id="memberStatus">
-                                        <option value="">全部狀態</option>
-                                        <option value="active">啟用</option>
-                                        <option value="suspended">停用</option>
-                                        <option value="banned">封鎖</option>
-                                        <option value="pending">待審核</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="permissionLevel" class="form-label">權限等級</label>
-                                    <select class="form-select" id="permissionLevel">
-                                        <option value="">全部等級</option>
-                                        <option value="basic">基本會員</option>
-                                        <option value="premium">高級會員</option>
-                                        <option value="vip">VIP會員</option>
-                                        <option value="restricted">限制會員</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="memberLevel" class="form-label">會員等級</label>
-                                    <select class="form-select" id="memberLevel">
-                                        <option value="">全部等級</option>
-                                        <option value="bronze">銅牌會員</option>
-                                        <option value="silver">銀牌會員</option>
-                                        <option value="gold">金牌會員</option>
-                                        <option value="platinum">白金會員</option>
-                                        <option value="diamond">鑽石會員</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="lastModified" class="form-label">最後修改</label>
-                                    <select class="form-select" id="lastModified">
-                                        <option value="">全部時間</option>
-                                        <option value="today">今天</option>
-                                        <option value="week">本週</option>
-                                        <option value="month">本月</option>
-                                        <option value="quarter">本季</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </form>
 
-                            <!-- Members Table -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>
-                                                <input type="checkbox" class="form-check-input" id="selectAll">
-                                            </th>
-                                            <th>會員資料</th>
-                                            <th>聯絡資訊</th>
-                                            <th>會員等級</th>
-                                            <th>註冊日期</th>
-                                            <th>狀態</th>
-                                            <th>權限等級</th>
-                                            <th>最後修改</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M001"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">王小美</div>
-                                                        <small class="text-muted">M001</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>wang@example.com</div>
-                                                <small class="text-muted">0912-345-678</small>
-                                            </td>
-                                            <td><span class="badge bg-warning">銅牌會員</span></td>
-                                            <td>2023-05-15</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td><span class="badge bg-info">高級會員</span></td>
-                                            <td>
-                                                <div>2024-01-10</div>
-                                                <small class="text-muted">系統管理員</small>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPermissions('M001')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editPermissions('M001')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M002"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">李大明</div>
-                                                        <small class="text-muted">M002</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>lee@example.com</div>
-                                                <small class="text-muted">0923-456-789</small>
-                                            </td>
-                                            <td><span class="badge bg-info">銀牌會員</span></td>
-                                            <td>2023-03-20</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td><span class="badge bg-primary">VIP會員</span></td>
-                                            <td>
-                                                <div>2024-01-08</div>
-                                                <small class="text-muted">系統管理員</small>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPermissions('M002')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editPermissions('M002')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M003"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px; opacity: 0.5;">
-                                                    <div>
-                                                        <div class="fw-bold text-muted">張美麗</div>
-                                                        <small class="text-muted">M003</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="text-muted">zhang@example.com</div>
-                                                <small class="text-muted">0934-567-890</small>
-                                            </td>
-                                            <td><span class="badge bg-secondary">銀牌會員</span></td>
-                                            <td>2024-01-10</td>
-                                            <td><span class="badge bg-danger">停用</span></td>
-                                            <td><span class="badge bg-danger">限制會員</span></td>
-                                            <td>
-                                                <div>2024-01-12</div>
-                                                <small class="text-muted">客服專員</small>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPermissions('M003')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editPermissions('M003')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M004"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">陳志強</div>
-                                                        <small class="text-muted">M004</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>chen@example.com</div>
-                                                <small class="text-muted">0945-678-901</small>
-                                            </td>
-                                            <td><span class="badge bg-dark">鑽石會員</span></td>
-                                            <td>2022-08-12</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td><span class="badge bg-primary">VIP會員</span></td>
-                                            <td>
-                                                <div>2023-12-20</div>
-                                                <small class="text-muted">系統管理員</small>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPermissions('M004')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editPermissions('M004')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M005"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/women/5.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">林雅婷</div>
-                                                        <small class="text-muted">M005</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>lin@example.com</div>
-                                                <small class="text-muted">0956-789-012</small>
-                                            </td>
-                                            <td><span class="badge bg-secondary">銀牌會員</span></td>
-                                            <td>2023-11-05</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td><span class="badge bg-secondary">基本會員</span></td>
-                                            <td>
-                                                <div>2024-01-05</div>
-                                                <small class="text-muted">系統管理員</small>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewPermissions('M005')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editPermissions('M005')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <!-- Batch Actions and Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <button class="btn btn-success me-2" onclick="batchUpgradePermission()">
+                                    <i class="fas fa-arrow-up me-1"></i>批量升級權限
+                                </button>
+                                <button class="btn btn-warning me-2" onclick="batchDowngradePermission()">
+                                    <i class="fas fa-arrow-down me-1"></i>批量降級權限
+                                </button>
+                                <button class="btn btn-danger" onclick="batchRestrictPermission()">
+                                    <i class="fas fa-ban me-1"></i>批量限制權限
+                                </button>
                             </div>
 
-                            <!-- Batch Actions and Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <button class="btn btn-success me-2" onclick="batchUpgradePermission()">
-                                        <i class="fas fa-arrow-up me-1"></i>批量升級權限
-                                    </button>
-                                    <button class="btn btn-warning me-2" onclick="batchDowngradePermission()">
-                                        <i class="fas fa-arrow-down me-1"></i>批量降級權限
-                                    </button>
-                                    <button class="btn btn-danger" onclick="batchRestrictPermission()">
-                                        <i class="fas fa-ban me-1"></i>批量限制權限
-                                    </button>
-                                </div>
-                                
-                                <!-- Pagination -->
-                                <nav aria-label="會員列表分頁">
-                                    <ul class="pagination mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">下一頁</a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
+                            <!-- Pagination -->
+                            <nav aria-label="會員列表分頁">
+                                <ul class="pagination mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">上一頁</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">下一頁</a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -454,154 +343,277 @@
     </div>
 
     <!-- Edit Permissions Modal -->
-    <div class="modal fade" id="editPermissionsModal" tabindex="-1" aria-labelledby="editPermissionsModalLabel" aria-hidden="true">
+    <!-- ✅ 整合後的 Edit Permissions Modal -->
+    <div class="modal fade" id="editPermissionsModal" tabindex="-1" aria-labelledby="editPermissionsModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editPermissionsModalLabel">編輯會員權限</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Member Basic Info -->
-                    <div class="row mb-4">
-                        <div class="col-md-3 text-center">
-                            <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="會員頭像" class="rounded-circle mb-2" style="width: 80px; height: 80px;" id="modalMemberAvatar">
-                            <h6 id="modalMemberName">王小美</h6>
-                            <small class="text-muted" id="modalMemberId">M001</small>
+                <form method="post" th:action="@{/smg/admin-members-permissions/update-status}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editPermissionsModalLabel">編輯會員權限</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-lㄌabel="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="memId" id="modalMemId" />
+
+                        <!-- 基本資料 -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 text-center">
+                                <img src="https://via.placeholder.com/80" alt="會員頭像" class="rounded-circle mb-2"
+                                    style="width: 80px; height: 80px;" id="modalMemberAvatar">
+                                <h6 id="modalMemberName">會員名稱</h6>
+                                <small class="text-muted" id="modalMemberId">會員編號</small>
+                            </div>
+                            <div class="col-md-9">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold">電子郵件：</td>
+                                        <td id="modalMemberEmail">example@example.com</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">會員等級：</td>
+                                        <td id="modalMemberLevel">等級</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">註冊日期：</td>
+                                        <td id="modalMemberRegDate">yyyy-MM-dd</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">目前狀態：</td>
+                                        <td id="modalMemberStatus">啟用/停用</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td class="fw-bold">電子郵件：</td>
-                                    <td id="modalMemberEmail">wang@example.com</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">會員等級：</td>
-                                    <td id="modalMemberLevel">銅牌會員</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">註冊日期：</td>
-                                    <td id="modalMemberRegDate">2023-05-15</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">目前狀態：</td>
-                                    <td id="modalMemberStatus">啟用</td>
-                                </tr>
-                            </table>
+
+                        <!-- 權限變更表單欄位 -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="memStatus" class="form-label">會員狀態</label>
+                                   		<select class="form-select" id="memStatus" name="memStatus">
+										    <option value="1">啟用</option>
+										    <option value="0">停用</option>
+										</select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="memNoSpeak" class="form-label">禁言狀態</label>
+                                    <select class="form-select" id="memNoSpeak" name="memNoSpeak">
+									    <option value="1">禁止發言</option>
+									    <option value="0">允許發言</option>
+									</select>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="memNoPost" class="form-label">發文狀態</label>
+                                  <select class="form-select" id="memNoPost" name="memNoPost">
+									   <option value="1">禁止發文</option>
+									   <option value="0">允許發文</option>
+								  </select>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="modalMemNoGroup"
+                                        class="block text-sm font-medium text-gray-700">開團</label>
+                                    <select name="memNoGroup" id="memNoGroup" class="mt-1 w-full border border-gray-300 rounded-lg p-2">
+									    <option value="0">正常</option>
+									    <option value="1">禁開團</option>
+									</select>
+
+                                </div>
+
+                                <div class="mb-6">
+                                    <label for="modalMemNoJoingroup"
+                                        class="block text-sm font-medium text-gray-700">參團</label>
+                                    <select name="memNoJoingroup" id="memNoJoingroup" class="mt-1 w-full border border-gray-300 rounded-lg p-2">
+									    <option value="0">正常</option>
+									    <option value="1">禁參團</option>
+									</select>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h6>權限等級設定</h6>
+                                <div class="mb-3">
+                                    <label for="permissionLevelSelect" class="form-label">權限等級</label>
+                                    <select class="form-select" id="permissionLevelSelect" name="permissionLevel">
+                                        <option value="basic">基本會員</option>
+                                        <option value="premium">高級會員</option>
+                                        <option value="vip">VIP會員</option>
+                                        <option value="restricted">限制會員</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="permissionReason" class="form-label">變更原因</label>
+                                    <textarea class="form-control" id="permissionReason" name="permissionReason"
+                                        rows="3" placeholder="請輸入權限變更原因說明..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 權限變更歷史 -->
+                        <div class="mt-4">
+                            <h6>權限變更歷史</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>變更日期</th>
+                                            <th>變更前</th>
+                                            <th>變更後</th>
+                                            <th>操作人員</th>
+                                            <th>變更原因</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>2024-01-10</td>
+                                            <td><span class="badge bg-secondary">基本會員</span></td>
+                                            <td><span class="badge bg-info">高級會員</span></td>
+                                            <td>系統管理員</td>
+                                            <td>消費金額達到升級標準</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-05-15</td>
+                                            <td>-</td>
+                                            <td><span class="badge bg-secondary">基本會員</span></td>
+                                            <td>系統</td>
+                                            <td>新會員註冊</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Permission Settings -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>權限等級設定</h6>
-                            <div class="mb-3">
-                                <label for="permissionLevelSelect" class="form-label">權限等級</label>
-                                <select class="form-select" id="permissionLevelSelect">
-                                    <option value="basic">基本會員</option>
-                                    <option value="premium">高級會員</option>
-                                    <option value="vip">VIP會員</option>
-                                    <option value="restricted">限制會員</option>
-                                </select>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="permissionReason" class="form-label">變更原因</label>
-                                <textarea class="form-control" id="permissionReason" rows="3" placeholder="請輸入權限變更原因說明..."></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <h6>功能權限設定</h6>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canPurchase" checked>
-                                <label class="form-check-label" for="canPurchase">
-                                    購買商品
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canCreateGroup" checked>
-                                <label class="form-check-label" for="canCreateGroup">
-                                    發起團購
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canJoinGroup" checked>
-                                <label class="form-check-label" for="canJoinGroup">
-                                    參加團購
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canComment" checked>
-                                <label class="form-check-label" for="canComment">
-                                    發表評論
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canMessage">
-                                <label class="form-check-label" for="canMessage">
-                                    發送訊息
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canUploadImage" checked>
-                                <label class="form-check-label" for="canUploadImage">
-                                    上傳圖片
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="canInvite" checked>
-                                <label class="form-check-label" for="canInvite">
-                                    邀請好友
-                                </label>
-                            </div>
-                        </div>
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">儲存變更</button>
                     </div>
-
-                    <!-- Permission History -->
-                    <div class="mt-4">
-                        <h6>權限變更歷史</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>變更日期</th>
-                                        <th>變更前</th>
-                                        <th>變更後</th>
-                                        <th>操作人員</th>
-                                        <th>變更原因</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>2024-01-10</td>
-                                        <td><span class="badge bg-secondary">基本會員</span></td>
-                                        <td><span class="badge bg-info">高級會員</span></td>
-                                        <td>系統管理員</td>
-                                        <td>消費金額達到升級標準</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-05-15</td>
-                                        <td>-</td>
-                                        <td><span class="badge bg-secondary">基本會員</span></td>
-                                        <td>系統</td>
-                                        <td>新會員註冊</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="savePermissions()">儲存變更</button>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 
+
+    <!-- Permission Settings -->
+    <div class="row">
+        <div class="col-md-6">
+            <h6>權限等級設定</h6>
+            <div class="mb-3">
+                <label for="permissionLevelSelect" class="form-label">權限等級</label>
+                <select class="form-select" id="permissionLevelSelect">
+                    <option value="basic">基本會員</option>
+                    <option value="premium">高級會員</option>
+                    <option value="vip">VIP會員</option>
+                    <option value="restricted">限制會員</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="permissionReason" class="form-label">變更原因</label>
+                <textarea class="form-control" id="permissionReason" rows="3" placeholder="請輸入權限變更原因說明..."></textarea>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h6>功能權限設定</h6>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canPurchase" checked>
+                <label class="form-check-label" for="canPurchase">
+                    購買商品
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canCreateGroup" checked>
+                <label class="form-check-label" for="canCreateGroup">
+                    發起團購
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canJoinGroup" checked>
+                <label class="form-check-label" for="canJoinGroup">
+                    參加團購
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canComment" checked>
+                <label class="form-check-label" for="canComment">
+                    發表評論
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canMessage">
+                <label class="form-check-label" for="canMessage">
+                    發送訊息
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canUploadImage" checked>
+                <label class="form-check-label" for="canUploadImage">
+                    上傳圖片
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="canInvite" checked>
+                <label class="form-check-label" for="canInvite">
+                    邀請好友
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permission History -->
+    <div class="mt-4">
+        <h6>權限變更歷史</h6>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>變更日期</th>
+                        <th>變更前</th>
+                        <th>變更後</th>
+                        <th>操作人員</th>
+                        <th>變更原因</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-01-10</td>
+                        <td><span class="badge bg-secondary">基本會員</span></td>
+                        <td><span class="badge bg-info">高級會員</span></td>
+                        <td>系統管理員</td>
+                        <td>消費金額達到升級標準</td>
+                    </tr>
+                    <tr>
+                        <td>2023-05-15</td>
+                        <td>-</td>
+                        <td><span class="badge bg-secondary">基本會員</span></td>
+                        <td>系統</td>
+                        <td>新會員註冊</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+ 
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="submit" class="btn btn-primary">儲存變更</button>
+    </div>
+ 
+
+
     <!-- Batch Permission Update Modal -->
-    <div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -618,12 +630,13 @@
                             <option value="restricted">限制會員</option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="batchPermissionReason" class="form-label">變更原因</label>
-                        <textarea class="form-control" id="batchPermissionReason" rows="3" placeholder="請輸入權限變更原因說明..."></textarea>
+                        <textarea class="form-control" id="batchPermissionReason" rows="3"
+                            placeholder="請輸入權限變更原因說明..."></textarea>
                     </div>
-                    
+
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
                         已選擇 <span id="selectedMembersCount">0</span> 位會員進行權限變更
@@ -641,69 +654,101 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- 自訂JS -->
     <script th:src="@{/js/admin/admin-script.js}"></script>
-    
+
     <script>
         // Select All Checkbox
-        document.getElementById('selectAll').addEventListener('change', function() {
+        document.getElementById('selectAll').addEventListener('change', function () {
             const checkboxes = document.querySelectorAll('.member-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
         });
 
-        // View Permissions Function
-        function viewPermissions(memberId) {
-            // 模擬資料
-            const memberData = {
-                'M001': {
-                    name: '王小美',
-                    id: 'M001',
-                    email: 'wang@example.com',
-                    level: '銅牌會員',
-                    regDate: '2023-05-15',
-                    status: '啟用',
-                    permissionLevel: 'premium',
-                    avatar: 'https://randomuser.me/api/portraits/women/1.jpg'
-                }
-            };
 
             const data = memberData[memberId];
             if (data) {
+                // 基本資訊
                 document.getElementById('modalMemberName').textContent = data.name;
                 document.getElementById('modalMemberId').textContent = data.id;
+                document.getElementById('modalMemId').value = data.id; // 隱藏欄位
                 document.getElementById('modalMemberEmail').textContent = data.email;
                 document.getElementById('modalMemberLevel').textContent = data.level;
                 document.getElementById('modalMemberRegDate').textContent = data.regDate;
-                document.getElementById('modalMemberStatus').textContent = data.status;
+                document.getElementById('modalMemberStatus').textContent = data.status === 'ACTIVE' ? '啟用' : '停用';
                 document.getElementById('modalMemberAvatar').src = data.avatar;
+
+                // 權限欄位預選
+                document.getElementById('memStatus').value = data.status;
+                document.getElementById('memNoSpeak').value = data.memNoSpeak;
+                document.getElementById('memNoPost').value = data.memNoPost;
                 document.getElementById('permissionLevelSelect').value = data.permissionLevel;
-                
+
+                // 開啟 modal
                 const modal = new bootstrap.Modal(document.getElementById('editPermissionsModal'));
                 modal.show();
+            } else {
+                alert('找不到該會員資料');
             }
+        
+
+        function editPermissions(memberId, isReadOnly) {
+            console.log("AJAX get memberId = " + memberId);
+
+            fetch(`/smg/admin-members-permissions/get-member/${memberId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("查詢會員資料失敗");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("收到會員資料:", data);
+
+                    // 隱藏欄位
+                    document.getElementById('modalMemId').value = data.memId;
+
+                    // 權限 select 欄位
+                    document.getElementById('memStatus').value = data.memStatus;
+                    document.getElementById('memNoSpeak').value = data.memNoSpeak;
+                    document.getElementById('memNoPost').value = data.memNoPost;
+                    document.getElementById('memNoGroup').value = data.memNoGroup;
+                    document.getElementById('memNoJoingroup').value = data.memNoJoingroup;
+
+                    // 顯示基本資料
+                    document.getElementById('modalMemberName').textContent = data.memName;
+                    document.getElementById('modalMemberId').textContent = "ID: " + data.memId;
+                    document.getElementById('modalMemberEmail').textContent = data.memEmail;
+                    document.getElementById('modalMemberRegDate').textContent = data.memTime.substring(0, 10);
+
+                    if (data.avatarBase64) {
+                        document.getElementById('modalMemberAvatar').src = `data:image/png;base64,${data.avatarBase64}`;
+                    } else {
+                        document.getElementById('modalMemberAvatar').src = "https://via.placeholder.com/80";
+                    }
+                    
+                 	// 處理 readonly
+                    const fields = document.querySelectorAll('#editPermissionsModal select, #editPermissionsModal textarea');
+                    fields.forEach(field => {
+                        field.disabled = isReadOnly;
+                    });
+
+                    // 底部「儲存變更」按鈕也一起 disable
+                    document.querySelector('#editPermissionsModal .modal-footer .btn-primary').disabled = isReadOnly;
+
+
+                    // 開 modal
+                    const modal = new bootstrap.Modal(document.getElementById('editPermissionsModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert(error.message);
+                });
         }
 
-        // Edit Permissions Function
-        function editPermissions(memberId) {
-            viewPermissions(memberId);
-        }
 
-        // Save Permissions Function
-        function savePermissions() {
-            const permissionLevel = document.getElementById('permissionLevelSelect').value;
-            const reason = document.getElementById('permissionReason').value;
-            
-            if (!reason.trim()) {
-                alert('請輸入權限變更原因說明');
-                return;
-            }
-            
-            if (confirm('確認要儲存變更？')) {
-                alert('權限變更已儲存');
-                bootstrap.Modal.getInstance(document.getElementById('editPermissionsModal')).hide();
-                location.reload();
-            }
-        }
+
+
 
         // Batch Permission Update Function
         function batchPermissionUpdate() {
@@ -712,7 +757,7 @@
                 alert('請選擇要變更權限的會員');
                 return;
             }
-            
+
             document.getElementById('selectedMembersCount').textContent = selectedMembers.length;
             const modal = new bootstrap.Modal(document.getElementById('batchPermissionModal'));
             modal.show();
@@ -722,12 +767,12 @@
         function confirmBatchPermissionUpdate() {
             const permissionLevel = document.getElementById('batchPermissionLevel').value;
             const reason = document.getElementById('batchPermissionReason').value;
-            
+
             if (!reason.trim()) {
                 alert('請輸入權限變更原因說明');
                 return;
             }
-            
+
             const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
             if (confirm(`確認要批量變更 ${selectedMembers.length} 位會員的權限？`)) {
                 alert('權限變更已完成');
@@ -743,7 +788,7 @@
                 alert('請選擇要升級權限的會員');
                 return;
             }
-            
+
             const reason = prompt('請輸入升級權限原因');
             if (reason && reason.trim()) {
                 if (confirm(`確認要批量升級 ${selectedMembers.length} 位會員的權限？`)) {
@@ -760,7 +805,7 @@
                 alert('請選擇要降級權限的會員');
                 return;
             }
-            
+
             const reason = prompt('請輸入降級權限原因');
             if (reason && reason.trim()) {
                 if (confirm(`確認要批量降級 ${selectedMembers.length} 位會員的權限？`)) {
@@ -777,7 +822,7 @@
                 alert('請選擇要限制權限的會員');
                 return;
             }
-            
+
             const reason = prompt('請輸入限制權限原因');
             if (reason && reason.trim()) {
                 if (confirm(`確認要批量限制 ${selectedMembers.length} 位會員的權限？`)) {
@@ -788,4 +833,5 @@
         }
     </script>
 </body>
+
 </html>
