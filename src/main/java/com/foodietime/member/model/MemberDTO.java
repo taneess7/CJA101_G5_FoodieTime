@@ -15,8 +15,10 @@ public class MemberDTO {
     private Integer memNoGroup;
     private Integer memNoJoinGroup;
     private String memTime; // 註冊日期 yyyy-MM-dd
-    private String memLevel;  // 會員等級（銅牌/銀牌/金牌...）
-    private String permissionLevel; // 權限等級（basic/premium/vip）
     private String lastModifiedDate; // yyyy-MM-dd
     private String lastModifiedBy; // ex. "系統管理員"
+    
+    private Integer memGender;
+    private Integer orderCount;
+    private Integer totalSpent;
 }
