@@ -4,6 +4,7 @@ import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.product.model.ProductVO;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 @Entity
@@ -16,11 +17,13 @@ public class OrdDetVO implements Serializable{
 	private Integer ordDetId;   // 訂單明細編號 (主鍵)
 
 	@ManyToOne
+	@EqualsAndHashCode.Exclude
 	@JoinColumn(name="ORD_ID",referencedColumnName = "ORD_ID")
 	private OrdersVO orders;       // 訂單編號 (外鍵)
 	//private Integer ordId;      // 訂單編號 (外鍵)
 
 	@ManyToOne
+	@EqualsAndHashCode.Exclude
 	@JoinColumn(name = "PROD_ID",referencedColumnName = "PROD_ID")
 	private ProductVO product;     // 商品編號 (外鍵)
 
