@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>建立活躍社群：線上討論區頁面設計與功能</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" th:href="@{/css/front/post/style.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+ <!-- PWA 設定 -->
+<link rel="manifest" th:href="@{/manifest.json}">
+<meta name="theme-color" content="#FF5722">
+<link rel="apple-touch-icon" th:href="@{/img/logo.png}">
+</head>
+<body class="min-h-screen bg-gray-100">
+	
+
+	<!--     Header -->
+	<header class="app-header">
+		<div class="header-container">
+			<div class="logo-container">
+				<a th:href="@{/index}" class="logo">
+					<div
+						class="logo-img bg-orange-500 text-white flex items-center justify-center text-lg font-bold">
+						🍽️</div> <span class="logo-text">FoodieTime 食刻</span>
+				</a>
+			</div>
+			<div class="search-container">
+				<div class="search-bar">
+					<i class="material-icons-outlined search-icon">search</i> <input
+						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+					<i class="material-icons-outlined mic-icon">mic</i> <i
+						class="material-icons-outlined camera-icon">photo_camera</i>
+				</div>
+			</div>
+			<nav class="main-nav">
+				<ul class="nav-list">
+					<li class="nav-item"><a th:href="@{/map}" class="nav-link">地圖</a></li>
+					<li class="nav-item"><a th:href="@{/group-order}"
+						class="nav-link">團購</a></li>
+					<li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
+					<li class="nav-item"><a th:href="@{/login}"
+						class="nav-link login-btn">登入/註冊</a></li>
+				</ul>
+				<button class="menu-toggle" aria-label="開啟選單">
+					<i class="material-icons-outlined">menu</i>
+				</button>
+			</nav>
+		</div>
+	</header>
+	<!--     頂部分頁導航 -->
+	<div class="bg-white border-b border-gray-200">
+		<div class="max-w-7xl mx-auto px-4 py-3">
+			<div class="flex items-center justify-center space-x-2">
+				<button class="btn btn-ghost px-3">
+					<i class="fas fa-chevron-left"></i>
+				</button>
+
+				<!-- 				<div class="flex flex-col items-center min-w-16 text-center"> -->
+				<!--    <div class="text-xs text-gray-500 mb-1" -->
+				<!--      th:text="${thread.postCate != null ? thread.postCate.postCate : '未分類'}"></div> -->
+				<!--     <div class="text-xl font-bold" th:text="${thread.postId}"></div> -->
+
+
+				<!-- 				<div class="flex items-center space-x-1"> -->
+				<!-- 					<button th:each="page : ${pages}" -->
+				<!-- 						th:classappend="${page.active} ? 'btn-primary' : 'btn-ghost'" -->
+				<!-- 						class="btn px-3 py-1 text-sm" th:text="${page.number}"></button> -->
+				<!-- 					<span class="text-gray-500" th:if="${pages.size() > 5}">...</span> -->
+				<!-- 					<button class="btn btn-ghost px-3 py-1 text-sm" -->
+				<!-- 						th:text="${pages != null ? pages[pages.size()-1].number : ''}" -->
+				<!-- 						th:if="${pages != null and pages.size() > 5}"></button> -->
+				<!-- 				</div> -->
+
+				<div class="flex items-center space-x-1">
+					<button class="btn px-3 py-1 text-sm">1</button>
+					<button class="btn px-3 py-1 text-sm">2</button>
+					<button class="btn px-3 py-1 text-sm">3</button>
+				</div>
+				<button class="btn btn-ghost px-3">
+					<i class="fas fa-chevron-right"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="max-w-7xl mx-auto">
+		<!--         主要分類標籤 -->
+		<!-- 		<div class="bg-white border-b border-gray-200"> -->
+		<!-- 			<div class="flex space-x-4 px-4 py-2"> -->
+		<!-- 				<button th:each="cat : ${categories}" -->
+		<!-- 					th:class="'btn ' + (${cat.active} ? 'btn-primary' : 'btn-ghost')" -->
+		<!-- 					th:text="${cat.postCate}"></button> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+
+		<div class="bg-white border-b border-gray-200">
+			<div class="flex space-x-4 px-4 py-2">
+				<button th:each="cat : ${categories}" class="btn btn-ghost"
+					th:text="${cat.postCate}"></button>
+			</div>
+		</div>
+
+		<!--         新增發布貼文按鈕 -->
+		<button class="btn btn-primary" style="margin-left: 1rem;"
+			th:onclick="'location.href=\'' + @{/post/new} + '\''">發布貼文</button>
+	</div>
+
+	<!--     工具列 -->
+	<div class="bg-orange-600 text-white">
+		<div class="flex items-center justify-between px-4 py-3">
+			<div class="flex items-center space-x-4">
+				<div class="flex items-center space-x-2">
+					<i class="fas fa-filter"></i> <span class="text-sm">篩選：</span> <select
+						class="select-dropdown" th:name="sort"
+						th:onchange="this.form.submit()">
+						<option value="likes" th:selected="${sort == 'likes'}">讚數</option>
+						<option value="replies" th:selected="${sort == 'replies'}">留言數</option>
+						<option value="views" th:selected="${sort == 'views'}">瀏覽數</option>
+					</select>
+				</div>
+				<button class="btn btn-secondary px-3 py-1 text-sm"
+					th:classappend="${featured} ? '' : 'btn-ghost'">精選</button>
+				<button class="btn px-3 py-1 text-sm"
+					style="background-color: #ea580c; color: white;">熱門</button>
+			</div>
+			<div class="flex items-center space-x-6">
+				<div class="text-center">
+					<div class="text-sm font-medium">發文時間</div>
+				</div>
+				<div class="text-center">
+					<div class="text-sm font-medium">互動 / 人氣</div>
+				</div>
+				<div class="text-center">
+					<div class="text-sm font-medium">最新留言</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 討論串列表 -->
+	<div>
+		<a th:each="thread,iterStat : ${threads}"
+       th:href="@{'/post/one'(postId=${thread.postId})}"
+       class="forum-thread-row border-b border-gray-200 p-3 block hover:bg-orange-50 transition">
+        <div class="flex items-start space-x-4">
+            <!-- 分類和編號 -->
+            <div class="flex flex-col items-center min-w-16 text-center">
+                <div class="text-xs text-gray-500 mb-1"
+                     th:text="${thread.postCate != null} ? ${thread.postCate.postCate} : '未分類'"></div>
+                <div class="text-xl font-bold" th:text="${thread.postId}"></div>
+            </div>
+            <!-- 主要內容 -->
+            <div class="flex-1">
+                <h3 class="text-sm font-medium text-gray-900 leading-relaxed"
+                    th:text="${thread.postTitle}"></h3>
+                <p class="text-xs text-gray-600 mt-1"
+                   th:text="${thread.postContent}"></p>
+            </div>
+            <!-- 互動數據 -->
+            <div class="text-center min-w-24">
+                <div class="text-xs text-blue-600"
+                     th:text="${thread.member != null} ? ${thread.member.memName} : '匿名'"></div>
+            </div>
+            <!-- 最新留言 -->
+            <div class="text-center min-w-24">
+                <div class="text-xs text-gray-600"
+                     th:text="${#dates.format(thread.editDate, 'yyyy-MM-dd HH:mm')}"></div>
+            </div>
+        </div>
+    </a>
+	</div>
+	<!-- ...existing code... -->
+	<!--     底部分頁導航 -->
+	<div class="bg-white border-t border-gray-200 mt-4">
+		<div class="max-w-7xl mx-auto px-4 py-3">
+			<div class="flex items-center justify-center space-x-2">
+				<button class="btn btn-ghost px-3">
+					<i class="fas fa-chevron-left"></i>
+				</button>
+				<!-- 				<div class="flex items-center space-x-1"> -->
+				<!-- 					<button th:each="page : ${pages}" -->
+				<!-- 						th:classappend="${page.active} ? 'btn-primary' : 'btn-ghost'" -->
+				<!-- 						class="btn px-3 py-1 text-sm" th:text="${page.number}"></button> -->
+
+				<div class="flex items-center space-x-1">
+					<button class="btn px-3 py-1 text-sm">1</button>
+					<button class="btn px-3 py-1 text-sm">2</button>
+					<button class="btn px-3 py-1 text-sm">3</button>
+				</div>
+				<!-- 					<span class="text-gray-500" th:if="${pages.size() > 5}">...</span> -->
+				<!-- 					<button class="btn btn-ghost px-3 py-1 text-sm" -->
+				<!-- 						th:text="${pages != null ? pages[pages.size()-1].number : ''}" -->
+				<!-- 						th:if="${pages != null and pages.size() > 5}"></button> -->
+				<!-- 				</div> -->
+				<button class="btn btn-ghost px-3">
+					<i class="fas fa-chevron-right"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<script th:src="@{/js/front/post/discuss.js}"></script>
+	
+</body>
+</html>
+

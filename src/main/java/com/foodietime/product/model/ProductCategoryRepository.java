@@ -8,5 +8,6 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 	
 	void deleteByProdCateId(Integer prodCateId);
 
-	
+	// 根據分類名稱查找分類
+//    ProductCategoryVO findByProdCate(String prodCate);
 }

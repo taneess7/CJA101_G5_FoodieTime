@@ -1,4 +1,4 @@
-package com.foodietime.act.model.controller;
+package com.foodietime.act.controller;
 
 import java.io.IOException;
 import java.util.List;

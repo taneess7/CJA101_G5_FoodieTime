@@ -1,6 +1,7 @@
 package com.foodietime.member.model;
 
 import java.security.SecureRandom;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,4 +102,23 @@ public class MemService {
         }
         return sb.toString();
     }
+    
+    // 總會員數
+    public long countAllMembers() {
+        return memberRepository.count();
+        // 或寫 Query: return memberRepository.countAllMembers();
+    }
+
+    // 狀態會員數
+    public long countByStatus(MemberVO.MemberStatus status) {
+        return memberRepository.countByMemStatus(status);
+    }
+
+    // 新增會員
+    public long countByRegTimeBetween(Timestamp start, Timestamp end) {
+        return memberRepository.countByMemTimeBetween(start, end);
+    }
+
+
+
 }
