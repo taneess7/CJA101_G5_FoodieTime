@@ -17,7 +17,7 @@ import com.foodietime.act.model.ActVO;
 
 @RestController //每個方法回傳物件自動轉成JSON
 @RequestMapping("/api") //URL 前綴 GET /api/updateAllActPhotos
-public class ActController {
+public class ActApiController {
 	
 	@Autowired
 	private ActService actSvc;
