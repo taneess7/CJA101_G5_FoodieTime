@@ -17,12 +17,8 @@ import com.foodietime.participants.model.ParticipantsVO;
 @Controller
 @RequestMapping("/participants")
 public class ParticipantsController {
-	private ParticipantsService participantsService;
-
 	@Autowired
-	public ParticipantsController(ParticipantsService participantsService) {
-		this.participantsService = participantsService;
-	}
+	private ParticipantsService participantsService;
 
 	// 查詢所有參與者
 	@GetMapping("/all")
