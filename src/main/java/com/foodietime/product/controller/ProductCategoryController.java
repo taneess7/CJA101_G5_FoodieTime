@@ -15,12 +15,22 @@ public class ProductCategoryController {
 
 	@Autowired
     private ProductCategoryService categoryService;
-
+	
     // 查全部
     @GetMapping("/food-categories")
     public String listAll() {
         
         return "/front/restaurant/food-categories";
+    }
+    //跳回首頁
+    @GetMapping("/index")
+    public String listindex() {
+    	return "/index";
+    }
+    //跳到會員登入頁面
+    @GetMapping("/login")
+    public String listlogin() {
+    	return "/front/member/login";
     }
     //中式料理
     @GetMapping("/chinese-cuisine")
