@@ -262,7 +262,7 @@ public class SmgController {
    
     @GetMapping("/admin-groups-reports")
     public String admingroupsreports() {
-    	return "admin/smg/admin-vendors-blacklist"; 
+    	return "admin/smg/admin-groups-reports"; 
     }
     @GetMapping("/admin-groups-status")
     public String admingroupsstatus() {

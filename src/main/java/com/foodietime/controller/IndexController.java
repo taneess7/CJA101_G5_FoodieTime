@@ -13,6 +13,7 @@ public class IndexController {
     public String homepage() {
         return "index";
     }
+
     @GetMapping("login")
     public String login() {
         return "front/member/login";

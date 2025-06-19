@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購樂 - 一起買更便宜</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        
+        .search-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 0;
+            margin-bottom: 30px;
+        }
+        
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .search-title {
+            color: white;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .search-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+        
+        .filter-bar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+            height: 100%;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            height: 48px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .product-price {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .product-original-price {
+            text-decoration: line-through;
+            color: #adb5bd;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+        
+        .product-discount {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        
+        .progress {
+            height: 8px;
+            margin: 10px 0;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .time-left {
+            color: #ff6b6b;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .join-btn {
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .section-title {
+            margin: 30px 0 20px 0;
+            font-weight: bold;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #ff6b6b;
+        }
+        
+        .badge-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container">
+          <a class="navbar-brand" href="#">團購樂</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav me-auto">
+                  <li class="nav-item">
+                      <a class="nav-link active" href="#">首頁</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">熱門團購</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">最新上架</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">即將結束</a>
+                  </li>
+                 
+                  <li class="nav-item">
+                      <!-- 未登入狀態：顯示登入模態視窗 -->
+                      <a th:if="${session.loggedInMember == null}" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
+                      <!-- 已登入狀態：直接跳轉到團長專區 -->
+                      <a th:if="${session.loggedInMember != null}" class="nav-link" href="/gb/leader">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
+                  </li>
+              </ul>
+              <div class="d-flex">
+    <!-- 未登入狀態：顯示登入 / 註冊 -->
+    <div th:if="${session.loggedInMember == null}">
+        <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <i class="bi bi-person"></i> 登入
+        </a>
+        <a href="/register" class="btn btn-outline-primary me-2">
+            <i class="bi bi-person-plus"></i> 註冊
+        </a>
+    </div>
+
+    <!-- 已登入狀態：顯示帳號 -->
+    <div th:if="${session.loggedInMember != null}" class="dropdown">
+        <a href="#" class="btn btn-outline-success dropdown-toggle me-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/member/profile">會員中心</a></li>
+            <li><a class="dropdown-item" href="/logout">登出</a></li>
+        </ul>
+    </div>
+</div>
+          </div>
+      </div>
+  </nav>
+    <!-- 搜尋區塊 -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container text-center">
+                <h1 class="search-title">尋找最優惠的團購商品</h1>
+                <p class="search-subtitle">與朋友一起購買，享受更多折扣</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control form-control-lg" placeholder="搜尋團購商品...">
+                    <button class="btn btn-primary btn-lg" type="button">
+                        <i class="bi bi-search"></i> 搜尋
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 篩選欄 -->
+    <div class="container">
+        <div class="filter-bar">
+            <div class="row">
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <select class="form-select">
+                        <option selected>所有分類</option>
+                        <option>3C電子</option>
+                        <option>美妝保養</option>
+                        <option>服飾配件</option>
+                        <option>居家生活</option>
+                        <option>美食餐飲</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <select class="form-select">
+                        <option selected>所有地區</option>
+                        <option>北部</option>
+                        <option>中部</option>
+                        <option>南部</option>
+                        <option>東部</option>
+                        <option>離島</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <select class="form-select">
+                        <option selected>價格範圍</option>
+                        <option>$0 - $500</option>
+                        <option>$501 - $1,000</option>
+                        <option>$1,001 - $3,000</option>
+                        <option>$3,001 以上</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option selected>排序方式</option>
+                        <option>熱門程度</option>
+                        <option>最新上架</option>
+                        <option>價格低至高</option>
+                        <option>價格高至低</option>
+                        <option>即將結束</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 熱門團購 -->
+        <h2 class="section-title">熱門團購</h2>
+        <div class="row">
+            <!-- 商品卡片 1 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-danger">熱門</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【台南美食團購】手工鳳梨酥禮盒 - 傳統古早味</h5>
+                        <div>
+                            <span class="product-price">$299</span>
+                            <span class="product-original-price">$499</span>
+                            <span class="product-discount">40%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 75 件</span>
+                            <span>目標 100 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 2 天 18 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片 2 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-success">新品</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【高雄團購】港式點心組合 - 港式茶餐廳直送</h5>
+                        <div>
+                            <span class="product-price">$599</span>
+                            <span class="product-original-price">$899</span>
+                            <span class="product-discount">33%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 45 件</span>
+                            <span>目標 100 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 5 天 6 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片 3 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-warning text-dark">即將結束</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【台中團購】手工牛軋糖禮盒 - 純天然無添加</h5>
+                        <div>
+                            <span class="product-price">$199</span>
+                            <span class="product-original-price">$349</span>
+                            <span class="product-discount">43%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 90 件</span>
+                            <span>目標 100 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 1 天 3 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片 4 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-primary">限量</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【台北團購】精選咖啡豆組合 - 單品莊園咖啡</h5>
+                        <div>
+                            <span class="product-price">$799</span>
+                            <span class="product-original-price">$1,299</span>
+                            <span class="product-discount">38%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 60 件</span>
+                            <span>目標 100 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 3 天 12 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最新上架 -->
+        <h2 class="section-title">最新上架</h2>
+        <div class="row">
+            <!-- 商品卡片 5 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-success">新品</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1128&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【桃園團購】手工蛋捲禮盒 - 酥脆香甜多口味</h5>
+                        <div>
+                            <span class="product-price">$399</span>
+                            <span class="product-original-price">$699</span>
+                            <span class="product-discount">43%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 25 件</span>
+                            <span>目標 100 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 7 天 8 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片 6 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-success">新品</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【新竹團購】客家麻糬組合 - 傳統手工製作</h5>
+                        <div>
+                            <span class="product-price">$249</span>
+                            <span class="product-original-price">$399</span>
+                            <span class="product-discount">38%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 15 件</span>
+                            <span>目標 100 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 8 天 14 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片 7 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-success">新品</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【彰化團購】古早味肉鬆蛋糕 - 濕潤綿密口感</h5>
+                        <div>
+                            <span class="product-price">$349</span>
+                            <span class="product-original-price">$549</span>
+                            <span class="product-discount">36%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 10 件</span>
+                            <span>目標 50 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 9 天 20 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片 8 -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="badge-container">
+                        <span class="badge bg-success">新品</span>
+                        <span class="badge bg-info">免運</span>
+                    </div>
+                    <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1065&q=80');"></div>
+                    <div class="product-info">
+                        <h5 class="product-title">【雲林團購】古坑咖啡豆禮盒 - 在地小農直送</h5>
+                        <div>
+                            <span class="product-price">$599</span>
+                            <span class="product-original-price">$899</span>
+                            <span class="product-discount">33%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>已售出 20 件</span>
+                            <span>目標 80 件</span>
+                        </div>
+                        <div class="time-left">
+                            <i class="bi bi-clock"></i> 剩餘 6 天 10 小時
+                        </div>
+                        <button class="btn btn-primary join-btn">立即參團</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登入彈窗 -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">會員登入</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/front/member/login" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">帳號</label>
+                            <input type="text" class="form-control" name="mem_account" id="mem_account" placeholder="帳號">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密碼</label>
+                            <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">記住我</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">登入</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <p>還沒有帳號？ <a href="#" class="text-decoration-none">立即註冊</a></p>
+                        <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-outline-danger">
+                            <i class="bi bi-google"></i> 使用 Google 登入
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-facebook"></i> 使用 Facebook 登入
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="organizerModal" tabindex="-1" aria-labelledby="organizerModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="organizerModalLabel">團長專區</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-center mb-4">
+                      <i class="bi bi-person-badge" style="font-size: 3rem; color: #ff6b6b;"></i>
+                      <h4 class="mt-2">團長登入</h4>
+                      <p class="text-muted">登入您的團長帳號，管理您的團購活動</p>
+                  </div>
+                  <form>
+                      <div class="mb-3">
+                          <label for="organizerEmail" class="form-label">帳號</label>
+                          <input type="text" class="form-control" name="mem_account" id="mem_account" placeholder="帳號">
+                      </div>
+                      <div class="mb-3">
+                          <label for="organizerPassword" class="form-label">密碼</label>
+                          <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
+                      </div>
+                      <div class="mb-3 form-check">
+                          <input type="checkbox" class="form-check-input" id="organizerRememberMe">
+                          <label class="form-check-label" for="organizerRememberMe">記住我</label>
+                      </div>
+                      <div class="d-grid">
+                          <button type="submit" class="btn btn-primary">登入團長專區</button>
+                      </div>
+                  </form>
+                  <hr>
+                  <div class="text-center">
+                      <p>還不是團長？ <a href="#" class="text-decoration-none">立即申請成為團長</a></p>
+                      <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                  </div>
+                  <div class="mt-4">
+                      <h5 class="text-center mb-3">團長專區功能</h5>
+                      <div class="row text-center">
+                          <div class="col-4">
+                              <i class="bi bi-shop" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">開設團購</p>
+                          </div>
+                          <div class="col-4">
+                              <i class="bi bi-graph-up" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">銷售分析</p>
+                          </div>
+                          <div class="col-4">
+                              <i class="bi bi-people" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">會員管理</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+    <!-- 頁腳 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                  <h5 class="footer-title">快速連結</h5>
+                  <ul class="footer-links">
+                      <li><a href="#">首頁</a></li>
+                      <li><a href="#">熱門團購</a></li>
+                      <li><a href="#">最新上架</a></li>
+                      <li><a href="#">即將結束</a></li>
+                      <li><a href="#">我要開團</a></li>
+                  </ul>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-4">
+                  <h5 class="footer-title">幫助中心</h5>
+                  <ul class="footer-links">
+                      <li><a href="#">常見問題</a></li>
+                      <li><a href="#">如何參團</a></li>
+                      <li><a href="#">付款方式</a></li>
+                      <li><a href="#">配送方式</a></li>
+                      <li><a href="#">退換貨政策</a></li>
+                  </ul>
+              </div>
+              <div class="col-lg-4 col-md-6 mb-4">
+                  <h5 class="footer-title">訂閱電子報</h5>
+                  <p>訂閱我們的電子報，獲取最新優惠和團購資訊。</p>
+                  <div class="input-group mb-3">
+                      <input type="email" class="form-control" placeholder="您的電子郵件" aria-label="您的電子郵件">
+                      <button class="btn btn-outline-light" type="button">訂閱</button>
+                  </div>
+                  <p class="small mt-3">© 2023 團購樂. 版權所有.</p>
+              </div>
+          </div>
+      </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- 自定義 JavaScript -->
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          // 搜尋功能
+          const searchInput = document.querySelector('.search-section input');
+          const searchButton = document.querySelector('.search-section button');
+          
+          searchButton.addEventListener('click', function() {
+              if (searchInput.value.trim() !== '') {
+                  alert('搜尋: ' + searchInput.value);
+                  // 實際應用中這裡會導向搜尋結果頁面
+                  // window.location.href = 'search-results.html?q=' + encodeURIComponent(searchInput.value);
+              }
+          });
+          
+          // 篩選功能
+          const filterSelects = document.querySelectorAll('.filter-bar select');
+          
+          filterSelects.forEach(select => {
+              select.addEventListener('change', function() {
+                  console.log('篩選條件變更:', this.value);
+                  // 實際應用中這裡會根據篩選條件更新商品列表
+              });
+          });
+          
+          // 參團按鈕
+          const joinButtons = document.querySelectorAll('.join-btn');
+          
+          joinButtons.forEach(button => {
+              button.addEventListener('click', function() {
+                  const productCard = this.closest('.product-card');
+                  const productTitle = productCard.querySelector('.product-title').textContent;
+                  
+                  // 檢查用戶是否已登入
+                  const isLoggedIn = false; // 實際應用中這裡會檢查用戶登入狀態
+                  
+                  if (isLoggedIn) {
+                      alert('您已成功參加「' + productTitle + '」團購！');
+                      // 實際應用中這裡會導向訂單頁面
+                      // window.location.href = 'order.html?product=' + encodeURIComponent(productTitle);
+                  } else {
+                      // 顯示登入彈窗
+                      const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                      loginModal.show();
+                  }
+              });
+          });
+          
+          // 倒數計時器更新（模擬）
+          function updateCountdowns() {
+              const timeElements = document.querySelectorAll('.time-left');
+              
+              timeElements.forEach(element => {
+                  // 實際應用中這裡會計算真實的剩餘時間
+                  const text = element.textContent;
+                  const match = text.match(/剩餘 (\d+) 天 (\d+) 小時/);
+                  
+                  if (match) {
+                      let days = parseInt(match[1]);
+                      let hours = parseInt(match[2]) - 1;
+                      
+                      if (hours < 0) {
+                          hours = 23;
+                          days -= 1;
+                      }
+                      
+                      if (days >= 0) {
+                          element.textContent = `剩餘 ${days} 天 ${hours} 小時`;
+                      } else {
+                          element.textContent = '已結束';
+                          element.style.color = '#dc3545';
+                      }
+                  }
+              });
+          }
+          
+          // 每小時更新一次倒數計時（實際應用中可能會更頻繁）
+          setInterval(updateCountdowns, 3600000);
+          
+          // 電子報訂閱
+          const newsletterInput = document.querySelector('.footer .input-group input');
+          const newsletterButton = document.querySelector('.footer .input-group button');
+          
+          newsletterButton.addEventListener('click', function() {
+              const email = newsletterInput.value.trim();
+              
+              if (email !== '') {
+                  if (validateEmail(email)) {
+                      alert('感謝您訂閱我們的電子報！');
+                      newsletterInput.value = '';
+                  } else {
+                      alert('請輸入有效的電子郵件地址');
+                  }
+              }
+          });
+          
+          電子郵件格式驗證
+          function validateEmail(email) {
+              const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              return re.test(email);
+          }
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收貨地址 - 團購樂</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+        }
+        
+        .profile-sidebar {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-sidebar .nav-link {
+            color: #495057;
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .profile-sidebar .nav-link.active {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        .profile-sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid #ff6b6b;
+        }
+        
+        .profile-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+        
+        .address-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .address-card.default {
+            border-color: #ff6b6b;
+        }
+        
+        .address-card.default::after {
+            content: '預設';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff6b6b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .address-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .address-phone {
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .address-detail {
+            margin-bottom: 10px;
+        }
+        
+        .btn-primary {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #ff5252;
+            border-color: #ff5252;
+        }
+        
+        .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #ced4da;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .address-form {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="../gp/loginindex.html">團購樂</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../gp/loginindex.html">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">熱門團購</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">最新上架</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">即將結束</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
+                            <i class="bi bi-person-badge"></i> 我是團長
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <!-- 通知圖標 -->
+                    <div class="position-relative me-3">
+                        <a href="#" class="btn btn-outline-secondary position-relative">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                                3
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <!-- 用戶資訊下拉選單 -->
+                    <div class="dropdown">
+                        <a class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="用戶頭像" class="user-avatar">
+                            <span>林小美</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="member-profile.html"><i class="bi bi-person"></i> 個人資料</a></li>
+                        <li><a class="dropdown-item" href="member-orders.html"><i class="bi bi-bag"></i> 我的訂單</a></li>
+                        <li><a class="dropdown-item" href="member-favorites.html"><i class="bi bi-heart"></i> 我的收藏</a></li>
+                        <li><a class="dropdown-item" href="member-groups.html"><i class="bi bi-people"></i> 我參加的團</a></li>
+                        <li><a class="dropdown-item" href="member-payment.html"><i class="bi bi-credit-card"></i> 付款方式</a></li>
+                        <li><a class="dropdown-item active" href="member-address.html"><i class="bi bi-geo-alt"></i> 收貨地址</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> 幫助中心</a></li>
+                            <li><a class="dropdown-item text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 會員專區內容 -->
+    <div class="container my-5">
+        <div class="row">
+            <!-- 側邊欄 -->
+            <div class="col-lg-3 mb-4">
+                <div class="profile-sidebar p-3">
+                    <div class="text-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="用戶頭像" class="profile-avatar mb-3">
+                        <h5>林小美</h5>
+                        <p class="text-muted mb-0">一般會員</p>
+                    </div>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="member-profile.html"><i class="bi bi-person"></i> 個人資料</a>
+                    <a class="nav-link" href="member-orders.html"><i class="bi bi-bag"></i> 我的訂單</a>
+                    <a class="nav-link" href="member-favorites.html"><i class="bi bi-heart"></i> 我的收藏</a>
+                    <a class="nav-link" href="member-groups.html"><i class="bi bi-people"></i> 我參加的團</a>
+                    <a class="nav-link" href="member-payment.html"><i class="bi bi-credit-card"></i> 付款方式</a>
+                    <a class="nav-link active" href="member-address.html"><i class="bi bi-geo-alt"></i> 收貨地址</a>
+                    <a class="nav-link" href="member-notifications.html"><i class="bi bi-bell"></i> 通知設定</a>
+                    <a class="nav-link" href="member-security.html"><i class="bi bi-shield-lock"></i> 帳號安全</a>
+                    <a class="nav-link text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- 主要內容 -->
+            <div class="col-lg-9">
+                <div class="profile-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>收貨地址</h3>
+                        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#addAddressForm">
+                            <i class="bi bi-plus-lg"></i> 新增地址
+                        </button>
+                    </div>
+                    
+                    <!-- 新增地址表單 -->
+                    <div class="collapse mb-4" id="addAddressForm">
+                        <div class="address-form">
+                            <h5 class="mb-3">新增收貨地址</h5>
+                            <form>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="receiverName" class="form-label">收件人姓名</label>
+                                        <input type="text" class="form-control" id="receiverName" placeholder="請輸入收件人姓名">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="receiverPhone" class="form-label">聯絡電話</label>
+                                        <input type="text" class="form-control" id="receiverPhone" placeholder="請輸入聯絡電話">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="city" class="form-label">縣市</label>
+                                        <select class="form-select" id="city">
+                                            <option selected disabled>請選擇縣市</option>
+                                            <option value="taipei">台北市</option>
+                                            <option value="newtaipei">新北市</option>
+                                            <option value="taoyuan">桃園市</option>
+                                            <option value="taichung">台中市</option>
+                                            <option value="tainan">台南市</option>
+                                            <option value="kaohsiung">高雄市</option>
+                                            <option value="other">其他縣市</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="district" class="form-label">區域</label>
+                                        <select class="form-select" id="district">
+                                            <option selected disabled>請選擇區域</option>
+                                            <option value="xinyi">信義區</option>
+                                            <option value="daan">大安區</option>
+                                            <option value="zhongshan">中山區</option>
+                                            <option value="zhongzheng">中正區</option>
+                                            <option value="songshan">松山區</option>
+                                            <option value="other">其他區域</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="zipcode" class="form-label">郵遞區號</label>
+                                        <input type="text" class="form-control" id="zipcode" placeholder="請輸入郵遞區號">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">詳細地址</label>
+                                    <input type="text" class="form-control" id="address" placeholder="請輸入詳細地址">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="defaultAddress">
+                                    <label class="form-check-label" for="defaultAddress">設為預設收貨地址</label>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="collapse" data-bs-target="#addAddressForm">取消</button>
+                                    <button type="submit" class="btn btn-primary">儲存</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- 已儲存的地址 -->
+                    <div class="address-card default">
+                        <div class="address-name">林小美</div>
+                        <div class="address-phone">0912-345-678</div>
+                        <div class="address-detail">台北市信義區松高路1號 11樓</div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
+                            <button class="btn btn-sm btn-outline-danger">刪除</button>
+                        </div>
+                    </div>
+                    
+                    <div class="address-card">
+                        <div class="address-name">林小美 (公司)</div>
+                        <div class="address-phone">0912-345-678</div>
+                        <div class="address-detail">台北市中山區南京東路三段219號 5樓</div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-secondary me-2">設為預設</button>
+                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
+                            <button class="btn btn-sm btn-outline-danger">刪除</button>
+                        </div>
+                    </div>
+                    
+                    <div class="address-card">
+                        <div class="address-name">林小美 (父母家)</div>
+                        <div class="address-phone">0987-654-321</div>
+                        <div class="address-detail">新北市板橋區縣民大道二段7號</div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-secondary me-2">設為預設</button>
+                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
+                            <button class="btn btn-sm btn-outline-danger">刪除</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 超商取貨 -->
+                    <h5 class="mt-4 mb-3">超商取貨地址</h5>
+                    
+                    <div class="address-card">
+                        <div class="address-name">全家便利商店 - 信義門市</div>
+                        <div class="address-phone">0912-345-678 (林小美)</div>
+                        <div class="address-detail">台北市信義區松高路12號1樓</div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
+                            <button class="btn btn-sm btn-outline-danger">刪除</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-plus-lg"></i> 新增超商取貨地址
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁腳 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">團購樂</h5>
+                    <p>團購樂是一個專業的團購平台，提供各種優質商品的團購服務，讓您與朋友一起購買，享受更多折扣。</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-line"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="footer-title">快速連結</h5>
+                    <ul class="footer-links">
+                        <li><a href="../gp/loginindex.html">首頁</a></li>
+                        <li><a href="#">熱門團購</a></li>
+                        <li><a href="#">最新上架</a></li>
+                        <li><a href="#">即將結束</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="footer-title">幫助中心</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">常見問題</a></li>
+                        <li><a href="#">如何參團</a></li>
+                        <li><a href="#">付款方式</a></li>
+                        <li><a href="#">配送方式</a></li>
+                        <li><a href="#">退換貨政策</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">聯絡我們</h5>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-envelope me-2"></i> service@groupbuy.com</li>
+                        <li><i class="bi bi-telephone me-2"></i> (02) 2345-6789</li>
+                        <li><i class="bi bi-geo-alt me-2"></i> 台北市信義區松高路1號</li>
+                    </ul>
+                    <p class="small mt-3">© 2023 團購樂. 版權所有.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
