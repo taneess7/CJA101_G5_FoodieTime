@@ -3,6 +3,7 @@ package com.foodietime.member.controller;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,8 @@ import com.foodietime.store.model.StoreVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import com.foodietime.directmessage.model.DirectMessageService;
+import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.member.model.MemService;
 
 @Controller
@@ -30,6 +33,9 @@ public class MemberController {
 
     @Autowired
     private MemService memService;
+    
+    @Autowired
+    private DirectMessageService dmService;
     
     @Autowired
     private StoreService storeService;
@@ -277,6 +283,19 @@ public class MemberController {
         }
         model.addAttribute("member", member);
         return "front/member/member_center"; // 要有這個 HTML
+    }
+    
+    @GetMapping("/messages")
+    public String viewMessages(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "redirect:/front/member/login";
+        }
+
+        List<DirectMessageVO> messages = dmService.getMessagesByMemberId(member.getMemId());
+        model.addAttribute("messages", messages);
+
+        return "front/member/messages"; // 這頁就是 messages.html
     }
 
 }
