@@ -21,7 +21,7 @@
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
-                <a href="index.html" class="logo">
+                <a th:href="@{/category/index}" class="logo">
                     <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
@@ -39,7 +39,7 @@
                     <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
                     <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
                     <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a href="login.html" class="nav-link login-btn">登入/註冊</a></li>
+                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
                 </ul>
                 <button class="menu-toggle" aria-label="開啟選單">
                     <i class="material-icons-outlined">menu</i>

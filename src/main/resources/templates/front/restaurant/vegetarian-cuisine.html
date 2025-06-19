@@ -21,7 +21,7 @@
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
-                <a href="index.html" class="logo">
+                <a th:href="@{/category/index}" class="logo">
                     <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
@@ -39,7 +39,7 @@
                     <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
                     <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
                     <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a href="login.html" class="nav-link login-btn">登入/註冊</a></li>
+                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
                 </ul>
                 <button class="menu-toggle" aria-label="開啟選單">
                     <i class="material-icons-outlined">menu</i>
@@ -646,65 +646,10 @@
 
     <footer class="app-footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3 class="footer-title">關於我們</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">公司簡介</a></li>
-                        <li><a href="#">媒體報導</a></li>
-                        <li><a href="#">加入我們</a></li>
-                        <li><a href="#">企業社會責任</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">幫助中心</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">常見問題</a></li>
-                        <li><a href="#">使用條款</a></li>
-                        <li><a href="#">隱私政策</a></li>
-                        <li><a href="#">聯絡客服</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">商務合作</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">餐廳合作</a></li>
-                        <li><a href="#">企業方案</a></li>
-                        <li><a href="#">行銷合作</a></li>
-                        <li><a href="#">異業合作</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">下載 App</h3>
-                    <div class="app-download">
-                        <a href="#" class="download-btn">
-                            <img src="images/app-store.svg" alt="App Store">
-                        </a>
-                        <a href="#" class="download-btn">
-                            <img src="images/google-play.svg" alt="Google Play">
-                        </a>
-                    </div>
-                    <div class="social-media">
-                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p class="copyright">© 2023 FoodieTime 食刻. 版權所有.</p>
-                <div class="language-selector">
-                    <select>
-                        <option value="zh-TW">繁體中文</option>
-                        <option value="en">English</option>
-                        <option value="ja">日本語</option>
-                    </select>
-                </div>
-            </div>
+            <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
         </div>
     </footer>
-
+    
     <script>
         // 標籤頁切換功能
         document.addEventListener('DOMContentLoaded', function() {

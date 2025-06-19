@@ -20,7 +20,7 @@
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
-                <a href="index.html" class="logo">
+                <a th:href="@{/category/index}" class="logo">
                     <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
@@ -38,7 +38,7 @@
                     <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
                     <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
                     <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a href="login.html" class="nav-link login-btn">登入/註冊</a></li>
+                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
                 </ul>
                 <button class="menu-toggle" aria-label="開啟選單">
                     <i class="material-icons-outlined">menu</i>
@@ -51,15 +51,15 @@
         <nav class="category-nav">
             <div class="container">
                 <ul class="category-list food-category-list">
-                    <li class="category-item active">所有美食</li>
-                    <li class="category-item">中式料理</li>
-                    <li class="category-item">日式料理</li>
-                    <li class="category-item">韓式料理</li>
-                    <li class="category-item">泰式料理</li>
-                    <li class="category-item">義式料理</li>
-                    <li class="category-item">美式料理</li>
-                    <li class="category-item">甜點飲料</li>
-                    <li class="category-item">素食料理</li>
+                    <li><a class="category-item" href="/category/food-categories">所有美食</a></li>
+                    <li><a class="category-item" href="/category/chinese-cuisine">中式料理</a></li>
+                    <li><a class="category-item" href="/category/japanese-cuisine">日式料理</a></li>
+                    <li><a class="category-item" href="/category/korean-cuisine">韓式料理</a></li>
+                    <li><a class="category-item" href="/category/thai-cuisine">泰式料理</a></li>
+                    <li><a class="category-item" href="/category/italian-cuisine">義式料理</a></li>
+                    <li><a class="category-item" href="/category/american-cuisine">美式料理</a></li>
+                    <li><a class="category-item" href="/category/dessert-drinks">甜點飲料</a></li>
+                    <li><a class="category-item" href="/category/vegetarian-cuisine">素食料理</a></li>
                 </ul>
             </div>
         </nav>
@@ -67,6 +67,7 @@
         <div class="container">
             <div class="restaurant-grid food-grid">
                 <!-- 中式料理 -->
+              <a href="/category/chinese-cuisine" class="card-link">
                 <article class="restaurant-card food-card">
                     <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="牛肉麵" class="restaurant-image">
                     <div class="restaurant-info">
@@ -85,8 +86,10 @@
                         </div>
                     </div>
                 </article>
+              </a>
 
                 <!-- 日式料理 -->
+              <a href="/category/japanese-cuisine" class="card-link">
                 <article class="restaurant-card food-card">
                     <img th:src="@{/images/restaurant/placeholder.svg}" alt="壽司" class="restaurant-image">
                     <div class="restaurant-info">
@@ -105,8 +108,10 @@
                         </div>
                     </div>
                 </article>
+              </a>
 
                 <!-- 義式料理 -->
+              <a href="/category/italian-cuisine" class="card-link">
                 <article class="restaurant-card food-card">
                     <img th:src="@{/images/restaurant/pasta.svg}" alt="義大利麵" class="restaurant-image">
                     <div class="restaurant-info">
@@ -125,8 +130,10 @@
                         </div>
                     </div>
                 </article>
+              </a>
 
                 <!-- 美式料理 -->
+              <a href="/category/american-cuisine" class="card-link">
                 <article class="restaurant-card food-card">
                     <img th:src="@{/images/restaurant/pizza.svg}" alt="披薩" class="restaurant-image">
                     <div class="restaurant-info">
@@ -145,8 +152,10 @@
                         </div>
                     </div>
                 </article>
+              </a>
 
                 <!-- 泰式料理 -->
+              <a href="/category/thai-cuisine" class="card-link">
                 <article class="restaurant-card food-card">
                     <img th:src="@{/images/restaurant/green-curry.svg}" alt="綠咖哩" class="restaurant-image">
                     <div class="restaurant-info">
@@ -165,8 +174,10 @@
                         </div>
                     </div>
                 </article>
+              </a>
 
                 <!-- 甜點飲料 -->
+              <a href="/category/dessert-drinks" class="card-link">
                 <article class="restaurant-card food-card">
                     <img th:src="@{/images/restaurant/bubble-tea.svg}" alt="珍珠奶茶" class="restaurant-image">
                     <div class="restaurant-info">
@@ -185,6 +196,7 @@
                         </div>
                     </div>
                 </article>
+              </a>
             </div>
         </div>
     </main>
