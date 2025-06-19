@@ -68,5 +68,11 @@ public class ActService {
 		}
 
 	}
+	
+
+//	public List<ActVO> getAllMap(Map<String, String[]> map) {
+//		
+//		return HibernateUtil_CompositeQuery_Act.getAllC(map,sessionFactory.openSession()); 
+//	}
 		
 }
