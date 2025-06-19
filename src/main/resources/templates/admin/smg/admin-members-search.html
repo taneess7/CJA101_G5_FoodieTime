@@ -177,7 +177,9 @@
             </button>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item">
+                    <a class="nav-link" th:href="@{/smg/admin-dashboard}" style="color: blue;">儀表板</a>
+                    </li>
                     <li class="breadcrumb-item">會員管理</li>
                     <li class="breadcrumb-item active">會員查詢與篩選</li>
                 </ol>
@@ -210,72 +212,41 @@
                         </div>
                         <div class="card-body">
                             <!-- Advanced Search Form -->
-                            <form class="row g-3 mb-4">
-                                <div class="col-md-3">
-                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                                    <input type="text" class="form-control" id="searchKeyword" placeholder="姓名、電子郵件、電話">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="memberStatus" class="form-label">會員狀態</label>
-                                    <select class="form-select" id="memberStatus">
-                                        <option value="">全部狀態</option>
-                                        <option value="active">啟用</option>
-                                        <option value="suspended">停用</option>
-                                        <option value="banned">封鎖</option>
-                                        <option value="pending">待審核</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="memberLevel" class="form-label">會員等級</label>
-                                    <select class="form-select" id="memberLevel">
-                                        <option value="">全部等級</option>
-                                        <option value="bronze">銅牌會員</option>
-                                        <option value="silver">銀牌會員</option>
-                                        <option value="gold">金牌會員</option>
-                                        <option value="platinum">白金會員</option>
-                                        <option value="diamond">鑽石會員</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="ageRange" class="form-label">年齡範圍</label>
-                                    <select class="form-select" id="ageRange">
-                                        <option value="">全部年齡</option>
-                                        <option value="18-25">18-25歲</option>
-                                        <option value="26-35">26-35歲</option>
-                                        <option value="36-45">36-45歲</option>
-                                        <option value="46-55">46-55歲</option>
-                                        <option value="56+">56歲以上</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="gender" class="form-label">性別</label>
-                                    <select class="form-select" id="gender">
-                                        <option value="">全部性別</option>
-                                        <option value="male">男性</option>
-                                        <option value="female">女性</option>
-                                        <option value="other">其他</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </form>
+								<form class="row g-3 mb-4" method="get" th:action="@{/smg/admin-members-search}">
+								    <input type="text" class="form-control" name="keyword" th:value="${keyword}">
+								
+								    <select class="form-select" name="status">
+								        <option value="">全部狀態</option>
+								        <option value="active" th:selected="${status == 'active'}">啟用</option>
+								        <option value="suspended" th:selected="${status == 'suspended'}">停用</option>
+								    </select>
+								
+								    <select class="form-select" name="gender">
+								        <option value="">全部性別</option>
+								        <option value="male" th:selected="${gender == 'male'}">男性</option>
+								        <option value="female" th:selected="${gender == 'female'}">女性</option>
+								        <option value="other" th:selected="${gender == 'other'}">不透露</option>
+								    </select>
+								
+								    <input type="date" class="form-control" name="regDateFrom" th:value="${regDateFrom}">
+								    <input type="date" class="form-control" name="regDateTo" th:value="${regDateTo}">
+								
+								    <input type="number" class="form-control" name="orderCountMin" th:value="${orderCountMin}">
+								    <input type="number" class="form-control" name="totalSpentMin" th:value="${totalSpentMin}">
+								
+								    <button type="submit" class="btn btn-primary">查詢</button>
+								</form>
+
                             
                             <!-- Additional Filters -->
                             <div class="row g-3 mb-4">
                                 <div class="col-md-2">
                                     <label for="registrationDateFrom" class="form-label">註冊日期(起)</label>
-                                    <input type="date" class="form-control" id="registrationDateFrom">
+                                    <input type="date" class="form-control" id="registrationDateFrom" name="regDateFrom">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="registrationDateTo" class="form-label">註冊日期(迄)</label>
-                                    <input type="date" class="form-control" id="registrationDateTo">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="lastLoginFrom" class="form-label">最後登入日期</label>
-                                    <input type="date" class="form-control" id="lastLoginFrom">
+                                    <input type="date" class="form-control" id="registrationDateTo" name="regDateTo">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="orderCountMin" class="form-label">訂單數量(最少)</label>
@@ -300,7 +271,7 @@
                                             <div class="d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="card-title">總會員數</h6>
-                                                    <h4 class="mb-0">12,456</h4>
+                                                    <h4 class="mb-0" th:text="${totalMembers}">0</h4>
                                                 </div>
                                                 <div class="align-self-center">
                                                     <i class="fas fa-users fa-2x"></i>
@@ -315,7 +286,7 @@
                                             <div class="d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="card-title">活躍會員</h6>
-                                                    <h4 class="mb-0">8,923</h4>
+                                                    <h4 class="mb-0" th:text="${activeMembers}">0</h4>
                                                 </div>
                                                 <div class="align-self-center">
                                                     <i class="fas fa-user-check fa-2x"></i>
@@ -330,7 +301,7 @@
                                             <div class="d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="card-title">新增會員</h6>
-                                                    <h4 class="mb-0">234</h4>
+                                                    <h4 class="mb-0" th:text="${newMembers}">0</h4>
                                                 </div>
                                                 <div class="align-self-center">
                                                     <i class="fas fa-user-plus fa-2x"></i>
@@ -345,7 +316,7 @@
                                             <div class="d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="card-title">異常帳號</h6>
-                                                    <h4 class="mb-0">45</h4>
+                                                    <h4 class="mb-0" th:text="${abnormalMembers}">0</h4>
                                                 </div>
                                                 <div class="align-self-center">
                                                     <i class="fas fa-exclamation-triangle fa-2x"></i>
@@ -359,172 +330,52 @@
                             <!-- Members Table -->
                             <div class="table-responsive">
                                 <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>
-                                                <input type="checkbox" class="form-check-input" id="selectAll">
-                                            </th>
-                                            <th>會員資料</th>
-                                            <th>聯絡資訊</th>
-                                            <th>等級</th>
-                                            <th>註冊日期</th>
-                                            <th>最後登入</th>
-                                            <th>訂單數</th>
-                                            <th>消費金額</th>
-                                            <th>狀態</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M001"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">王小美</div>
-                                                        <small class="text-muted">M001</small>
-                                                        <div><small class="text-muted">女性，28歲</small></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>wang@example.com</div>
-                                                <small class="text-muted">0912-345-678</small>
-                                            </td>
-                                            <td><span class="badge bg-warning">銅牌會員</span></td>
-                                            <td>2023-05-15</td>
-                                            <td>2024-01-14</td>
-                                            <td>25</td>
-                                            <td>NT$ 45,600</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M001')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editMember('M001')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M001')">
-                                                    <i class="fas fa-envelope"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M002"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">李大明</div>
-                                                        <small class="text-muted">M002</small>
-                                                        <div><small class="text-muted">男性，35歲</small></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>lee@example.com</div>
-                                                <small class="text-muted">0923-456-789</small>
-                                            </td>
-                                            <td><span class="badge bg-info">銀牌會員</span></td>
-                                            <td>2023-03-20</td>
-                                            <td>2024-01-15</td>
-                                            <td>42</td>
-                                            <td>NT$ 89,200</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M002')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editMember('M002')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M002')">
-                                                    <i class="fas fa-envelope"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M003"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px; opacity: 0.5;">
-                                                    <div>
-                                                        <div class="fw-bold text-muted">張小華</div>
-                                                        <small class="text-muted">M003</small>
-                                                        <div><small class="text-muted">女性，24歲</small></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="text-muted">zhang@example.com</div>
-                                                <small class="text-muted">0934-567-890</small>
-                                            </td>
-                                            <td><span class="badge bg-secondary">基本會員</span></td>
-                                            <td>2024-01-10</td>
-                                            <td>2024-01-12</td>
-                                            <td>2</td>
-                                            <td>NT$ 1,200</td>
-                                            <td><span class="badge bg-danger">停用</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M003')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-success me-1" onclick="activateMember('M003')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M003')">
-                                                    <i class="fas fa-envelope"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input member-checkbox" data-member-id="M004"></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="會員" class="rounded-circle me-3" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">陳志強</div>
-                                                        <small class="text-muted">M004</small>
-                                                        <div><small class="text-muted">男性，42歲</small></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>chen@example.com</div>
-                                                <small class="text-muted">0945-678-901</small>
-                                            </td>
-                                            <td><span class="badge bg-dark">鑽石會員</span></td>
-                                            <td>2022-08-12</td>
-                                            <td>2024-01-15</td>
-                                            <td>156</td>
-                                            <td>NT$ 256,800</td>
-                                            <td><span class="badge bg-success">啟用</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewMember('M004')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editMember('M004')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info" onclick="sendMessage('M004')">
-                                                    <i class="fas fa-envelope"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+							    <thead class="table-light">
+							        <tr>
+							        	<th>
+							                <input type="checkbox" id="selectAll" />
+							            </th>
+							            <th>頭像</th>
+							            <th>姓名</th>
+							            <th>Email</th>
+							            <th>狀態</th>
+							            <th>性別</th>
+							            <th>註冊日期</th>
+							            <th>訂單數</th>
+							            <th>總消費金額</th>
+							        </tr>
+							    </thead>
+							    <tbody>
+							        <tr th:each="member : ${members}">
+							        	<td>
+							                <input type="checkbox" 
+							                       class="form-check-input member-checkbox" 
+							                       th:value="${member.memId}" />
+							            </td>
+							            <td>
+							                <img th:if="${member.avatarBase64 != null}" 
+											     th:src="'data:image/*;base64,' + ${member.avatarBase64}" 
+											     style="width: 40px; height: 40px; border-radius: 50%;" />
+							                <img th:if="${member.avatarBase64 == null}"
+							                     src="/images/icons/logo.png"
+							                     style="width: 40px; height: 40px; border-radius: 50%;" />
+							            </td>
+							            <td th:text="${member.memName}"></td>
+							            <td th:text="${member.memEmail}"></td>
+							            <td th:text="${member.memStatus == 1 ? '啟用' : '停用'}"></td>
+							            <td th:text="${member.memGender == 0 ? '男性' : (member.memGender == 1 ? '女性' : '不透露')}"></td>
+							            <td th:text="${member.memTime}"></td>
+							            <td th:text="${member.orderCount}"></td>
+							            <td th:text="'NT$ ' + ${member.totalSpent}"></td>
+							        </tr>
+							    </tbody>
+							</table>
+
                             </div>
 
                             <!-- Batch Actions -->
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div>
-                                    <button class="btn btn-success me-2" onclick="batchActivate()">
-                                        <i class="fas fa-check me-1"></i>批量啟用
-                                    </button>
-                                    <button class="btn btn-warning me-2" onclick="batchSuspend()">
-                                        <i class="fas fa-pause me-1"></i>批量停用
-                                    </button>
                                     <button class="btn btn-info me-2" onclick="batchMessage()">
                                         <i class="fas fa-envelope me-1"></i>批量發送訊息
                                     </button>
@@ -770,46 +621,39 @@
             alert('匯出會員資料功能開發中...');
         }
 
-        // Batch Activate Function
-        function batchActivate() {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            if (selectedMembers.length === 0) {
-                alert('請選擇要啟用的會員');
-                return;
-            }
-            
-            if (confirm(`確定要批量啟用 ${selectedMembers.length} 位會員嗎？`)) {
-                alert('批量啟用完成');
-                location.reload();
-            }
-        }
-
-        // Batch Suspend Function
-        function batchSuspend() {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            if (selectedMembers.length === 0) {
-                alert('請選擇要停用的會員');
-                return;
-            }
-            
-            const reason = prompt('請輸入停用原因');
-            if (reason && reason.trim()) {
-                if (confirm(`確定要批量停用 ${selectedMembers.length} 位會員嗎？`)) {
-                    alert('批量停用完成');
-                    location.reload();
-                }
-            }
-        }
+	
 
         // Batch Message Function
         function batchMessage() {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            if (selectedMembers.length === 0) {
-                alert('請選擇要發送訊息的會員');
-                return;
-            }
-            
-            alert('批量發送訊息功能開發中...');
+        	 const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+        	    if (selectedMembers.length === 0) {
+        	        alert('請選擇要發送訊息的會員');
+        	        return;
+        	    }
+
+        	    const memIds = Array.from(selectedMembers).map(cb => cb.value);
+        	    const messageContent = prompt('請輸入要發送的訊息內容');
+
+        	    if (messageContent && messageContent.trim()) {
+        	        fetch('/smg/admin-members-search/batch-send-message', {
+        	            method: 'POST',
+        	            headers: {
+        	                'Content-Type': 'application/json'
+        	            },
+        	            body: JSON.stringify({
+        	                memIds: memIds,
+        	                messageContent: messageContent
+        	            })
+        	        })
+        	        .then(response => response.json())
+        	        .then(data => {
+        	            if (data.success) {
+        	                alert(`已發送 ${data.sentCount} 封訊息`);
+        	            } else {
+        	                alert('發送失敗');
+        	            }
+        	        });
+        	    }
         }
 
         // Batch Export Function
