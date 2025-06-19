@@ -159,7 +159,8 @@ public class OrdersController {
             redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
             // 將新生成的訂單ID傳遞給確認頁面
             redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());
-            return "redirect:/cart/order-confirmation";
+            return "redirect:/orders/order-confirmation";
+
 
 //        }
 //        catch (IllegalStateException e) {

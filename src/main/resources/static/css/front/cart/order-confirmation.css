@@ -126,7 +126,17 @@
     color: var(--primary-color);
     font-weight: 600;
 }
+.stepper-item.completed .step-counter {
+    background-color: var(--success);
+    color: white;
+    border-color: var(--success);
+    box-shadow: 0 4px 8px rgba(93, 255, 34, 0.3);
+}
 
+.stepper-item.completed .step-name {
+    color: var(--success);
+    font-weight: 600;
+}
 /* ========== 購物車主內容佈局 (同時適用於結帳頁面和確認頁面) ========== */
 .cart-content, .checkout-content, .confirmation-container { /* 將 confirmation-container 也加入 */
     display: grid;

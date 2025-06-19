@@ -131,7 +131,7 @@
     background-color: var(--success);
     color: white;
     border-color: var(--success);
-    box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
+    box-shadow: 0 4px 8px rgba(93, 255, 34, 0.3);
 }
 
 .stepper-item.completed .step-name {
