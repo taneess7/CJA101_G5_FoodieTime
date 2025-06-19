@@ -23,10 +23,8 @@ public class PostCategoryVO implements Serializable {
 	private Integer postCateId;
 
 	@Column(name = "POST_CATE")
-	@NotNull(message = "檢舉原因請勿空白")
-	@Min(value=1, message="最小1")
-    @Max(value=45, message="最大45")
-	private Integer postCate;
+	@NotNull(message = "分類名稱請勿空白")
+	private String postCate;
 
 	
 
