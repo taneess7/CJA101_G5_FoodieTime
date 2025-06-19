@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.smg.model.SmgVO;
 
 
@@ -39,4 +40,17 @@ public class DirectMessageService {
 	    public DirectMessageVO getById(Integer dmId) {
 	        return messageRepo.findById(dmId).orElse(null);
 	    }
+	    
+	 // 批量發送用
+	    public void addMessage(MemberVO member, SmgVO smgr, String content) {
+	        DirectMessageVO message = new DirectMessageVO();
+	        message.setMember(member);
+	        message.setSmgr(smgr);
+	        message.setMessContent(content);
+	        message.setMessTime(LocalDateTime.now());
+	        message.setMessDirection(DirectMessageVO.MessageDirection.ADMIN_TO_MEMBER);
+
+	        messageRepo.save(message);
+	    }
+
 }
