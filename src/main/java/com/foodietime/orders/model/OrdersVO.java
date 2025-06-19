@@ -7,6 +7,7 @@ import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.store.model.StoreVO;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -48,10 +49,12 @@ public class OrdersVO implements Serializable{
 	private Integer orderStatus;     // 訂單狀態
 
 	@ManyToOne
+	@EqualsAndHashCode.Exclude
 	@JoinColumn(name = "ACT_ID",referencedColumnName = "ACT_ID")
 	private ActVO act;           // 活動編號
 
 	@ManyToOne
+	@EqualsAndHashCode.Exclude
 	@JoinColumn(name = "COU_ID",referencedColumnName = "COU_ID")
 	private CouponVO coupon;           // 優惠券編號
 

@@ -26,20 +26,20 @@
         <div class="search-container">
             <div class="search-bar">
                 <i class="material-icons-outlined search-icon">search</i>
-                <label>
+
                     <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-                </label>
+
                 <i class="material-icons-outlined mic-icon">mic</i>
                 <i class="material-icons-outlined camera-icon">photo_camera</i>
             </div>
         </div>
         <nav class="main-nav">
             <ul class="nav-list">
-                <li class="nav-item"><a th:href="@{/front/map.html}" class="nav-link">地圖</a></li>
-                <li class="nav-item"><a th:href="@{/front/group-order.html}" class="nav-link">團購</a></li>
-                <li class="nav-item"><a th:href="@{/front/deals.html}" class="nav-link">優惠</a></li>
-                <li class="nav-item"><a th:href="@{/front/cart/cart}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
-                <li class="nav-item"><a th:href="@{/front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
+                <li class="nav-item"><a th:href="@{/map.html}" class="nav-link">地圖</a></li>
+                <li class="nav-item"><a th:href="@{/group-order.html}" class="nav-link">團購</a></li>
+                <li class="nav-item"><a th:href="@{/deals.html}" class="nav-link">優惠</a></li>
+                <li class="nav-item"><a th:href="@{/cart/cart}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
+                <li class="nav-item"><a th:href="@{/cart/login}" class="nav-link login-btn">登入/註冊</a></li>
             </ul>
             <button class="menu-toggle" aria-label="開啟選單">
                 <i class="material-icons-outlined">menu</i>
@@ -171,7 +171,7 @@
                 </div>
 
                 <!-- 結帳按鈕 -->
-                <a th:href="@{/cart/checkout}" class="btn btn-primary btn-block">前往結帳</a>
+                <a th:href="@{/orders/checkout}" class="btn btn-primary btn-block">前往結帳</a>
                 <a th:href="@{/index}" class="btn btn-text btn-block">繼續購物</a>
             </div>
         </div>

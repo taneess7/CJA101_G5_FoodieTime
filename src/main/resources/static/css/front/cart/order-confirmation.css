@@ -1,0 +1,923 @@
+/**
+ * FoodieTime 食刻 - 訂單確認頁面樣式 (與 cart.css / checkout.css 風格一致)
+ * 此檔案包含所有必要的樣式，以確保訂單確認頁面與購物車/結帳頁面風格統一。
+ * 內容為 cart.css 的完整複製。
+ */
+
+/* ========== 基礎變數設定 ========== */
+:root {
+    --primary-color: #FF5722;
+    --primary-dark: #E64A19;
+    --primary-light: #FFCCBC;
+    --accent-green: #4CAF50;
+    --accent-blue: #2196F3;
+    --error: #F44336;
+    --success: #4CAF50;
+    --warning: #FF9800;
+
+    --bg-light: #FFFFFF;
+    --neutral-50: #FAFAFA;
+    --neutral-100: #F5F5F5;
+    --neutral-200: #EEEEEE;
+    --neutral-300: #E0E0E0;
+    --neutral-400: #BDBDBD;
+    --neutral-500: #9E9E9E;
+    --neutral-600: #757575;
+    --neutral-700: #616161;
+    --neutral-800: #424242;
+    --neutral-900: #212121;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+
+    --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+}
+
+/* ========== 購物車頁面基本結構 ========== */
+.cart-page {
+    padding: var(--space-4) 0 var(--space-6);
+    min-height: calc(100vh - 200px);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+/* ========== 購物流程指示器 ========== */
+.checkout-stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: var(--space-4) 0 var(--space-5);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.checkout-stepper::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 60px;
+    right: 60px;
+    height: 2px;
+    background-color: var(--neutral-300);
+    z-index: 1;
+}
+
+.stepper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    background-color: var(--bg-light);
+    padding: 0 var(--space-2);
+}
+
+.step-counter {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--neutral-200);
+    color: var(--neutral-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+    transition: all var(--transition-normal);
+    border: 2px solid var(--neutral-300);
+}
+
+.step-name {
+    color: var(--neutral-600);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color var(--transition-normal);
+    text-align: center;
+}
+
+.stepper-item.active .step-counter {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
+}
+
+.stepper-item.active .step-name {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+.stepper-item.completed .step-counter {
+    background-color: var(--success);
+    color: white;
+    border-color: var(--success);
+    box-shadow: 0 4px 8px rgba(93, 255, 34, 0.3);
+}
+
+.stepper-item.completed .step-name {
+    color: var(--success);
+    font-weight: 600;
+}
+/* ========== 購物車主內容佈局 (同時適用於結帳頁面和確認頁面) ========== */
+.cart-content, .checkout-content, .confirmation-container { /* 將 confirmation-container 也加入 */
+    display: grid;
+    grid-template-columns: 1fr 340px; /* 主內容與側邊欄比例 */
+    gap: var(--space-4);
+    align-items: start;
+    margin-top: var(--space-4);
+}
+/* For confirmation page, sometimes a single column layout for content is preferred */
+.confirmation-container {
+    grid-template-columns: 1fr; /* 讓確認頁內容單列佈局 */
+    max-width: 800px; /* 限制寬度 */
+    margin: var(--space-4) auto; /* 居中 */
+}
+
+
+.cart-items {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1); /* 使用 shadow-1 */
+    overflow: hidden;
+}
+
+/* ========== 單個購物車項目 (同時適用於結帳頁面內的訂單摘要項目和確認頁面) ========== */
+.cart-item, .checkout-item { /* 將 checkout-item 也加入 */
+    display: grid;
+    grid-template-columns: 1fr auto auto; /* 商品名 數量x單價 小計 */
+    gap: var(--space-2);
+    padding: var(--space-3); /* 稍微縮小內邊距 */
+    border-bottom: 1px solid var(--neutral-200); /* 使用 neutral-200 */
+    transition: background-color 0.2s ease;
+    align-items: center; /* 垂直置中 */
+}
+.checkout-item .item-info {
+    display: flex;
+    flex-direction: column;
+}
+.checkout-item .item-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--neutral-800);
+    margin-bottom: 0;
+}
+.checkout-item .item-price {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    white-space: nowrap; /* 防止換行 */
+}
+.checkout-item .item-subtotal {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1rem;
+    white-space: nowrap; /* 防止換行 */
+}
+
+
+.cart-item:last-child, .checkout-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item:hover {
+    background-color: var(--neutral-50); /* 更淺的懸停背景 */
+}
+
+/* 表單按鈕組 */
+.form-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+/* 購物車商品圖片 (在 checkout 頁面可能不顯示) */
+.item-image {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-md);
+    background-color: var(--neutral-100); /* 使用中性色 */
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 商品詳情與控制項的容器 */
+.item-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-height: 120px;
+}
+
+/* 商品資訊：名稱、描述、價格 */
+.item-info {
+    flex-grow: 1;
+}
+
+.item-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    margin: 0 0 var(--space-1);
+}
+
+.item-description {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    margin: 0 0 var(--space-2);
+}
+
+.item-price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* ========== 控制項區域 ========== */
+.item-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--neutral-200); /* 使用 neutral-200 */
+}
+
+/* 數量控制 */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.quantity-label, .subtotal-label {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    white-space: nowrap;
+}
+
+.quantity-input-group {
+    display: inline-block;
+    align-items: center;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.quantity-btn {
+    width: 36px;
+    height: 36px;
+    background-color: var(--neutral-100);
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--neutral-600);
+    transition: background-color 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: var(--neutral-200);
+}
+
+.quantity-input {
+    width: 50px;
+    height: 36px;
+    border: none;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--neutral-900);
+    -moz-appearance: textfield;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.update-btn {
+    height: 36px;
+    padding: 0 var(--space-3);
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+/* 小計 */
+.item-subtotal {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* 刪除按鈕 */
+.item-controls form {
+    margin: 0;
+}
+
+.delete-btn {
+    background-color: transparent;
+    border: none;
+    color: var(--neutral-600);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.9rem;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: var(--primary-light); /* 使用 primary-light */
+    color: var(--error);
+}
+
+/* ========== 空購物車提示 ========== */
+.empty-cart-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) var(--space-3);
+    text-align: center;
+}
+
+.empty-cart-icon {
+    font-size: 4rem;
+    color: var(--neutral-400);
+    margin-bottom: var(--space-3);
+}
+
+/* ========== 購物車側邊欄 (同時適用於結帳頁面和確認頁面) ========== */
+.cart-sidebar, .checkout-sidebar, .confirmation-summary { /* 將 confirmation-summary 也加入 */
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    background-color: var(--bg-light); /* 確保背景色 */
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+}
+
+.cart-summary, .order-summary { /* 將 order-summary 也加入 */
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+}
+
+.summary-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.summary-divider {
+    height: 1px;
+    background-color: var(--neutral-200);
+    margin: var(--space-3) 0;
+}
+
+.total-row {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* ========== 表單樣式 (適用於結帳表單) ========== */
+.checkout-form {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+}
+
+.form-section {
+    margin-bottom: var(--space-5);
+    border-bottom: 1px solid var(--neutral-200);
+    padding-bottom: var(--space-4);
+}
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: var(--space-4);
+    padding-bottom: 0;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+    color: var(--neutral-800);
+}
+
+.form-group {
+    margin-bottom: var(--space-3);
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: var(--space-1);
+    color: var(--neutral-700);
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="email"],
+.form-group input[type="datetime-local"],
+.form-group textarea {
+    width: 100%;
+    padding: var(--space-2);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    color: var(--neutral-900);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.2);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-row {
+    display: flex;
+    gap: var(--space-3);
+}
+.form-row .form-group {
+    flex: 1;
+}
+
+/* 支付方式/取餐方式選擇 */
+.payment-methods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.payment-method {
+    display: flex;
+    align-items: center;
+    background-color: var(--neutral-50);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.payment-method:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.payment-method input[type="radio"] {
+    margin-right: var(--space-2);
+    accent-color: var(--primary-color); /* 改變選中時的顏色 */
+}
+
+.payment-method label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+    color: var(--neutral-800);
+}
+
+/* 支付細節區塊 (如果您未來需要JS切換顯示) */
+.payment-details {
+    border: 1px dashed var(--neutral-300);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-4);
+}
+
+.payment-icons {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    justify-content: center;
+}
+
+.payment-icon {
+    height: 24px;
+    opacity: 0.7;
+}
+
+.payment-qrcode-container {
+    text-align: center;
+    padding: var(--space-4);
+}
+
+.payment-qrcode {
+    width: 150px;
+    height: 150px;
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-3);
+}
+
+.payment-instruction {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+}
+
+.apple-pay-button-container {
+    text-align: center;
+    margin-top: var(--space-4);
+}
+
+.apple-pay-button {
+    background-color: black;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+}
+
+.apple-pay-button:hover {
+    opacity: 0.9;
+}
+
+.apple-pay-text::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12.022 0C10.742 0 8.868 1.488 8.006 1.488c-.863 0-1.748-.847-2.915-.847-1.168 0-2.316.969-2.914 2.128-.588 1.15-.369 2.805.811 3.996 1.18 1.192 2.766 1.83 3.934 1.83 1.168 0 2.062-.733 2.915-.733.863 0 1.956.733 3.203.733 1.246 0 2.227-.864 2.915-2.023.689-1.15.53-2.61-.31-3.791-.84-.863-2.043-1.427-3.153-1.427zM12.022 0"/></svg>'); /* Apple logo SVG */
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* 表單動作按鈕 */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-4);
+}
+
+/* ========== 按鈕樣式 (一般按鈕) ========== */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-text {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-text:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.btn-block {
+    width: 100%;
+    margin-bottom: var(--space-2);
+}
+.btn-secondary { /* 為訂單確認頁面的 "繼續購物" 按鈕新增樣式 */
+    background-color: var(--neutral-200);
+    color: var(--neutral-800);
+    border: 1px solid var(--neutral-400);
+}
+.btn-secondary:hover {
+    background-color: var(--neutral-300);
+    color: var(--neutral-900);
+}
+
+/* 警示訊息 */
+.alert {
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.alert-danger {
+    background-color: rgba(244, 67, 54, 0.1); /* 使用 --error 變量，透明度 */
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+
+/* ========== 訂單確認頁面特有樣式 ========== */
+.confirmation-content {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.confirmation-header {
+    text-align: center;
+    margin-bottom: var(--space-4);
+}
+
+.confirmation-icon {
+    font-size: 4rem;
+    color: var(--success);
+    margin-bottom: var(--space-2);
+}
+
+.confirmation-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin-bottom: var(--space-2);
+}
+
+.confirmation-message {
+    font-size: 1.1rem;
+    color: var(--neutral-700);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.order-details, .delivery-info {
+    background-color: var(--neutral-50);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: inset 0 0 0 1px var(--neutral-200);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+    font-size: 1rem;
+}
+
+.info-label {
+    font-weight: 500;
+    color: var(--neutral-700);
+}
+
+.info-value {
+    color: var(--neutral-900);
+    text-align: right;
+    word-break: break-all; /* 防止長文字溢出 */
+}
+
+.confirmation-items {
+    border-top: 1px solid var(--neutral-200);
+    padding-top: var(--space-4);
+}
+
+.subsection-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    margin-bottom: var(--space-3);
+}
+
+/* 訂單確認頁的按鈕動作區塊 */
+.confirmation-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center; /* 居中對齊按鈕 */
+    margin-top: var(--space-4);
+}
+
+
+/* ========== 推薦商品區域 (在結帳頁面通常不顯示，但CSS保留) ========== */
+.recommendations-section {
+    margin-top: var(--space-6);
+    padding: var(--space-5) 0;
+    border-radius: 20px;
+    background-color: var(--neutral-50);
+}
+
+.section-title { /* 已在表單區段中定義過，這裡為推薦商品區塊重定義 */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    color: var(--neutral-900);
+    text-align: center;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+}
+
+.recommendation-card {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-2);
+}
+
+.recommendation-image-container {
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.recommendation-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.recommendation-card:hover .recommendation-image {
+    transform: scale(1.1);
+}
+
+.add-to-cart-btn {
+    position: absolute;
+    bottom: var(--space-2);
+    right: var(--space-2);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow-2);
+    transition: all var(--transition-fast);
+}
+
+.add-to-cart-btn:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.1);
+}
+
+.recommendation-details {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.recommendation-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1.4;
+    min-height: 2.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.recommendation-restaurant {
+    font-size: 0.875rem;
+    color: var(--neutral-600);
+    margin: var(--space-1) 0;
+    flex-grow: 1;
+}
+
+.recommendation-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.125rem;
+    margin-top: auto;
+    padding-top: var(--space-2);
+}
+
+
+/* ========== 響應式設計 ========== */
+@media (max-width: 992px) {
+    .cart-content, .checkout-content {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-sidebar, .checkout-sidebar {
+        position: static;
+        margin-top: var(--space-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-item {
+        grid-template-columns: 100px 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .cart-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .item-image {
+        margin: 0 auto var(--space-2);
+    }
+
+    .item-controls {
+        align-items: center;
+    }
+    .checkout-item { /* 小螢幕下訂單摘要內的商品顯示 */
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: var(--space-2);
+    }
+    .checkout-item .item-info,
+    .checkout-item .item-price,
+    .checkout-item .item-subtotal {
+        width: 100%;
+        text-align: center;
+        margin-bottom: var(--space-1);
+    }
+    .confirmation-actions {
+        flex-direction: column; /* 按鈕在小螢幕上垂直堆疊 */
+        gap: var(--space-2);
+    }
+}

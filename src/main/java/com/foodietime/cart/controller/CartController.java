@@ -26,6 +26,11 @@ public class CartController {
 //        return "front/cart/cart";
 //    }
 
+    @GetMapping("login")
+    public String login() {
+        return "front/member/login";
+    }
+
     @GetMapping("checkout")
     public String checkout(Model model) {
         return "front/cart/checkout";
