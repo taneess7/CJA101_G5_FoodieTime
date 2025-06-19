@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>結帳資訊 - FoodieTime 食刻</title>
   <meta name="description" content="FoodieTime 食刻結帳 - 安全便捷的付款流程。">
+  <!-- 引入公共樣式和購物車專用樣式 -->
   <link rel="stylesheet" th:href="@{/css/common/style.css}">
-  <link rel="stylesheet" th:href="@{/css/front/cart/cart.css}">
+  <link rel="stylesheet" th:href="@{/css/front/cart/checkout.css}">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
   <!-- PWA 支援 -->
   <link rel="manifest" href="./manifest.json">
@@ -48,7 +49,6 @@
   </div>
 </header>
 
-
 <main class="cart-page">
   <div class="container">
     <!-- 購物流程指示器 -->
@@ -73,184 +73,102 @@
 
       <div class="checkout-content">
         <div class="checkout-form">
-          <form id="checkout-form" th:action="@{/cart/order-confirmation}" method="post">
-            <!-- 聯絡資訊 -->
+          <!-- 錯誤訊息顯示區 -->
+          <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
+
+
+          <!-- 結帳表單，提交至 /orders/placeOrder -->
+          <form id="checkout-form" th:action="@{/orders/placeOrder}" method="post">
+            <!-- 收件資訊 - 對應 OrdersVO 的 ordAddr -->
             <div class="form-section">
-              <h2 class="section-title">聯絡資訊</h2>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="contact-name">姓名</label>
-                  <input type="text" id="contact-name" name="name" required>
-                </div>
-                <div class="form-group">
-                  <label for="contact-phone">電話</label>
-                  <input type="tel" id="contact-phone" name="phone" required>
-                </div>
-              </div>
+              <h2 class="section-title">收件資訊</h2>
               <div class="form-group">
-                <label for="contact-email">電子郵件</label>
-                <input type="email" id="contact-email" name="email" required>
+                <label for="ordAddr">外送地址</label>
+                <input type="text" id="ordAddr" name="ordAddr" placeholder="請輸入完整外送地址" required>
               </div>
             </div>
 
-            <!-- 配送資訊 -->
-            <div class="form-section">
-              <h2 class="section-title">配送資訊</h2>
-              <div class="form-group">
-                <label for="delivery-address">地址</label>
-                <input type="text" id="delivery-address" name="address" required>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="delivery-city">城市</label>
-                  <input type="text" id="delivery-city" name="city" required>
-                </div>
-                <div class="form-group">
-                  <label for="delivery-zip">郵遞區號</label>
-                  <input type="text" id="delivery-zip" name="zip" required>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="delivery-time">希望送達時間</label>
-                <input type="datetime-local" id="delivery-time" name="delivery-time" required>
-              </div>
-              <div class="form-group">
-                <label for="delivery-note">備註 (選填)</label>
-                <textarea id="delivery-note" name="notes" rows="3" placeholder="特殊要求、過敏原資訊等"></textarea>
-              </div>
-            </div>
-
-            <!-- 飲食需求 -->
-            <div class="form-section">
-              <h2 class="section-title">飲食需求 (選填)</h2>
-              <div class="dietary-options">
-                <div class="dietary-option">
-                  <input type="checkbox" id="vegetarian" name="dietary" value="vegetarian">
-                  <label for="vegetarian">素食</label>
-                </div>
-                <div class="dietary-option">
-                  <input type="checkbox" id="vegan" name="dietary" value="vegan">
-                  <label for="vegan">純素</label>
-                </div>
-                <div class="dietary-option">
-                  <input type="checkbox" id="gluten-free" name="dietary" value="gluten-free">
-                  <label for="gluten-free">無麩質</label>
-                </div>
-                <div class="dietary-option">
-                  <input type="checkbox" id="low-carb" name="dietary" value="low-carb">
-                  <label for="low-carb">低碳水</label>
-                </div>
-                <div class="dietary-option">
-                  <input type="checkbox" id="low-sugar" name="dietary" value="low-sugar">
-                  <label for="low-sugar">低糖</label>
-                </div>
-              </div>
-            </div>
-
-            <!-- 付款方式 -->
+            <!-- 付款方式 - 對應 OrdersVO 的 payMethod -->
             <div class="form-section">
               <h2 class="section-title">付款方式</h2>
               <div class="payment-methods">
                 <div class="payment-method">
-                  <input type="radio" id="credit-card" name="payment-method" value="credit-card" checked>
-                  <label for="credit-card">信用卡</label>
+                  <input type="radio" id="payMethod1" name="payMethod" value="1" checked>
+                  <label for="payMethod1">信用卡</label>
                 </div>
                 <div class="payment-method">
-                  <input type="radio" id="line-pay" name="payment-method" value="line-pay">
-                  <label for="line-pay">Line Pay</label>
+                  <input type="radio" id="payMethod2" name="payMethod" value="2">
+                  <label for="payMethod2">貨到付款</label>
                 </div>
-                <div class="payment-method">
-                  <input type="radio" id="apple-pay" name="payment-method" value="apple-pay">
-                  <label for="apple-pay">Apple Pay</label>
-                </div>
-                <div class="payment-method">
-                  <input type="radio" id="cash" name="payment-method" value="cash">
-                  <label for="cash">貨到付款</label>
-                </div>
-              </div>
-
-              <!-- 信用卡資訊 -->
-              <div id="credit-card-form" class="payment-details">
-                <div class="form-group">
-                  <label for="card-number">卡號</label>
-                  <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456">
-                </div>
-                <div class="form-group">
-                  <label for="card-holder">持卡人姓名</label>
-                  <input type="text" id="card-holder" name="card-holder" placeholder="姓名">
-                </div>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="expiry-date">到期日</label>
-                    <input type="text" id="expiry-date" name="expiry" placeholder="MM/YY">
-                  </div>
-                  <div class="form-group">
-                    <label for="cvv">CVV</label>
-                    <input type="text" id="cvv" name="cvv" placeholder="123">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Line Pay 支付介面 -->
-              <div id="line-pay-form" class="payment-details" style="display: none;">
-                <div class="payment-qrcode-container">
-                  <img th:src="@{/images/payment/line-pay-qrcode.svg}" alt="Line Pay QR Code" class="payment-qrcode">
-                  <p class="payment-instruction">請使用 Line 應用程式掃描上方 QR Code 完成支付</p>
-                </div>
-              </div>
-
-              <!-- Apple Pay 支付介面 -->
-              <div id="apple-pay-form" class="payment-details" style="display: none;">
-                <div class="apple-pay-button-container">
-                  <button type="button" class="apple-pay-button">
-                    <span class="apple-pay-text">使用 Apple Pay 支付</span>
-                  </button>
-                  <p class="payment-instruction">點擊按鈕使用 Apple Pay 完成支付</p>
-                </div>
-              </div>
-
-              <!-- 支援的支付方式圖示 -->
-              <div class="payment-icons">
-                <img th:src="@{/images/payment/visa.svg}" alt="Visa" class="payment-icon">
-                <img th:src="@{//payment/mastercard.svg}" alt="MasterCard" class="payment-icon">
-                <img th:src="@{/images/payment/jcb.svg}" alt="JCB" class="payment-icon">
-                <img th:src="@{/images/payment/line-pay.svg}" alt="Line Pay" class="payment-icon">
-                <img th:src="@{/images/payment/apple-pay.svg}" alt="Apple Pay" class="payment-icon">
+                <!-- 可以根據需求增加其他付款方式，並更新 OrdersVO -->
               </div>
             </div>
 
-            <!-- 按鈕 - 修改為頁面跳轉 -->
+            <!-- 取餐方式 - 對應 OrdersVO 的 deliver -->
+            <div class="form-section">
+              <h2 class="section-title">取餐方式</h2>
+              <div class="payment-methods"> <!-- 使用同樣的樣式類別 -->
+                <div class="payment-method">
+                  <input type="radio" id="deliver1" name="deliver" value="1" checked>
+                  <label for="deliver1">外送</label>
+                </div>
+                <div class="payment-method">
+                  <input type="radio" id="deliver2" name="deliver" value="2">
+                  <label for="deliver2">自取</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 訂單備註 - 對應 OrdersVO 的 comment -->
+            <div class="form-section">
+              <h2 class="section-title">訂單備註 (選填)</h2>
+              <div class="form-group">
+                <label for="comment"></label><textarea id="comment" name="comment" rows="3" placeholder="特殊要求、過敏原資訊等"></textarea>
+              </div>
+            </div>
+
+            <!-- 按鈕 -->
             <div class="form-actions">
               <a th:href="@{/cart/cart}" class="btn btn-text">返回購物車</a>
-              <button type="submit" class="btn btn-primary">確認訂單</button>
+              <button type="submit" class="btn btn-primary">確認下單</button>
             </div>
           </form>
         </div>
 
-        <div class="checkout-sidebar">
-          <div class="order-summary">
+        <!-- 訂單摘要側邊欄 -->
+        <div class="checkout-sidebar cart-sidebar">
+          <div class="order-summary cart-summary">
             <h2 class="summary-title">訂單摘要</h2>
             <div id="checkout-items" class="checkout-items">
-              <!-- 結帳項目將由JavaScript動態生成 -->
+              <!-- 結帳項目由Thymeleaf動態生成 -->
+              <div th:each="item : ${cartListData}" class="checkout-item">
+                <div class="item-info">
+                  <span class="item-name" th:text="${item.product.prodName}">商品名稱</span>
+                </div>
+                <span class="item-price" th:text="${item.prodN} + ' x NT$ ' + ${item.product.prodPrice} +' = '">數量 x 單價</span>
+                <span class="item-subtotal" th:text="'NT$ ' + (${item.prodN} * ${item.product.prodPrice})">小計金額</span>
+              </div>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-row">
               <span>小計</span>
-              <span id="checkout-subtotal">NT$ 0</span>
+              <span id="checkout-subtotal" th:text="'NT$ ' + ${totalAmount}">NT$ 0</span>
             </div>
             <div class="summary-row">
               <span>運費</span>
-              <span id="checkout-shipping">NT$ 0</span>
+              <span id="checkout-shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
             </div>
-            <div class="summary-row discount-row" id="checkout-discount-row">
+            <!-- 折扣行，如果沒有折扣可以隱藏 -->
+            <div class="summary-row discount-row" th:if="${couponDiscount != null and couponDiscount > 0}">
               <span>折扣</span>
-              <span id="checkout-discount">-NT$ 0</span>
+              <span id="checkout-discount" th:text="'-NT$ ' + ${couponDiscount}">-NT$ 0</span>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-row total-row">
               <span>總計</span>
-              <span id="checkout-total">NT$ 0</span>
+              <span id="checkout-total" th:text="'NT$ ' + ${finalTotal}">NT$ 0</span>
             </div>
+
           </div>
         </div>
       </div>
@@ -307,7 +225,6 @@
     </div>
   </div>
 </footer>
-
 
 <script th:src="@{/js/common/main.js}"></script>
 <script th:src="@{/js/front/cart/checkout.js}"></script>

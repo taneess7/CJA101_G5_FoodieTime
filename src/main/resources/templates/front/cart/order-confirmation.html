@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>訂單確認 - FoodieTime 食刻</title>
   <meta name="description" content="FoodieTime 食刻訂單確認 - 您的訂單已成功建立。">
-  <link rel="stylesheet" th:href="@{css/common/style.css}">
-  <link rel="stylesheet" th:href="@{css/front/cart/cart.css}">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/front/cart/order-confirmation.css}"> <!-- 引入專屬 CSS -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
   <!-- PWA 支援 -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#FF5722">
-  <link rel="apple-touch-icon" th:href="@{images/icons/icon-192x192.png}">
+  <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
 <!-- 保持原有的header -->
@@ -19,7 +19,7 @@
   <div class="header-container">
     <div class="logo-container">
       <a href="index.html" class="logo">
-        <img th:src="@{images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+        <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
         <span class="logo-text">FoodieTime 食刻</span>
       </a>
     </div>
@@ -35,11 +35,11 @@
     </div>
     <nav class="main-nav">
       <ul class="nav-list">
-        <li class="nav-item"><a th:href="@{front/map.html}" class="nav-link">地圖</a></li>
-        <li class="nav-item"><a th:href="@{front/group-order.html}" class="nav-link">團購</a></li>
-        <li class="nav-item"><a th:href="@{front/deals.html}" class="nav-link">優惠</a></li>
-        <li class="nav-item"><a th:href="@{front/cart.html}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
-        <li class="nav-item"><a th:href="@{front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
+        <li class="nav-item"><a th:href="@{/front/map.html}" class="nav-link">地圖</a></li>
+        <li class="nav-item"><a th:href="@{/front/group-order.html}" class="nav-link">團購</a></li>
+        <li class="nav-item"><a th:href="@{/front/deals.html}" class="nav-link">優惠</a></li>
+        <li class="nav-item"><a th:href="@{/cart/cart}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
+        <li class="nav-item"><a th:href="@{/front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
       </ul>
       <button class="menu-toggle" aria-label="開啟選單">
         <i class="material-icons-outlined">menu</i>
@@ -47,7 +47,6 @@
     </nav>
   </div>
 </header>
-
 
 <main class="cart-page">
   <div class="container">
@@ -67,8 +66,14 @@
       </div>
     </div>
 
-    <!-- 訂單確認 -->
-    <div class="confirmation-container">
+    <!-- 錯誤訊息顯示區 -->
+    <!-- 錯誤訊息顯示區 -->
+    <!-- 檢查 Model 中是否存在 'error' 屬性 -->
+    <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
+
+
+    <!-- 訂單確認內容 (只有當 order 物件存在時才顯示) -->
+    <div class="confirmation-container" th:if="${order != null}">
       <div class="confirmation-content">
         <div class="confirmation-header">
           <i class="material-icons-outlined confirmation-icon">check_circle</i>
@@ -81,46 +86,72 @@
           <div class="order-info">
             <div class="info-row">
               <span class="info-label">訂單編號</span>
-              <span id="order-number" class="info-value"></span>
+              <span id="order-number" class="info-value" th:text="${order.ordId}"></span>
             </div>
             <div class="info-row">
               <span class="info-label">訂單日期</span>
-              <span id="order-date" class="info-value"></span>
+              <span id="order-date" class="info-value" th:text="${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
             </div>
+            <!-- 預計送達日期如果 OrdersVO 沒有此欄位則不顯示或給預設值 -->
+            <!--
             <div class="info-row">
               <span class="info-label">預計送達</span>
-              <span id="delivery-date" class="info-value"></span>
+              <span id="delivery-date" class="info-value">XXXX-XX-XX</span>
             </div>
+            -->
             <div class="info-row">
               <span class="info-label">付款方式</span>
-              <span id="payment-method" class="info-value"></span>
+              <span id="payment-method" class="info-value">
+                <span th:switch="${order.payMethod}">
+                    <span th:case="1">信用卡</span>
+                    <span th:case="2">貨到付款</span>
+                    <span th:case="*">未知</span>
+                </span>
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">取餐方式</span>
+              <span id="delivery-method" class="info-value">
+                    <span th:switch="${order.deliver}">
+                        <span th:case="1">外送</span>
+                        <span th:case="2">自取</span>
+                        <span th:case="*">未知</span>
+                    </span>
+                </span>
             </div>
           </div>
 
           <div class="confirmation-items">
             <h3 class="subsection-title">訂購項目</h3>
             <div id="confirmation-items-list">
-              <!-- 確認項目將由JavaScript動態生成 -->
+              <!-- 使用 th:each 迭代訂單明細 -->
+              <div th:each="ordDet : ${order.ordDet}" class="checkout-item">
+                <div class="item-info">
+                  <span class="item-name" th:text="${ordDet.product.prodName}">商品名稱</span>
+                </div>
+                <span class="item-price" th:text="${ordDet.prodQty} + ' x NT$ ' + ${ordDet.prodPrice}">數量 x 單價</span>
+                <span class="item-subtotal" th:text="'NT$ ' + (${ordDet.prodQty} * ${ordDet.prodPrice})">小計金額</span>
+              </div>
             </div>
           </div>
 
           <div class="confirmation-summary">
             <div class="summary-row">
               <span>小計</span>
-              <span id="confirmation-subtotal">NT$ 0</span>
+              <span id="confirmation-subtotal" th:text="'NT$ ' + ${order.ordSum}">NT$ 0</span>
             </div>
             <div class="summary-row">
               <span>運費</span>
-              <span id="confirmation-shipping">NT$ 0</span>
+              <span id="confirmation-shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
             </div>
-            <div class="summary-row discount-row" id="confirmation-discount-row">
+            <div class="summary-row discount-row" th:if="${order.promoDiscount > 0 or order.couponDiscount > 0}">
               <span>折扣</span>
-              <span id="confirmation-discount">-NT$ 0</span>
+              <span id="confirmation-discount" th:text="'-NT$ ' + (${order.promoDiscount + order.couponDiscount})">-NT$ 0</span>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-row total-row">
               <span>總計</span>
-              <span id="confirmation-total">NT$ 0</span>
+              <span id="confirmation-total" th:text="'NT$ ' + ${order.actualPayment}">NT$ 0</span>
             </div>
           </div>
         </div>
@@ -129,41 +160,40 @@
           <h2 class="section-title">配送資訊</h2>
           <div class="info-row">
             <span class="info-label">收件人</span>
-            <span id="recipient-name" class="info-value"></span>
+            <span id="recipient-name" class="info-value" th:text="${order.member.memName}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">電話</span>
-            <span id="recipient-phone" class="info-value"></span>
+            <span id="recipient-phone" class="info-value" th:text="${order.member.memTel}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">電子郵件</span>
-            <span id="recipient-email" class="info-value"></span>
+            <span id="recipient-email" class="info-value" th:text="${order.member.memEmail}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">配送地址</span>
-            <span id="delivery-address" class="info-value"></span>
+            <span id="delivery-address" class="info-value" th:text="${order.ordAddr}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">備註</span>
-            <span id="order-notes" class="info-value"></span>
+            <span id="order-notes" class="info-value" th:text="${order.comment != null and order.comment != '' ? order.comment : '無'}"></span>
           </div>
         </div>
 
-        <!-- 修改按鈕為頁面跳轉 -->
         <div class="confirmation-actions">
-          <a href="index.html" class="btn btn-primary">返回首頁</a>
-          <a href="index.html" class="btn btn-secondary">繼續購物</a>
+          <a th:href="@{/}" class="btn btn-primary">返回首頁</a>
+          <a th:href="@{/}" class="btn btn-secondary">繼續購物</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 推薦商品 -->
+  <!-- 推薦商品 (保持原有結構，由JS或Thymeleaf渲染) -->
   <section class="recommendations-section">
     <div class="container">
       <h2 class="section-title">您可能也喜歡</h2>
       <div class="recommendations-grid" id="recommendations">
-        <!-- 推薦商品將由JavaScript動態生成 -->
+        <!-- 推薦商品將由JavaScript或Thymeleaf動態生成 -->
       </div>
     </div>
   </section>
@@ -174,35 +204,35 @@
   <div class="footer-container">
     <div class="footer-top">
       <div class="footer-logo">
-        <img th:src="@{img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+        <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
         <span class="logo-text">FoodieTime 食刻</span>
       </div>
       <div class="footer-nav">
         <div class="footer-nav-group">
           <h4 class="footer-nav-title">功能</h4>
           <ul class="footer-nav-list">
-            <li><a th:href="@{front/map.html}">地圖搜尋</a></li>
-            <li><a th:href="@{front/group-order.html}">團購功能</a></li>
-            <li><a th:href="@{front/deals.html}">比價優惠</a></li>
-            <li><a th:href="@{front/collections.html}">收藏管理</a></li>
+            <li><a th:href="@{/front/map.html}">地圖搜尋</a></li>
+            <li><a th:href="@{/front/group-order.html}">團購功能</a></li>
+            <li><a th:href="@{/front/deals.html}">比價優惠</a></li>
+            <li><a th:href="@{/front/collections.html}">收藏管理</a></li>
           </ul>
         </div>
         <div class="footer-nav-group">
           <h4 class="footer-nav-title">關於我們</h4>
           <ul class="footer-nav-list">
-            <li><a th:href="@{front/about.html}">公司簡介</a></li>
-            <li><a th:href="@{front/team.html}">團隊成員</a></li>
-            <li><a th:href="@{front/careers.html}">加入我們</a></li>
-            <li><a th:href="@{front/press.html}">媒體報導</a></li>
+            <li><a th:href="@{/front/about.html}">公司簡介</a></li>
+            <li><a th:href="@{/front/team.html}">團隊成員</a></li>
+            <li><a th:href="@{/front/careers.html}">加入我們</a></li>
+            <li><a th:href="@{/front/press.html}">媒體報導</a></li>
           </ul>
         </div>
         <div class="footer-nav-group">
           <h4 class="footer-nav-title">幫助</h4>
           <ul class="footer-nav-list">
-            <li><a th:href="@{front/faq.html}">常見問題</a></li>
-            <li><a th:href="@{front/contact.html}">聯絡我們</a></li>
-            <li><a th:href="@{front/terms.html}">使用條款</a></li>
-            <li><a th:href="@{front/privacy.html}">隱私政策</a></li>
+            <li><a th:href="@{/front/faq.html}">常見問題</a></li>
+            <li><a th:href="@{/front/contact.html}">聯絡我們</a></li>
+            <li><a th:href="@{/front/terms.html}">使用條款</a></li>
+            <li><a th:href="@{/front/privacy.html}">隱私政策</a></li>
           </ul>
         </div>
       </div>
@@ -219,7 +249,8 @@
   </div>
 </footer>
 
-<script th:src="@{js/common/main.js}"></script>
-<script th:src="@{js/front/cart/order-confirmation.js}"></script>
+<script th:src="@{/js/common/main.js}"></script>
+<!-- 訂單確認頁面的 JS 如果還有其他互動功能，請保留 -->
+<script th:src="@{/js/front/cart/order-confirmation.js}"></script>
 </body>
 </html>
