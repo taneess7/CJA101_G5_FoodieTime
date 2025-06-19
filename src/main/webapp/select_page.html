@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貼文管理選單</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2.25rem; /* Tailwind: text-4xl */
+            font-weight: 700; /* Tailwind: font-bold */
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-field {
+            width: calc(100% - 20px);
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #f97316; /* Tailwind: orange-500 */
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 1rem; /* Space between buttons */
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none; /* For links */
+            color: white; /* Default button text color */
+            display: inline-flex; /* For icon and text alignment */
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-primary {
+            background-color: #f97316; /* Tailwind: orange-500 */
+        }
+        .btn-primary:hover {
+            background-color: #ea580c; /* Tailwind: orange-600 */
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* Tailwind: gray-500 */
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Tailwind: gray-600 */
+            transform: translateY(-2px);
+        }
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        .error-message {
+            color: #ef4444; /* Tailwind: red-500 */
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>貼文管理選單</h1>
+
+        <form th:action="@{/post/getOne_For_Display}" method="post" class="form-group">
+            <input type="text" name="postId" placeholder="輸入貼文ID查詢" class="input-field" />
+            <button type="submit" class="btn btn-primary mt-4 w-full">
+                <i class="fas fa-search"></i> 查詢單一貼文
+            </button>
+        </form>
+
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <div class="btn-group">
+            <a th:href="@{/post/addPost}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> 新增貼文
+            </a>
+
+            <a th:href="@{/post/listAllPost}" class="btn btn-secondary">
+                <i class="fas fa-list"></i> 查看所有貼文
+            </a>
+            
+            <a th:href="@{/post}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> 前台論壇首頁
+            </a>
+        </div>
+    </div>
+</body>
+</html>

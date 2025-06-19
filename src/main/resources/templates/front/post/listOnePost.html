@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title th:text="${postVO.postTitle}">貼文內容 - FoodieTime 食刻</title>
+<meta name="description" content="在FoodieTime食刻討論區分享美食體驗，與美食愛好者交流互動">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link rel="stylesheet" th:href="@{/css/front/post/post.css}">
+</head>
+<body>
+	<!-- 頁首 -->
+
+	<!--     Header -->
+	<header class="app-header">
+		<div class="header-container">
+			<div class="logo-container">
+				<a th:href="@{/index}" class="logo">
+					<div
+						class="logo-img bg-orange-500 text-white flex items-center justify-center text-lg font-bold">
+						🍽️</div> <span class="logo-text">FoodieTime 食刻</span>
+				</a>
+			</div>
+			<div class="search-container">
+				<div class="search-bar">
+					<i class="material-icons-outlined search-icon">search</i> <input
+						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+					<i class="material-icons-outlined mic-icon">mic</i> <i
+						class="material-icons-outlined camera-icon">photo_camera</i>
+				</div>
+			</div>
+			<nav class="main-nav">
+				<ul class="nav-list">
+					<li class="nav-item"><a th:href="@{/map}" class="nav-link">地圖</a></li>
+					<li class="nav-item"><a th:href="@{/group-order}"
+						class="nav-link">團購</a></li>
+					<li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
+					<li class="nav-item"><a th:href="@{/login}"
+						class="nav-link login-btn">登入/註冊</a></li>
+				</ul>
+				<button class="menu-toggle" aria-label="開啟選單">
+					<i class="material-icons-outlined">menu</i>
+				</button>
+			</nav>
+		</div>
+	</header>
+
+	<!-- 麵包屑導航 -->
+<section class="breadcrumb">
+    <div class="container">
+        <a th:href="@{/post/}" class="breadcrumb-link">討論區</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-category" 
+              th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">分類名稱</span>
+<!--         <span class="breadcrumb-separator">/</span> -->
+<!--         <span class="breadcrumb-current" th:text="${postVO.postTitle}">貼文標題</span> -->
+    </div>
+</section>
+
+	<!-- 主要內容 -->
+	<main class="main-content">
+		<div class="container">
+			<div class="post-detail-card">
+				<div class="post-header">
+					<div class="post-category"
+						th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">分類</div>
+					<h1 class="post-title" th:text="${postVO.postTitle}">貼文標題</h1>
+					<div class="post-meta">
+						<span class="author-name"
+							th:text="${postVO.member != null ? postVO.member.memName : '匿名'}">作者</span>
+						<span class="post-time"
+							th:text="${#dates.format(postVO.postDate, 'yyyy-MM-dd HH:mm')}">發文時間</span>
+					</div>
+				</div>
+
+				<div class="post-content">
+					<p th:text="${postVO.postContent}">貼文內容</p>
+				</div>
+				<!-- 新增：功能按鈕 -->
+				<div class="post-actions" style="margin: 16px 0;">
+					<button class="btn btn-primary" onclick="editPost()" type="button">修改貼文</button>
+					<button class="btn btn-danger" onclick="reportPost()" type="button">檢舉貼文</button>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+<script th:src="@{/js/front/post/post.js}"></script>
+
+</script>
+
+</html>

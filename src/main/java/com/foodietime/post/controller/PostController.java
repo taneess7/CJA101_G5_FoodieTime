@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.foodietime.post.model.PostService;
 import com.foodietime.post.model.PostVO;
+import com.foodietime.postcategory.model.PostCategoryService;
+import com.foodietime.postcategory.model.PostCategoryVO;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+
 
 @Controller
 @RequestMapping("/post")
@@ -24,6 +27,11 @@ public class PostController {
 
 	@Autowired
 	PostService postservice;
+	
+	@Autowired
+	PostCategoryService postCategoryservice;
+	
+	
 //	@Autowired
 //	PostCategoryService postcategory;
 
@@ -129,38 +137,52 @@ public class PostController {
 			id = Integer.valueOf(postId);
 		} catch (NumberFormatException e) {
 			model.addAttribute("errorMessage", "貼文編號格式不正確");
-			return "back-end/post/select_page";
+			return "front/post/listOnePost";
 		}
 
 		/*************************** 2.開始查詢資料 *****************************************/
 		PostVO postVO = postservice.getOnePost(id);
 		if (postVO == null) {
 			model.addAttribute("errorMessage", "查無資料");
-			return "back-end/post/select_page";
+			return "front/post/listOnePost";
 		}
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("postVO", postVO);
-		return "back-end/post/listOnePost";
+		return "front/post/listOnePost";
+	}
+	
+	@GetMapping("/one")
+	public String getOnePost(@RequestParam("postId") Integer postId, ModelMap model) {
+	    PostVO postVO = postservice.getOnePost(postId);
+	    model.addAttribute("postVO", postVO);
+	    return "front/post/listOnePost";
 	}
 
 	// ================ GET ALL 查詢所有貼文 ================
-	@GetMapping("/listAllPost")
+	@GetMapping("/")
 	public String listAllPost(ModelMap model) {
 
 		/**************************** 1.接收請求參數 (無參數)************************************/
 
 		/*************************** 2.開始查詢資料 *****************************************/
 		List<PostVO> list = postservice.getAll();
+		List<PostCategoryVO> categories = postCategoryservice.getAll();
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
-		model.addAttribute("postListData", list);
-		return "back-end/post/listAllPost";
+//		model.addAttribute("postListData", list);
+		model.addAttribute("threads", list);
+		model.addAttribute("categories", categories);
+		return "front/post/listallpost";
+	}
+	@GetMapping
+	public String postHome(ModelMap model) {
+	    return listAllPost(model); // 重定向到 listAllPost 方法
 	}
 
-	// ================ 選擇頁面 ================
-	@GetMapping("/select_page")
-	public String select_page() {
-		return "back-end/post/select_page";
-	}
+	 //================ 選擇頁面 ================
+	 @GetMapping("/select_page")
+	 public String select_page() {
+	 	return "front/post/select_page";
+	 }
 }
