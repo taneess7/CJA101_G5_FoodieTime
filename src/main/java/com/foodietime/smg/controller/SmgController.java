@@ -292,8 +292,5 @@ public class SmgController {
     public String adminorderspayments() {
     	return "admin/smg/admin-orders-payments"; 
     }
-    @GetMapping("/admin-service-tickets")
-    public String adminserviceticketss() {
-    	return "admin/smg/admin-service-tickets"; 
-    }
+   
 }

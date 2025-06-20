@@ -44,6 +44,33 @@ public class ExceptionAspect {
         }
     }
     
+    /**
+     * 針對團購商品 Controller 進行異常處理
+     * 攔截 com.foodietime.gbprod.controller 包下所有方法執行
+     */
+    @Around("execution(* com.foodietime.gbprod.controller..*(..))")
+    public Object handleGbprodControllerExceptions(ProceedingJoinPoint joinPoint) throws Throwable {
+        
+        String methodName = joinPoint.getSignature().getName();
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        
+        try {
+            logger.info("執行方法: {}.{}", className, methodName);
+            
+            // 執行原始方法
+            Object result = joinPoint.proceed();
+            
+            logger.info("方法執行成功: {}.{}", className, methodName);
+            return result;
+            
+        } catch (Exception e) {
+            logger.error("方法執行異常: {}.{}, 錯誤訊息: {}", className, methodName, e.getMessage(), e);
+            
+            // 簡化的異常處理
+            return handleSimpleException(joinPoint, e, methodName);
+        }
+    }
+    
     // 註解：未來可擴展到全專案的異常處理
     /*
     @Around("execution(* com.foodietime..controller..*(..))")
@@ -66,9 +93,11 @@ public class ExceptionAspect {
     */
     
     /**
-     * 簡化的異常處理 - 只針對 SMG Controller
+     * 簡化的異常處理 - 針對 SMG 和 Gbprod Controller
      */
     private Object handleSimpleException(ProceedingJoinPoint joinPoint, Exception e, String methodName) {
+        
+        String className = joinPoint.getTarget().getClass().getSimpleName();
         
         // 取得方法參數，尋找 Model 物件
         Object[] args = joinPoint.getArgs();
@@ -86,16 +115,28 @@ public class ExceptionAspect {
         // 簡化的錯誤訊息
         String errorMessage = "系統發生錯誤: " + e.getMessage();
         
-        // 簡化的頁面路由 - 根據方法名稱決定
+        // 根據控制器類別和方法名稱決定返回的錯誤頁面
         String errorView;
-        if (methodName.contains("login")) {
-            errorView = "admin/smg/admin-login";
-        } else if (methodName.contains("edit") || methodName.contains("update")) {
-            errorView = "admin/smg/admin-users-edit";
-        } else if (methodName.contains("add") || methodName.contains("create")) {
-            errorView = "admin/smg/admin-users-add";
+        if (className.contains("gbservlet") || className.contains("Gbprod")) {
+            // 團購商品相關錯誤處理
+            if (methodName.contains("detail")) {
+                errorView = "front/gb/gbindex"; // 詳情頁面錯誤返回首頁
+            } else if (methodName.contains("search") || methodName.contains("products") || methodName.contains("all")) {
+                errorView = "front/gb/gball"; // 列表頁面錯誤返回列表頁
+            } else {
+                errorView = "front/gb/gbindex"; // 預設返回團購首頁
+            }
         } else {
-            errorView = "admin/smg/admin-dashboard";
+            // SMG 後台管理相關錯誤處理
+            if (methodName.contains("login")) {
+                errorView = "admin/smg/admin-login";
+            } else if (methodName.contains("edit") || methodName.contains("update")) {
+                errorView = "admin/smg/admin-users-edit";
+            } else if (methodName.contains("add") || methodName.contains("create")) {
+                errorView = "admin/smg/admin-users-add";
+            } else {
+                errorView = "admin/smg/admin-dashboard";
+            }
         }
         
         // 將錯誤訊息加入到適當的物件中
@@ -107,7 +148,7 @@ public class ExceptionAspect {
             redirectAttributes.addFlashAttribute("error", errorMessage);
         }
         
-        logger.info("異常處理完成，方法: {}, 返回錯誤頁面: {}", methodName, errorView);
+        logger.info("異常處理完成，類別: {}, 方法: {}, 返回錯誤頁面: {}", className, methodName, errorView);
         return errorView;
     }
     
