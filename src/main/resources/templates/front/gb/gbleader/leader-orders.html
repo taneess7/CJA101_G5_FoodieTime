@@ -162,14 +162,14 @@
     <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="../gp/loginindex.html">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="../gp/loginindex.html">首頁</a>
+                        <a class="nav-link" th:href="@{/gb/leaderindex}">首頁</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">熱門團購</a>
@@ -181,10 +181,10 @@
                         <a class="nav-link" href="#">即將結束</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
-                          <i class="bi bi-person-badge"></i> 我是團長
-                      </a>
-                  </li>
+                      	<a class="nav-link" th:href="@{/gb/leader}">
+						    <i class="bi bi-person-badge"></i> 我是團長
+						</a>
+                  	</li>
                 </ul>
                 <div class="d-flex align-items-center">
                     

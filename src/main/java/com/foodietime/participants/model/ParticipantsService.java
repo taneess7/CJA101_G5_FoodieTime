@@ -15,7 +15,7 @@ public class ParticipantsService {
 	@Autowired
 	private ParticipantsRepository participantsRepository;
 	
-	// 查詢所有會員
+	// 查詢所有參與者
     public List<ParticipantsVO> getAll() {
         return participantsRepository.findAll();
     }

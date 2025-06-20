@@ -186,7 +186,7 @@ body {
 	<nav
 		class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
 		<div class="container">
-			<a class="navbar-brand" href="../gp/loginindex.html">團購樂</a>
+			<a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
 			<button class="navbar-toggler" type="button"
 				data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false"
@@ -196,14 +196,13 @@ body {
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav me-auto">
 					<li class="nav-item"><a class="nav-link"
-						href="../gp/loginindex.html">首頁</a></li>
+						th:href="@{/gb/leaderindex}">首頁</a></li>
 					<li class="nav-item"><a class="nav-link" href="#">熱門團購</a></li>
 					<li class="nav-item"><a class="nav-link" href="#">最新上架</a></li>
 					<li class="nav-item"><a class="nav-link" href="#">即將結束</a></li>
-					<li class="nav-item"><a class="nav-link" href="#"
-						data-bs-toggle="modal" data-bs-target="#organizerModal"> <i
-							class="bi bi-person-badge"></i> 我是團長
-					</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/gb/leader}">
+						    <i class="bi bi-person-badge"></i> 我是團長
+						</a>
 				</ul>
 				<div class="d-flex align-items-center">
 
@@ -352,82 +351,82 @@ body {
 						</div>
 					</div>
 
-<!-- Edit Order Modal -->
-<div class="modal fade" id="editCaseModal" tabindex="-1" aria-labelledby="editCaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editCaseModalLabel">編輯團購</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <!-- 團購狀態 -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="editCaseStatus" class="form-label">團購狀態</label>
-                                <select class="form-select" id="editCaseStatus">
-                                    <option value="pending">待開團</option>
-                                    <option value="recruiting">招募中</option>
-                                    <option value="closing soon">即將截止</option>
-                                    <option value="group opened">已開團</option>
-                                    <option value="closed">已截止</option>
-                                    <option value="cancelled">已取消</option>
-                                    <option value="group failed">開團失敗</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- 最低成團數量 -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="minGroupSize" class="form-label">最低成團數量</label>
-                                <input type="number" class="form-control" id="minGroupSize" min="1" placeholder="請輸入最低成團數量">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- 開始時間 -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="startTime" class="form-label">開始時間</label>
-                                <input type="datetime-local" class="form-control" id="startTime">
-                            </div>
-                        </div>
-                        
-                        <!-- 結束時間 -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="endTime" class="form-label">結束時間</label>
-                                <input type="datetime-local" class="form-control" id="endTime">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 取消原因 -->
-                    <div class="mb-3">
-                        <label for="editCaseNote" class="form-label">取消原因</label>
-                        <textarea class="form-control" id="editCaseNote" rows="3" placeholder="請輸入取消原因.."></textarea>
-                    </div>
-
-                    <!-- 通知會員 -->
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="notifyMember">
-                        <label class="form-check-label" for="notifyMember">
-                            通知會員團購狀態變更
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="saveOrderChanges()">儲存變更</button>
-            </div>
-        </div>
-    </div>
-</div>
+					<!-- Edit Order Modal -->
+					<div class="modal fade" id="editCaseModal" tabindex="-1" aria-labelledby="editCaseModalLabel" aria-hidden="true">
+					    <div class="modal-dialog modal-lg">
+					        <div class="modal-content">
+					            <div class="modal-header">
+					                <h5 class="modal-title" id="editCaseModalLabel">編輯團購</h5>
+					                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					            </div>
+					            <div class="modal-body">
+					                <form>
+					                    <div class="row">
+					                        <!-- 團購狀態 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="editCaseStatus" class="form-label">團購狀態</label>
+					                                <select class="form-select" id="editCaseStatus">
+					                                    <option value="pending">待開團</option>
+					                                    <option value="recruiting">招募中</option>
+					                                    <option value="closing soon">即將截止</option>
+					                                    <option value="group opened">已開團</option>
+					                                    <option value="closed">已截止</option>
+					                                    <option value="cancelled">已取消</option>
+					                                    <option value="group failed">開團失敗</option>
+					                                </select>
+					                            </div>
+					                        </div>
+					                        
+					                        <!-- 最低成團數量 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="minGroupSize" class="form-label">最低成團數量</label>
+					                                <input type="number" class="form-control" id="minGroupSize" min="1" placeholder="請輸入最低成團數量">
+					                            </div>
+					                        </div>
+					                    </div>
+					
+					                    <div class="row">
+					                        <!-- 開始時間 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="startTime" class="form-label">開始時間</label>
+					                                <input type="datetime-local" class="form-control" id="startTime">
+					                            </div>
+					                        </div>
+					                        
+					                        <!-- 結束時間 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="endTime" class="form-label">結束時間</label>
+					                                <input type="datetime-local" class="form-control" id="endTime">
+					                            </div>
+					                        </div>
+					                    </div>
+					
+					                    <!-- 取消原因 -->
+					                    <div class="mb-3">
+					                        <label for="editCaseNote" class="form-label">取消原因</label>
+					                        <textarea class="form-control" id="editCaseNote" rows="3" placeholder="請輸入取消原因.."></textarea>
+					                    </div>
+					
+					                    <!-- 通知會員 -->
+					                    <div class="form-check">
+					                        <input class="form-check-input" type="checkbox" id="notifyMember">
+					                        <label class="form-check-label" for="notifyMember">
+					                            通知會員團購狀態變更
+					                        </label>
+					                    </div>
+					                </form>
+					            </div>
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+					                <button type="button" class="btn btn-primary" onclick="saveOrderChanges()">儲存變更</button>
+					            </div>
+					        </div>
+					    </div>
+					</div>
 
 
 

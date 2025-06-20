@@ -20,25 +20,18 @@ import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListV
 import com.foodietime.member.model.MemberVO;
 
 @Controller
-@RequestMapping("/groupbuyingcollectionlist")
+@RequestMapping("/gblist")
 public class GroupBuyingCollectionListController {
     
-    private final GroupBuyingCollectionListService groupBuyingCollectionListService;
-     
+         
     
     @Autowired
-    public GroupBuyingCollectionListController(GroupBuyingCollectionListService groupBuyingCollectionListService) {
-        this.groupBuyingCollectionListService = groupBuyingCollectionListService;
-    }
+    private GroupBuyingCollectionListService groupBuyingCollectionListService;
 
-    // 主頁
-    @GetMapping("/select_page")
-    public String index() {
-        return "groupBuyingCollectionList/select_page";
-    }
+
     
     // 查詢單筆收藏（判斷是否已收藏）
-    @PostMapping("/findCollectionByMemAndGb")
+    @PostMapping("/findByMemAndGb")
     public String findSingleCollection(@RequestParam Integer memId,
                                        @RequestParam Integer gbId,
                                        Model model) {
@@ -48,7 +41,7 @@ public class GroupBuyingCollectionListController {
     }
     
     // 查詢某會員的所有收藏
-    @PostMapping("/findCollectionByMem")
+    @PostMapping("/findByMem")
     public String findCollectionByMem(@RequestParam Integer memId, Model model) {
 		List<GroupBuyingCollectionListVO> collectionList = groupBuyingCollectionListService.findByMemId(memId);
 		if(collectionList.isEmpty()) {
@@ -99,7 +92,7 @@ public class GroupBuyingCollectionListController {
 //    	 // 創建 GroupBuyingCollectionListId 物件
 //        GroupBuyingCollectionListId id = new GroupBuyingCollectionListId(memId, gbId);
 //        // 呼叫 service 層的 deleteById 方法
-//        groupBuyingCollectionListService.removeFromCollection(id);
+//        groupBuyingCollectionListService.deleteByMemIdAndGbId(id);
 //        // 返回成功刪除的視圖
 //        return "groupBuyingCollectionList/deleted";
 //    }
