@@ -76,13 +76,17 @@
 
 
           <!-- 結帳表單，提交至 /orders/placeOrder -->
-          <form id="checkout-form" th:action="@{/orders/placeOrder}" method="post">
+          <!-- 【修改點 1】: 新增 th:object="${orderData}"，將表單與 Controller 傳來的 orderData 物件綁定 -->
+          <form id="checkout-form" th:action="@{/orders/placeOrder}" th:object="${orderData}" method="post">
+
             <!-- 收件資訊 - 對應 OrdersVO 的 ordAddr -->
             <div class="form-section">
               <h2 class="section-title">收件資訊</h2>
               <div class="form-group">
                 <label for="ordAddr">外送地址</label>
-                <input type="text" id="ordAddr" name="ordAddr" placeholder="請輸入完整外送地址" required>
+                <!-- 【修改點 2】: 使用 th:field="*{ordAddr}" 取代 name="ordAddr" -->
+                <!-- th:field 會自動生成 id="ordAddr", name="ordAddr" 和 value="..." -->
+                <input type="text" id="ordAddr" th:field="*{ordAddr}" placeholder="請輸入完整外送地址" required>
               </div>
             </div>
 
@@ -91,27 +95,32 @@
               <h2 class="section-title">付款方式</h2>
               <div class="payment-methods">
                 <div class="payment-method">
-                  <input type="radio" id="payMethod1" name="payMethod" value="1" checked>
+                  <!-- 【修改點 3】: 使用 th:field="*{payMethod}" 取代 name="payMethod" -->
+                  <input type="radio" id="payMethod1" th:field="*{payMethod}" value="0">
                   <label for="payMethod1">信用卡</label>
                 </div>
                 <div class="payment-method">
-                  <input type="radio" id="payMethod2" name="payMethod" value="2">
+                  <input type="radio" id="payMethod2" th:field="*{payMethod}" value="1">
                   <label for="payMethod2">貨到付款</label>
                 </div>
-                <!-- 可以根據需求增加其他付款方式，並更新 OrdersVO -->
+                <div class="payment-method">
+                  <input type="radio" id="payMethod3" th:field="*{payMethod}" value="2">
+                  <label for="payMethod2">第三方</label>
+                </div>
               </div>
             </div>
 
             <!-- 取餐方式 - 對應 OrdersVO 的 deliver -->
             <div class="form-section">
               <h2 class="section-title">取餐方式</h2>
-              <div class="payment-methods"> <!-- 使用同樣的樣式類別 -->
+              <div class="payment-methods">
                 <div class="payment-method">
-                  <input type="radio" id="deliver1" name="deliver" value="1" checked>
+                  <!-- 【修改點 4】: 使用 th:field="*{deliver}" 取代 name="deliver" -->
+                  <input type="radio" id="deliver1" th:field="*{deliver}" value="1">
                   <label for="deliver1">外送</label>
                 </div>
                 <div class="payment-method">
-                  <input type="radio" id="deliver2" name="deliver" value="2">
+                  <input type="radio" id="deliver2" th:field="*{deliver}" value="2">
                   <label for="deliver2">自取</label>
                 </div>
               </div>
@@ -121,7 +130,9 @@
             <div class="form-section">
               <h2 class="section-title">訂單備註 (選填)</h2>
               <div class="form-group">
-                <label for="comment"></label><textarea id="comment" name="comment" rows="3" placeholder="特殊要求、過敏原資訊等"></textarea>
+                <label for="comment"></label>
+                <!-- 【修改點 5】: 在 textarea 上同樣使用 th:field="*{comment}" -->
+                <textarea id="comment" th:field="*{comment}" rows="3" placeholder="特殊要求、過敏原資訊等"></textarea>
               </div>
             </div>
 

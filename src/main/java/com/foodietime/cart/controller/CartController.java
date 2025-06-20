@@ -2,6 +2,8 @@ package com.foodietime.cart.controller;
 
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
+import com.foodietime.member.model.MemberVO;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +23,6 @@ public class CartController {
     @Autowired
     public CartController(CartService cartService) {this.cartService = cartService;}
 
-//    @GetMapping("cart")
-//    public String cart(Model model) {
-//        return "front/cart/cart";
-//    }
-
     @GetMapping("login")
     public String login() {
         return "front/member/login";
@@ -42,11 +39,15 @@ public class CartController {
     }
 
     @GetMapping("cart")
-    public String listAllCart(Model model) {
+    public String listAllCart(Model model, HttpSession session) {
         // ================== 步驟1：獲取當前會員ID ==================
         // 注意：實際應用中應從Session或安全上下文獲取
-        Integer currentMemberId = 1; // 測試用
+//        Integer currentMemberId = 1; // 測試用
+        // 步驟1：從 session 中取出完整的 MemberVO 物件
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
 
+// 步驟2：從 MemberVO 物件中取得會員 ID
+        Integer currentMemberId = memberVO.getMemId(); // 假設 getter 方法是 getMemId()
         try {
             // ================== 步驟2：獲取購物車數據 ==================
             List<CartVO> cartList = cartService.getByMemId(currentMemberId);
@@ -101,10 +102,16 @@ public class CartController {
 
     @PostMapping("/updateQuantity")
     public String updateCartQuantity(@RequestParam Integer shopId,
-                                     @RequestParam Integer newQuantity) {
+                                     @RequestParam Integer newQuantity,
+                                     HttpSession session) {
         try {
             // ================== 步驟1：獲取當前會員ID ==================
-            Integer currentMemberId = 1; // 測試用，實際應從Session獲取
+//            Integer currentMemberId = 1; // 測試用，實際應從Session獲取
+            // 步驟1：從 session 中取出完整的 MemberVO 物件
+            MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+
+            // 步驟2：從 MemberVO 物件中取得會員 ID
+            Integer currentMemberId = memberVO.getMemId(); // 假設 getter 方法是 getMemId()
 
             // ================== 步驟2：更新商品數量 ==================
             cartService.updateCart(shopId, currentMemberId, newQuantity);
