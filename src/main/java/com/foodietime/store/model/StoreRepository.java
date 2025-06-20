@@ -62,6 +62,8 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
 //    List<StoreVO> findByStoreCateId(@Param("cateId") Integer cateId);
 	
 	
-	List<StoreVO> findByStoreCateId(Integer storeCateId);
+
+	
+	List<StoreVO> findByStoreCate_StorCateId(Integer id);
 	
 }
