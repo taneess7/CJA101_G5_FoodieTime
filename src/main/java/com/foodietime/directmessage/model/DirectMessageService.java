@@ -6,8 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.directmessage.model.DirectMessageVO.MessageDirection;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.smg.model.SmgVO;
+
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -20,6 +23,12 @@ public class DirectMessageService {
 	        message.setMessTime(LocalDateTime.now());
 	        return messageRepo.save(message);
 	    }
+	    
+	    // 查詢全部訊息（工單列表用）
+	    public List<DirectMessageVO> getAllMessages() {
+	        return messageRepo.findAllByOrderByMessTimeDesc();
+	    }
+
 
 	    // 查詢會員的訊息
 	    public List<DirectMessageVO> getMessagesByMemberId(Integer memId) {
@@ -51,6 +60,18 @@ public class DirectMessageService {
 	        message.setMessDirection(DirectMessageVO.MessageDirection.ADMIN_TO_MEMBER);
 
 	        messageRepo.save(message);
+	    }
+	    
+	    @Transactional
+	    public void reply(Integer dmId, Integer messDirectionOrdinal, String replyContent) {
+	        DirectMessageVO dm = getById(dmId);
+	        if (dm != null) {
+	            dm.setMessContent(replyContent);
+	            dm.setMessDirection(MessageDirection.values()[messDirectionOrdinal]);
+	            dm.setMessTime(LocalDateTime.now());
+
+	            messageRepo.save(dm); // JpaRepository save
+	        }
 	    }
 
 }
