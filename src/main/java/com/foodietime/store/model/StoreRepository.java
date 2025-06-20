@@ -58,8 +58,10 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
 
 
 
-	@Query("SELECT s FROM StoreVO s WHERE s.storeCate.storCateId = :cateId")
-    List<StoreVO> findByStoreCateId(@Param("cateId") Integer cateId);
+//	@Query("SELECT s FROM StoreVO s WHERE s.storeCate.storCateId = :cateId")
+//    List<StoreVO> findByStoreCateId(@Param("cateId") Integer cateId);
 	
+	
+	List<StoreVO> findByStoreCateId(Integer storeCateId);
 	
 }
