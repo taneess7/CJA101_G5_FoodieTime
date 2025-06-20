@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/orders")
@@ -32,58 +34,89 @@ public class OrdersController {
     /** ========================================================================================================================================= **/
     /** ========================================================================================================================================= **/
     /**
-     * 處理前往結帳頁面的請求
-     * @param model 用於將數據傳遞到視圖 (View)
-     * @param redirectAttributes 用於在重定向時傳遞快閃屬性 (Flash Attribute)
-     * @return 結帳頁面的視圖路徑，或重定向到購物車頁面
+     * 【核心修改】處理從購物車提交的結帳請求 (POST)
+     * 這個方法現在會接收被勾選的商品ID，並進行店家驗證。
+     *
+     * @param selectedItems      參數用途：從前端表單接收到的、被勾選的購物車項目ID列表 (name="selectedItems")。
+     *                           資料來源：cart.html 中的複選框。
+     * @param session            參數用途：用於獲取會員資訊及在不同請求間傳遞數據。
+     * @param redirectAttributes 參數用途：用於在重定向時傳遞提示訊息給前端。
+     * @return 重定向到結帳頁面或返回購物車（如果驗證失敗）。
      */
-    @GetMapping("/checkout")
-    public String showCheckoutPage(Model model,
-                                   RedirectAttributes redirectAttributes,
-                                   HttpSession session) {
-        // ================== 步驟1：獲取當前會員ID ==================
-        // 步驟1：從 session 中取出完整的 MemberVO 物件
+    @PostMapping("/checkout")
+    public String processCheckout(@RequestParam(name = "selectedItems", required = false) List<Integer> selectedItems,
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes) {
+
+        // ================== 步驟1：安全性與有效性檢查 ==================
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
-
-        // 步驟2：從 MemberVO 物件中取得會員 ID
-        Integer currentMemberId = memberVO.getMemId(); // 假設 getter 方法是 getMemId()
-
-
-        try {
-            // ================== 步驟2：從購物車服務獲取數據 ==================
-            List<CartVO> cartList = cartService.getByMemId(currentMemberId);
-            model.addAttribute("cartListData", cartList);
-
-            // ================== 步驟3：處理空購物車的情況 ==================
-            if (cartList.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "您的購物車是空的，無法結帳。");
-                return "redirect:/cart/cart";
-            }
-
-            // ================== 步驟4：計算訂單摘要所需金額 ==================
-            Integer totalAmount = cartService.calculateTotalAmount(currentMemberId);
-            model.addAttribute("totalAmount", totalAmount);
-            Integer shippingFee = totalAmount >= 500 ? 0 : 60;
-            model.addAttribute("shippingFee", shippingFee);
-            Integer finalTotal = totalAmount + shippingFee;
-            model.addAttribute("finalTotal", finalTotal);
-
-            // ================== 【修改點】新增一個空的 OrdersVO 物件到 model ==================
-            // 說明：此物件將作為表單的後端綁定物件 (form-backing bean)。
-            // Thymeleaf 的 th:object 將會使用名為 "orderData" 的這個物件。
-            model.addAttribute("orderData", new OrdersVO());
-
-        } catch (Exception e) {
-            // ================== 步驟5：處理潛在的異常 ==================
-            model.addAttribute("error", "載入結帳頁面時發生錯誤：" + e.getMessage());
-            model.addAttribute("cartListData", new ArrayList<>());
-            // 即使出錯，也提供一個空的物件以避免 Thymeleaf 渲染錯誤
-            model.addAttribute("orderData", new OrdersVO());
+        if (memberVO == null) {
+            return "redirect:/cart/login";
         }
 
-        // ================== 步驟6：返回結帳頁面的視圖名稱 ==================
-        return "/front/cart/checkout";
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "請至少選擇一項商品進行結帳！");
+            return "redirect:/cart/cart";
+        }
+
+        // ================== 步驟2：獲取被選中的購物車項目詳情 ==================
+        // 我們需要一個新方法來只獲取被選中的項目，而不是整個購物車
+        List<CartVO> selectedCartItems = cartService.getCartItemsByIds(selectedItems);
+
+        // ================== 步驟3：【店家驗證邏輯】 ==================
+        // 使用 Set 來收集所有不重複的店家 ID
+        Set<Integer> uniqueStoreIds = selectedCartItems.stream()
+                .map(cartVO -> cartVO.getProduct().getStore().getStorId())
+                .collect(Collectors.toSet());
+
+        // 如果 Set 的大小大於 1，代表商品來自多個店家
+        if (uniqueStoreIds.size() > 1) {
+            redirectAttributes.addFlashAttribute("errorMessage", "一次只能結帳一家店的商品喔！");
+            return "redirect:/cart/cart";
+        }
+
+        // ================== 步驟4：【傳遞數據到結帳頁】 ==================
+        // 將驗證通過的、被選中的商品列表存入 Session，以便結帳頁面 (GET) 可以獲取
+        session.setAttribute("checkoutCartItems", selectedCartItems);
+
+        // 使用 PRG (Post-Redirect-Get) 模式，重定向到顯示結帳頁面的 GET 請求
+        return "redirect:/orders/checkout";
     }
+
+    /**
+     * 【核心修改】顯示結帳頁面 (GET)
+     * 這個方法現在從 Session 中讀取經過驗證的商品數據，而不是直接查詢資料庫。
+     */
+    @GetMapping("/checkout")
+    public String showCheckoutPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        // 從 Session 中獲取由 POST 方法存入的、已過濾的購物車項目
+        List<CartVO> checkoutCartItems = (List<CartVO>) session.getAttribute("checkoutCartItems");
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+
+        // 如果 Session 中沒有數據（例如用戶直接訪問URL），則重定向回購物車
+        if (checkoutCartItems == null || checkoutCartItems.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "無結帳商品，請從購物車重新選擇。");
+            return "redirect:/cart/cart";
+        }
+
+        // ================== 計算訂單摘要 ==================
+        // 直接基於傳過來的 checkoutCartItems 列表進行計算
+        int totalAmount = checkoutCartItems.stream()
+                .mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN())
+                .sum();
+
+        int shippingFee = totalAmount >= 500 ? 0 : 60;
+        int finalTotal = totalAmount + shippingFee;
+
+        model.addAttribute("cartListData", checkoutCartItems); // 將過濾後的列表傳給前端
+        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("shippingFee", shippingFee);
+        model.addAttribute("finalTotal", finalTotal);
+        model.addAttribute("orderData", new OrdersVO()); // 為表單綁定提供一個空物件
+
+        return "/front/cart/checkout"; // 返回結帳頁面視圖
+    }
+
     /** ========================================================================================================================================= **/
     /** ========================================================================================================================================= **/
     /**

@@ -141,15 +141,51 @@
     box-shadow: var(--shadow-soft);
     overflow: hidden;
 }
+/* cart.css */
+.shop-group {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow: hidden; /* 確保圓角效果 */
+}
 
-/* ========== 單個購物車項目 (重點修正) ========== */
+.shop-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #f8f9fa; /* 店家標題背景色 */
+    border-bottom: 1px solid #e9ecef;
+}
+
+.shop-header .material-icons-outlined {
+    margin-right: 8px;
+    color: #495057;
+}
+
+.shop-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+}
+
+/* 移除原 cart-item 的頂部 margin 和 border，因為現在由 shop-group 管理 */
+.cart-item {
+    border-top: none; /* 移除原本的頂部分隔線 */
+}
+.shop-items-list .cart-item:not(:last-child) {
+    border-bottom: 1px solid #e9ecef; /* 在商品之間加上分隔線 */
+}
+
+/* ========== 單個購物車項目 (核心修改) ========== */
 .cart-item {
     display: grid;
-    grid-template-columns: 120px 1fr; /* 圖片與內容分離 */
+    /* 核心修改：增加一欄給複選框 */
+    grid-template-columns: auto 120px 1fr;
     gap: var(--space-3);
-    padding: var(--space-4);
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.2s ease;
+    padding: var(--space-3);
+    transition: background-color var(--transition-fast);
 }
 
 .cart-item:last-child {
@@ -569,5 +605,145 @@
 
     .item-controls {
         align-items: center;
+    }
+}
+/* cart.css - 將這些規則合併到您現有的檔案中 */
+
+/* ========== 購物車主內容佈局 (微調) ========== */
+.cart-content {
+    display: grid;
+    /* 側邊欄寬度與您原始設定一致 */
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-4);
+    align-items: start;
+    margin-top: var(--space-4);
+}
+
+.cart-items-container {
+    /* 這個容器用來包裹所有店家群組 */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* ========== 店家分組樣式 (新增) ========== */
+.shop-group {
+    background-color: var(--bg-light);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg); /* 使用您定義的圓角 */
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+}
+
+.shop-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--neutral-50);
+    border-bottom: 1px solid var(--neutral-300);
+    cursor: pointer;
+}
+
+.shop-name-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    cursor: pointer;
+}
+
+.shop-name-label .material-icons-outlined {
+    color: var(--primary-color);
+}
+
+.shop-items-list .cart-item:not(:last-child) {
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+
+
+
+.cart-item:hover {
+    background-color: var(--neutral-50);
+}
+
+/* 第 1 欄：複選框區域 (新增) */
+.item-selection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 複選框本身樣式 (新增) */
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    /* 使用您的主題色 */
+    accent-color: var(--primary-color);
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem; /* 與下方內容的間距 */
+    border: 1px solid transparent;
+    border-radius: var(--radius-md); /* 使用您定義的圓角變數 */
+    display: flex;
+    justify-content: space-between; /* 讓文字和關閉按鈕分列兩側 */
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+/* 針對錯誤訊息的特定樣式 */
+.alert.alert-danger {
+    color: #842029; /* 深紅色文字 */
+    background-color: #f8d7da; /* 淡紅色背景 */
+    border-color: #f5c2c7; /* 邊框顏色 */
+}
+
+/* ========== 結帳按鈕禁用狀態 (新增) ========== */
+#checkout-btn:disabled {
+    background-color: var(--neutral-400);
+    border-color: var(--neutral-400);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* 關閉按鈕的樣式 */
+.alert .close-alert-btn {
+    background: none;
+    border: none;
+    padding: 0 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: inherit; /* 繼承父元素的文字顏色 */
+    opacity: 0.7;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.alert .close-alert-btn:hover {
+    opacity: 1;
+}
+
+/* ========== 響應式調整 ========== */
+@media (max-width: 992px) {
+    .cart-content {
+        grid-template-columns: 1fr;
+    }
+    .cart-sidebar {
+        /* 在較小螢幕上，摘要不應再是 sticky */
+        position: static;
+        margin-top: var(--space-4);
+    }
+}
+
+@media (max-width: 576px) {
+    .cart-item {
+        /* 在手機上，將複選框和圖片放在同一行 */
+        grid-template-columns: auto 100px 1fr;
     }
 }

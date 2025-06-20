@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.foodietime.accrec.model.AccrecVO;
@@ -39,7 +43,11 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
-@Data
+// ==================== 1. 移除 @Data，使用更精確的 Lombok 註解 ====================
+@Getter
+@Setter
+// 使用 @ToString 並排除所有集合屬性，防止無限循環和延遲載入問題
+@ToString(exclude = {"product", "act", "gbprod", "groupOrders", "groupBuyingCases", "coupon", "accrec", "orders"})
 @Entity
 @Table(name = "store")
 //@NamedQuery(name = "getAllStores", query = "from store where storId > :storId order by storId desc")
@@ -179,6 +187,21 @@ public class StoreVO implements Serializable {
     private List<OrdersVO> orders;
 
 	// 取得or設置 
+	// ==================== 2. 手動實作 equals 和 hashCode ====================
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		StoreVO storeVO = (StoreVO) o;
+		// 關鍵：只比較主鍵 (ID)，並且只有當 ID 不是 null 時才比較
+		return storId != null && Objects.equals(storId, storeVO.storId);
+	}
 
-	
+	@Override
+	public int hashCode() {
+		// 關鍵：返回一個固定的值，這個值對於同一個類的所有實例都是一樣的。
+		// 這可以確保在物件被持久化前後（ID從null變為有值），雜湊碼保持不變。
+		// 這避免了在 HashMap 或 HashSet 中找不到物件的問題。
+		return getClass().hashCode();
+	}
 }
