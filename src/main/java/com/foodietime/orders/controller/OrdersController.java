@@ -48,38 +48,29 @@ public class OrdersController {
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
 
-        // ================== 步驟1：安全性與有效性檢查 ==================
-        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
-        if (memberVO == null) {
-            return "redirect:/cart/login";
-        }
-
+        // -------------------- 步驟1：安全性與有效性檢查 --------------------
         if (selectedItems == null || selectedItems.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "請至少選擇一項商品進行結帳！");
             return "redirect:/cart/cart";
         }
 
-        // ================== 步驟2：獲取被選中的購物車項目詳情 ==================
-        // 我們需要一個新方法來只獲取被選中的項目，而不是整個購物車
+        // -------------------- 步驟2：獲取勾選商品的詳情 --------------------
         List<CartVO> selectedCartItems = cartService.getCartItemsByIds(selectedItems);
 
-        // ================== 步驟3：【店家驗證邏輯】 ==================
-        // 使用 Set 來收集所有不重複的店家 ID
+        // -------------------- 步驟3：店家驗證邏輯 --------------------
         Set<Integer> uniqueStoreIds = selectedCartItems.stream()
                 .map(cartVO -> cartVO.getProduct().getStore().getStorId())
                 .collect(Collectors.toSet());
 
-        // 如果 Set 的大小大於 1，代表商品來自多個店家
         if (uniqueStoreIds.size() > 1) {
             redirectAttributes.addFlashAttribute("errorMessage", "一次只能結帳一家店的商品喔！");
             return "redirect:/cart/cart";
         }
 
-        // ================== 步驟4：【傳遞數據到結帳頁】 ==================
-        // 將驗證通過的、被選中的商品列表存入 Session，以便結帳頁面 (GET) 可以獲取
-        session.setAttribute("checkoutCartItems", selectedCartItems);
+        // -------------------- 步驟4：將驗證通過的商品列表存入 Session --------------------
+        session.setAttribute("checkoutItems", selectedCartItems);
 
-        // 使用 PRG (Post-Redirect-Get) 模式，重定向到顯示結帳頁面的 GET 請求
+        // 使用 Post-Redirect-Get 模式，重定向到顯示結帳頁面的 GET 請求
         return "redirect:/orders/checkout";
     }
 
@@ -89,32 +80,29 @@ public class OrdersController {
      */
     @GetMapping("/checkout")
     public String showCheckoutPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        // 從 Session 中獲取由 POST 方法存入的、已過濾的購物車項目
-        List<CartVO> checkoutCartItems = (List<CartVO>) session.getAttribute("checkoutCartItems");
-        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        // -------------------- 步驟1：從 Session 讀取已驗證的商品 --------------------
+        List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
 
-        // 如果 Session 中沒有數據（例如用戶直接訪問URL），則重定向回購物車
-        if (checkoutCartItems == null || checkoutCartItems.isEmpty()) {
+        if (checkoutItems == null || checkoutItems.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "無結帳商品，請從購物車重新選擇。");
             return "redirect:/cart/cart";
         }
 
-        // ================== 計算訂單摘要 ==================
-        // 直接基於傳過來的 checkoutCartItems 列表進行計算
-        int totalAmount = checkoutCartItems.stream()
+        // -------------------- 步驟2：基於 Session 中的商品計算金額 --------------------
+        int totalAmount = checkoutItems.stream()
                 .mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN())
                 .sum();
-
         int shippingFee = totalAmount >= 500 ? 0 : 60;
         int finalTotal = totalAmount + shippingFee;
 
-        model.addAttribute("cartListData", checkoutCartItems); // 將過濾後的列表傳給前端
+        // -------------------- 步驟3：將數據傳遞給前端頁面 --------------------
+        model.addAttribute("checkoutItems", checkoutItems); // 將過濾後的列表傳給前端
         model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("shippingFee", shippingFee);
         model.addAttribute("finalTotal", finalTotal);
         model.addAttribute("orderData", new OrdersVO()); // 為表單綁定提供一個空物件
 
-        return "/front/cart/checkout"; // 返回結帳頁面視圖
+        return "/front/cart/checkout";
     }
 
     /** ========================================================================================================================================= **/
@@ -167,36 +155,44 @@ public class OrdersController {
          * @param session 參數：用於獲取當前登入的會員資訊
          * @return 重定向到訂單確認頁或返回結帳頁
          */
-    @PostMapping("/placeOrder")
-    public String placeOrder(@ModelAttribute("orderData") OrdersVO newOrderData, // 【修改點】用 @ModelAttribute 取代多個 @RequestParam
-                             RedirectAttributes redirectAttributes,
-                             HttpSession session) {
+        @PostMapping("/placeOrder")
+        public String placeOrder(@ModelAttribute("orderData") OrdersVO newOrderData,
+                                 RedirectAttributes redirectAttributes,
+                                 HttpSession session) {
 
-        // ================== 步驟1：獲取當前會員ID ==================
-        // 步驟1：從 session 中取出完整的 MemberVO 物件
-        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+            // -------------------- 步驟1：獲取會員和已驗證的商品列表 --------------------
+            MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+            if (memberVO == null) {
+                return "redirect:/cart/login";
+            }
+            Integer currentMemberId = memberVO.getMemId();
 
-        // 步驟2：從 MemberVO 物件中取得會員 ID
-        Integer currentMemberId = memberVO.getMemId(); // 假設 getter 方法是 getMemId()
+            // 【核心修正】從 Session 中取出已驗證的商品列表
+            List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
 
-        // 【修改點】不再需要手動創建 OrdersVO 或設置從表單傳來的屬性，
-        // 因為 Spring MVC 已經透過 @ModelAttribute 為我們完成了數據綁定。
-        // OrdersVO newOrderData = new OrdersVO();
-        // newOrderData.setOrdAddr(ordAddr); ... 等都不再需要
+            if (checkoutItems == null || checkoutItems.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "結帳已逾時或無商品，請重新操作。");
+                return "redirect:/cart/cart";
+            }
 
-        // ================== 步驟2：調用Service層處理訂單創建的核心業務邏輯 ==================
-        /*
-         * 說明：
-         * Service 層現在接收一個已經填充好表單數據的 OrdersVO 物件。
-         * 這樣 Controller 的職責更清晰，只負責接收請求和數據轉發。
-         */
-        OrdersVO createdOrder = ordersService.createOrderFromCart(currentMemberId, newOrderData);
+            // -------------------- 步驟2：調用修改後的 Service 方法 --------------------
+            try {
+                // 將 checkoutItems 傳遞給 Service
+                OrdersVO createdOrder = ordersService.createOrderFromCart(currentMemberId, newOrderData, checkoutItems);
 
-        // ================== 步驟3：成功後重定向到訂單確認頁面 ==================
-        redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
-        redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());
-        return "redirect:/orders/order-confirmation";
+                // -------------------- 步驟3：成功後清理 Session 並重定向 --------------------
+                session.removeAttribute("checkoutItems"); // 清除暫存
+                redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
+                redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());
+                return "redirect:/orders/order-confirmation";
 
-        // 異常處理可以保持不變或根據業務需求調整
-    }
+            } catch (IllegalStateException e) {
+                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+                return "redirect:/orders/checkout"; // 返回結帳頁面顯示錯誤
+            } catch (Exception e) {
+                e.printStackTrace();
+                redirectAttributes.addFlashAttribute("errorMessage", "建立訂單時發生未知錯誤。");
+                return "redirect:/orders/checkout";
+            }
+        }
 }

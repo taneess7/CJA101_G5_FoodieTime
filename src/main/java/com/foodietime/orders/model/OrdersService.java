@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class OrdersService {
@@ -51,51 +52,45 @@ public class OrdersService {
     }
 
     /**
-     * 根據會員購物車內容建立新的訂單。
-     * 此方法包含交易管理，確保訂單與訂單明細的建立以及購物車的清空是原子性操作。
+     * 根據會員【選定】的購物車內容建立新的訂單。
+     * 此方法不再查詢完整購物車，而是直接使用傳入的、已經過驗證的商品列表。
      *
      * @param memberId      參數用途：當前登入會員的唯一識別ID。
      *                      資料來源：由控制器從 Session 或安全上下文獲取。
-     * @param orderFormData 參數用途：包含從結帳表單收集的訂單基本資訊（如地址、付款方式、取餐方式、備註）。
-     *                      資料來源：由前端表單提交，控制器透過 @RequestParam 綁定。
-     * @return OrdersVO 參數用途：成功建立並持久化到資料庫的訂單物件，包含訂單ID等資訊。
-     * @throws IllegalStateException 當購物車為空、找不到會員或店家、或購物車中包含來自不同店家的商品時拋出。
+     * @param orderFormData 參數用途：包含從結帳表單收集的訂單基本資訊。
+     *                      資料來源：由前端表單提交。
+     * @param checkoutItems 參數用途：【最重要】使用者在購物車勾選並通過驗證的商品列表。
+     *                      資料來源：由控制器從 Session 中取出後傳入。
+     * @return OrdersVO     成功建立的訂單物件。
+     * @throws IllegalStateException 當購物車為空、找不到會員或店家時拋出。
      */
     @Transactional
-    public OrdersVO createOrderFromCart(Integer memberId, OrdersVO orderFormData) {
+    public OrdersVO createOrderFromCart(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems) { // <<<<<< 【修改點 1】新增第三個參數
 
         // ======================================== 步驟1：獲取必要基礎資料 ========================================
         // 1.1 獲取會員資訊
         MemberVO member = memberRepo.findById(memberId)
                 .orElseThrow(() -> new IllegalStateException("訂單建立失敗：找不到會員ID " + memberId));
 
-        // 1.2 獲取購物車內容
-        List<CartVO> cartItems = cartService.getByMemId(memberId);
+        // 1.2 【修改點 2】不再從資料庫撈取完整購物車，而是直接使用傳入的 checkoutItems
+        // List<CartVO> cartItems = cartService.getByMemId(memberId); // <<<<<<<<<<< 刪除或註解掉此行
 
-        // 1.3 驗證購物車是否為空
-        if (cartItems.isEmpty()) {
-            throw new IllegalStateException("訂單建立失敗：您的購物車是空的，無法建立訂單。");
+        // 1.3 驗證傳入的商品列表是否為空
+        if (checkoutItems == null || checkoutItems.isEmpty()) {
+            throw new IllegalStateException("訂單建立失敗：沒有需要結帳的商品。");
         }
 
-        // 1.4 確定訂單所屬店家 (假設單一訂單只來自單一店家)
-        ProductVO firstProduct = cartItems.get(0).getProduct();
-        if (firstProduct == null || firstProduct.getProdId() == null || firstProduct.getStore() == null) {
-            throw new IllegalStateException("訂單建立失敗：購物車中的商品資訊不完整 (缺少商品或店家)。");
-        }
-
-        StoreVO orderStore = firstProduct.getStore();
+        // 1.4 確定訂單所屬店家 (邏輯不變，但基於 checkoutItems)
+        StoreVO orderStore = checkoutItems.get(0).getProduct().getStore();
         if (orderStore == null || orderStore.getStorId() == null) {
-            throw new IllegalStateException("訂單建立失敗：購物車中的商品未關聯到有效店家。");
+            throw new IllegalStateException("訂單建立失敗：商品未關聯到有效店家。");
         }
 
-        // 1.5 驗證購物車中所有商品是否來自同一個店家
-        boolean allFromSameStore = cartItems.stream()
-                .allMatch(item -> item.getProduct() != null &&
-                        item.getProduct().getStore() != null &&
-                        item.getProduct().getStore().getStorId().equals(orderStore.getStorId()));
-
+        // 1.5 店家驗證邏輯可以保留作為雙重保險，但理論上在控制器已驗證過
+        boolean allFromSameStore = checkoutItems.stream()
+                .allMatch(item -> item.getProduct().getStore().getStorId().equals(orderStore.getStorId()));
         if (!allFromSameStore) {
-            throw new IllegalStateException("訂單建立失敗：購物車中包含來自不同店家的商品，請分開結帳。");
+            throw new IllegalStateException("內部錯誤：嘗試用多個店家的商品建立訂單。");
         }
 
         // ======================================== 步驟2：建立 OrdersVO 主物件並設定屬性 ========================================
@@ -103,8 +98,8 @@ public class OrdersService {
         order.setMember(member);
         order.setStore(orderStore);
         order.setOrdDate(new Timestamp(System.currentTimeMillis()));
-        order.setPaymentStatus(0); // 預設付款狀態：0 (未付款/待處理)
-        order.setOrderStatus(0);   // 預設訂單狀態：0 (待處理)
+        order.setPaymentStatus(0);
+        order.setOrderStatus(0);
         order.setOrdAddr(orderFormData.getOrdAddr());
         order.setPayMethod(orderFormData.getPayMethod());
         order.setDeliver(orderFormData.getDeliver());
@@ -114,15 +109,16 @@ public class OrdersService {
         Integer ordSum = 0;
         Set<OrdDetVO> orderDetails = new HashSet<>();
 
-        for (CartVO cartItem : cartItems) {
+        // 【修改點 3】迴圈遍歷 checkoutItems 而不是 cartItems
+        for (CartVO cartItem : checkoutItems) {
             OrdDetVO ordDet = new OrdDetVO();
             ordDet.setOrders(order);
             ordDet.setProduct(cartItem.getProduct());
-            ordDet.setProdQty(cartItem.getProdN()); // 使用 getProdN()
+            ordDet.setProdQty(cartItem.getProdN());
             ordDet.setProdPrice(cartItem.getProduct().getProdPrice());
 
             orderDetails.add(ordDet);
-            ordSum += cartItem.getProdN() * cartItem.getProduct().getProdPrice(); // 使用 getProdN()
+            ordSum += cartItem.getProdN() * cartItem.getProduct().getProdPrice();
         }
         order.setOrdSum(ordSum);
 
@@ -134,10 +130,13 @@ public class OrdersService {
         order.setOrdDet(orderDetails);
 
         // ======================================== 步驟4：保存訂單至資料庫 ========================================
-        OrdersVO savedOrder = ordersRepo.save(order); // 使用 ordersRepo
+        OrdersVO savedOrder = ordersRepo.save(order);
 
-        // ======================================== 步驟5：清空購物車 ========================================
-        cartService.clearCart(memberId);
+        // ======================================== 步驟5：從購物車中移除已結帳的商品 ========================================
+        // 【修改點 4】不再是清空整個購物車，而是只移除被結帳的商品
+        // cartService.clearCart(memberId); // <<<<<<<<<<< 不再清空整個購物車
+        List<Integer> checkedOutShopIds = checkoutItems.stream().map(CartVO::getShopId).collect(Collectors.toList());
+        cartService.deleteCartItems(checkedOutShopIds); // 使用現有的 deleteCartItems 方法
 
         // ======================================== 步驟6：返回建立的訂單物件 ========================================
         return savedOrder;
