@@ -3,6 +3,7 @@ package com.foodietime.act.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,13 +14,33 @@ import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 
 
-public class ActPageController {
 
+
+@Controller 
+public class ActListController {
 	@Autowired
 	ActService actSvc;
 	
 	@Autowired
 	StoreService storeSvc;
+	
+	/*** 進到查詢頁 /src/main/resources/templates/admin/act/select_page.html 與 listAllAct.html ***/  
+	@GetMapping("/act/select_page")
+	public String act_select_page(Model model){//事先塞好getAllActs，直接用 ${actListData} 就能拿到
+		model.addAttribute("actVO", new ActVO());
+		return "admin/act/select_page";
+	}
+	
+	@GetMapping("/act/listAllAct")
+	public String listAllAct(Model model) { 
+		return "admin/act/listAllAct";
+	}
+	
+	@GetMapping("/addAct")
+	public String addAct(Model model) { 
+		return "admin/act/addAct";
+	}
+	
 	
 	/***執行同一個Controller方法前，先準備資料，不用每個方法手動加model.addAttribute(...) 直接用 ${actListData} 就能拿到。 ***/  
 
@@ -38,18 +59,9 @@ public class ActPageController {
     //<option th:each="storeVO : ${storeListData}" 
 	
 	
-	/*** 轉頁 /src/main/resources/templates/back-end/act/select_page.html 與 listAllAct.html ***/  
-	@GetMapping("/act/select_page")
-	public String act_select_page(Model model){//事先塞好getAllActs，直接用 ${actListData} 就能拿到
-		return "back-end/act/select_page";
-	}
-	
-	@GetMapping("/act/listAllAct")
-	public String listAllAct(Model model) { 
-		return "back-end/act/listAllAct";
-	}
 	
 	 
 
 	
 }
+

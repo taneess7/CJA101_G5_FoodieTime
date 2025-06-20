@@ -2,23 +2,21 @@ package com.foodietime.act.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.foodietime.orddet.model.OrdDetVO;
-import com.foodietime.orders.model.OrdersVO;
+
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
-import com.foodietime.storeCate.model.StoreCateVO;
-
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,7 +26,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -46,9 +43,20 @@ public class ActVO implements Serializable {
 	
 	//2.店家物件（外鍵：STORE_ID）
 	@ManyToOne
-    @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID") // 外鍵名稱
+    @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID",nullable = true) // 外鍵名稱
 	private StoreVO store;
-//	private Integer storId;
+
+	
+	//2-1.店家id欄位 
+	@Transient // ➜ 不映射到資料庫，只拿來接值用
+	private Integer storId;
+	
+	public Integer getStorId() { //用傳進來的 storId 查出 StoreVO，儲存時更新 STOR_ID 外鍵欄位
+		 return (store != null) ? store.getStorId() : null;
+	}
+	public void setStorId(Integer storId) {
+	    this.storId = storId;
+	}
 
 	
 	// 3.活動類型
@@ -68,7 +76,8 @@ public class ActVO implements Serializable {
 	private String actContent; 
 	
 	// 6.活動建立時間
-	@NotNull
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	@CreationTimestamp
 	@Column(name = "ACT_LAUNCHTIME" , updatable = false)
 	private Timestamp actSetTime; 
@@ -77,11 +86,13 @@ public class ActVO implements Serializable {
 	//使用活動折扣需同時符合:活動狀態上架、活動開始時間
 	// 7.活動開始時間
 	@NotNull(message="活動開始時間: 請勿空白")
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	@Column(name = "ACT_STARTTIME")
 	private Timestamp actStartTime; 
 	
 	// 8.活動結束時間 
 	@NotNull(message="活動結束時間: 請勿空白")
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	@Column(name = "ACT_ENDTIME")
 	private Timestamp actEndTime; 
 	
@@ -100,14 +111,19 @@ public class ActVO implements Serializable {
 	private Double actDiscValue; 
 	
 	// 12.活動圖片
-	@Lob
+	@Lob 
 	@Column(name = "ACT_PHOTO")
 	private byte[] actPhoto; 
 	
 	// 13.最後更新時間
 	@Column(name = "ACT_LAST_UPDATE")
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	@UpdateTimestamp 
 	private Timestamp actLastUpdate; 
+	
+	// 14.預設true全店家適用
+	@Column(name = "ISGLOBAL")
+	private Boolean isGlobal = true;  
 
 	
 	// OneToMany
@@ -118,6 +134,6 @@ public class ActVO implements Serializable {
 	// 取得or設置
 	public ActVO() {
 		super();
-	} 
+	}
 
 }
