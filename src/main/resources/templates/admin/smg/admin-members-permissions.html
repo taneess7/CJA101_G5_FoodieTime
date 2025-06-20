@@ -193,11 +193,11 @@
                         <form class="row g-3 mb-4" method="get" th:action="@{/smg/admin-members-permissions}">
                             <div class="col-md-3">
                                 <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                                <input type="text" class="form-control" id="searchKeyword" name="keyword" placeholder="會員姓名或電子郵件">
+                                <input type="text" class="form-control" id="searchKeyword" name="keyword" th:value="${param.keyword}" placeholder="會員姓名或電子郵件">
                             </div>
                             <div class="col-md-2">
                                 <label for="memberStatus" class="form-label">會員狀態</label>
-                                <select class="form-select" id="memberStatus"  name="status">
+                                <select class="form-select" id="memberStatus"  name="status" th:value="${param.keyword}">
                                     <option value="">全部狀態</option>
                                     <option value="active">啟用</option>
                                     <option value="suspended">停用</option>
@@ -209,7 +209,7 @@
                             
                             <div class="col-md-2">
                                 <label for="lastModified" class="form-label">最後修改</label>
-                                <select class="form-select" id="lastModified" name="lastModified">
+                                <select class="form-select" id="lastModified" name="lastModified" th:value="${param.keyword}">
                                     <option value="">全部時間</option>
                                     <option value="today">今天</option>
                                     <option value="week">本週</option>
@@ -615,6 +615,57 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- 自訂JS -->
     <script th:src="@{/js/admin/admin-script.js}"></script>
+    
+   <script th:inline="javascript">
+    // localStorage 統一管理版
+    const currentVersion = '[[${dbVersion}]]';
+    const savedData = JSON.parse(localStorage.getItem('adminMembersPageData')) || {
+        version: '',
+        batchPermissionHistory: [],
+        permissionHistory: [],
+        searchConditions: {}
+    };
+
+    // 檢查版本
+    if (savedData.version !== currentVersion) {
+        console.log("版本不同，清空 localStorage");
+        localStorage.setItem('adminMembersPageData', JSON.stringify({
+            version: currentVersion,
+            batchPermissionHistory: [],
+            permissionHistory: [],
+            searchConditions: {}
+        }));
+        
+        for (let key in localStorage) {
+            if (key.startsWith('memberHistory_')) {
+                localStorage.removeItem(key);
+            }
+        }
+    } else {
+        console.log("版本相同，讀取 localStorage");
+
+        // 還原搜尋條件
+        const sc = savedData.searchConditions;
+        document.getElementById('searchKeyword').value = sc.keyword || '';
+        document.getElementById('memberStatus').value = sc.status || '';
+        document.getElementById('lastModified').value = sc.lastModified || '';
+    }
+
+    // 當表單送出時，將搜尋條件存入 localStorage
+    document.querySelector('form').addEventListener('submit', function() {
+        const searchData = {
+            keyword: document.getElementById('searchKeyword').value,
+            status: document.getElementById('memberStatus').value,
+            lastModified: document.getElementById('lastModified').value
+        };
+        const updatedData = {
+            ...savedData,
+            searchConditions: searchData
+        };
+        localStorage.setItem('adminMembersPageData', JSON.stringify(updatedData));
+    });
+</script>
+   
 
     <script>
         // Select All Checkbox
@@ -765,6 +816,31 @@
                 	    saveHistoryToLocal(memId, batchHistoryRow);
                 	});
                     alert(`批量變更成功，共 ${data.updatedCount} 位會員`);
+                 // --- 存 localStorage ---
+                    const savedData = JSON.parse(localStorage.getItem('adminMembersPageData')) || {
+                        version: currentVersion,
+                        batchPermissionHistory: [],
+                        permissionHistory: [],
+                        searchConditions: {}
+                    };
+
+                    const newHistoryItem = {
+                            date: new Date().toISOString().substring(0, 10),
+                            targetStatus: window.batchTargetStatus == 1 ? '啟用' : '停用',
+                            memberCount: ids.length,
+                            operator: '[[${session.loggedInSmg.smgrName}]]',
+                            reason: reason
+                        };
+
+                    	savedData.batchPermissionHistory.unshift(newHistoryItem);
+
+                        // 最多只保留 20 筆
+                        if (savedData.batchPermissionHistory.length > 20) {
+						    savedData.batchPermissionHistory = savedData.batchPermissionHistory.slice(0, 20);
+						}
+						
+						localStorage.setItem('adminMembersPageData', JSON.stringify(savedData));
+
                     bootstrap.Modal.getInstance(document.getElementById('batchPermissionModal')).hide();
                     location.reload();
                 } else {

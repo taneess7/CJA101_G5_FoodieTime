@@ -12,5 +12,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessageVO, 
 
     // 依管理者查詢所有訊息（可排序）
     List<DirectMessageVO> findBySmgrOrderByMessTimeAsc(SmgVO smgr);
+    
+    List<DirectMessageVO> findAllByOrderByMessTimeDesc();
+
 
     }

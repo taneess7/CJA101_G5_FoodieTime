@@ -117,7 +117,8 @@ import com.foodietime.member.model.MemService;
 	
 	            return dto;
 	        }).collect(Collectors.toList());
-	
+	        
+	        model.addAttribute("dbVersion", "20250621");  //更改DB時更改版本時間以清除localstorage
 	        model.addAttribute("members", dtoList);
 	        return "admin/smg/admin-members-permissions";
 	    }
@@ -258,6 +259,7 @@ import com.foodietime.member.model.MemService;
 	        Map<String, Object> result = new HashMap<>();
 	        result.put("success", true);
 	        result.put("updatedCount", memIds.size());
+	        result.put("memIds", memIds);
 	        return result;
 	    }
 	}
