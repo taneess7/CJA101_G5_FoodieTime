@@ -1,5 +1,7 @@
 package com.foodietime.store.model;
 
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -7,17 +9,24 @@ import java.util.Optional;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
-import com.foodietime.store.model.StoreVO;
 
 
+
+@Transactional
 @Service
 public class StoreService {
 	
 	@Autowired
 	private StoreRepository repository; 
 	
+//	@Autowired
+//	private CouponRepository couRepository; 
+	
+
 
 	
 	public void addStore(StoreVO storeVO) {
@@ -42,6 +51,31 @@ public class StoreService {
 		return repository.findAll(); //回傳全部
 	}
 	
+	public StoreVO findById(Integer id) {
+		return repository.findById(id).orElse(null);
+	}
+	
+//	//註冊 storeSvc.register(storeVO) + 防止重複註冊
+//	public void register(StoreVO storeVO) {
+//		if (repository.findByStorEmail(storeVO.getStorEmail()) != null)
+//			throw new RuntimeException("此 Email 已被註冊");
+//		repository.save(storeVO);
+//	}
+	
+//	//登入 
+//	public StoreVO findByStorEmail(String email) {
+//		return repository.findByStorEmail(email);
+//	}
+	
+	//查詢店家類別
+	 public List<StoreVO> findByCateId(Integer cateId) {
+	        return repository.findByStoreCateId(cateId);
+	    }
+	
+	
+
+	
+	
 	//模糊查詢
 //	public List<StoreVO> getAll(Map<String, String[]> map){ //回傳key-value類型的參數
 //		return HibernateUtil_CompositeQuery_g05.getAllC(map.sessionFactory.openSession());
@@ -51,10 +85,7 @@ public class StoreService {
 //	}
 	
 	
-	public StoreVO findByStorEmail(String email) {
-		return repository.findByStorEmail(email);
-	}
-	
+
 	//檢舉次數
 	public void reportStore(Integer storId) {
 		StoreVO store = repository.findById(storId)
@@ -73,5 +104,22 @@ public class StoreService {
 		repository.save(store); //存回資料庫
 	}
 	
+	//泰式餐廳-改 - 可動態帶入資料庫店家--查只有泰式料理的店家
+	
+	public List<StoreVO> getThaiRestaurants() { 
+		String keyword = "%泰式%";
+	    return repository.findByStoreCateNameLike(keyword);
+	}
+	
+	
 
-}
+
+		
+		
+		
+	}
+
+	
+	
+
+
