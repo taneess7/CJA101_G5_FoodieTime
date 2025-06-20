@@ -1,13 +1,17 @@
 package com.foodietime.product.controller;
 
 import com.foodietime.product.model.*;
+import com.foodietime.store.model.StoreVO;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/products")
+@Controller
+@RequestMapping("/products")
 public class ProductController {
 
 	private final ProductService productService;
@@ -52,20 +56,20 @@ public class ProductController {
 //    }
 
     // 查詢單一商品
-    @GetMapping("/{id}")
-    public ProductVO getProduct(@PathVariable Integer id) {
-        return productService.getProductById(id);
-    }
+//    @GetMapping("/{id}")
+//    public ProductVO getProduct(@PathVariable Integer id) {
+//        return productService.getProductById(id);
+//    }
 
     // 查詢全部商品
-    @GetMapping
-    public List<ProductVO> getAllProducts() {
-        return productService.getAllProducts();
-    }
+//    @GetMapping
+//    public List<ProductVO> getAllProducts() {
+//        return productService.getAllProducts();
+//    }
 
     // 刪除商品
-    @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Integer id) {
-        productService.deleteProduct(id);
-    }
+//    @DeleteMapping("/{id}")
+//    public void deleteProduct(@PathVariable Integer id) {
+//        productService.deleteProduct(id);
+//    }
 }

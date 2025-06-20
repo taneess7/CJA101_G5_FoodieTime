@@ -2,6 +2,8 @@ package com.foodietime.product.controller;
 
 import com.foodietime.product.model.ProductCategoryService;
 import com.foodietime.product.model.ProductCategoryVO;
+import com.foodietime.store.model.StoreVO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +34,16 @@ public class ProductCategoryController {
     public String listlogin() {
     	return "/front/member/login";
     }
+    
+    @GetMapping("/{cateId}")
+    public String showCategoryPage(@PathVariable Integer cateId, Model model) {
+        List<StoreVO> storeList = categoryService.getStoresByCategoryId(cateId);
+        model.addAttribute("storeList", storeList);
+        model.addAttribute("categoryId", cateId); 
+        
+        return "front/restaurant/chinese-cuisine"; // 對應的 Thymeleaf 模板
+    }
+    
     //中式料理
     @GetMapping("/chinese-cuisine")
     public String listChinese() {
@@ -62,12 +74,15 @@ public class ProductCategoryController {
         
         return "/front/restaurant/italian-cuisine";
     }
-    //美式料理
-    @GetMapping("/american-cuisine")
-    public String listAmerican() {
-        
-        return "/front/restaurant/american-cuisine";
-    }
+    //美式餐廳 (可動態帶入資料庫店家)
+//    @GetMapping("/american-cuisine")
+//    public String showAmeStore(Model model) {
+//        List<StoreVO> ameStores = categoryService.getAmericanRestaurants(); // 呼叫 StoreService
+//        model.addAttribute("AmeStore", ameStores); // 傳到 Thymeleaf 頁面
+//        return "front/restaurant/american-cuisine"; // 返回 american-cuisine.html
+//    }
+
+
     //甜點飲料
     @GetMapping("/dessert-drinks")
     public String listDessert() {
