@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新增貼文 - FoodieTime 食刻</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" th:href="@{/css/front/post/style.css}">
+</head>
+<body class="min-h-screen bg-gray-100">
+	<!--     Header -->
+	<header class="app-header">
+		<div class="header-container">
+			<div class="logo-container">
+				<a th:href="@{/index}" class="logo">
+					<div
+						class="logo-img bg-orange-500 text-white flex items-center justify-center text-lg font-bold">
+						🍽️</div> <span class="logo-text">FoodieTime 食刻</span>
+				</a>
+			</div>
+			<div class="search-container">
+				<div class="search-bar">
+					<i class="material-icons-outlined search-icon">search</i> <input
+						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+					<i class="material-icons-outlined mic-icon">mic</i> <i
+						class="material-icons-outlined camera-icon">photo_camera</i>
+				</div>
+			</div>
+			<nav class="main-nav">
+				<ul class="nav-list">
+					<li class="nav-item"><a th:href="@{/map}" class="nav-link">地圖</a></li>
+					<li class="nav-item"><a th:href="@{/group-order}"
+						class="nav-link">團購</a></li>
+					<li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
+					<li class="nav-item"><a th:href="@{/login}"
+						class="nav-link login-btn">登入/註冊</a></li>
+				</ul>
+				<button class="menu-toggle" aria-label="開啟選單">
+					<i class="material-icons-outlined">menu</i>
+				</button>
+			</nav>
+		</div>
+	</header>
+
+	<!-- 麵包屑 -->
+	<section class="breadcrumb">
+		<div class="container">
+			<a th:href="@{/post/}" class="breadcrumb-link">討論區</a> <span
+				class="breadcrumb-separator">/</span> <span
+				class="breadcrumb-current">新增貼文</span>
+		</div>
+	</section>
+
+	<!-- 新增貼文表單 -->
+	<main class="main-content">
+		<div
+			class="container max-w-xl mx-auto bg-white rounded shadow p-8 mt-8">
+			<h2 class="text-2xl font-bold mb-6 text-orange-600">新增貼文</h2>
+			<form th:action="@{/post/insert}" method="post" th:object="${postVO}">
+				<!-- 分類 -->
+				<div class="mb-4">
+					<label class="block mb-1 font-medium text-gray-700">分類</label> <select
+						class="w-full border rounded px-3 py-2"
+						th:field="*{postCate.postCateId}" required>
+						<option value="" disabled selected>請選擇分類</option>
+						<option th:each="cat : ${categories}" th:value="${cat.postCateId}"
+							th:text="${cat.postCate}"></option>
+					</select>
+				</div>
+				<!-- 標題 -->
+				<div class="mb-4">
+					<label class="block mb-1 font-medium text-gray-700">標題</label> <input
+						type="text" class="w-full border rounded px-3 py-2"
+						th:field="*{postTitle}" maxlength="100" required>
+				</div>
+				 <div class="character-count">
+                        <span id="titleCount">0</span>/45 字元
+                    </div>
+				<!-- 內容 -->
+				<div class="mb-6">
+					<label class="block mb-1 font-medium text-gray-700">內容</label>
+					<textarea class="w-full border rounded px-3 py-2"
+						th:field="*{postContent}" rows="8" maxlength="2000" required></textarea>
+				</div>
+				<!-- 送出按鈕 -->
+				<div class="flex justify-end">
+					<button type="submit" name="action" value="publish"
+						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">送出貼文</button>
+				</div>
+			</form>
+		</div>
+	</main>
+</body>
+</html>

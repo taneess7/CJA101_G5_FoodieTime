@@ -10,13 +10,13 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
- <!-- PWA 設定 -->
+<!-- PWA 設定 -->
 <link rel="manifest" th:href="@{/manifest.json}">
 <meta name="theme-color" content="#FF5722">
 <link rel="apple-touch-icon" th:href="@{/img/logo.png}">
 </head>
 <body class="min-h-screen bg-gray-100">
-	
+
 
 	<!--     Header -->
 	<header class="app-header">
@@ -106,21 +106,31 @@
 
 		<!--         新增發布貼文按鈕 -->
 		<button class="btn btn-primary" style="margin-left: 1rem;"
-			th:onclick="'location.href=\'' + @{/post/new} + '\''">發布貼文</button>
+			id="addPostBtn">發佈貼文</button>
+		<!-- 		<button class="btn btn-primary" style="margin-left: 1rem;"  -->
+		<!-- 			th:onclick="'location.href=\'' + @{/post/addPost} + '\''">發佈貼文</button> -->
 	</div>
-
+	<div class="icon-input flex items-center space-x-2">
+		<i class="fas fa-edit"></i> <input type="text" class="form-control"
+			id="searchTitle" name="title" placeholder="請輸入貼文標題..."
+			maxlength="100">
+		<button class="btn btn-primary" id="searchPostBtn" type="button">搜尋貼文</button>
+	</div>
 	<!--     工具列 -->
 	<div class="bg-orange-600 text-white">
 		<div class="flex items-center justify-between px-4 py-3">
 			<div class="flex items-center space-x-4">
 				<div class="flex items-center space-x-2">
-					<i class="fas fa-filter"></i> <span class="text-sm">篩選：</span> <select
-						class="select-dropdown" th:name="sort"
-						th:onchange="this.form.submit()">
-						<option value="likes" th:selected="${sort == 'likes'}">讚數</option>
-						<option value="replies" th:selected="${sort == 'replies'}">留言數</option>
-						<option value="views" th:selected="${sort == 'views'}">瀏覽數</option>
-					</select>
+					<form method="get" th:action="@{/post/}" id="sortForm"
+						style="display: inline;">
+						<select name="sort"
+							onchange="document.getElementById('sortForm').submit()">
+							<option value="likes" th:selected="${sort == 'likes'}">讚數</option>
+							<option value="messagecount"
+								th:selected="${sort == 'messagecount'}">留言數</option>
+							<option value="views" th:selected="${sort == 'views'}">瀏覽數</option>
+						</select>
+					</form>
 				</div>
 				<button class="btn btn-secondary px-3 py-1 text-sm"
 					th:classappend="${featured} ? '' : 'btn-ghost'">精選</button>
@@ -145,34 +155,34 @@
 	<!-- 討論串列表 -->
 	<div>
 		<a th:each="thread,iterStat : ${threads}"
-       th:href="@{'/post/one'(postId=${thread.postId})}"
-       class="forum-thread-row border-b border-gray-200 p-3 block hover:bg-orange-50 transition">
-        <div class="flex items-start space-x-4">
-            <!-- 分類和編號 -->
-            <div class="flex flex-col items-center min-w-16 text-center">
-                <div class="text-xs text-gray-500 mb-1"
-                     th:text="${thread.postCate != null} ? ${thread.postCate.postCate} : '未分類'"></div>
-                <div class="text-xl font-bold" th:text="${thread.postId}"></div>
-            </div>
-            <!-- 主要內容 -->
-            <div class="flex-1">
-                <h3 class="text-sm font-medium text-gray-900 leading-relaxed"
-                    th:text="${thread.postTitle}"></h3>
-                <p class="text-xs text-gray-600 mt-1"
-                   th:text="${thread.postContent}"></p>
-            </div>
-            <!-- 互動數據 -->
-            <div class="text-center min-w-24">
-                <div class="text-xs text-blue-600"
-                     th:text="${thread.member != null} ? ${thread.member.memName} : '匿名'"></div>
-            </div>
-            <!-- 最新留言 -->
-            <div class="text-center min-w-24">
-                <div class="text-xs text-gray-600"
-                     th:text="${#dates.format(thread.editDate, 'yyyy-MM-dd HH:mm')}"></div>
-            </div>
-        </div>
-    </a>
+			th:href="@{'/post/one'(postId=${thread.postId})}"
+			class="forum-thread-row border-b border-gray-200 p-3 block hover:bg-orange-50 transition">
+			<div class="flex items-start space-x-4">
+				<!-- 分類和編號 -->
+				<div class="flex flex-col items-center min-w-16 text-center">
+					<div class="text-xs text-gray-500 mb-1"
+						th:text="${thread.postCate != null} ? ${thread.postCate.postCate} : '未分類'"></div>
+					<div class="text-xl font-bold" th:text="${thread.postId}"></div>
+				</div>
+				<!-- 主要內容 -->
+				<div class="flex-1">
+					<h3 class="text-sm font-medium text-gray-900 leading-relaxed"
+						th:text="${thread.postTitle}"></h3>
+					<p class="text-xs text-gray-600 mt-1"
+						th:text="${thread.postContent}"></p>
+				</div>
+				<!-- 互動數據 -->
+				<div class="text-center min-w-24">
+					<div class="text-xs text-blue-600"
+						th:text="${thread.member != null} ? ${thread.member.memName} : '匿名'"></div>
+				</div>
+				<!-- 最新留言 -->
+				<div class="text-center min-w-24">
+					<div class="text-xs text-gray-600"
+						th:text="${#dates.format(thread.editDate, 'yyyy-MM-dd HH:mm')}"></div>
+				</div>
+			</div>
+		</a>
 	</div>
 	<!-- ...existing code... -->
 	<!--     底部分頁導航 -->
@@ -204,7 +214,7 @@
 		</div>
 	</div>
 	<script th:src="@{/js/front/post/discuss.js}"></script>
-	
+
 </body>
 </html>
 
