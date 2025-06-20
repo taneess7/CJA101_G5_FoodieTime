@@ -4,15 +4,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.store.model.StoreRepository;
+import com.foodietime.store.model.StoreVO;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductCategoryService {
 
-    @Autowired
     private ProductCategoryRepository categoryRepo;
+    private final StoreRepository storeRepo;
     
+    @Autowired
+	public ProductCategoryService(ProductCategoryRepository categoryRepo,StoreRepository storeRepo) {
+		this.categoryRepo = categoryRepo;
+		this.storeRepo = storeRepo;
+	}
+
+    public List<StoreVO> getStoresByCategoryId(Integer cateId) {
+        return storeRepo.findByStoreCate_StorCateId(cateId);
+    }
+    
+    // 美式餐廳 (可動態帶入資料庫店家 分類ID = 6)
+//	public List<StoreVO> getAmericanRestaurants() {
+//        return storeRepo.findByStoreCate_StorCateId(6);
+//    }
+
     // 修改分類
     public ProductCategoryVO updateCategory(Integer id, String newName) {
         Optional<ProductCategoryVO> optional = categoryRepo.findById(id);

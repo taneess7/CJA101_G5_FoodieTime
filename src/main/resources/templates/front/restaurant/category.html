@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'分類 - ' + ${categoryId}">分類頁面</title>
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+</head>
+<body>
+    <h1>分類餐廳列表</h1>
+
+    <div th:if="${storeList != null}">
+        <ul>
+            <li th:each="store : ${storeList}">
+                <h2 th:text="${store.storName}">店名</h2>
+                <p th:text="${store.storDesc}">店家描述</p>
+                <p><strong>地址：</strong><span th:text="${store.storAddr}"></span></p>
+                <p><strong>電話：</strong><span th:text="${store.storPhone}"></span></p>
+                <hr>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${storeList == null or storeList.size() == 0}">
+        <p>目前此分類沒有任何店家。</p>
+    </div>
+</body>
+</html>

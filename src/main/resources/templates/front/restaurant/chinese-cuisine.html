@@ -1,503 +1,183 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中式料理 - FoodieTime 食刻</title>
-    <meta name="description" content="探索各種中式料理，尋找您喜愛的中華美食。FoodieTime 食刻提供多樣化的中式餐廳選擇，滿足您的味蕾需求。">
-    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
-    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
-    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
-    <link rel="stylesheet" th:href="@{/css/front/restaurant/chinese-cuisine.css}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title th:text="${categoryName + ' - FoodieTime 食刻'}">分類名稱</title>
+<meta name="description"
+	th:content="'探索各種' + ${categoryName} + '，尋找您喜愛的美食。'">
+
+<link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/restaurant/restaurant-categories.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/restaurant/food-categories.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/restaurant/chinese-cuisine.css}">
 <!--     <link rel="stylesheet" href="css/responsive.css"> -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- PWA 支援 -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+	rel="stylesheet">
+<!-- PWA 支援 -->
 <!--     <link rel="manifest" href="manifest.json"> -->
-    <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+<meta name="theme-color" content="#FF5722">
+<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-container">
-            <div class="logo-container">
-                <a th:href="@{/category/index}" class="logo">
-                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                    <span class="logo-text">FoodieTime 食刻</span>
-                </a>
-            </div>
-            <div class="search-container">
-                <div class="search-bar">
-                    <i class="material-icons-outlined search-icon">search</i>
-                    <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-                    <i class="material-icons-outlined mic-icon">mic</i>
-                    <i class="material-icons-outlined camera-icon">photo_camera</i>
-                </div>
-            </div>
-            <nav class="main-nav">
-                <ul class="nav-list">
-                    <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
-                    <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
-                    <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
-                </ul>
-                <button class="menu-toggle" aria-label="開啟選單">
-                    <i class="material-icons-outlined">menu</i>
-                </button>
-            </nav>
-        </div>
-    </header>
+	<header class="app-header">
+		<div class="header-container">
+			<div class="logo-container">
+				<a th:href="@{/category/index}" class="logo"> <img
+					th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻"
+					class="logo-img"> <span class="logo-text">FoodieTime
+						食刻</span>
+				</a>
+			</div>
+			<div class="search-container">
+				<div class="search-bar">
+					<i class="material-icons-outlined search-icon">search</i> <input
+						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+					<i class="material-icons-outlined mic-icon">mic</i> <i
+						class="material-icons-outlined camera-icon">photo_camera</i>
+				</div>
+			</div>
+			<nav class="main-nav">
+				<ul class="nav-list">
+					<li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
+					<li class="nav-item"><a href="group-order.html"
+						class="nav-link">團購</a></li>
+					<li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
+					<li class="nav-item"><a th:href="@{/category/login}"
+						class="nav-link login-btn">登入/註冊</a></li>
+				</ul>
+				<button class="menu-toggle" aria-label="開啟選單">
+					<i class="material-icons-outlined">menu</i>
+				</button>
+			</nav>
+		</div>
+	</header>
 
-    <main>
-        <!-- 頁面標題 -->
-        <section class="page-header">
-            <div class="container">
-                <h1 class="page-title">中式料理</h1>
-                <p class="page-description">探索台灣最道地的中式美食，從傳統小吃到精緻料理，滿足您的味蕾</p>
-                <div class="breadcrumbs">
-                    <a href="index.html">首頁</a> &gt; 
-                    <a href="food-categories.html">美食分類</a> &gt; 
-                    <span>中式料理</span>
-                </div>
-            </div>
-        </section>
+	<main>
+		<!-- 頁面標題 -->
+		<section class="page-header">
+			<div class="container">
+<!-- 				<h1 class="page-title" th:text="${categoryName}">分類名稱</h1> -->
+<!-- 				<p class="page-description" -->
+<!--     th:text="'探索台灣最道地的 ' + ${categoryName} + '，從傳統小吃到精緻料理，滿足您的味蕾'"></p> -->
+				<div class="breadcrumbs">
+					<a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a>
+					&gt; <span>中式料理</span>
+				</div>
+			</div>
+		</section>
 
-        <!-- 中式料理分類導航 -->
-        <nav class="category-nav">
-            <div class="container">
-                <ul class="category-list chinese-category-list">
-                    <li class="category-item active">所有中式料理</li>
-                    <li class="category-item">麵食</li>
-                    <li class="category-item">點心</li>
-                    <li class="category-item">湯品</li>
-                    <li class="category-item">小吃</li>
-                    <li class="category-item">火鍋</li>
-                    <li class="category-item">粵菜</li>
-                    <li class="category-item">川菜</li>
-                </ul>
-            </div>
-        </nav>
+		<!-- 中式料理分類導航 -->
+		<nav class="category-nav">
+			<div class="container">
+				<ul class="category-list chinese-category-list">
+					<li class="category-item active">所有中式料理</li>
+					<li class="category-item">麵食</li>
+					<li class="category-item">點心</li>
+					<li class="category-item">湯品</li>
+					<li class="category-item">小吃</li>
+					<li class="category-item">火鍋</li>
+					<li class="category-item">粵菜</li>
+					<li class="category-item">川菜</li>
+				</ul>
+			</div>
+		</nav>
 
-        <div class="container">
-            <!-- 中式料理店家列表 -->
-            <div class="restaurant-list">
-                <!-- 傳統牛肉麵 -->
-                <article class="restaurant-detail">
-                    <div class="restaurant-header">
-                        <div class="restaurant-main-info">
-                            <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="傳統牛肉麵" class="restaurant-image">
-                            <div class="restaurant-primary-info">
-                                <h2 class="restaurant-name">傳統牛肉麵</h2>
-                                <span class="cuisine-tag cuisine-chinese">中式料理</span>
-                                <p class="restaurant-category">麵食 • 湯品 • 小菜</p>
-                                <div class="restaurant-rating">
-                                    <span class="rating-stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star-half-alt"></i>
-                                    </span>
-                                    <span>4.5 (238則評價)</span>
-                                </div>
-                                <div class="restaurant-actions">
-                                    <button class="action-btn favorite-btn">
-                                        <i class="far fa-heart"></i> 收藏
-                                    </button>
-                                    <button class="action-btn share-btn">
-                                        <i class="fas fa-share-alt"></i> 分享
-                                    </button>
-                                    <button class="action-btn directions-btn">
-                                        <i class="fas fa-directions"></i> 導航
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="restaurant-contact-info">
-                            <div class="info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>台北市中正區忠孝東路一段100號</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-phone"></i>
-                                <span>(02) 2345-6789</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-clock"></i>
-                                <span>營業時間: 11:00-21:00 (週一公休)</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-globe"></i>
-                                <a href="#" class="website-link">www.traditional-beef-noodle.com.tw</a>
-                            </div>
-                        </div>
-                    </div>
+		<div class="container">
+			<!-- 中式料理店家列表 -->
+			<div class="restaurant-list">
+				<article class="restaurant-detail" th:each="store : ${storeList}">
+					<div class="restaurant-header">
+						<div class="restaurant-main-info">
+							<img th:src="@{/images/restaurant/placeholder.svg}" alt="店家圖片"
+								class="restaurant-image">
+							<div class="restaurant-primary-info">
+								<h2 class="restaurant-name" th:text="${store.storName}">店名</h2>
+								<span class="cuisine-tag cuisine-chinese"
+									th:text="${store.storeCate.storCatName}">分類名稱</span>
+								<p class="restaurant-category">（這邊可以顯示靜態分類 or 評語）</p>
+								<div class="restaurant-rating">
+									<span class="rating-stars"> <i class="fas fa-star"
+										th:each="i : ${#numbers.sequence(1, store.starNum != null ? store.starNum : 0)}"></i>
+									</span> <span
+										th:text="${store.starNum != null ? store.starNum + ' 分 (' + store.reviews + ' 則評價)' : '尚無評價'}">4.5
+										(238則評價)</span>
+								</div>
+								<div class="restaurant-actions">
+									<button class="action-btn favorite-btn">
+										<i class="far fa-heart"></i> 收藏
+									</button>
+									<button class="action-btn share-btn">
+										<i class="fas fa-share-alt"></i> 分享
+									</button>
+									<button class="action-btn directions-btn">
+										<i class="fas fa-directions"></i> 導航
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="restaurant-contact-info">
+							<div class="info-item">
+								<i class="fas fa-map-marker-alt"></i> <span
+									th:text="${store.storAddr}">地址</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-phone"></i> <span th:text="${store.storPhone}">電話</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-clock"></i> <span
+									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime}">營業時間</span>
+							</div>
+							<div class="info-item" th:if="${store.storWeb != null}">
+								<i class="fas fa-globe"></i> <a th:href="${store.storWeb}"
+									class="website-link" th:text="${store.storWeb}">網址</a>
+							</div>
+						</div>
+					</div>
 
-                    <div class="restaurant-details-tabs">
-                        <div class="tabs-header">
-                            <button class="tab-btn active" data-tab="menu">菜單</button>
-                            <button class="tab-btn" data-tab="reviews">評價</button>
-                            <button class="tab-btn" data-tab="photos">照片</button>
-                            <button class="tab-btn" data-tab="info">店家資訊</button>
-                        </div>
-                        <div class="tabs-content">
-                            <!-- 菜單標籤內容 -->
-                            <div class="tab-content active" id="menu-content">
-                                <div class="menu-categories">
-                                    <button class="menu-category active">招牌麵食</button>
-                                    <button class="menu-category">湯品</button>
-                                    <button class="menu-category">小菜</button>
-                                    <button class="menu-category">飲料</button>
-                                </div>
-                                <div class="menu-items">
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="紅燒牛肉麵" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">紅燒牛肉麵</h3>
-                                            <p class="menu-item-description">使用澳洲進口牛腱，熬煮8小時的濃郁湯頭，搭配手工拉麵</p>
-                                            <span class="menu-item-price">NT$ 180</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="清燉牛肉麵" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">清燉牛肉麵</h3>
-                                            <p class="menu-item-description">清爽湯頭，保留牛肉原味，搭配手工拉麵</p>
-                                            <span class="menu-item-price">NT$ 160</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="麻辣牛肉麵" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">麻辣牛肉麵</h3>
-                                            <p class="menu-item-description">使用四川花椒與辣椒製成的麻辣湯底，搭配手工拉麵</p>
-                                            <span class="menu-item-price">NT$ 200</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+					<!-- 可以選擇是否顯示下方標籤區 -->
+					<div class="restaurant-details-tabs">
+						<div class="tabs-header">
+							<button class="tab-btn active" data-tab="menu">菜單</button>
+							<button class="tab-btn" data-tab="reviews">評價</button>
+							<button class="tab-btn" data-tab="photos">照片</button>
+							<button class="tab-btn" data-tab="info">店家資訊</button>
+						</div>
+						<div class="tabs-content">
+							<!-- 你可以依實際資料開發這幾個區塊 -->
+							<div class="tab-content active" id="menu-content">
+								<p>此區待串接菜單資料</p>
+							</div>
+							<div class="tab-content" id="reviews-content">
+								<p>此區待串接評論資料</p>
+							</div>
+							<div class="tab-content" id="photos-content">
+								<p>此區待串接照片</p>
+							</div>
+							<div class="tab-content" id="info-content">
+								<p>此區待串接額外店家資訊</p>
+							</div>
+						</div>
+					</div>
+				</article>
+			</div>
+		</div>
+	
+	</main>
 
-                            <!-- 評價標籤內容 -->
-                            <div class="tab-content" id="reviews-content">
-                                <div class="reviews-summary">
-                                    <div class="overall-rating">
-                                        <span class="rating-number">4.5</span>
-                                        <div class="rating-stars-large">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star-half-alt"></i>
-                                        </div>
-                                        <span class="total-reviews">238則評價</span>
-                                    </div>
-                                    <div class="rating-breakdown">
-                                        <div class="rating-bar">
-                                            <span class="rating-label">5星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 70%"></div>
-                                            </div>
-                                            <span class="rating-percent">70%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">4星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 20%"></div>
-                                            </div>
-                                            <span class="rating-percent">20%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">3星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 5%"></div>
-                                            </div>
-                                            <span class="rating-percent">5%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">2星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 3%"></div>
-                                            </div>
-                                            <span class="rating-percent">3%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">1星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 2%"></div>
-                                            </div>
-                                            <span class="rating-percent">2%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="user-reviews">
-                                    <div class="review-item">
-                                        <div class="reviewer-info">
-                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
-                                            <div class="reviewer-details">
-                                                <h4 class="reviewer-name">陳小明</h4>
-                                                <div class="review-rating">
-                                                    <span class="rating-stars">
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                    </span>
-                                                    <span class="review-date">2024-03-15</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="review-text">牛肉麵湯頭非常濃郁，牛肉軟嫩多汁，麵條Q彈有嚼勁，是我吃過最好吃的牛肉麵之一！服務態度也很好，環境乾淨舒適。</p>
-                                        <div class="review-photos">
-                                            <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="食物照片" class="review-photo">
-                                        </div>
-                                    </div>
-                                    <div class="review-item">
-                                        <div class="reviewer-info">
-                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
-                                            <div class="reviewer-details">
-                                                <h4 class="reviewer-name">林小華</h4>
-                                                <div class="review-rating">
-                                                    <span class="rating-stars">
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="far fa-star"></i>
-                                                    </span>
-                                                    <span class="review-date">2024-03-10</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="review-text">牛肉麵的味道很不錯，但價格稍微偏高。小菜的選擇也很豐富，特別推薦涼拌黃瓜和醬筍，非常開胃。</p>
-                                    </div>
-                                </div>
-                            </div>
+	<footer class="app-footer">
+		<div class="container">
+			<p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+		</div>
+	</footer>
 
-                            <!-- 照片標籤內容 -->
-                            <div class="tab-content" id="photos-content">
-                                <div class="photo-gallery">
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="紅燒牛肉麵" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="清燉牛肉麵" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="麻辣牛肉麵" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="店內環境" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="小菜" class="gallery-image">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 店家資訊標籤內容 -->
-                            <div class="tab-content" id="info-content">
-                                <div class="info-section">
-                                    <h3 class="info-title">營業時間</h3>
-                                    <div class="business-hours">
-                                        <div class="day-hours">
-                                            <span class="day">星期一</span>
-                                            <span class="hours">公休</span>
-                                        </div>
-                                        <div class="day-hours">
-                                            <span class="day">星期二</span>
-                                            <span class="hours">11:00 - 21:00</span>
-                                        </div>
-                                        <div class="day-hours">
-                                            <span class="day">星期三</span>
-                                            <span class="hours">11:00 - 21:00</span>
-                                        </div>
-                                        <div class="day-hours">
-                                            <span class="day">星期四</span>
-                                            <span class="hours">11:00 - 21:00</span>
-                                        </div>
-                                        <div class="day-hours">
-                                            <span class="day">星期五</span>
-                                            <span class="hours">11:00 - 22:00</span>
-                                        </div>
-                                        <div class="day-hours">
-                                            <span class="day">星期六</span>
-                                            <span class="hours">10:00 - 22:00</span>
-                                        </div>
-                                        <div class="day-hours">
-                                            <span class="day">星期日</span>
-                                            <span class="hours">10:00 - 21:00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="info-section">
-                                    <h3 class="info-title">設施與服務</h3>
-                                    <div class="facilities">
-                                        <div class="facility-item">
-                                            <i class="fas fa-wifi"></i>
-                                            <span>免費WiFi</span>
-                                        </div>
-                                        <div class="facility-item">
-                                            <i class="fas fa-credit-card"></i>
-                                            <span>接受信用卡</span>
-                                        </div>
-                                        <div class="facility-item">
-                                            <i class="fas fa-parking"></i>
-                                            <span>附近有停車場</span>
-                                        </div>
-                                        <div class="facility-item">
-                                            <i class="fas fa-baby"></i>
-                                            <span>提供兒童座椅</span>
-                                        </div>
-                                        <div class="facility-item">
-                                            <i class="fas fa-utensils"></i>
-                                            <span>提供外帶</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="info-section">
-                                    <h3 class="info-title">店家位置</h3>
-                                    <div class="map-container">
-                                        <img th:src="@{/images/restaurant/map-placeholder.svg}" alt="地圖" class="location-map">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- 江南美食 -->
-                <article class="restaurant-detail">
-                    <div class="restaurant-header">
-                        <div class="restaurant-main-info">
-                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="江南美食" class="restaurant-image">
-                            <div class="restaurant-primary-info">
-                                <h2 class="restaurant-name">江南美食</h2>
-                                <span class="cuisine-tag cuisine-chinese">中式料理</span>
-                                <p class="restaurant-category">小籠包 • 點心 • 麵食</p>
-                                <div class="restaurant-rating">
-                                    <span class="rating-stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </span>
-                                    <span>4.0 (186則評價)</span>
-                                </div>
-                                <div class="restaurant-actions">
-                                    <button class="action-btn favorite-btn">
-                                        <i class="far fa-heart"></i> 收藏
-                                    </button>
-                                    <button class="action-btn share-btn">
-                                        <i class="fas fa-share-alt"></i> 分享
-                                    </button>
-                                    <button class="action-btn directions-btn">
-                                        <i class="fas fa-directions"></i> 導航
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="restaurant-contact-info">
-                            <div class="info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>台北市大安區信義路三段150號</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-phone"></i>
-                                <span>(02) 8765-4321</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-clock"></i>
-                                <span>營業時間: 10:00-20:00 (週二公休)</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-globe"></i>
-                                <a href="#" class="website-link">www.jiangnan-food.com.tw</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="restaurant-details-tabs">
-                        <div class="tabs-header">
-                            <button class="tab-btn active" data-tab="menu">菜單</button>
-                            <button class="tab-btn" data-tab="reviews">評價</button>
-                            <button class="tab-btn" data-tab="photos">照片</button>
-                            <button class="tab-btn" data-tab="info">店家資訊</button>
-                        </div>
-                        <div class="tabs-content">
-                            <!-- 菜單標籤內容 -->
-                            <div class="tab-content active" id="menu-content-2">
-                                <div class="menu-categories">
-                                    <button class="menu-category active">招牌點心</button>
-                                    <button class="menu-category">麵食</button>
-                                    <button class="menu-category">湯品</button>
-                                    <button class="menu-category">飲料</button>
-                                </div>
-                                <div class="menu-items">
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="上海小籠包" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">上海小籠包</h3>
-                                            <p class="menu-item-description">皮薄餡多，湯汁豐富，一籠8顆</p>
-                                            <span class="menu-item-price">NT$ 120</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="蟹黃湯包" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">蟹黃湯包</h3>
-                                            <p class="menu-item-description">使用新鮮蟹黃製作，鮮美可口，一籠6顆</p>
-                                            <span class="menu-item-price">NT$ 180</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="鮮肉餛飩" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">鮮肉餛飩</h3>
-                                            <p class="menu-item-description">手工包製，湯頭清甜，一份10顆</p>
-                                            <span class="menu-item-price">NT$ 100</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 其他標籤內容省略，與上面類似 -->
-                            <div class="tab-content" id="reviews-content-2"><!-- 評價內容 --></div>
-                            <div class="tab-content" id="photos-content-2"><!-- 照片內容 --></div>
-                            <div class="tab-content" id="info-content-2"><!-- 店家資訊內容 --></div>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </main>
-
-    <footer class="app-footer">
-        <div class="container">
-            <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
+	<script>
         // 分類切換功能
         document.querySelectorAll('.category-item').forEach(item => {
             item.addEventListener('click', function() {
