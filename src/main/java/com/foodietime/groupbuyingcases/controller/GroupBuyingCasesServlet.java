@@ -47,4 +47,9 @@ public class GroupBuyingCasesServlet {
     public String leaderproduct(){
         return "front/gb/gbleader/leader-product";
     }
+	
+	@GetMapping("/leader-searchresult")
+    public String leadersearchresult(){
+        return "front/gb/gbleader/leader-searchresult";
+    }
 }

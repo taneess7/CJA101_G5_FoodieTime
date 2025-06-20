@@ -426,14 +426,14 @@
     <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="gbindex.html">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="gbindex.html">首頁</a>
+                        <a class="nav-link" th:href="@{/gb/leaderindex}">首頁</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">熱門團購</a>
@@ -445,9 +445,9 @@
                         <a class="nav-link" href="#">即將結束</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
-                            <i class="bi bi-person-badge"></i> 我是團長
-                        </a>
+                        <a class="nav-link" th:href="@{/gb/leader}">
+						    <i class="bi bi-person-badge"></i> 我是團長
+						</a>
                   </li>
                     
                 </ul>
@@ -468,12 +468,12 @@
                             <span>林小美</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="leader.html"><i class="bi bi-person"></i> 我是團長</a></li>
-                            <li><a class="dropdown-item" href="leader-groups.html"><i class="bi bi-box"></i> 團購管理</a></li>
-                            <li><a class="dropdown-item" href="leader-orders.html"><i class="bi bi-bag"></i> 訂單管理</a></li>
-                            <li><a class="dropdown-item" href="leader-cashflow.html"><i class="bi bi-credit-card"></i> 金流管理</a></li>
-                            <li><a class="dropdown-item" href="leader-address.html"><i class="bi bi-geo-alt"></i> 收貨地址</a></li>
-                            <li><a class="dropdown-item" href="leader-notifications.html"><i class="bi bi-bell"></i> 通知管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader}"><i class="bi bi-person"></i> 我是團長</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-groups}"><i class="bi bi-box"></i> 團購管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-orders}"><i class="bi bi-bag"></i> 訂單管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-cashflow}"><i class="bi bi-credit-card"></i> 金流管理</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-address}"><i class="bi bi-geo-alt"></i> 收貨地址</a></li>
+                            <li><a class="dropdown-item" th:href="@{/gb/leader-notifications}"><i class="bi bi-bell"></i> 通知管理</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> 幫助中心</a></li>
                             <li><a class="dropdown-item text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a></li>

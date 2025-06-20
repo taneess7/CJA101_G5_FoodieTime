@@ -12,7 +12,7 @@ import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
 
 @Controller
-@RequestMapping("/group-buying-cases")
+@RequestMapping("/gbcase")
 public class GroupBuyingCasesController {
 
     @Autowired
@@ -53,11 +53,12 @@ public class GroupBuyingCasesController {
 //        return "group-buying-cases/group-buying-cases-list";
 //    }
 
-    // 根據團購編號查詢團購案
+    
+    // 根據商品編號或商品名稱查詢團購案
     @GetMapping("/product/{gbProdId}")
-    public String findByProdId(@PathVariable Integer gbProdId, Model model) {
+    public String findByProdIdOrName(@PathVariable Integer gbProdId, @RequestParam(required = false) String gbProdName, Model model) {
         // 查詢該商品對應的所有團購案
-        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByProdId(gbProdId);
+        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByProdIdOrName(gbProdId, gbProdName);
 
         if (groupBuyingCases.isEmpty()) {
             // 如果該商品沒有對應的團購案，顯示錯誤訊息
@@ -70,6 +71,19 @@ public class GroupBuyingCasesController {
         return "group-buying-cases/group-buying-cases-list"; // 顯示商品對應的團購案列表視圖
     }
 
+    // 查詢某會員開設且是團主的團購案
+    @GetMapping("/leader/{memId}")
+    public String findByLeader(@PathVariable Integer memId, @RequestParam(required = false) Boolean leader, Model model) {
+       
+        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeader(memId, leader);
+
+        if (groupBuyingCases.isEmpty()) {
+            model.addAttribute("error", "找不到該會員開設且為團主的團購案");
+        } else {
+            model.addAttribute("groupBuyingCases", groupBuyingCases);
+        }
+        return "front/gb/gbleader/leader-groups"; // 返回顯示團主所開設團購案的頁面
+    }
 
     // 根據團購編號查詢團購案
     @GetMapping("/{gbId}")
