@@ -6,6 +6,7 @@ import com.foodietime.product.model.ProductRepository;
 import com.foodietime.product.model.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class CartService {
     public List<CartVO> getByMemId(Integer memId) {
         MemberVO member = memberRepo.findById(memId)
                 .orElseThrow(() -> new RuntimeException("會員不存在"));
-        return repo.findByMember(member);
+        return repo.findAllByMemberIdWithDetails(member);
     }
     // 查詢某會員某商品是否已存在於購物車
     public CartVO getByMemIdAndProdId(Integer memId, Integer prodId) {
@@ -149,6 +150,13 @@ public class CartService {
         }
     }
 
-
+    @Transactional(readOnly = true)
+    public List<CartVO> getCartItemsByIds(List<Integer> shopIds) {
+        if (shopIds == null || shopIds.isEmpty()) {
+            return List.of(); // 返回一個空的列表
+        }
+        // 呼叫 Repository 中對應的新方法
+        return repo.findAllByIdsWithDetails(shopIds);
+    }
 
 }

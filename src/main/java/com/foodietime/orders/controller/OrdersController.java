@@ -2,20 +2,21 @@ package com.foodietime.orders.controller;
 
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.orders.model.OrdersService;
 import com.foodietime.orders.model.OrdersVO;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/orders")
@@ -30,53 +31,82 @@ public class OrdersController {
         this.ordersService = ordersService;
     }
 
+    /** ========================================================================================================================================= **/
+    /** ========================================================================================================================================= **/
     /**
-     * 處理前往結帳頁面的請求
-     * @param model 用於將數據傳遞到視圖 (View)
-     * @param redirectAttributes 用於在重定向時傳遞快閃屬性 (Flash Attribute)
-     * @return 結帳頁面的視圖路徑，或重定向到購物車頁面
+     * 【核心修改】處理從購物車提交的結帳請求 (POST)
+     * 這個方法現在會接收被勾選的商品ID，並進行店家驗證。
+     *
+     * @param selectedItems      參數用途：從前端表單接收到的、被勾選的購物車項目ID列表 (name="selectedItems")。
+     *                           資料來源：cart.html 中的複選框。
+     * @param session            參數用途：用於獲取會員資訊及在不同請求間傳遞數據。
+     * @param redirectAttributes 參數用途：用於在重定向時傳遞提示訊息給前端。
+     * @return 重定向到結帳頁面或返回購物車（如果驗證失敗）。
      */
-    @GetMapping("/checkout")
-    public String showCheckoutPage(Model model, RedirectAttributes redirectAttributes) {
-        // ================== 步驟1：獲取當前會員ID ==================
-        // 說明：在實際應用中，會員ID應從用戶Session或Spring Security上下文中獲取
-        Integer currentMemberId = 1; // 根據需求，此處使用測試會員ID 1
+    @PostMapping("/checkout")
+    public String processCheckout(@RequestParam(name = "selectedItems", required = false) List<Integer> selectedItems,
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes) {
 
-        try {
-            // ================== 步驟2：從購物車服務獲取數據 ==================
-            List<CartVO> cartList = cartService.getByMemId(currentMemberId);
-            model.addAttribute("cartListData", cartList);
-
-            // ================== 步驟3：處理空購物車的情況 ==================
-            if (cartList.isEmpty()) {
-                // 如果購物車是空的，不應進入結帳頁面。重定向回購物車並顯示提示。
-                redirectAttributes.addFlashAttribute("error", "您的購物車是空的，無法結帳。");
-                return "redirect:/cart/cart";
-            }
-
-            // ================== 步驟4：計算訂單摘要所需金額 ==================
-            // 商品小計
-            Integer totalAmount = cartService.calculateTotalAmount(currentMemberId);
-            model.addAttribute("totalAmount", totalAmount);
-
-            // 運費（業務邏輯：滿500免運，未滿則運費60）
-            Integer shippingFee = totalAmount >= 500 ? 0 : 60;
-            model.addAttribute("shippingFee", shippingFee);
-
-            // 訂單總計
-            Integer finalTotal = totalAmount + shippingFee;
-            model.addAttribute("finalTotal", finalTotal);
-
-        } catch (Exception e) {
-            // ================== 步驟5：處理潛在的異常 ==================
-            model.addAttribute("error", "載入結帳頁面時發生錯誤：" + e.getMessage());
-            // 即使出錯，也提供一個空列表，以防Thymeleaf渲染時出錯
-            model.addAttribute("cartListData", new ArrayList<>());
+        // -------------------- 步驟1：安全性與有效性檢查 --------------------
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "請至少選擇一項商品進行結帳！");
+            return "redirect:/cart/cart";
         }
 
-        // ================== 步驟6：返回結帳頁面的視圖名稱 ==================
+        // -------------------- 步驟2：獲取勾選商品的詳情 --------------------
+        List<CartVO> selectedCartItems = cartService.getCartItemsByIds(selectedItems);
+
+        // -------------------- 步驟3：店家驗證邏輯 --------------------
+        Set<Integer> uniqueStoreIds = selectedCartItems.stream()
+                .map(cartVO -> cartVO.getProduct().getStore().getStorId())
+                .collect(Collectors.toSet());
+
+        if (uniqueStoreIds.size() > 1) {
+            redirectAttributes.addFlashAttribute("errorMessage", "一次只能結帳一家店的商品喔！");
+            return "redirect:/cart/cart";
+        }
+
+        // -------------------- 步驟4：將驗證通過的商品列表存入 Session --------------------
+        session.setAttribute("checkoutItems", selectedCartItems);
+
+        // 使用 Post-Redirect-Get 模式，重定向到顯示結帳頁面的 GET 請求
+        return "redirect:/orders/checkout";
+    }
+
+    /**
+     * 【核心修改】顯示結帳頁面 (GET)
+     * 這個方法現在從 Session 中讀取經過驗證的商品數據，而不是直接查詢資料庫。
+     */
+    @GetMapping("/checkout")
+    public String showCheckoutPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        // -------------------- 步驟1：從 Session 讀取已驗證的商品 --------------------
+        List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
+
+        if (checkoutItems == null || checkoutItems.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "無結帳商品，請從購物車重新選擇。");
+            return "redirect:/cart/cart";
+        }
+
+        // -------------------- 步驟2：基於 Session 中的商品計算金額 --------------------
+        int totalAmount = checkoutItems.stream()
+                .mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN())
+                .sum();
+        int shippingFee = totalAmount >= 500 ? 0 : 60;
+        int finalTotal = totalAmount + shippingFee;
+
+        // -------------------- 步驟3：將數據傳遞給前端頁面 --------------------
+        model.addAttribute("checkoutItems", checkoutItems); // 將過濾後的列表傳給前端
+        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("shippingFee", shippingFee);
+        model.addAttribute("finalTotal", finalTotal);
+        model.addAttribute("orderData", new OrdersVO()); // 為表單綁定提供一個空物件
+
         return "/front/cart/checkout";
     }
+
+    /** ========================================================================================================================================= **/
+    /** ========================================================================================================================================= **/
     /**
      * 處理訂單確認頁面的請求。
      * 根據傳入的訂單ID顯示該訂單的所有詳細資訊。
@@ -115,64 +145,54 @@ public class OrdersController {
         return "/front/cart/order-confirmation";
 
     }
-    /**
-     * 處理用戶提交的訂單
-     * @param ordAddr 參數：外送地址，來自表單 name="ordAddr"
-     * @param payMethod 參數：付款方式，來自表單 name="payMethod"
-     * @param deliver 參數：取餐方式，來自表單 name="deliver"
-     * @param comment 參數：訂單備註，來自表單 name="comment"
-     * @param redirectAttributes 參數：用於重定向時傳遞成功或失敗的訊息
-     * @return 重定向到訂單確認頁或返回結帳頁
-     */
-    @PostMapping("/placeOrder")
-    public String placeOrder(@RequestParam String ordAddr,
-                             @RequestParam Integer payMethod,
-                             @RequestParam Integer deliver,
-                             @RequestParam(required = false) String comment,
-                             RedirectAttributes redirectAttributes) {
+    /** ========================================================================================================================================= **/
+    /** ========================================================================================================================================= **/
+        /**
+         * 處理用戶提交的訂單
+         * @param newOrderData 參數：使用 @ModelAttribute 綁定表單數據到 OrdersVO 物件。
+         *                     Thymeleaf 表單中的 th:object 必須對應這裡的 model attribute 名稱 ("orderData")。
+         * @param redirectAttributes 參數：用於重定向時傳遞成功或失敗的訊息
+         * @param session 參數：用於獲取當前登入的會員資訊
+         * @return 重定向到訂單確認頁或返回結帳頁
+         */
+        @PostMapping("/placeOrder")
+        public String placeOrder(@ModelAttribute("orderData") OrdersVO newOrderData,
+                                 RedirectAttributes redirectAttributes,
+                                 HttpSession session) {
 
-        // ================== 步驟1：獲取當前會員ID ==================
-        Integer currentMemberId = 1; // 同上，應從Session獲取
+            // -------------------- 步驟1：獲取會員和已驗證的商品列表 --------------------
+            MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+            if (memberVO == null) {
+                return "redirect:/cart/login";
+            }
+            Integer currentMemberId = memberVO.getMemId();
 
-//        try {
-            // ================== 步驟2：創建一個OrdersVO實例以收集表單數據 ==================
-            OrdersVO newOrderData = new OrdersVO();
-            newOrderData.setOrdAddr(ordAddr);
-            newOrderData.setPayMethod(payMethod);
-            newOrderData.setDeliver(deliver);
-            newOrderData.setComment(comment);
+            // 【核心修正】從 Session 中取出已驗證的商品列表
+            List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
 
-            // ================== 步驟3：調用Service層處理訂單創建的核心業務邏輯 ==================
-            /*
-             * 說明：
-             * 一個健壯的系統會將複雜的業務邏輯封裝在Service層。
-             * OrderService應負責：
-             * 1. 事務管理(Transaction)：確保訂單(Orders)和訂單明細(Order_Details)要麼全部成功，要麼全部失敗。
-             * 2. 數據驗證：再次確認購物車數據的有效性。
-             * 3. 數據整合：從購物車數據轉換為OrdersVO和OrdDetVO。
-             * 4. 數據庫操作：保存訂單和訂單明細。
-             * 5. 後續處理：清空購物車。
-             */
-            OrdersVO createdOrder = ordersService.createOrderFromCart(currentMemberId, newOrderData);
+            if (checkoutItems == null || checkoutItems.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "結帳已逾時或無商品，請重新操作。");
+                return "redirect:/cart/cart";
+            }
 
-            // ================== 步驟4：成功後重定向到訂單確認頁面 ==================
-            redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
-            // 將新生成的訂單ID傳遞給確認頁面
-            redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());
-            return "redirect:/orders/order-confirmation";
+            // -------------------- 步驟2：調用修改後的 Service 方法 --------------------
+            try {
+                // 將 checkoutItems 傳遞給 Service
+                OrdersVO createdOrder = ordersService.createOrderFromCart(currentMemberId, newOrderData, checkoutItems);
 
+                // -------------------- 步驟3：成功後清理 Session 並重定向 --------------------
+                session.removeAttribute("checkoutItems"); // 清除暫存
+                redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
+                redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());
+                return "redirect:/orders/order-confirmation";
 
-//        }
-//        catch (IllegalStateException e) {
-//            // ================== 步驟5：處理可預期的業務異常 (如購物車為空) ==================
-//            redirectAttributes.addFlashAttribute("error", "訂單建立失敗：" + e.getMessage());
-//            return "redirect:/cart/checkout";
-//        }
-//         catch (Exception e) {
-//            // ================== 步驟6：處理未預期的系統異常 ==================
-//            e.printStackTrace(); // 在後台記錄詳細錯誤，方便開發者調試
-//            redirectAttributes.addFlashAttribute("error", "系統發生未知錯誤，請稍後再試。");
-//            return "redirect:/cart/checkout";
-//        }
-    }
+            } catch (IllegalStateException e) {
+                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+                return "redirect:/orders/checkout"; // 返回結帳頁面顯示錯誤
+            } catch (Exception e) {
+                e.printStackTrace();
+                redirectAttributes.addFlashAttribute("errorMessage", "建立訂單時發生未知錯誤。");
+                return "redirect:/orders/checkout";
+            }
+        }
 }

@@ -15,6 +15,7 @@
 </head>
 <body>
 <!-- 保持原有的header -->
+<!--<header class="app-header" th:replace="~{/front/header :: app-header}">-->
 <header class="app-header">
     <div class="header-container">
         <div class="logo-container">
@@ -48,147 +49,130 @@
     </div>
 </header>
 
-
 <main class="cart-page">
     <div class="container">
-        <!-- 購物流程指示器 -->
+        <!-- 購物流程指示器 (維持不變) -->
         <div class="checkout-stepper">
-            <div class="stepper-item active" data-step="cart">
-                <div class="step-counter">1</div>
-                <div class="step-name">購物車</div>
-            </div>
-            <div class="stepper-item" data-step="checkout">
-                <div class="step-counter">2</div>
-                <div class="step-name">結帳資訊</div>
-            </div>
-            <div class="stepper-item" data-step="confirmation">
-                <div class="step-counter">3</div>
-                <div class="step-name">訂單確認</div>
-            </div>
+            <div class="stepper-item active" data-step="cart"><div class="step-counter">1</div><div class="step-name">購物車</div></div>
+            <div class="stepper-item" data-step="checkout"><div class="step-counter">2</div><div class="step-name">結帳資訊</div></div>
+            <div class="stepper-item" data-step="confirmation"><div class="step-counter">3</div><div class="step-name">訂單確認</div></div>
         </div>
+        <!-- ==================== 新增的錯誤訊息提示框 ==================== -->
+        <!--
+            th:if="${errorMessage}"：
+            這是 Thymeleaf 的條件判斷。只有當 Controller 透過 RedirectAttributes
+            傳遞了一個名為 "errorMessage" 的屬性時，這個 <div> 區塊才會被渲染出來。
+        -->
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}">這是一條預設的錯誤訊息。</span>
+            <button type="button" class="close-alert-btn" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+        <!-- ==================== 主要修改區域開始 ==================== -->
+        <!-- 使用 form 標籤包裹整個列表和側邊欄 -->
+        <form id="cart-form" th:action="@{/orders/checkout}" method="post">
+            <div class="cart-content">
 
-        <div class="cart-content">
-        <div class="cart-items" id="cart-items">
-            <!-- 使用 Thymeleaf 循環顯示購物車項目 -->
-            <th:block th:each="cartVO, iterStat : ${cartListData}">
-                <div class="cart-item" th:attr="data-shop-id=${cartVO.shopId}">
-
-                    <!-- 商品圖片 -->
-                    <div class="item-image">
-                        <img th:src="@{/product/image/} + ${cartVO.product.prodId}"
-                             th:alt="${cartVO.product.prodName}"
-                             class="product-image"
-                             onerror="this.src='/images/default-product.jpg'">
+                <!-- 購物車商品容器 -->
+                <div class="cart-items-container">
+                    <!-- 空購物車提示 -->
+                    <div class="empty-cart-message" th:if="${groupedCartData == null or #maps.isEmpty(groupedCartData)}">
+                        <i class="material-icons-outlined empty-cart-icon">shopping_cart</i>
+                        <h2>您的購物車是空的</h2>
+                        <a th:href="@{/index}" class="btn btn-primary">開始探索</a>
                     </div>
 
-                    <!-- 商品詳細資訊 -->
-                    <div class="item-details">
-                        <div class="item-info">
-                            <!-- 商品名稱 -->
-                            <h3 class="item-name" th:text="${cartVO.product.prodName}">商品名稱</h3>
-
-                            <!-- 商品描述 -->
-                            <p class="item-description" th:text="${cartVO.product.prodDesc}">商品描述</p>
-
-                            <!-- 商品單價 -->
-                            <div class="item-price">
-                                <span class="price-label">單價：</span>
-                                <span class="price-value" th:text="'NT$ ' + ${cartVO.product.prodPrice}">NT$ 0</span>
+                    <!-- 外層循環：遍歷店家 -->
+                    <th:block th:each="entry, iterStat : ${groupedCartData}">
+                        <div class="shop-group">
+                            <!-- 店家標題與全選框 -->
+                            <div class="shop-header">
+                                <input type="checkbox" class="shop-select-all" th:id="'shop-select-' + ${iterStat.index}" checked>
+                                <label th:for="'shop-select-' + ${iterStat.index}" class="shop-name-label">
+                                    <i class="material-icons-outlined">storefront</i>
+                                    <span class="shop-name" th:text="${entry.key.storName}">店家名稱</span>
+                                </label>
                             </div>
-                        </div>
 
-                        <!-- 操作控制 -->
-                        <div class="item-controls">
-                            <!-- 數量控制 -->
-                            <div class="quantity-controls">
-                                <span class="quantity-label">數量：</span>
-                                <form class="form-btn" method="post" th:action="@{/cart/updateQuantity}" >
-                                    <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
-                                    <div class="quantity-input-group">
-                                        <button type="submit" class="quantity-btn minus">-</button>
-                                        <input type="number" name="newQuantity"
-                                               th:value="${cartVO.prodN}"
-                                               min="1" max="99"
-                                               class="quantity-input">
-                                        <button type="submit" class="quantity-btn plus">+</button>
+                            <!-- 內層循環：遍歷該店家的商品列表 -->
+                            <div class="shop-items-list">
+                                <th:block th:each="cartVO : ${entry.value}">
+                                    <!-- data-* 屬性用於 JS 計算，cart-item 現在是 grid 容器 -->
+                                    <div class="cart-item" th:data-price="${cartVO.product.prodPrice}" th:data-quantity="${cartVO.prodN}">
+
+                                        <!-- 第 1 欄：商品勾選框 -->
+                                        <div class="item-selection">
+                                            <input type="checkbox" class="item-checkbox" name="selectedItems" th:value="${cartVO.shopId}" checked>
+                                        </div>
+
+                                        <!-- 第 2 欄：商品圖片 -->
+                                        <div class="item-image">
+                                            <img th:src="@{/product/image/{prodId}(prodId=${cartVO.product.prodId})}"
+                                                 th:alt="${cartVO.product.prodName}" class="product-image"
+                                                 onerror="this.src='/images/default-product.jpg'">
+                                        </div>
+
+                                        <!-- 第 3 欄：商品詳情與控制項 -->
+                                        <div class="item-details">
+                                            <div class="item-info">
+                                                <h3 class="item-name" th:text="${cartVO.product.prodName}">商品名稱</h3>
+                                                <p class="item-description" th:text="${cartVO.product.prodDesc}">商品簡短描述</p>
+                                                <div class="item-price" th:text="'NT$ ' + ${cartVO.product.prodPrice}">NT$ 100</div>
+                                            </div>
+
+                                            <div class="item-controls">
+                                                <div class="quantity-controls">
+                                                    <div class="quantity-input-group">
+                                                        <button type="button" class="quantity-btn minus" th:data-shop-id="${cartVO.shopId}">-</button>
+                                                        <input type="number" class="quantity-input" th:value="${cartVO.prodN}" min="1" max="99" readonly>
+                                                        <button type="button" class="quantity-btn plus" th:data-shop-id="${cartVO.shopId}">+</button>
+                                                    </div>
+                                                </div>
+                                                <div class="item-subtotal">
+                                                    <span class="subtotal-value" th:text="'NT$ ' + ${cartVO.product.prodPrice * cartVO.prodN}">NT$ 200</span>
+                                                </div>
+                                                <form method="post" th:action="@{/cart/delete}" style="display: contents;">
+                                                    <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
+                                                    <button type="submit" class="delete-btn" onclick="return confirm('確定要刪除此商品嗎？')">
+                                                        <i class="material-icons-outlined">delete_outline</i>
+                                                        <span>刪除</span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-<!--                                    <button type="submit" class="btn btn-sm btn-primary update-btn">更新</button>-->
-                                </form>
+                                </th:block>
                             </div>
-
-                            <!-- 小計 -->
-                            <div class="item-subtotal">
-                                <span class="subtotal-label">小計：</span>
-                                <span class="subtotal-value"
-                                      th:text="'NT$ ' + ${cartVO.product.prodPrice * cartVO.prodN}">NT$ 0</span>
-                            </div>
-
-                            <!-- 刪除按鈕 -->
-                            <form method="post" th:action="@{/cart/delete}" style="display: inline;">
-                                <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
-                                <button type="submit" class="btn btn-danger btn-sm delete-btn"
-                                        onclick="return confirm('確定要刪除此商品嗎？')">
-                                    <i class="material-icons-outlined">delete</i>
-                                    刪除
-                                </button>
-                            </form>
                         </div>
+                    </th:block>
+                </div>
+
+                <!-- 訂單摘要側邊欄 (結構維持不變) -->
+                <div class="cart-sidebar" th:if="${groupedCartData != null and not #maps.isEmpty(groupedCartData)}">
+                    <div class="cart-summary">
+                        <h2 class="summary-title">訂單摘要</h2>
+                        <div class="summary-row">
+                            <span>商品小計 (<span id="selected-items-count">0</span> 件)</span>
+                            <span id="selected-subtotal">NT$ 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>運費</span>
+                            <span id="shipping-fee">NT$ 0</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span>總計</span>
+                            <span id="final-total">NT$ 0</span>
+                        </div>
+
+                        <!-- 結帳按鈕，現在是 form 的一部分 -->
+                        <button type="submit" id="checkout-btn" class="btn btn-primary btn-block">
+                            前往結帳
+                        </button>
                     </div>
-
                 </div>
-            </th:block>
-
-            <!-- 購物車為空時的提示 -->
-            <div class="empty-cart-message" th:if="${cartListData == null or #lists.isEmpty(cartListData)}">
-                <i class="material-icons-outlined empty-cart-icon">shopping_cart</i>
-                <h2>您的購物車是空的</h2>
-                <p>瀏覽我們的美食選擇，將喜歡的餐點加入購物車</p>
-                <a th:href="@{/index}" class="btn btn-primary">探索美食</a>
             </div>
-        </div>
-
-        <!-- 購物車摘要也需要使用 Thymeleaf -->
-        <div class="cart-sidebar" th:if="${cartListData != null and !#lists.isEmpty(cartListData)}">
-            <div class="cart-summary">
-                <h2 class="summary-title">訂單摘要</h2>
-
-                <div class="summary-row">
-                    <span>商品總數</span>
-                    <span th:text="${totalQuantity} + ' 件'">0 件</span>
-                </div>
-                <div class="summary-row">
-                    <span>小計</span>
-                    <span id="subtotal" th:text="'NT$ ' + ${totalAmount}">NT$ 0</span>
-                </div>
-                <div class="summary-row">
-                    <span>運費</span>
-                    <span id="shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
-                </div>
-                <div class="summary-divider"></div>
-                <div class="summary-row total-row">
-                    <span>總計</span>
-                    <span id="total" th:text="'NT$ ' + ${finalTotal}">NT$ 0</span>
-                </div>
-
-                <!-- 結帳按鈕 -->
-                <a th:href="@{/orders/checkout}" class="btn btn-primary btn-block">前往結帳</a>
-                <a th:href="@{/index}" class="btn btn-text btn-block">繼續購物</a>
-            </div>
-        </div>
-        </div>
-
-
-
-
-        <!-- 推薦商品 -->
-    <section class="recommendations-section">
-        <div class="container">
-            <h2 class="section-title">您可能也喜歡</h2>
-            <div class="recommendations-grid" id="recommendations">
-                <!-- 推薦商品將由JavaScript動態生成 -->
-            </div>
-        </div>
-    </section>
+        </form>
+    </div>
 </main>
 
 <!-- 保持原有的footer -->

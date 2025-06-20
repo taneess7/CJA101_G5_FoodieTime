@@ -67,13 +67,14 @@
     </div>
 
     <!-- 錯誤訊息顯示區 -->
-    <!-- 錯誤訊息顯示區 -->
-    <!-- 檢查 Model 中是否存在 'error' 屬性 -->
-    <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+    <!-- 成功訊息顯示區 (從 placeOrder 重定向過來時顯示) -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 
     <!-- 訂單確認內容 (只有當 order 物件存在時才顯示) -->
-    <div class="confirmation-container" th:if="${order != null}">
+    <!-- th:if="${order}" 是 th:if="${order != null}" 的簡寫，更簡潔 -->
+    <div class="confirmation-container" th:if="${order}">
       <div class="confirmation-content">
         <div class="confirmation-header">
           <i class="material-icons-outlined confirmation-icon">check_circle</i>
@@ -86,118 +87,108 @@
           <div class="order-info">
             <div class="info-row">
               <span class="info-label">訂單編號</span>
-              <span id="order-number" class="info-value" th:text="${order.ordId}"></span>
+              <!-- th:text 用於安全地顯示文本，防止 XSS 攻擊 -->
+              <span class="info-value" th:text="${order.ordId}"></span>
             </div>
             <div class="info-row">
               <span class="info-label">訂單日期</span>
-              <span id="order-date" class="info-value" th:text="${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+              <!-- 使用 #dates 工具類格式化日期 -->
+              <span class="info-value" th:text="${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
             </div>
-            <!-- 預計送達日期如果 OrdersVO 沒有此欄位則不顯示或給預設值 -->
-            <!--
-            <div class="info-row">
-              <span class="info-label">預計送達</span>
-              <span id="delivery-date" class="info-value">XXXX-XX-XX</span>
-            </div>
-            -->
             <div class="info-row">
               <span class="info-label">付款方式</span>
-              <span id="payment-method" class="info-value">
+              <span class="info-value">
+                <!-- th:switch 用於根據不同條件顯示不同內容 -->
                 <span th:switch="${order.payMethod}">
-                    <span th:case="1">信用卡</span>
-                    <span th:case="2">貨到付款</span>
+                    <span th:case="0">信用卡</span>
+                    <span th:case="1">現金</span>
+                    <span th:case="2">第三方</span>
                     <span th:case="*">未知</span>
                 </span>
               </span>
             </div>
             <div class="info-row">
               <span class="info-label">取餐方式</span>
-              <span id="delivery-method" class="info-value">
-                    <span th:switch="${order.deliver}">
-                        <span th:case="1">外送</span>
-                        <span th:case="2">自取</span>
-                        <span th:case="*">未知</span>
-                    </span>
+              <span class="info-value">
+                <span th:switch="${order.deliver}">
+                    <span th:case="1">外送</span>
+                    <span th:case="2">自取</span>
+                    <span th:case="*">未知</span>
                 </span>
+              </span>
             </div>
           </div>
 
           <div class="confirmation-items">
             <h3 class="subsection-title">訂購項目</h3>
-            <div id="confirmation-items-list">
-              <!-- 使用 th:each 迭代訂單明細 -->
-              <div th:each="ordDet : ${order.ordDet}" class="checkout-item">
-                <div class="item-info">
-                  <span class="item-name" th:text="${ordDet.product.prodName}">商品名稱</span>
-                </div>
-                <span class="item-price" th:text="${ordDet.prodQty} + ' x NT$ ' + ${ordDet.prodPrice}">數量 x 單價</span>
-                <span class="item-subtotal" th:text="'NT$ ' + (${ordDet.prodQty} * ${ordDet.prodPrice})">小計金額</span>
+            <!-- 使用 th:each 迭代訂單中的所有明細 (ordDet 集合) -->
+            <!-- 假設 Controller 傳來的 order 物件已經包含了 ordDet 列表 -->
+            <div th:each="ordDet : ${order.ordDet}" class="checkout-item">
+              <div class="item-info">
+                <span class="item-name" th:text="${ordDet.product.prodName}">商品名稱</span>
               </div>
+              <!-- 【優化點】使用字面值替換，語法更簡潔 -->
+              <span class="item-price" th:text="|${ordDet.prodQty} x NT$ ${ordDet.prodPrice}|">數量 x 單價</span>
+              <span class="item-subtotal" th:text="|NT$ ${ordDet.prodQty * ordDet.prodPrice}|">小計金額</span>
             </div>
           </div>
 
           <div class="confirmation-summary">
             <div class="summary-row">
               <span>小計</span>
-              <span id="confirmation-subtotal" th:text="'NT$ ' + ${order.ordSum}">NT$ 0</span>
+              <!-- 【優化點】使用字面值替換 -->
+              <span id="confirmation-subtotal" th:text="|NT$ ${order.ordSum}|">NT$ 0</span>
             </div>
             <div class="summary-row">
               <span>運費</span>
-              <span id="confirmation-shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
+              <span id="confirmation-shipping" th:text="|NT$ ${shippingFee}|">NT$ 0</span>
             </div>
             <div class="summary-row discount-row" th:if="${order.promoDiscount > 0 or order.couponDiscount > 0}">
               <span>折扣</span>
-              <span id="confirmation-discount" th:text="'-NT$ ' + (${order.promoDiscount + order.couponDiscount})">-NT$ 0</span>
+              <span id="confirmation-discount" th:text="|-NT$ ${order.promoDiscount + order.couponDiscount}|">-NT$ 0</span>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-row total-row">
               <span>總計</span>
-              <span id="confirmation-total" th:text="'NT$ ' + ${order.actualPayment}">NT$ 0</span>
+              <span id="confirmation-total" th:text="|NT$ ${order.actualPayment}|">NT$ 0</span>
             </div>
           </div>
         </div>
 
         <div class="delivery-info">
           <h2 class="section-title">配送資訊</h2>
+          <!-- 假設 order 物件已關聯 member 物件 -->
           <div class="info-row">
             <span class="info-label">收件人</span>
-            <span id="recipient-name" class="info-value" th:text="${order.member.memName}"></span>
+            <span class="info-value" th:text="${order.member.memName}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">電話</span>
-            <span id="recipient-phone" class="info-value" th:text="${order.member.memPhone}"></span>
+            <span class="info-value" th:text="${order.member.memPhone}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">電子郵件</span>
-            <span id="recipient-email" class="info-value" th:text="${order.member.memEmail}"></span>
+            <span class="info-value" th:text="${order.member.memEmail}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">配送地址</span>
-            <span id="delivery-address" class="info-value" th:text="${order.ordAddr}"></span>
+            <span class="info-value" th:text="${order.ordAddr}"></span>
           </div>
           <div class="info-row">
             <span class="info-label">備註</span>
-            <span id="order-notes" class="info-value" th:text="${order.comment != null and order.comment != '' ? order.comment : '無'}"></span>
+            <!-- 【優化點】使用 #strings.isEmpty 檢查備註是否為 null 或空字串 -->
+            <span class="info-value" th:text="${!#strings.isEmpty(order.comment) ? order.comment : '無'}"></span>
           </div>
         </div>
 
         <div class="confirmation-actions">
           <a th:href="@{/}" class="btn btn-primary">返回首頁</a>
-          <a th:href="@{/}" class="btn btn-secondary">繼續購物</a>
+          <!-- 根據專案結構，修改為指向商品列表或地圖頁面可能更合適 -->
+          <a th:href="@{/products/list}" class="btn btn-secondary">繼續購物</a>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- 推薦商品 (保持原有結構，由JS或Thymeleaf渲染) -->
-  <section class="recommendations-section">
-    <div class="container">
-      <h2 class="section-title">您可能也喜歡</h2>
-      <div class="recommendations-grid" id="recommendations">
-        <!-- 推薦商品將由JavaScript或Thymeleaf動態生成 -->
-      </div>
-    </div>
-  </section>
-</main>
 
 <!-- 保持原有的footer -->
 <footer class="app-footer">

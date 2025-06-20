@@ -2,6 +2,9 @@ package com.foodietime.cart.controller;
 
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.store.model.StoreVO;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/cart")
@@ -20,11 +26,6 @@ public class CartController {
 
     @Autowired
     public CartController(CartService cartService) {this.cartService = cartService;}
-
-//    @GetMapping("cart")
-//    public String cart(Model model) {
-//        return "front/cart/cart";
-//    }
 
     @GetMapping("login")
     public String login() {
@@ -42,45 +43,60 @@ public class CartController {
     }
 
     @GetMapping("cart")
-    public String listAllCart(Model model) {
-        // ================== 步驟1：獲取當前會員ID ==================
-        // 注意：實際應用中應從Session或安全上下文獲取
-        Integer currentMemberId = 1; // 測試用
+    public String listAllCart(Model model, HttpSession session) {
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO == null) {
+            return "redirect:/cart/login";
+        }
+        Integer currentMemberId = memberVO.getMemId();
 
         try {
-            // ================== 步驟2：獲取購物車數據 ==================
+            // 步驟1：獲取包含完整資訊的購物車列表 (這一步是正確的)
             List<CartVO> cartList = cartService.getByMemId(currentMemberId);
-            model.addAttribute("cartListData", cartList);
 
-            // ================== 步驟3：計算購物車統計信息 ==================
+            // ==================== 核心修正點：直接基於 cartList 計算 ====================
             if (!cartList.isEmpty()) {
-                // 計算總金額
-                Integer totalAmount = cartService.calculateTotalAmount(currentMemberId);
+                // 步驟2：直接使用已獲取的 cartList 進行分組
+                Map<StoreVO, List<CartVO>> groupedCartData = cartList.stream()
+                        .collect(Collectors.groupingBy(
+                                cartVO -> cartVO.getProduct().getStore(),
+                                LinkedHashMap::new,
+                                Collectors.toList()
+                        ));
+                model.addAttribute("groupedCartData", groupedCartData);
+
+                // 步驟3：直接基於已獲取的 cartList 計算總金額和總數量，不再呼叫 Service
+                Integer totalAmount = cartList.stream()
+                        .mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN())
+                        .sum();
                 model.addAttribute("totalAmount", totalAmount);
 
-                // 計算總商品數量
-                Integer totalQuantity = cartService.calculateTotalQuantity(currentMemberId);
+                Integer totalQuantity = cartList.stream()
+                        .mapToInt(CartVO::getProdN)
+                        .sum();
                 model.addAttribute("totalQuantity", totalQuantity);
 
-                // 計算運費邏輯
+                // 步驟4：計算運費和最終總價
                 Integer shippingFee = totalAmount >= 500 ? 0 : 60;
                 model.addAttribute("shippingFee", shippingFee);
 
-                // 計算最終總價
                 Integer finalTotal = totalAmount + shippingFee;
                 model.addAttribute("finalTotal", finalTotal);
             } else {
-                // ================== 步驟4：處理空購物車 ==================
+                // 處理空購物車
+                model.addAttribute("groupedCartData", new LinkedHashMap<>());
                 model.addAttribute("totalAmount", 0);
                 model.addAttribute("totalQuantity", 0);
                 model.addAttribute("shippingFee", 0);
                 model.addAttribute("finalTotal", 0);
             }
+            // ======================================================================
 
         } catch (Exception e) {
-            // ================== 步驟5：異常處理 ==================
-            model.addAttribute("error", "載入購物車時發生錯誤：" + e.getMessage());
-            model.addAttribute("cartListData", new ArrayList<>());
+            // 為了除錯
+            e.printStackTrace();
+            model.addAttribute("error", "載入購物車時發生無法預期的錯誤：" + e.getMessage());
+            model.addAttribute("groupedCartData", new LinkedHashMap<>());
         }
         return "front/cart/cart";
     }
@@ -101,10 +117,16 @@ public class CartController {
 
     @PostMapping("/updateQuantity")
     public String updateCartQuantity(@RequestParam Integer shopId,
-                                     @RequestParam Integer newQuantity) {
+                                     @RequestParam Integer newQuantity,
+                                     HttpSession session) {
         try {
             // ================== 步驟1：獲取當前會員ID ==================
-            Integer currentMemberId = 1; // 測試用，實際應從Session獲取
+//            Integer currentMemberId = 1; // 測試用，實際應從Session獲取
+            // 步驟1：從 session 中取出完整的 MemberVO 物件
+            MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+
+            // 步驟2：從 MemberVO 物件中取得會員 ID
+            Integer currentMemberId = memberVO.getMemId(); // 假設 getter 方法是 getMemId()
 
             // ================== 步驟2：更新商品數量 ==================
             cartService.updateCart(shopId, currentMemberId, newQuantity);

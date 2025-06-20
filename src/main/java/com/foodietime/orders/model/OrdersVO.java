@@ -6,15 +6,18 @@ import com.foodietime.member.model.MemberVO;
 import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.store.model.StoreVO;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Set;
 
+// ==================== 1. 移除 @Data，使用更精確的 Lombok 註解 ====================
+@Getter
+@Setter
+@ToString(exclude = {"ordDet"})
 @Entity
-@Data
 @Table(name = "orders")
 public class OrdersVO implements Serializable{
 	@Id
@@ -81,4 +84,22 @@ public class OrdersVO implements Serializable{
 
 	@OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
 	private Set<OrdDetVO> ordDet;
+
+	// ==================== 2. 手動實作 equals 和 hashCode ====================
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		OrdersVO ordersVO = (OrdersVO) o;
+		// 關鍵：只比較主鍵 (ID)，並且只有當 ID 不是 null 時才比較
+		return ordId != null && Objects.equals(ordId, ordersVO.ordId);
+	}
+
+	@Override
+	public int hashCode() {
+		// 關鍵：返回一個固定的值，這個值對於同一個類的所有實例都是一樣的。
+		// 這可以確保在物件被持久化前後（ID從null變為有值），雜湊碼保持不變。
+		// 這避免了在 HashMap 或 HashSet 中找不到物件的問題。
+		return getClass().hashCode();
+	}
 }
