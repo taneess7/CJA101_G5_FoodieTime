@@ -1,7 +1,6 @@
 package com.foodietime.gbprod.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,19 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
+
 
 import com.foodietime.gbprod.dto.GroupBuyingDisplayDTO;
-import com.foodietime.gbprod.model.GbprodService;
-import com.foodietime.gbprod.model.GbprodVO;
+
 import com.foodietime.gbprod.service.GroupBuyingDisplayService;
-import com.foodietime.gbpromotion.model.GbpromotionVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
-import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
-import com.foodietime.member.model.MemberVO;
+
 
 @Controller
 @RequestMapping("/gb")
@@ -32,8 +25,7 @@ public class gbservlet {
 	@Autowired
     private GroupBuyingDisplayService groupBuyingDisplayService;
     
-    @Autowired
-    private GroupBuyingCasesService groupBuyingCasesService;
+  
     
 	
 	@GetMapping("/gb_index")
