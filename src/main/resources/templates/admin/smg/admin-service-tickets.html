@@ -173,7 +173,7 @@
             </button>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/smg/admin-dashboard}">儀表板</a></li>
                     <li class="breadcrumb-item">客服管理</li>
                     <li class="breadcrumb-item active">表單處理</li>
                 </ol>
@@ -204,7 +204,7 @@
                             <div class="card-body d-flex align-items-center">
                                 <div class="flex-grow-1">
                                     <h6 class="text-muted text-uppercase mb-1">待處理工單</h6>
-                                    <h3 class="mb-0 fw-bold">18</h3>
+                                    <h3 class="mb-0 fw-bold" th:text="${pendingCount}">0</h3>
                                 </div>
                                 <div class="ms-3">
                                     <i class="fas fa-clipboard-list fa-2x text-primary"></i>
@@ -217,7 +217,7 @@
                             <div class="card-body d-flex align-items-center">
                                 <div class="flex-grow-1">
                                     <h6 class="text-muted text-uppercase mb-1">已處理工單</h6>
-                                    <h3 class="mb-0 fw-bold">245</h3>
+                                    <h3 class="mb-0 fw-bold" th:text="${completedCount}">0</h3>
                                 </div>
                                 <div class="ms-3">
                                     <i class="fas fa-check-circle fa-2x text-success"></i>
@@ -225,32 +225,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <h6 class="text-muted text-uppercase mb-1">平均處理時間</h6>
-                                    <h3 class="mb-0 fw-bold">2.5小時</h3>
-                                </div>
-                                <div class="ms-3">
-                                    <i class="fas fa-clock fa-2x text-warning"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <h6 class="text-muted text-uppercase mb-1">客戶滿意度</h6>
-                                    <h3 class="mb-0 fw-bold">4.8/5.0</h3>
-                                </div>
-                                <div class="ms-3">
-                                    <i class="fas fa-smile fa-2x text-info"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+   
                 </div>
 
                 <!-- Search and Filter Form -->
@@ -289,15 +264,7 @@
                                     <option value="closed">已關閉</option>
                                 </select>
                             </div>
-                            <div class="col-lg-2 col-md-6">
-                                <label for="priority" class="form-label">優先級別</label>
-                                <select class="form-select" id="priority">
-                                    <option value="">全部級別</option>
-                                    <option value="high">高</option>
-                                    <option value="medium">中</option>
-                                    <option value="low">低</option>
-                                </select>
-                            </div>
+                          
                             <div class="col-lg-3 col-md-6">
                                 <label for="dateRange" class="form-label">日期範圍</label>
                                 <input type="date" class="form-control" id="dateRange">
@@ -327,8 +294,8 @@
                             </button>
                         </div>
                     </div>
+                  
                     <div class="card-body p-0">
-                        <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
@@ -349,38 +316,42 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="ps-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox">
-                                            </div>
-                                        </td>
-                                        <td><span class="fw-medium">TK-20230501-001</span></td>
-                                        <td>
-                                            <div class="fw-medium">張小明</div>
-                                            <small class="text-muted">ID: 12345</small>
-                                        </td>
-                                        <td><span class="badge bg-info-subtle text-info">訂單問題</span></td>
-                                        <td>訂單無法正常顯示</td>
-                                        <td><span class="badge bg-danger-subtle text-danger">高</span></td>
-                                        <td>2023-05-01 09:30</td>
-                                        <td><span class="badge bg-warning-subtle text-warning">待處理</span></td>
-                                        <td>2023-05-01 09:30</td>
-                                        <td class="text-end pe-4">
-                                            <button class="btn btn-sm btn-icon btn-outline-primary me-1" onclick="viewTicket('TK-20230501-001')" title="查看工單">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-icon btn-outline-success" onclick="replyTicket('TK-20230501-001')" title="回覆工單">
-                                                <i class="fas fa-reply"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <!-- More ticket rows... -->
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <!-- Pagination -->
+								    <tr th:each="message, iterStat : ${messages}">
+								        <td class="ps-4">
+								            <div class="form-check">
+								                <input class="form-check-input" type="checkbox" name="selectedTickets" th:value="${message.dmId}">
+								            </div>
+								        </td>
+								        <td th:text="'TK-' + ${message.dmId}"></td>
+								        <td>
+								            <div th:text="${message.member.memNickname}"></div>
+								            <small class="text-muted" th:text="'ID: ' + ${message.member.memId}"></small>
+								        </td>
+								        <td>訂單問題</td>
+								        <td th:text="${message.messContent}"></td>
+								        <td>高</td>
+								         <td th:text="${formattedTimes[iterStat.index]}"></td>
+									<td>
+									    <span th:if="${message.messDirection.ordinal() == 0}" class="badge bg-warning">待處理</span>
+									    <span th:if="${message.messDirection.ordinal() == 1}" class="badge bg-success">已回覆</span>
+									</td>
+									 <td th:text="${formattedTimes[iterStat.index]}"></td>
+
+								        <td class="text-end pe-4">
+								             <button class="btn btn-sm btn-outline-primary"
+        										  th:onclick="|viewTicket(${message.dmId})|">查看</button>
+
+										
+										    <button class="btn btn-sm btn-outline-success"
+        										  th:onclick="|viewTicket(${message.dmId})|">回覆</button>
+
+								        </td>
+								    </tr>
+							</tbody>
+						</table>
+              		</div>
+                        <!-- Pagination -->  
+                    <div class="card-footer">            
                         <nav class="mt-3">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item disabled">
@@ -394,12 +365,11 @@
                                 </li>
                             </ul>
                         </nav>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+                      </div>
+                   </div>
+				</div> 
+			</div>
+ 
     <!-- View Ticket Modal -->
     <div class="modal fade" id="viewTicketModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -419,25 +389,19 @@
                                     </div>
                                     <div class="d-flex align-items-center mb-2">
                                         <span class="text-muted me-2">會員資料：</span>
-                                        <span class="fw-medium">張小明<small class="text-muted">(ID: 12345)</small></span>
+                                        <span class="fw-medium" id="viewTicketMemberInfo"></span>
                                     </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="text-muted me-2">工單類型：</span>
-                                        <span class="badge bg-info-subtle text-info">訂單問題</span>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <span class="text-muted me-2">優先級別：</span>
-                                        <span class="badge bg-danger-subtle text-danger">高</span>
-                                    </div>
+                                  
+                                    
                                 </div>
                                 <div class="col-md-6">
                                     <div class="d-flex align-items-center mb-2">
                                         <span class="text-muted me-2">建立時間：</span>
-                                        <span>2023-05-01 09:30</span>
+                                        <span id="viewMessTime"></span>
                                     </div>
                                     <div class="d-flex align-items-center mb-2">
                                         <span class="text-muted me-2">處理狀態：</span>
-                                        <span class="badge bg-warning-subtle text-warning">待處理</span>
+                                        <span id="viewTicketStatus" class="badge"></span>
                                     </div>
                                     <div class="d-flex align-items-center mb-2">
                                         <span class="text-muted me-2">最後更新：</span>
@@ -503,13 +467,14 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">關閉</button>
-                    <button type="button" class="btn btn-primary" onclick="replyTicket('TK-20230501-001')">
+                    <button type="button" class="btn btn-primary" id="replyBtnInModal">
                         <i class="fas fa-reply me-1"></i>回覆
                     </button>
                 </div>
             </div>
         </div>
     </div>
+  
 
     <!-- Reply Ticket Modal -->
     <div class="modal fade" id="replyTicketModal" tabindex="-1">
@@ -520,13 +485,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="replyForm">
+                    <form id="replyForm" >
+                    <input type="hidden" id="replyDmId">
                         <div class="mb-3">
                             <label for="replyStatus" class="form-label">更新狀態</label>
                             <select class="form-select" id="replyStatus">
-                                <option value="processing">處理中</option>
-                                <option value="completed">已完成</option>
-                                <option value="closed">已關閉</option>
+                                <option value="0">待處理</option>
+								<option value="1">已回覆</option>
                             </select>
                         </div>
                         
@@ -574,33 +539,98 @@
             });
         });
 
-        // View Ticket
-        function viewTicket(ticketId) {
-            // In a real application, this would fetch ticket details from the server
-            // For demo purposes, we're using static data
-            var modal = new bootstrap.Modal(document.getElementById('viewTicketModal'));
-            modal.show();
+     // 查看
+        function viewTicket(dmId) {
+            // Ajax 去 Controller 拉該筆工單資料
+            fetch(`/smg/admin-service-tickets/view/${dmId}`)
+            		.then(response => {
+                		if (!response.ok) throw new Error('Network response was not ok');
+                		return response.json();
+            		})
+             		.then(data => {
+                        console.log('✅ 回傳資料：', data); // debug 看後端回來什麼
+
+                        document.getElementById('ticketId').textContent = 'TK-' + data.dmId;
+
+                        // 安全判斷 member 有沒有
+                        if (data.member) {
+                            document.getElementById('viewTicketMemberInfo').textContent =
+                                data.member.memNickname + ' (ID: ' + data.member.memId + ')';
+                        } else {
+                            document.getElementById('viewTicketMemberInfo').textContent = '未知會員';
+                        }
+
+                        // messTime 有沒有
+                        if (data.messTime) {
+                            const messTime = new Date(data.messTime).toLocaleString('zh-TW');
+                            document.getElementById('viewMessTime').textContent = messTime;
+                        } else {
+                            document.getElementById('viewMessTime').textContent = '-';
+                        }
+                        
+                        // 狀態 badge
+                        const statusBadge = document.getElementById('viewTicketStatus');
+                        if (data.messDirection === 0) {
+                            statusBadge.textContent = '待處理';
+                            statusBadge.className = 'badge bg-warning-subtle text-warning';
+                        } else if (data.messDirection === 1) {
+                            statusBadge.textContent = '已回覆';
+                            statusBadge.className = 'badge bg-success-subtle text-success';
+                        }
+                        
+                     // 回覆按鈕 → 塞正確 dmId
+                        document.getElementById('replyBtnInModal').setAttribute('onclick', `replyTicket(${data.dmId})`);
+
+
+                    var modal = new bootstrap.Modal(document.getElementById('viewTicketModal'));
+                    modal.show();
+                });
         }
 
-        // Reply Ticket
-        function replyTicket(ticketId) {
+     // 回覆
+        function replyTicket(dmId) {
+            // 可以預設塞 dmId 到 form hidden 欄位
+            document.getElementById('replyDmId').value = dmId;
+
             var modal = new bootstrap.Modal(document.getElementById('replyTicketModal'));
             modal.show();
         }
 
-        // Submit Reply
+     // 提交回覆
         function submitReply() {
-            // In a real application, this would submit the reply to the server
-            // For demo purposes, we'll just close the modal
-            var modal = bootstrap.Modal.getInstance(document.getElementById('replyTicketModal'));
-            modal.hide();
-
-            // Show success message
-            alert('回覆已送出');
+        	const yourDmId = document.getElementById('replyDmId').value;
+            const yourReplyContent = document.getElementById('replyContent').value;
+            const replyStatus = parseInt(document.getElementById('replyStatus').value);
             
-            // Refresh the page or update the ticket list
-            // location.reload();
+            fetch('/smg/admin-service-tickets/reply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dmId: yourDmId,
+                    status: 1, // 固定為 已回覆
+                    replyContent: yourReplyContent
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('回覆已送出');
+                    location.reload();
+                }
+            });
         }
+     
+     // 全選功能
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checked = this.checked;
+            document.querySelectorAll('input[name="selectedTickets"]').forEach(function(checkbox) {
+                checkbox.checked = checked;
+            });
+        });
+
+
     </script>
 </body>
 </html>
