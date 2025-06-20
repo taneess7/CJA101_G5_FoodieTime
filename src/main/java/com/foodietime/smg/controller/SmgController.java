@@ -292,4 +292,5 @@ public class SmgController {
     public String adminorderspayments() {
     	return "admin/smg/admin-orders-payments"; 
     }
+
 }
