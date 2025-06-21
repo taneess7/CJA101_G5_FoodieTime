@@ -14,27 +14,12 @@ public class ReportPostService {
 	@Autowired
 	private ReportPostRepository repository;
 
-	public ReportPostVO addReportPost(Integer postId, Integer memId, java.sql.Timestamp repPostDate, char repPostReason,
-			byte repPostStatus) {
-		ReportPostVO reportpostVO = new ReportPostVO();
-
-		MemberVO member = new MemberVO();
-		member.setMemId(memId);
-
-		PostVO post = new PostVO();
-		post.setPostId(postId);
-
-		reportpostVO.setPost(post);
-		reportpostVO.setMember(member);
-		reportpostVO.setRepPostDate(repPostDate);
-		reportpostVO.setRepPostReason(repPostReason);
-		reportpostVO.setRepPostStatus(repPostStatus);
-
-		return repository.save(reportpostVO);
+	public ReportPostVO save(ReportPostVO vo) {
+	    return repository.save(vo);
 	}
 
 	public ReportPostVO updateReportPost(Integer repPostId, Integer postId, Integer memId,
-			java.sql.Timestamp repPostDate, char repPostReason, byte repPostStatus) {
+			java.sql.Timestamp repPostDate, String repPostReason, byte repPostStatus) {
 		ReportPostVO reportpostVO = new ReportPostVO();
 
 		MemberVO member = new MemberVO();

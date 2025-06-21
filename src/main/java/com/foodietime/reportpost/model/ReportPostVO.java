@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -19,6 +20,7 @@ import lombok.Data;
 public class ReportPostVO implements Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "REP_POST_ID")
 	private Integer repPostId;
 
@@ -35,9 +37,8 @@ public class ReportPostVO implements Serializable {
 
 	@Column(name = "REP_POST_REASON")
 	@NotNull(message = "檢舉原因請勿空白")
-	@Min(value=1, message="最小1")
-    @Max(value=255, message="最大255")
-	private char repPostReason;
+	@Size(max=255)
+	private String repPostReason;
 
 	@Column(name = "REP_POST_STATUS")
 	private byte repPostStatus;

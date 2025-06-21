@@ -47,14 +47,20 @@ public class PostController {
 //	PostCategoryService postcategory;
 
 	@GetMapping("/addPost")
-	public String addPost(ModelMap model, HttpSession session) {
-		PostVO postVO = new PostVO();
+	public String addPost(@RequestParam(value = "postId", required = false) Integer postId, ModelMap model,
+			HttpSession session) {
+		PostVO postVO;
+		if (postId != null) {
+			postVO = postservice.getOnePost(postId); // 查詢原本的貼文
+		} else {
+			postVO = new PostVO(); // 新增時給空物件
+		}
 		List<PostCategoryVO> categories = postCategoryservice.getAll();
 		model.addAttribute("categories", categories);
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("postVO", postVO);
-		return "front/post/addPost"; // 表單頁面的 view 名稱
+		return "front/post/addPost";
 	}
 
 	@PostMapping("/insert")
@@ -131,12 +137,12 @@ public class PostController {
 
 	@PostMapping("/delete")
 	public String delete(@RequestParam("postId") String postId, ModelMap model, HttpSession session) {
-		
+
 		// ====== 測試用：手動指定登入會員 ======
-	    // 你可以改這個 ID 來測試不同會員
-	    MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-	    session.setAttribute("loginMember", fakeMember);
-	    // ====== 測試用結束 ======
+		// 你可以改這個 ID 來測試不同會員
+		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
+		session.setAttribute("loginMember", fakeMember);
+		// ====== 測試用結束 ======
 		// 取得目前登入會員
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		if (loginMember == null) {
@@ -169,10 +175,10 @@ public class PostController {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
 		// ====== 測試用：手動指定登入會員 ======
-	    // 你可以改這個 ID 來測試不同會員
-	    MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-	    session.setAttribute("loginMember", fakeMember);
-	    // ====== 測試用結束 ======
+		// 你可以改這個 ID 來測試不同會員
+		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
+		session.setAttribute("loginMember", fakeMember);
+		// ====== 測試用結束 ======
 		Integer id = null;
 		try {
 			id = Integer.valueOf(postId);
@@ -180,13 +186,12 @@ public class PostController {
 			model.addAttribute("errorMessage", "貼文編號格式不正確");
 			return "redirect:/post/";
 		}
-		 // 依標題查詢
+		// 依標題查詢
 //	    List<PostVO> posts = postservice.getByTitle(postTitle); // 你要實作這個方法，回傳 List
 //	    if (posts == null || posts.isEmpty()) {
 //	        model.addAttribute("errorMessage", "查無資料");
 //	        return "front/post/listOnePost";
 //	    }
-		
 
 		/*************************** 2.開始查詢資料 *****************************************/
 		PostVO postVO = postservice.getOnePost(id);
@@ -195,7 +200,7 @@ public class PostController {
 			return "front/post/listOnePost";
 		}
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-	    model.addAttribute("loginMember", loginMember);
+		model.addAttribute("loginMember", loginMember);
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("postVO", postVO);
@@ -205,18 +210,18 @@ public class PostController {
 	@GetMapping("/one")
 	public String getOnePost(@RequestParam("postId") Integer postId, ModelMap model, HttpSession session) {
 		// ====== 測試用：手動指定登入會員 ======
-	    // 你可以改這個 ID 來測試不同會員
-	    MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-	    session.setAttribute("loginMember", fakeMember);
-	    // ====== 測試用結束 ======
+		// 你可以改這個 ID 來測試不同會員
+		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
+		session.setAttribute("loginMember", fakeMember);
+		// ====== 測試用結束 ======
 		PostVO postVO = postservice.getOnePost(postId);
-	    model.addAttribute("postVO", postVO);
+		model.addAttribute("postVO", postVO);
 
-	    // 加這行
-	    MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-	    model.addAttribute("loginMember", loginMember);
+		// 加這行
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		model.addAttribute("loginMember", loginMember);
 
-	    return "front/post/listOnePost";
+		return "front/post/listOnePost";
 	}
 
 	// ================ GET ALL 查詢所有貼文 ================
