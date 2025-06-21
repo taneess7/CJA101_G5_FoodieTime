@@ -36,16 +36,13 @@
 
        // 留言輸入框功能
        document.addEventListener('DOMContentLoaded', function () {
-           const textarea = document.querySelector('.comment-textarea');
-           const submitBtn = document.querySelector('.submit-btn');
-
-           textarea.addEventListener('input', function () {
-               if (this.value.trim().length > 0) {
-                   submitBtn.disabled = false;
-               } else {
-                   submitBtn.disabled = true;
-               }
-           });
+		const textarea = document.querySelector('.comment-textarea');
+		   const submitBtn = document.querySelector('.submit-btn');
+		   if (textarea && submitBtn) {
+		       textarea.addEventListener('input', function () {
+		           submitBtn.disabled = this.value.trim().length === 0;
+		       });
+		   }
        });
 	   
 	   /*<![CDATA[*/

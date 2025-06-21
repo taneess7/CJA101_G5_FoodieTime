@@ -7,7 +7,7 @@
 <meta name="description" content="在FoodieTime食刻討論區分享美食體驗，與美食愛好者交流互動">
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-<link rel="stylesheet" th:href="@{/css/front/post/post.css}">
+<link rel="stylesheet" th:href="@{/css/front/post/selectOnePost.css}">
 </head>
 <body>
 	<!-- 頁首 -->
@@ -47,16 +47,16 @@
 	</header>
 
 	<!-- 麵包屑導航 -->
-<section class="breadcrumb">
-    <div class="container">
-        <a th:href="@{/post/}" class="breadcrumb-link">討論區</a>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-category" 
-              th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">分類名稱</span>
-<!--         <span class="breadcrumb-separator">/</span> -->
-<!--         <span class="breadcrumb-current" th:text="${postVO.postTitle}">貼文標題</span> -->
-    </div>
-</section>
+	<section class="breadcrumb">
+		<div class="container">
+			<a th:href="@{/post/}" class="breadcrumb-link">討論區</a> <span
+				class="breadcrumb-separator">/</span> <span
+				class="breadcrumb-category"
+				th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">分類名稱</span>
+			<!--         <span class="breadcrumb-separator">/</span> -->
+			<!--         <span class="breadcrumb-current" th:text="${postVO.postTitle}">貼文標題</span> -->
+		</div>
+	</section>
 
 	<!-- 主要內容 -->
 	<main class="main-content">
@@ -82,12 +82,25 @@
 					<button class="btn btn-primary" onclick="editPost()" type="button">修改貼文</button>
 					<button class="btn btn-danger" onclick="reportPost()" type="button">檢舉貼文</button>
 				</div>
+				<!-- 只有作者本人才能刪除 -->
+				<form
+					th:if="${loginMember != null and postVO.member.memId == loginMember.memId}"
+					th:action="@{/post/delete}" method="post" style="display: inline;">
+					<input type="hidden" name="postId" th:value="${postVO.postId}" />
+					<button type="submit" class="btn btn-danger"
+						onclick="return confirm('確定要刪除這篇貼文嗎？');">刪除貼文</button>
+				</form>
+				<!-- 其他人看到禁用按鈕 -->
+				<button
+					th:if="${loginMember == null or postVO.member.memId != loginMember.memId}"
+					class="btn btn-danger" disabled
+					style="opacity: 0.5; cursor: not-allowed;">僅限本人可刪除</button>
 			</div>
 		</div>
 	</main>
 </body>
-<script th:src="@{/js/front/post/post.js}"></script>
+<script th:src="@{/js/front/post/selectOnePost.js}"></script>
 
-</script>
+
 
 </html>
