@@ -1,7 +1,10 @@
 package com.foodietime.product.controller;
 
 import com.foodietime.product.model.ProductCategoryService;
+import com.foodietime.product.model.ProductCategoryServiceImpl;
 import com.foodietime.product.model.ProductCategoryVO;
+import com.foodietime.product.model.ProductService;
+import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreVO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -17,18 +21,21 @@ public class ProductCategoryController {
 
 	@Autowired
     private ProductCategoryService categoryService;
+	@Autowired
+	private ProductService productService;
 	
     // 查全部
     @GetMapping("/food-categories")
-    public String listAll() {
-        
+    public String listAll() {      
         return "/front/restaurant/food-categories";
     }
+    
     //跳回首頁
     @GetMapping("/index")
     public String listindex() {
     	return "/index";
     }
+    
     //跳到會員登入頁面
     @GetMapping("/login")
     public String listlogin() {
@@ -37,11 +44,24 @@ public class ProductCategoryController {
     
     @GetMapping("/{cateId}")
     public String showCategoryPage(@PathVariable Integer cateId, Model model) {
+        // 1. 找出分類名稱
+        ProductCategoryVO categoryVO = categoryService.findById(cateId);
+        model.addAttribute("categoryName", categoryVO.getProdCate());
+
+        // 2. 找出該分類的店家
         List<StoreVO> storeList = categoryService.getStoresByCategoryId(cateId);
         model.addAttribute("storeList", storeList);
-        model.addAttribute("categoryId", cateId); 
-        
-        return "front/restaurant/chinese-cuisine"; // 對應的 Thymeleaf 模板
+        model.addAttribute("categoryId", cateId);
+
+        // 3. 根據店家撈商品
+        List<ProductVO> allProducts = new ArrayList<>();
+        for (StoreVO store : storeList) {
+            List<ProductVO> products = productService.findByStoreId(store.getStorId());
+            allProducts.addAll(products);
+        }
+        model.addAttribute("productList", allProducts);
+
+        return "front/restaurant/category"; // 共用模板
     }
     
     //中式料理

@@ -59,17 +59,34 @@
 	</header>
 
 	<main>
-		<!-- 頁面標題 -->
-		<section class="page-header">
-			<div class="container">
-				<h1 class="page-title">美式料理</h1>
-				<p class="page-description">探索道地的美式風味，從經典漢堡到香脆炸雞，體驗美國多元飲食文化的精髓</p>
-				<div class="breadcrumbs">
-					<a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a>
-					&gt; <span>美式料理</span>
+
+		<section class="menu-section">
+			<h2>店家菜單</h2>
+			<div class="menu-list" th:if="${productList != null}">
+				<div class="menu-item" th:each="product : ${productList}">
+					<img th:if="${product.prodPhoto != null}"
+						th:src="'data:image/jpeg;base64,' + ${T(org.apache.tomcat.util.codec.binary.Base64).encodeBase64String(product.prodPhoto)}"
+						alt="商品圖片" class="menu-image" />
+					<h3 class="menu-name" th:text="${product.prodName}">商品名稱</h3>
+					<p class="menu-desc" th:text="${product.prodDesc}">商品描述</p>
+					<p class="menu-price" th:text="'$' + ${product.prodPrice}">價格</p>
 				</div>
 			</div>
+			<div th:if="${productList == null || productList.isEmpty()}">
+				<p>目前沒有菜單資料。</p>
+			</div>
 		</section>
+		<!-- 頁面標題 -->
+		<!-- 		<section class="page-header"> -->
+		<!-- 			<div class="container"> -->
+		<!-- 				<h1 class="page-title">美式料理</h1> -->
+		<!-- 				<p class="page-description">探索道地的美式風味，從經典漢堡到香脆炸雞，體驗美國多元飲食文化的精髓</p> -->
+		<!-- 				<div class="breadcrumbs"> -->
+		<!-- 					<a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a> -->
+		<!-- 					&gt; <span>美式料理</span> -->
+		<!-- 				</div> -->
+		<!-- 			</div> -->
+		<!-- 		</section> -->
 
 		<!-- 美式料理分類導航 -->
 		<nav class="category-nav">
@@ -100,41 +117,43 @@
 								<span class="cuisine-tag cuisine-american">美式料理</span>
 								<p class="restaurant-category" th:text="${store.storDesc}">店家描述</p>
 								<div class="restaurant-rating">
-									<span class="rating-stars"> 
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i> 
-									<i class="fas fa-star"></i> 
-									<i class="fas fa-star"></i> 
-									<i class="far fa-star"></i>
-									</span> 
-									<span th:text="|${store.reviews != null ? store.reviews : 0} 則評價|">123 則評價</span>
-										
+									<span class="rating-stars"> <i class="fas fa-star"></i>
+										<i class="fas fa-star"></i> <i class="fas fa-star"></i> <i
+										class="fas fa-star"></i> <i class="far fa-star"></i>
+									</span> <span
+										th:text="|${store.reviews != null ? store.reviews : 0} 則評價|">123
+										則評價</span>
+
 								</div>
 								<div class="restaurant-actions">
-									<button class="action-btn favorite-btn"><i class="far fa-heart"></i> 收藏</button>
-									<button class="action-btn share-btn"><i class="fas fa-share-alt"></i> 分享</button>
-									<button class="action-btn directions-btn"><i class="fas fa-directions"></i> 導航</button>
+									<button class="action-btn favorite-btn">
+										<i class="far fa-heart"></i> 收藏
+									</button>
+									<button class="action-btn share-btn">
+										<i class="fas fa-share-alt"></i> 分享
+									</button>
+									<button class="action-btn directions-btn">
+										<i class="fas fa-directions"></i> 導航
+									</button>
 								</div>
 							</div>
 						</div>
 						<div class="restaurant-contact-info">
 							<div class="info-item">
-								<i class="fas fa-map-marker-alt"></i>
-								<span th:text="${store.storAddr}">地址</span>
+								<i class="fas fa-map-marker-alt"></i> <span
+									th:text="${store.storAddr}">地址</span>
 							</div>
 							<div class="info-item">
-								<i class="fas fa-phone"></i>
-								<span th:text="${store.storPhone}">電話</span>
+								<i class="fas fa-phone"></i> <span th:text="${store.storPhone}">電話</span>
 							</div>
 							<div class="info-item">
-								<i class="fas fa-clock"></i>
-								<span>營業時間: <span th:text="${store.storOnTime}">11:00</span> -
-								<span th:text="${store.storOffTime}">21:00</span></span>
+								<i class="fas fa-clock"></i> <span>營業時間: <span
+									th:text="${store.storOnTime}">11:00</span> - <span
+									th:text="${store.storOffTime}">21:00</span></span>
 							</div>
 							<div class="info-item" th:if="${store.storWeb != null}">
-								<i class="fas fa-globe"></i> 
-								<a th:href="${store.storWeb}"
-								   th:text="${store.storWeb}" class="website-link">網站</a>
+								<i class="fas fa-globe"></i> <a th:href="${store.storWeb}"
+									th:text="${store.storWeb}" class="website-link">網站</a>
 							</div>
 						</div>
 					</div>
