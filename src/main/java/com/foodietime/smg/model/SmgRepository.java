@@ -26,4 +26,9 @@ public interface SmgRepository extends JpaRepository<SmgVO, Integer> {
 		List<SmgVO> findByConditions(@Param("account") String account,
 		                             @Param("name") String name,
 		                             @Param("email") String email);
+
+
+
+
+		
 }

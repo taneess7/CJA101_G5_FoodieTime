@@ -47,14 +47,20 @@ public class SmgController {
                         Model model) {
 
         SmgVO smg = smgSvc.login(account, password);
-
+        
         if (smg != null) {
-            session.setAttribute("loggedInSmg", smg); // 儲存商家資訊於 session
-            return "admin/smg/admin-dashboard";
+        	if( smgSvc.checkAccountStatus(smg)) {
+            	session.setAttribute("loggedInSmg", smg); // 儲存商家資訊於 session
+            	return "admin/smg/admin-dashboard";
+            }else {
+            	model.addAttribute("error", "帳號狀態無啟用");
+                return "admin/smg/admin-login"; // 返回登入頁面
+            }          
         } else {
             model.addAttribute("error", "帳號或密碼錯誤");
             return "admin/smg/admin-login"; // 返回登入頁面
         }
+        
     }
 
     @GetMapping("/logout")
