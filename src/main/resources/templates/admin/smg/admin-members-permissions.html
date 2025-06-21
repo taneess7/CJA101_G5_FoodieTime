@@ -705,11 +705,13 @@
                     document.getElementById('modalMemberEmail').textContent = data.memEmail;
                     document.getElementById('modalMemberRegDate').textContent = data.memTime ? data.memTime.substring(0, 10) : '-';
                     document.getElementById('modalMemberStatus').textContent = (data.memStatus == 1) ? '啟用' : '停用';
+					
+                    const avatarImg = document.getElementById('modalMemberAvatar');
 
-                    if (data.avatarBase64) {
-                        document.getElementById('modalMemberAvatar').src = `data:image/png;base64,${data.avatarBase64}`;
+                    if (data.avatarBase64 && data.avatarBase64.trim() !== "") {
+                        avatarImg.src = `data:image/png;base64,${data.avatarBase64}`;
                     } else {
-                        document.getElementById('modalMemberAvatar').src = "https://via.placeholder.com/80";
+                        avatarImg.src = "/images/icons/logo.png"; 
                     }
 
                     // 權限欄位 disable 處理

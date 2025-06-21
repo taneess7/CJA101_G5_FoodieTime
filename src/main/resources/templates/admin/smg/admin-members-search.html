@@ -235,33 +235,37 @@
 								    <input type="number" class="form-control" name="totalSpentMin" th:value="${totalSpentMin}">
 								
 								    <button type="submit" class="btn btn-primary">查詢</button>
+								    
+								    <!-- Additional Filters -->
+		                            <div class="row g-3 mb-4">
+		                                <div class="col-md-2">
+		                                    <label for="registrationDateFrom" class="form-label">註冊日期(起)</label>
+		                                    <input type="date" class="form-control" id="registrationDateFrom" name="regDateFrom">
+		                                </div>
+		                                <div class="col-md-2">
+		                                    <label for="registrationDateTo" class="form-label">註冊日期(迄)</label>
+		                                    <input type="date" class="form-control" id="registrationDateTo" name="regDateTo">
+		                                </div>
+		                                <div class="col-md-2">
+		                                    <label for="orderCountMin" class="form-label">訂單數量(最少)</label>
+		                                    <input type="number" class="form-control" id="orderCountMin" placeholder="0">
+		                                </div>
+		                                <div class="col-md-2">
+		                                    <label for="totalSpentMin" class="form-label">消費金額(最少)</label>
+		                                    <input type="number" class="form-control" id="totalSpentMin" placeholder="0">
+		                                </div>
+		                                <div class="col-md-2 d-flex align-items-end">
+		                                    <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+		                                        <i class="fas fa-times me-1"></i>清除
+		                                    </button>
+		                                </div>
+		                            </div>
+								    
+								    
 								</form>
 
                             
-                            <!-- Additional Filters -->
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-2">
-                                    <label for="registrationDateFrom" class="form-label">註冊日期(起)</label>
-                                    <input type="date" class="form-control" id="registrationDateFrom" name="regDateFrom">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="registrationDateTo" class="form-label">註冊日期(迄)</label>
-                                    <input type="date" class="form-control" id="registrationDateTo" name="regDateTo">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="orderCountMin" class="form-label">訂單數量(最少)</label>
-                                    <input type="number" class="form-control" id="orderCountMin" placeholder="0">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="totalSpentMin" class="form-label">消費金額(最少)</label>
-                                    <input type="number" class="form-control" id="totalSpentMin" placeholder="0">
-                                </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
-                                        <i class="fas fa-times me-1"></i>清除
-                                    </button>
-                                </div>
-                            </div>
+                            
 
                             <!-- Statistics Cards -->
                             <div class="row mb-4">
@@ -604,17 +608,14 @@
 
         // Clear Filters Function
         function clearFilters() {
-            document.getElementById('searchKeyword').value = '';
-            document.getElementById('memberStatus').value = '';
-            document.getElementById('memberLevel').value = '';
-            document.getElementById('ageRange').value = '';
-            document.getElementById('gender').value = '';
-            document.getElementById('registrationDateFrom').value = '';
-            document.getElementById('registrationDateTo').value = '';
-            document.getElementById('lastLoginFrom').value = '';
-            document.getElementById('orderCountMin').value = '';
-            document.getElementById('totalSpentMin').value = '';
-        }
+		    document.querySelector('input[name="keyword"]').value = '';
+		    document.querySelector('select[name="status"]').value = '';
+		    document.querySelector('select[name="gender"]').value = '';
+		    document.querySelector('input[name="regDateFrom"]').value = '';
+		    document.querySelector('input[name="regDateTo"]').value = '';
+		    document.querySelector('input[name="orderCountMin"]').value = '';
+		    document.querySelector('input[name="totalSpentMin"]').value = '';
+		}
 
         // Export Members Function
         function exportMembers() {
