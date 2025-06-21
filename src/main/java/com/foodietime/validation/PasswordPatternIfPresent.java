@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordPatternIfPresent {
-    String message() default "密碼需包含大小寫字母、數字，長度 6~20 字元";
+    String message() default "密碼需包含大小寫字母、數字，長度 4~20 字元";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

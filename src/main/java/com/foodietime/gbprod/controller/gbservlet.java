@@ -1,7 +1,6 @@
 package com.foodietime.gbprod.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,19 +9,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
+
 
 import com.foodietime.gbprod.dto.GroupBuyingDisplayDTO;
-import com.foodietime.gbprod.model.GbprodService;
-import com.foodietime.gbprod.model.GbprodVO;
+import com.foodietime.gbprod.dto.ProductDetailDTO;
+
 import com.foodietime.gbprod.service.GroupBuyingDisplayService;
-import com.foodietime.gbpromotion.model.GbpromotionVO;
+import com.foodietime.gbprod.service.ProductDetailService;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
-import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
-import com.foodietime.member.model.MemberVO;
+
 
 @Controller
 @RequestMapping("/gb")
@@ -33,10 +28,12 @@ public class gbservlet {
     private GroupBuyingDisplayService groupBuyingDisplayService;
     
     @Autowired
-    private GroupBuyingCasesService groupBuyingCasesService;
+    private ProductDetailService productDetailService;
+    
+  
     
 	
-	@GetMapping("/gb_index")
+	@GetMapping("/gbindex")
 	public String showLoginPage(Model model) {
 		List<GroupBuyingDisplayDTO> popularProducts = groupBuyingDisplayService.getPopularProducts();
         model.addAttribute("popularProducts", popularProducts);
@@ -96,12 +93,20 @@ public class gbservlet {
      */
     @GetMapping("/detail/{gbId}")
     public String showProductDetail(@PathVariable Integer gbId, Model model) {
-
-       
         
-       
+             // 從資料庫獲取商品詳情
+             ProductDetailDTO productDetail = productDetailService.getProductDetail(gbId);
+            
+            if (productDetail == null) {
+                model.addAttribute("error", "找不到該團購商品");
+                return "front/gb/gbindex"; // 返回首頁並顯示錯誤訊息
+            }
+            
+            // 將商品詳情資料傳遞給前端模板
+            model.addAttribute("productDetail", productDetail);
+            
+            return "front/gb/product-detail";
         
-        return "front/gb/product-detail";
     }
     
     

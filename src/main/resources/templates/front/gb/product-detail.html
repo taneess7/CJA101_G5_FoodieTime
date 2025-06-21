@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${product != null ? product.gbProdName + ' - 團購樂' : '商品詳情 - 團購樂'}">商品詳情 - 團購樂</title>
+    <title >商品詳情 - 團購樂</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
@@ -959,14 +959,14 @@
     <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/gb/gb_index">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/index">首頁</a>
+                        <a class="nav-link" th:href="@{/index}">首頁</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">熱門團購</a>
@@ -1001,7 +1001,7 @@
                 <li class="breadcrumb-item"><a href="gbindex.html">首頁</a></li>
                 <li class="breadcrumb-item"><a href="#">美食團購</a></li>
                 <li class="breadcrumb-item"><a href="#">台南美食</a></li>
-                <li class="breadcrumb-item active" aria-current="page" th:text="${product != null ? product.gbProdName : '商品詳情'}">商品詳情</li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${productDetail != null ? productDetail.gbProdName : '商品詳情'}">商品詳情</li>
             </ol>
         </nav>
 
@@ -1013,11 +1013,11 @@
                     <!-- 主要輪播 -->
                     <div class="swiper main-swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide" th:if="${product != null and product.productImageBase64 != null}">
-                                <img th:src="'data:image/jpeg;base64,' + ${product.productImageBase64}" th:alt="${product.gbProdName + ' - 商品圖片'}">
+                            <div class="swiper-slide" th:if="${productDetail != null and productDetail.productImageBase64 != null}">
+                                <img th:src="'data:image/jpeg;base64,' + ${productDetail.productImageBase64}" th:alt="${productDetail.gbProdName + ' - 商品圖片'}">
                             </div>
-                            <div class="swiper-slide" th:each="image, iterStat : ${images != null ? images : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80', 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80'}}" th:if="${product == null or product.productImageBase64 == null}">
-                                <img th:src="${image}" th:alt="${product != null ? product.gbProdName + ' - 圖片' + (iterStat.index + 1) : '商品圖片'}">
+                            <div class="swiper-slide" th:each="image, iterStat : ${images != null ? images : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80', 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80'}}" th:if="${productDetail == null or productDetail.productImageBase64 == null}">
+                                <img th:src="${image}" th:alt="${productDetail != null ? productDetail.gbProdName + ' - 圖片' + (iterStat.index + 1) : '商品圖片'}">
                             </div>
                         </div>
                         <div class="swiper-pagination"></div>
@@ -1026,10 +1026,10 @@
                     <!-- 縮圖輪播 -->
                     <div class="swiper thumbnail-swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide" th:if="${product != null and product.productImageBase64 != null}">
-                                    <img th:src="'data:image/jpeg;base64,' + ${product.productImageBase64}" th:alt="'縮圖'">
+                            <div class="swiper-slide" th:if="${productDetail != null and productDetail.productImageBase64 != null}">
+                                    <img th:src="'data:image/jpeg;base64,' + ${productDetail.productImageBase64}" th:alt="'縮圖'">
                                 </div>
-                                <div class="swiper-slide" th:each="image, iterStat : ${images != null ? images : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80', 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1978&q=80'}}" th:if="${product == null or product.productImageBase64 == null}">
+                                <div class="swiper-slide" th:each="image, iterStat : ${images != null ? images : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80', 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1978&q=80'}}" th:if="${productDetail == null or productDetail.productImageBase64 == null}">
                                 <img th:src="${image}" th:alt="'縮圖' + (iterStat.index + 1)">
                             </div>
                         </div>
@@ -1040,40 +1040,40 @@
             <!-- 商品資訊 -->
             <div class="col-lg-6">
                 <div class="product-container">
-                    <h1 class="product-title" th:text="${product != null ? product.gbProdName : '商品名稱'}">商品名稱</h1>
+                    <h1 class="product-title" th:text="${productDetail != null ? productDetail.gbProdName : '商品名稱'}">商品名稱</h1>
                     
                     <div class="organizer-info">
-                        <img th:src="${organizer != null ? organizer.avatar : 'https://randomuser.me/api/portraits/women/45.jpg'}" alt="團長頭像" class="organizer-avatar">
+                        <img th:src="${productDetail != null and productDetail.organizerAvatar != null ? productDetail.organizerAvatar : 'https://randomuser.me/api/portraits/women/45.jpg'}" alt="團長頭像" class="organizer-avatar">
                         <div>
-                            <div class="organizer-name" th:text="${organizer != null ? organizer.name : '團長'}">團長</div>
+                            <div class="organizer-name" th:text="${productDetail != null ? productDetail.organizerName : '團長'}">團長</div>
                             <div class="organizer-rating">
-                                <th:block th:each="i : ${#numbers.sequence(1, organizer != null ? organizer.rating : 4)}">
+                                <th:block th:each="i : ${#numbers.sequence(1, productDetail != null and productDetail.organizerRating != null ? productDetail.organizerRating : 4)}">
                                     <i class="bi bi-star-fill"></i>
                                 </th:block>
-                                <th:block th:if="${organizer != null and organizer.rating % 1 != 0}">
+                                <th:block th:if="${productDetail != null and productDetail.organizerRating != null and productDetail.organizerRating % 1 != 0}">
                                     <i class="bi bi-star-half"></i>
                                 </th:block>
-                                <span class="ms-1" th:text="${organizer != null ? organizer.rating + ' (' + organizer.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
+                                <span class="ms-1" th:text="${productDetail != null and productDetail.organizerRating != null ? productDetail.organizerRating + ' (' + productDetail.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
                             </div>
                         </div>
                     </div>
                     
                     <div>
-                        <span class="product-price" th:text="'$' + ${product != null ? product.gbProdSpe : 299}">$299</span>
-                        <span class="product-original-price" th:text="'$' + ${product != null ? product.originalPrice : 499}">$499</span>
-                        <span class="product-discount" th:text="${product != null ? product.discountPercent + '% OFF' : '40% OFF'}">40% OFF</span>
+                        <span class="product-price" th:text="'$' + ${productDetail != null ? productDetail.currentPrice : 299}">$299</span>
+                        <span class="product-original-price" th:if="${productDetail != null and productDetail.originalPrice != null}" th:text="'$' + ${productDetail.originalPrice}">$499</span>
+                        <span class="product-discount" th:if="${productDetail != null and productDetail.discountPercent != null}" th:text="${productDetail.discountPercent} + ' OFF'">40% OFF</span>
                     </div>
                     
                     <div class="time-left">
-                        <i class="bi bi-clock"></i> <span th:text="${product != null ? '剩餘 ' + product.remainingDays + ' 天 ' + product.remainingHours + ' 小時 (' + product.endDate + ' 結束)' : '剩餘 2 天 18 小時 (2023/12/31 23:59 結束)'}">剩餘 2 天 18 小時 (2023/12/31 23:59 結束)</span>
+                        <i class="bi bi-clock"></i> <span th:text="${productDetail != null and productDetail.timeLeft != null ? productDetail.timeLeft + ' (' + productDetail.endDate + ' 結束)' : '剩餘 2 天 18 小時 (2023/12/31 23:59 結束)'}">剩餘 2 天 18 小時 (2023/12/31 23:59 結束)</span>
                     </div>
                     
                     <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${product != null ? product.progressPercent : 75} + '%'" th:aria-valuenow="${product != null ? product.progressPercent : 75}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${productDetail != null ? productDetail.progressPercent : 75} + '%'" th:aria-valuenow="${productDetail != null ? productDetail.progressPercent : 75}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <div class="progress-info">
-                        <span th:text="'已售出 ' + ${product != null ? product.soldCount : 75} + ' 件'">已售出 75 件</span>
-                        <span th:text="'目標 ' + ${product != null ? product.targetCount : 100} + ' 件'">目標 100 件</span>
+                        <span th:text="'已售出 ' + ${productDetail != null ? productDetail.cumulativePurchaseQuantity : 75} + ' 件'">已售出 75 件</span>
+                        <span th:text="'目標 ' + ${productDetail != null ? productDetail.gbMinProductQuantity : 100} + ' 件'">目標 100 件</span>
                     </div>
                     
                     <!-- 團購進度重點區塊 -->
@@ -1092,32 +1092,32 @@
                                     <i class="bi bi-check-circle-fill"></i>
                                 </div>
                                 <div class="status-content">
-                                    <div class="status-title" th:text="'目前已達第 ' + ${product != null ? product.currentTier : 1} + ' 階優惠'">目前已達第 1 階優惠</div>
-                                    <div class="status-price" th:text="'單件 NT$' + ${product != null ? product.currentPrice : 380} + ' (原價 NT$' + ${product != null ? product.originalPrice : 299} + ')'">單件 NT$380 (原價 NT$299)</div>
-                                    <div class="status-savings" th:text="'已省 NT$' + ${product != null ? (product.originalPrice - product.currentPrice) : 81} + '/件'">已省 NT$81/件</div>
+                                    <div class="status-title">目前優惠價格</div>
+                                    <div class="status-price" th:text="'單件 NT$' + ${productDetail != null ? productDetail.currentPrice : 380} + (${productDetail != null and productDetail.originalPrice != null ? ' (原價 NT$' + productDetail.originalPrice + ')' : ''})">單件 NT$380 (原價 NT$299)</div>
+                                    <div class="status-savings" th:if="${productDetail != null and productDetail.originalPrice != null and productDetail.currentPrice != null}" th:text="'已省 NT$' + ${productDetail.originalPrice - productDetail.currentPrice} + '/件'">已省 NT$81/件</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="next-tier-info">
-                            <div class="next-tier-card">
-                                <div class="next-tier-header">
-                                    <i class="bi bi-arrow-up-circle text-warning"></i>
-                                    <span class="next-tier-title">下一階段優惠</span>
-                                </div>
-                                <div class="next-tier-content">
-                                    <div class="next-tier-target">再購買 <span class="highlight-number" th:text="${product != null ? product.nextTierRemaining : 5}">5</span> 件即可達成</div>
-                                    <div class="next-tier-price">最優惠價：<span class="best-price" th:text="'NT$' + ${product != null ? product.nextTierPrice : 350} + '/件'">NT$350/件</span></div>
-                                    <div class="next-tier-savings" th:text="'可再省 NT$' + ${product != null ? (product.currentPrice - product.nextTierPrice) : 30} + '/件！'">可再省 NT$30/件！</div>
-                                </div>
-                                <div class="next-tier-progress">
-                                    <div class="mini-progress">
-                                        <div class="mini-progress-bar" style="width: 83.3%"></div>
-                                    </div>
-                                    <div class="mini-progress-text" th:text="${product != null ? product.soldCount + '/' + product.nextTierTarget + ' 件 (' + product.nextTierProgress + '%)' : '25/30 件 (83%)'}">25/30 件 (83%)</div>
-                                </div>
-                            </div>
-                        </div>
+<!--                         <div class="next-tier-info"> -->
+<!--                             <div class="next-tier-card"> -->
+<!--                                 <div class="next-tier-header"> -->
+<!--                                     <i class="bi bi-arrow-up-circle text-warning"></i> -->
+<!--                                     <span class="next-tier-title">下一階段優惠</span> -->
+<!--                                 </div> -->
+<!--                                 <div class="next-tier-content"> -->
+<!--                                     <div class="next-tier-target">再購買 <span class="highlight-number" th:text="${productDetail != null ? productDetail.nextTierRemaining : 5}">5</span> 件即可達成</div> -->
+<!--                                     <div class="next-tier-price" th:if="${productDetail != null and productDetail.nextTierPrice != null}">最優惠價：<span class="best-price" th:text="'NT$' + ${productDetail.nextTierPrice} + '/件'">NT$350/件</span></div> -->
+<!--                                     <div class="next-tier-savings" th:if="${productDetail != null and productDetail.nextTierPrice != null and productDetail.currentPrice != null}" th:text="'可再省 NT$' + ${productDetail.currentPrice - productDetail.nextTierPrice} + '/件！'">可再省 NT$30/件！</div> -->
+<!--                                 </div> -->
+<!--                                 <div class="next-tier-progress"> -->
+<!--                                     <div class="mini-progress"> -->
+<!--                                         <div class="mini-progress-bar" style="width: 83.3%"></div> -->
+<!--                                     </div> -->
+<!--                                     <div class="mini-progress-text" th:text="${productDetail != null ? productDetail.cumulativePurchaseQuantity + '/' + productDetail.nextTierTarget + ' 件 (' + productDetail.nextTierProgress + '%)' : '25/30 件 (83%)'}">25/30 件 (83%)</div> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                         </div> -->
                         
                         <div class="countdown-section">
                             <div class="countdown-card">
@@ -1127,28 +1127,28 @@
                                 </div>
                                 <div class="countdown-timer">
                                     <div class="time-unit">
-                                        <span class="time-number" th:text="${product != null ? product.remainingDays : 2}">2</span>
+                                        <span class="time-number" th:text="${productDetail != null ? productDetail.remainingDays : 2}">2</span>
                                         <span class="time-label">天</span>
                                     </div>
                                     <div class="time-separator">:</div>
                                     <div class="time-unit">
-                                        <span class="time-number" th:text="${product != null ? product.remainingHours : 18}">18</span>
+                                        <span class="time-number" th:text="${productDetail != null ? productDetail.remainingHours : 18}">18</span>
                                         <span class="time-label">時</span>
                                     </div>
                                     <div class="time-separator">:</div>
                                     <div class="time-unit">
-                                        <span class="time-number" th:text="${product != null ? product.remainingMinutes : 45}">45</span>
+                                        <span class="time-number">45</span>
                                         <span class="time-label">分</span>
                                     </div>
                                 </div>
-                                <div class="countdown-end-time" th:text="'結束時間：' + ${product != null ? product.endDate : '2023/12/31 23:59'}">結束時間：2023/12/31 23:59</div>
+                                <div class="countdown-end-time" th:text="'結束時間：' + ${productDetail != null ? productDetail.endDate : '2023/12/31 23:59'}">結束時間：2023/12/31 23:59</div>
                             </div>
                         </div>
                         
                         <div class="urgency-message">
                             <div class="urgency-card">
                                 <i class="bi bi-lightning-charge text-warning"></i>
-                                <span class="urgency-text" th:text="'把握機會！距離最優惠價只差 ' + ${product != null ? product.nextTierRemaining : 15} + ' 件'">把握機會！距離最優惠價只差 15 件</span>
+                                <span class="urgency-text" th:text="'把握機會！距離最優惠價只差 ' + ${productDetail != null ? productDetail.nextTierRemaining : 15} + ' 件'">把握機會！距離最優惠價只差 15 件</span>
                                 <i class="bi bi-arrow-right"></i>
                             </div>
                         </div>
@@ -1170,24 +1170,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="discount-row" th:each="tier : ${product != null ? product.priceTiers : {{minQuantity: 10, price: 380}, {minQuantity: 30, price: 350}, {minQuantity: 60, price: 320}}}" th:data-min="${tier.minQuantity}" th:data-price="${tier.price}">
-                                        <td th:text="'≧ ' + ${tier.minQuantity} + ' 件'">≧ 10 件</td>
-                                        <td class="price-cell" th:text="'$' + ${tier.price}">$380</td>
-                                    </tr>
+                                    <tr class="discount-row" 
+									    th:each="tier : ${productDetail != null ? productDetail.priceTiers : defaultTiers}" 
+									    th:data-min="${tier.minQuantity}" th:data-price="${tier.price}">
+									    <td th:text="'≧ ' + ${tier.minQuantity} + ' 件'">≧ 10 件</td>
+									    <td class="price-cell" th:text="'$' + ${tier.price}">$380</td>
+									</tr>
                                 </tbody>
                             </table>
                         </div>
                         
                         <div class="quantity-selector">
                             <button class="quantity-btn minus" type="button">-</button>
-                            <input type="number" class="quantity-input" value="1" min="1" th:max="${product != null ? product.stock : 150}">
+                            <input type="number" class="quantity-input" value="1" min="1" th:max="${product?.stock ?: 150}">
                             <button class="quantity-btn plus" type="button">+</button>
                         </div>
                         <div class="quantity-info">
-                            <div class="unit-price">單價：NT$ <span class="current-unit-price" th:text="${product != null ? product.currentPrice : 299}">299</span></div>
-                            <div class="total-price">總計：NT$ <span class="total-amount" th:text="${product != null ? product.currentPrice : 299}">299</span></div>
+                            <div class="unit-price">單價：NT$ <span class="current-unit-price" th:text="${productDetail != null ? productDetail.currentPrice : 299}">299</span></div>
+                            <div class="total-price">總計：NT$ <span class="total-amount" th:text="${productDetail != null ? productDetail.currentPrice : 100}">299</span></div>
                         </div>
-                        <div class="stock-info text-muted" th:text="'庫存 ' + ${product != null ? product.stock : 150} + ' 件'">庫存 150 件</div>
+                       
                     </div>
                     
                     <div class="d-grid gap-2">
@@ -1225,8 +1227,10 @@
             <div class="tab-content p-4" id="productTabsContent">
                 <!-- 商品詳情 -->
                 <div class="tab-pane fade show active product-description" id="description" role="tabpanel" aria-labelledby="description-tab">
-                    <h4 th:text="${product != null ? product.gbProdName : '商品名稱'}">商品名稱</h4>
-                    <p th:text="${product != null ? product.description : '商品描述'}">商品描述</p>
+                    <h4 th:if="${productDetail != null}" th:text="${productDetail.gbProdName}">商品名稱</h4>
+					<h4 th:unless="${productDetail != null}">商品名稱</h4>
+                    <p th:if="${productDetail != null}" th:text="${productDetail.gbProdDescription}">商品描述</p>
+					<p th:unless="${productDetail != null}">商品描述</p>
                     
                     <h5>產品特色：</h5>
                     <ul>
@@ -1263,27 +1267,24 @@
                         <tbody>
                             <tr>
                                 <th>產品名稱</th>
-                                <td th:text="${product != null ? product.gbProdName : '商品名稱'}">商品名稱</td>
+                                <td th:text="${productDetail != null ? productDetail.gbProdName : '商品名稱'}">商品名稱</td>
                             </tr>
                             <tr>
                                 <th>包裝選擇</th>
-                                <td th:text="${product != null ? product.packageOptions : '精美禮盒裝、簡約包裝、加購提袋'}">精美禮盒裝、簡約包裝、加購提袋</td>
-                            </tr>
-                            <tr>
-                                <th>內容數量</th>
-                                <td th:text="${product != null ? product.quantity : '12個/盒'}">12個/盒</td>
-                            </tr>
+                                <td th:if="${productDetail != null}" th:text="${productDetail.gbProdSpecification}">精美禮盒裝、簡約包裝、加購提袋</td>
+								<td th:unless="${productDetail != null}">精美禮盒裝、簡約包裝、加購提袋</td>
+                            </tr>                          
                             <tr>
                                 <th>單個重量</th>
-                                <td th:text="${product != null ? product.unitWeight : '約50公克'}">約50公克</td>
+                                <td>約50公克</td>
                             </tr>
                             <tr>
                                 <th>總重量</th>
-                                <td th:text="${product != null ? product.totalWeight : '約600公克（不含包裝）'}">約600公克（不含包裝）</td>
+                                <td>約600公克（不含包裝）</td>
                             </tr>
                             <tr>
                                 <th>保存期限</th>
-                                <td th:text="${product != null ? product.shelfLife : '常溫保存30天'}">常溫保存30天</td>
+                                <td>常溫保存30天</td>
                             </tr>
                             <tr>
                                 <th>保存方式</th>
@@ -1706,208 +1707,92 @@
             const quantityInput = document.querySelector('.quantity-input');
             const minusBtn = document.querySelector('.quantity-btn.minus');
             const plusBtn = document.querySelector('.quantity-btn.plus');
-            const totalAmountSpan = document.querySelector('.total-amount');
             const currentUnitPriceSpan = document.querySelector('.current-unit-price');
-            const baseUnitPrice = 299;
+            const totalAmountSpan = document.querySelector('.total-amount');
+            const discountRows = document.querySelectorAll('.discount-row');
             
-            // 數量門檻優惠設定
-            const discountTiers = [
-                { minQuantity: 60, unitPrice: 320 },
-                { minQuantity: 30, unitPrice: 350 },
-                { minQuantity: 10, unitPrice: 380 },
-                { minQuantity: 1, unitPrice: 299 }
+            // 價格階層數據（從 Thymeleaf 模板獲取或使用默認值）
+            const priceTiers = [
+                { minQuantity: 1, price: 299 },
+                { minQuantity: 10, price: 280 },
+                { minQuantity: 30, price: 250 },
+                { minQuantity: 60, price: 220 }
             ];
             
-            function getCurrentUnitPrice(quantity) {
-                for (let tier of discountTiers) {
+            // 獲取當前數量對應的單價
+            function getCurrentPrice(quantity) {
+                let currentPrice = priceTiers[0].price;
+                for (let tier of priceTiers) {
                     if (quantity >= tier.minQuantity) {
-                        return tier.unitPrice;
+                        currentPrice = tier.price;
                     }
                 }
-                return baseUnitPrice;
+                return currentPrice;
             }
             
-            function updateDiscountTableHighlight(quantity) {
-                const discountRows = document.querySelectorAll('.discount-row');
+            // 更新價格顯示
+            function updatePriceDisplay() {
+                const quantity = parseInt(quantityInput.value) || 1;
+                const unitPrice = getCurrentPrice(quantity);
+                const totalPrice = unitPrice * quantity;
+                
+                currentUnitPriceSpan.textContent = unitPrice;
+                totalAmountSpan.textContent = totalPrice;
+                
+                // 更新數量門檻表格的高亮
                 discountRows.forEach(row => {
+                    const minQuantity = parseInt(row.dataset.min);
                     row.classList.remove('active');
-                });
-                
-                // 找到對應的優惠階層並高亮
-                if (quantity >= 60) {
-                    document.querySelector('.discount-row[data-min="60"]')?.classList.add('active');
-                } else if (quantity >= 30) {
-                    document.querySelector('.discount-row[data-min="30"]')?.classList.add('active');
-                } else if (quantity >= 10) {
-                    document.querySelector('.discount-row[data-min="10"]')?.classList.add('active');
-                }
-            }
-            
-            function updateGroupBuyProgress(quantity) {
-                const statusTitle = document.querySelector('.status-title');
-                const statusPrice = document.querySelector('.status-price');
-                const statusSavings = document.querySelector('.status-savings');
-                const nextTierTarget = document.querySelector('.next-tier-target .highlight-number');
-                const nextTierPrice = document.querySelector('.best-price');
-                const nextTierSavings = document.querySelector('.next-tier-savings');
-                const progressBar = document.querySelector('.mini-progress-bar');
-                const progressText = document.querySelector('.mini-progress-text');
-                
-                let currentTier, nextTier, currentProgress;
-                
-                if (quantity >= 60) {
-                    currentTier = { level: 3, price: 320, savings: 21 };
-                    nextTier = null; // 已達最高階
-                } else if (quantity >= 30) {
-                    currentTier = { level: 2, price: 350, savings: 51 };
-                    nextTier = { level: 3, price: 320, target: 60, savings: 30 };
-                    currentProgress = (quantity / 60) * 100;
-                } else if (quantity >= 10) {
-                    currentTier = { level: 1, price: 380, savings: 81 };
-                    nextTier = { level: 2, price: 350, target: 30, savings: 30 };
-                    currentProgress = (quantity / 30) * 100;
-                } else {
-                    currentTier = { level: 0, price: 299, savings: 0 };
-                    nextTier = { level: 1, price: 380, target: 10, savings: 81 };
-                    currentProgress = (quantity / 10) * 100;
-                }
-                
-                // 更新當前狀態
-                if (statusTitle) {
-                    if (currentTier.level === 0) {
-                        statusTitle.textContent = '尚未達到優惠門檻';
-                    } else {
-                        statusTitle.textContent = `目前已達第 ${currentTier.level} 階優惠`;
-                    }
-                }
-                
-                if (statusPrice) {
-                    statusPrice.innerHTML = `單件 NT$${currentTier.price} <span class="original-price">(原價 NT$299)</span>`;
-                }
-                
-                if (statusSavings) {
-                    if (currentTier.savings > 0) {
-                        statusSavings.textContent = `已省 NT$${currentTier.savings}/件`;
-                    } else {
-                        statusSavings.textContent = '尚未享有優惠';
-                    }
-                }
-                
-                // 更新下一階段資訊
-                if (nextTier) {
-                    const remaining = nextTier.target - quantity;
-                    if (nextTierTarget) nextTierTarget.textContent = remaining;
-                    if (nextTierPrice) nextTierPrice.textContent = `NT$${nextTier.price}/件`;
-                    if (nextTierSavings) nextTierSavings.textContent = `可再省 NT$${currentTier.price - nextTier.price}/件！`;
-                    
-                    if (progressBar) progressBar.style.width = `${Math.min(currentProgress, 100)}%`;
-                    if (progressText) progressText.textContent = `${quantity}/${nextTier.target} 件 (${Math.round(currentProgress)}%)`;
-                } else {
-                    // 已達最高階
-                    if (nextTierTarget) nextTierTarget.textContent = '0';
-                    if (nextTierPrice) nextTierPrice.textContent = '已達最優惠';
-                    if (nextTierSavings) nextTierSavings.textContent = '恭喜！已享最大優惠';
-                    
-                    if (progressBar) progressBar.style.width = '100%';
-                    if (progressText) progressText.textContent = `${quantity}/60 件 (100%)`;
-                }
-            }
-            
-            function updateTotal() {
-                const quantity = parseInt(quantityInput.value);
-                const unitPrice = getCurrentUnitPrice(quantity);
-                const total = quantity * unitPrice;
-                
-                if (currentUnitPriceSpan) {
-                    currentUnitPriceSpan.textContent = unitPrice;
-                }
-                totalAmountSpan.textContent = total;
-                
-                updateDiscountTableHighlight(quantity);
-                updateGroupBuyProgress(quantity);
-            }
-            
-            if (minusBtn && plusBtn && quantityInput && totalAmountSpan) {
-                minusBtn.addEventListener('click', function() {
-                    let currentValue = parseInt(quantityInput.value);
-                    if (currentValue > 1) {
-                        quantityInput.value = currentValue - 1;
-                        updateTotal();
+                    if (quantity >= minQuantity) {
+                        row.classList.add('active');
                     }
                 });
-                
-                plusBtn.addEventListener('click', function() {
-                    let currentValue = parseInt(quantityInput.value);
-                    const maxValue = parseInt(quantityInput.getAttribute('max'));
-                    if (currentValue < maxValue) {
-                        quantityInput.value = currentValue + 1;
-                        updateTotal();
-                    }
-                });
-                
-                quantityInput.addEventListener('input', function() {
-                    let value = parseInt(this.value);
-                    const min = parseInt(this.getAttribute('min'));
-                    const max = parseInt(this.getAttribute('max'));
-                    
-                    if (isNaN(value) || value < min) {
-                        this.value = min;
-                    } else if (value > max) {
-                        this.value = max;
-                    }
-                    updateTotal();
-                });
-                
-                // 初始化顯示
-                updateTotal();
             }
             
-            // 舊的數量選擇器（如果存在）
-            const quantityInputOld = document.getElementById('quantity');
-            const decreaseBtn = document.getElementById('decrease-quantity');
-            const increaseBtn = document.getElementById('increase-quantity');
-            
-            decreaseBtn.addEventListener('click', function() {
-                let value = parseInt(quantityInput.value);
-                if (value > 1) {
-                    quantityInput.value = value - 1;
+            // 減少數量
+            minusBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                    updatePriceDisplay();
                 }
             });
             
-            increaseBtn.addEventListener('click', function() {
-                let value = parseInt(quantityInput.value);
-                if (value < 10) {
-                    quantityInput.value = value + 1;
+            // 增加數量
+            plusBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                const maxValue = parseInt(quantityInput.max) || 999;
+                if (currentValue < maxValue) {
+                    quantityInput.value = currentValue + 1;
+                    updatePriceDisplay();
                 }
             });
             
-            // 顏色選擇
-            const variantBtns = document.querySelectorAll('.variant-btn');
+            // 直接輸入數量
+            quantityInput.addEventListener('input', function() {
+                let value = parseInt(this.value) || 1;
+                const maxValue = parseInt(this.max) || 999;
+                
+                if (value < 1) {
+                    this.value = 1;
+                } else if (value > maxValue) {
+                    this.value = maxValue;
+                }
+                
+                updatePriceDisplay();
+            });
             
-            variantBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    variantBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
+            // 點擊數量門檻行直接設置數量
+            discountRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const minQuantity = parseInt(this.dataset.min);
+                    quantityInput.value = minQuantity;
+                    updatePriceDisplay();
                 });
             });
             
-            // 複製分享連結
-            const copyLinkBtn = document.getElementById('copy-link');
-            
-            copyLinkBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const tempInput = document.createElement('input');
-                tempInput.value = window.location.href;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                
-                alert('連結已複製到剪貼簿！');
-            });
-            
-
+            // 初始化價格顯示
+            updatePriceDisplay();
             
             // 參團按鈕
             const joinBtn = document.querySelector('.join-btn');

@@ -58,7 +58,7 @@ public class SmgVO implements Serializable {
     private String smgrAccount;
 
 
-    @Size(min = 6, max = 20, message = "密碼長度需介於 6 到 20 字")
+    @Size(min = 4, max = 20, message = "密碼長度需介於 4 到 20 字")
     @Column(name = "SMGR_PASSWORD", length = 128)
     private String smgrPassword;
 

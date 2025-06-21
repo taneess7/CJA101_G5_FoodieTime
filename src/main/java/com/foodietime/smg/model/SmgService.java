@@ -54,6 +54,14 @@ public class SmgService {
 	public SmgVO findBySmgrAccount(String smgrAccount) {
 		return smgRepository.findBySmgrAccount(smgrAccount);
 	}
+	
+	public boolean checkAccountStatus(SmgVO smgVO) {
+		if(smgVO.getSmgrStatus() == 0) {
+			return false;
+		}
+		return true;
+	}
+	
 	public List<SmgVO> searchByConditions(String account, String name, String email) {
 	    return smgRepository.findByConditions(account, name, email);
 	}
