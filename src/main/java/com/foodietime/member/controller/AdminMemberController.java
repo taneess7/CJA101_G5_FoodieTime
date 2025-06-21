@@ -106,9 +106,11 @@ import com.foodietime.member.model.MemService;
 	                dto.setMemTime(member.getMemTime().toLocalDateTime().toLocalDate().toString());
 	            }
 	
-	            if (member.getMemAvatar() != null) {
+	            if (member.getMemAvatar() != null && member.getMemAvatar().length > 0) {
 	                String base64 = java.util.Base64.getEncoder().encodeToString(member.getMemAvatar());
 	                dto.setAvatarBase64(base64);
+	            } else {
+	                dto.setAvatarBase64(""); // 不要 null，給 "" 比較保險
 	            }
 	
 	            // 最後修改 — 假資料
