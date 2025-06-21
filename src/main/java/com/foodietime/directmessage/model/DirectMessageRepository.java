@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.smg.model.SmgVO;
 
 public interface DirectMessageRepository extends JpaRepository<DirectMessageVO, Integer>{
@@ -14,6 +15,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessageVO, 
     List<DirectMessageVO> findBySmgrOrderByMessTimeAsc(SmgVO smgr);
     
     List<DirectMessageVO> findAllByOrderByMessTimeDesc();
+    
+    boolean existsByMemberAndMessDirection(MemberVO member, DirectMessageVO.MessageDirection messDirection);
 
 
     }
