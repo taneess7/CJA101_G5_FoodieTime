@@ -43,6 +43,7 @@ public class ProductDetailDTO {
     private String timeLeft;         // 剩餘時間文字
     private Integer remainingDays;   // 剩餘天數
     private Integer remainingHours;  // 剩餘小時
+    private Integer remainingMinutes; // 剩餘分鐘
     private String endDate;          // 結束日期
     
     // ==================== 團長資訊 ====================
@@ -50,6 +51,8 @@ public class ProductDetailDTO {
     private String organizerAvatar;  // 團長頭像
     private Double organizerRating;  // 團長評價
     private Integer reviewCount;     // 評價數量
+    private String leaderNickname;   // 團長暱稱
+    private String leaderAvatar;     // 團長頭像
     
     // ==================== 店家資訊 ====================
     private String storeName;        // 店家名稱
@@ -61,11 +64,16 @@ public class ProductDetailDTO {
     private Integer nextTierPrice;     // 下一階段價格
     private Integer nextTierTarget;    // 下一階段目標數量
     private String nextTierProgress;   // 下一階段進度文字
+    private Integer canSaveAmount;     // 可節省金額
     
     // ==================== 計算屬性 ====================
     private String badgeType;          // 徽章類型
     private String badgeText;          // 徽章文字
     private String productImageBase64;  // 商品圖片 Base64
+    
+    // ==================== 商品規格 ====================
+    private String packageOptions;     // 包裝選項
+    private String quantity;            // 數量規格
     
     // ==================== 內部類別：價格階梯 ====================
     public static class PriceTier {
@@ -177,6 +185,9 @@ public class ProductDetailDTO {
     public Integer getRemainingHours() { return remainingHours; }
     public void setRemainingHours(Integer remainingHours) { this.remainingHours = remainingHours; }
     
+    public Integer getRemainingMinutes() { return remainingMinutes; }
+    public void setRemainingMinutes(Integer remainingMinutes) { this.remainingMinutes = remainingMinutes; }
+    
     public String getEndDate() { return endDate; }
     public void setEndDate(String endDate) { this.endDate = endDate; }
     
@@ -192,6 +203,12 @@ public class ProductDetailDTO {
     
     public Integer getReviewCount() { return reviewCount; }
     public void setReviewCount(Integer reviewCount) { this.reviewCount = reviewCount; }
+    
+    public String getLeaderNickname() { return leaderNickname; }
+    public void setLeaderNickname(String leaderNickname) { this.leaderNickname = leaderNickname; }
+    
+    public String getLeaderAvatar() { return leaderAvatar; }
+    public void setLeaderAvatar(String leaderAvatar) { this.leaderAvatar = leaderAvatar; }
     
     // 店家資訊
     public String getStoreName() { return storeName; }
@@ -216,6 +233,9 @@ public class ProductDetailDTO {
     public String getNextTierProgress() { return nextTierProgress; }
     public void setNextTierProgress(String nextTierProgress) { this.nextTierProgress = nextTierProgress; }
     
+    public Integer getCanSaveAmount() { return canSaveAmount; }
+    public void setCanSaveAmount(Integer canSaveAmount) { this.canSaveAmount = canSaveAmount; }
+    
     // 計算屬性
     public String getBadgeType() { return badgeType; }
     public void setBadgeType(String badgeType) { this.badgeType = badgeType; }
@@ -225,6 +245,13 @@ public class ProductDetailDTO {
     
     public String getProductImageBase64() { return productImageBase64; }
     public void setProductImageBase64(String productImageBase64) { this.productImageBase64 = productImageBase64; }
+    
+    // 商品規格
+    public String getPackageOptions() { return packageOptions; }
+    public void setPackageOptions(String packageOptions) { this.packageOptions = packageOptions; }
+    
+    public String getQuantity() { return quantity; }
+    public void setQuantity(String quantity) { this.quantity = quantity; }
     
     // ==================== 計算方法 ====================
     

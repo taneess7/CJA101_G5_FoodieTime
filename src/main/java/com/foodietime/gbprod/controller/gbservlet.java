@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 import com.foodietime.gbprod.dto.GroupBuyingDisplayDTO;
+import com.foodietime.gbprod.dto.ProductDetailDTO;
 
 import com.foodietime.gbprod.service.GroupBuyingDisplayService;
+import com.foodietime.gbprod.service.ProductDetailService;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
 
 
@@ -25,10 +27,13 @@ public class gbservlet {
 	@Autowired
     private GroupBuyingDisplayService groupBuyingDisplayService;
     
+    @Autowired
+    private ProductDetailService productDetailService;
+    
   
     
 	
-	@GetMapping("/gb_index")
+	@GetMapping("/gbindex")
 	public String showLoginPage(Model model) {
 		List<GroupBuyingDisplayDTO> popularProducts = groupBuyingDisplayService.getPopularProducts();
         model.addAttribute("popularProducts", popularProducts);
@@ -88,12 +93,20 @@ public class gbservlet {
      */
     @GetMapping("/detail/{gbId}")
     public String showProductDetail(@PathVariable Integer gbId, Model model) {
-
-       
         
-       
+             // 從資料庫獲取商品詳情
+             ProductDetailDTO productDetail = productDetailService.getProductDetail(gbId);
+            
+            if (productDetail == null) {
+                model.addAttribute("error", "找不到該團購商品");
+                return "front/gb/gbindex"; // 返回首頁並顯示錯誤訊息
+            }
+            
+            // 將商品詳情資料傳遞給前端模板
+            model.addAttribute("productDetail", productDetail);
+            
+            return "front/gb/product-detail";
         
-        return "front/gb/product-detail";
     }
     
     
