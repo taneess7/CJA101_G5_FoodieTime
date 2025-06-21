@@ -12,5 +12,6 @@ public interface ProductRepository extends JpaRepository<ProductVO, Integer>{
 	
 	void deleteByProdId(Integer prodId);
 	
+	List<ProductVO> findByStore_StorId(Integer storeId);  // ✔ 注意是 StoreVO 裡面的屬性
 	
 }

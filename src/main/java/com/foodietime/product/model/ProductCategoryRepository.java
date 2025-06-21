@@ -1,5 +1,7 @@
 package com.foodietime.product.model;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductCategoryRepository extends JpaRepository<ProductCategoryVO, Integer>{
@@ -8,6 +10,7 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 	
 	void deleteByProdCateId(Integer prodCateId);
 
+	
 	// 根據分類名稱查找分類
 //    ProductCategoryVO findByProdCate(String prodCate);
 }

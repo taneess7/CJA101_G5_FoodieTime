@@ -22,6 +22,10 @@ public class ProductService {
 //		this.storeRepo = storeRepo;
 	}
 
+	public List<ProductVO> findByStoreId(Integer storeId) {
+	    return productRepo.findByStore_StorId(storeId);
+	}
+	
 	// 新增商品
 	public ProductVO addProduct(ProductVO vo, Integer categoryId) {
 		ProductCategoryVO category = categoryRepo.findById(categoryId)

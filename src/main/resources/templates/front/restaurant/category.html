@@ -1,27 +1,127 @@
 <!DOCTYPE html>
-<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title th:text="'分類 - ' + ${categoryId}">分類頁面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰式料理 - FoodieTime 食刻</title>
+    <meta name="description" content="探索各種泰式料理，尋找您喜愛的泰國風味美食。FoodieTime 食刻提供多樣化的泰式餐廳選擇，滿足您的味蕾需求。">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
     <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/thai-cuisine.css}">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- PWA 支援 -->
+<!--     <link rel="manifest" href="manifest.json"> -->
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
+
 <body>
-    <h1>分類餐廳列表</h1>
+	<header class="app-header">
+		<div class="header-container">
+			<div class="logo-container">
+				<a th:href="@{/category/index}" class="logo"> <img
+					th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻"
+					class="logo-img"> <span class="logo-text">FoodieTime
+						食刻</span>
+				</a>
+			</div>
+			<div class="search-container">
+				<div class="search-bar">
+					<i class="material-icons-outlined search-icon">search</i> <input
+						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+				</div>
+			</div>
+		</div>
+	</header>
 
-    <div th:if="${storeList != null}">
-        <ul>
-            <li th:each="store : ${storeList}">
-                <h2 th:text="${store.storName}">店名</h2>
-                <p th:text="${store.storDesc}">店家描述</p>
-                <p><strong>地址：</strong><span th:text="${store.storAddr}"></span></p>
-                <p><strong>電話：</strong><span th:text="${store.storPhone}"></span></p>
-                <hr>
-            </li>
-        </ul>
-    </div>
+	<main>
+		<section class="page-header">
+			<div class="container">
+				<h1 class="page-title" th:text="${categoryName}">分類名稱</h1>
+				<p class="page-description"
+					th:text="'探索道地的 ' + ${categoryName} + '，從傳統小吃到精緻料理'">分類描述</p>
+			</div>
+		</section>
 
-    <div th:if="${storeList == null or storeList.size() == 0}">
-        <p>目前此分類沒有任何店家。</p>
-    </div>
+		<div class="container">
+			<div class="restaurant-list">
+				<article class="restaurant-detail" th:each="store : ${storeList}">
+					<div class="restaurant-header">
+						<div class="restaurant-main-info">
+							<img th:src="@{/images/restaurant/placeholder.svg}" alt=""
+								class="restaurant-image">
+							<div class="restaurant-primary-info">
+								<h2 class="restaurant-name" th:text="${store.storName}">店家名稱</h2>
+								<p class="restaurant-category"
+									th:text="${store.storeCate.storCatName}">分類標籤</p>
+								<div class="restaurant-actions">
+									<button class="action-btn favorite-btn">
+										<i class="far fa-heart"></i> 收藏
+									</button>
+									<button class="action-btn directions-btn">
+										<i class="fas fa-directions"></i> 導航
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="restaurant-contact-info">
+							<div class="info-item">
+								<i class="fas fa-map-marker-alt"></i><span
+									th:text="${store.storAddr}">地址</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-phone"></i><span th:text="${store.storPhone}">電話</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-clock"></i><span
+									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（' + ${store.storOffDay} + '）'">
+									營業時間: 11:00-21:30（週一至週日）</span>
+							</div>
+							<div class="info-item"
+								th:if="${store.storWeb != null and !store.storWeb.isEmpty()}">
+								<i class="fas fa-globe"></i> <a
+									th:href="${store.storWeb.startsWith('http') ? store.storWeb : 'http://' + store.storWeb}"
+									th:text="${store.storWeb}" class="website-link">網站連結</a>
+							</div>
+						</div>
+					</div>
+					<div class="restaurant-details-tabs">
+						<div class="tabs-header">
+							<button class="tab-btn active" data-tab="menu">菜單</button>
+						</div>
+						<div class="tabs-content">
+							<div class="tab-content active" id="menu-content">
+								<div class="menu-items">
+									<div class="menu-item" th:each="prod : ${productList}"
+										th:if="${prod.store.storId} == ${store.storId}">
+										<img th:src="@{/images/restaurant/placeholder.svg}" alt=""
+											class="menu-item-image">
+										<div class="menu-item-info">
+											<h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
+											<p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
+											<span class="menu-item-price"
+												th:text="'NT$ ' + ${prod.prodPrice}">價格</span>
+										</div>
+										<button class="add-to-cart-btn">
+											<i class="fas fa-plus"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<footer class="app-footer">
+		<div class="container">
+			<p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+		</div>
+	</footer>
 </body>
 </html>
