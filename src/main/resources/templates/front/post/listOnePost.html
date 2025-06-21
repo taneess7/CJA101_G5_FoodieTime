@@ -82,20 +82,25 @@
 					<button class="btn btn-primary" onclick="editPost()" type="button">修改貼文</button>
 					<button class="btn btn-danger" onclick="reportPost()" type="button">檢舉貼文</button>
 				</div>
-				<div class="post-actions" style="margin-top: 24px;">
-					<form th:action="@{/post/delete}" method="post"
-						style="display: inline;">
-						<input type="hidden" name="postId" th:value="${postVO.postId}" />
-						<button type="submit" class="btn btn-danger"
-							onclick="return confirm('確定要刪除這篇貼文嗎？');">刪除貼文</button>
-					</form>
-				</div>
+				<!-- 只有作者本人才能刪除 -->
+				<form
+					th:if="${loginMember != null and postVO.member.memId == loginMember.memId}"
+					th:action="@{/post/delete}" method="post" style="display: inline;">
+					<input type="hidden" name="postId" th:value="${postVO.postId}" />
+					<button type="submit" class="btn btn-danger"
+						onclick="return confirm('確定要刪除這篇貼文嗎？');">刪除貼文</button>
+				</form>
+				<!-- 其他人看到禁用按鈕 -->
+				<button
+					th:if="${loginMember == null or postVO.member.memId != loginMember.memId}"
+					class="btn btn-danger" disabled
+					style="opacity: 0.5; cursor: not-allowed;">僅限本人可刪除</button>
 			</div>
 		</div>
 	</main>
 </body>
 <script th:src="@{/js/front/post/selectOnePost.js}"></script>
 
-</script>
+
 
 </html>
