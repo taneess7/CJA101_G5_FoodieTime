@@ -45,7 +45,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 /*-------------------------------------------------------路徑還沒改成專案位置------------------------------------------------------*/
-@RequestMapping("/store")
+//@RequestMapping("/store")
 @Controller
 public class StorePageController {
 	
@@ -62,18 +62,36 @@ public class StorePageController {
 	private ProductService productSvc;
 
 
+	 //測試 首頁 確認8080活著
+    @GetMapping("/index-test")
+    public String home() {
+        return "index-test"; // 找 templates/index.html 首頁
+    }
+    
+    //測試 到下一頁
+    @GetMapping("/goNext")
+    public String goNextPage() {
+        return "next"; // 找 templates/next.html
+    }
+    
+    //測試 帶出使用者名稱
+    @GetMapping("/index2")
+    public String showIndex2(Model model) {
+        model.addAttribute("username", "小新");
+        return "index2";  // 對應 templates/index2.html
+    }
 	
     
    
     
-//    //歡迎招呼語- 示範
-//    @GetMapping("/storecoupon")
-//    public String showCoupon(Model model) {
-//    	StoreVO storeVO = storeSvc.findById(1);
-//        model.addAttribute("storeVO", storeVO);//model存入一筆 id=1 的店家資料
-//        return "storecoupon";  // 對應 templates/storecoupon.html
-//    }
-//    
+    //歡迎招呼語- 示範
+    @GetMapping("/storecoupon")
+    public String showCoupon(Model model) {
+    	StoreVO storeVO = storeSvc.findById(1);
+        model.addAttribute("storeVO", storeVO);//model存入一筆 id=1 的店家資料
+        return "storecoupon";  // 對應 templates/storecoupon.html
+    }
+    
     
 /*-----------------------------------------------------------測試功能-------------------------------------------------------*/
     
