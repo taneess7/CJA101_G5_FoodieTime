@@ -13,6 +13,8 @@ import com.foodietime.reportpost.model.ReportPostVO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,6 +23,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -29,6 +32,7 @@ import lombok.Data;
 public class MessageVO implements Serializable {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "MES_ID")
 	private Integer mesId;
 
@@ -45,8 +49,7 @@ public class MessageVO implements Serializable {
 
 	@Column(name = "MES_CONTENT")
 	@NotNull(message = "留言內容請勿空白")
-	@Min(value=1, message="最小1")
-    @Max(value=255, message="最大255")
+	@Size(min = 1, max = 255, message = "留言長度需介於1到255字")
 	private String mesContent;
 
 
