@@ -23,10 +23,10 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader-cashflow";
     }
 	
-	@GetMapping("/leader-groups")
-    public String leadergroups(){
-        return "front/gb/gbleader/leader-groups";
-    }
+//	@GetMapping("/leader-groups")
+//    public String leadergroups(){
+//        return "front/gb/gbleader/leader-groups";
+//    }
 		
 	@GetMapping("/leaderindex")
 	public String leaderindex(){
@@ -51,5 +51,15 @@ public class GroupBuyingCasesServlet {
 	@GetMapping("/leader-searchresult")
     public String leadersearchresult(){
         return "front/gb/gbleader/leader-searchresult";
+    }
+	
+	@GetMapping("/leader-gbdetail")
+    public String leadergbdetail(){
+        return "front/gb/gbleader/leader-gbdetail";
+    }
+	
+	@GetMapping("/leader-groups-edit")
+    public String leadergroupsedit(){
+        return "front/gb/gbleader/leader-groups-edit";
     }
 }

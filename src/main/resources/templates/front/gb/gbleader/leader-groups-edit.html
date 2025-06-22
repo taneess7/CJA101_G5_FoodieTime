@@ -284,114 +284,79 @@ body {
 				</div>
 			</div>
 
-			<!-- 主要內容 -->
-			<div class="col-lg-9">
-				<div class="profile-content">
-					<h3 class="mb-4">團購管理</h3>
-					<p>在這裡，您可以查看和管理所有的團購案。您可以設置團購的進度、目標人數，並控制團購的狀態。</p>
-
-					<!-- 團購篩選 -->
+			        <!-- 主要內容 -->
+                    <!-- Edit Order Modal -->
+            <div class="col-lg-9">
+					            <div class="modal-body">
+					                <form>
+					                    <div class="row">
+					                        <!-- 團購狀態 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="editCaseStatus" class="form-label">團購狀態</label>
+					                                <select class="form-select" id="editCaseStatus">
+					                                    <option value="pending">待開團</option>
+					                                    <option value="recruiting">招募中</option>
+					                                    <option value="closing soon">即將截止</option>
+					                                    <option value="group opened">已開團</option>
+					                                    <option value="closed">已截止</option>
+					                                    <option value="cancelled">已取消</option>
+					                                    <option value="group failed">開團失敗</option>
+					                                </select>
+					                            </div>
+					                        </div>
+					                        
+					                        <!-- 最低成團數量 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="minGroupSize" class="form-label">最低成團數量</label>
+					                                <input type="number" class="form-control" id="minGroupSize" min="1" placeholder="請輸入最低成團數量">
+					                            </div>
+					                        </div>
+					                    </div>
 					
-
-					<div class="mb-4">
-						<label for="editCaseStatus" class="form-label">團購狀態篩選</label>
-						<select class="form-select" id="editCaseStatus">
-							<option value="pending">待開團</option>
-							<option value="recruiting">招募中</option>
-							<option value="closing soon">即將截止</option>
-							<option value="group opened">已開團</option>
-							<option value="closed">已截止</option>
-							<option value="cancelled">已取消</option>
-							<option value="group failed">開團失敗</option>
-						</select>
+					                    <div class="row">
+					                        <!-- 開始時間 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="startTime" class="form-label">開始時間</label>
+					                                <input type="datetime-local" class="form-control" id="startTime">
+					                            </div>
+					                        </div>
+					                        
+					                        <!-- 結束時間 -->
+					                        <div class="col-md-6">
+					                            <div class="mb-3">
+					                                <label for="endTime" class="form-label">結束時間</label>
+					                                <input type="datetime-local" class="form-control" id="endTime">
+					                            </div>
+					                        </div>
+					                    </div>
+					
+					                    <!-- 取消原因 -->
+					                    <div class="mb-3">
+					                        <label for="editCaseNote" class="form-label">取消原因</label>
+					                        <textarea class="form-control" id="editCaseNote" rows="3" placeholder="請輸入取消原因.."></textarea>
+					                    </div>
+					
+					                    <!-- 通知會員 -->
+					                    <div class="form-check">
+					                        <input class="form-check-input" type="checkbox" id="notifyMember">
+					                        <label class="form-check-label" for="notifyMember">
+					                            通知會員團購狀態變更
+					                        </label>
+					                    </div>
+					                </form>
+					            </div>
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+					                <button type="button" class="btn btn-primary" onclick="saveOrderChanges()">儲存變更</button>
+					            </div>
+					        </div>
+					    </div>
 					</div>
-
-
-					<!-- 團購列表-->
-					<div class="card mb-4">
-						<div
-							class="card-header py-3 d-flex justify-content-between align-items-center">
-							<h6 class="m-0 font-weight-bold">團購列表</h6>
-
-						</div>
-						<div class="card-body">
-							<div class="table-responsive">
-								<table class="table table-bordered" width="100%" cellspacing="0">
-									<thead>
-										<tr>
-											<th>團購編號</th>
-											<th>團購標題</th>
-											<th>商品名稱</th>
-											<th>開團日期</th>
-											<th>開團狀態</th>
-											<th>操作</th>
-										</tr>
-									</thead>
-									<tbody>
-										<!-- th:each 會對應到 model 裡的 groupBuyingCases -->
-										<tr th:each="gbcase, iterStat : ${groupBuyingCases}"
-											th:data-index="${iterStat.index}">
-											<!-- 團購編號 -->
-											<td th:text="${gbcase.gbId}">1</td>
-											<!-- 團購標題 -->
-											<td th:text="${gbcase.gbTitle}">1</td>
-											<!-- 商品名稱 -->
-											<td th:text="${gbcase.gbProd.gbProdName}">商品名稱</td>
-											<!-- 開團日期，用 #temporals.format 格式化 LocalDateTime -->
-											<td
-												th:text="${#temporals.format(gbcase.gbStartTime, 'yyyy-MM-dd HH:mm')}">
-												2025-06-21 14:00</td>
-											<!-- 開團狀態 -->
-											<td><span th:switch="${gbcase.gbStatus}"> <span
-													th:case="0">待開團</span> <span th:case="1">招募中</span> <span
-													th:case="2">即將截止</span> <span th:case="3">已開團</span> <span
-													th:case="4">已截止</span> <span th:case="5">已取消</span> <span
-													th:case="6">開團失敗</span> <span th:case="*">未知</span>
-											</span></td>
-											<!-- 查看詳情 按鈕 -->
-											<td>
-											  <a th:href="@{/gb/leader-gbdetail}"
-											     class="btn btn-sm btn-primary">查看詳情</a>
-											  <!-- 編輯團購 按鈕 -->
-											  <a th:href="@{/gb/leader-groups-edit}"
-											     class="btn btn-sm btn-secondary">
-											    編輯團購
-											  </a>
-											
-										  </td>
-										</tr>
-
-										
-										<!-- 如果沒有任何資料，顯示一行空狀態 -->
-										<tr th:if="${#lists.isEmpty(groupBuyingCases)}">
-											<td colspan="5" class="text-center">目前無任何團購案</td>
-										</tr>
-									</tbody>
-								</table>
-
-							</div>
-
-							<!-- 分頁導航 -->
-							<div
-								class="d-flex justify-content-between align-items-center mt-3">
-								<div class="pagination-info">
-									<span>顯示第 <span id="startRecord">1</span> 到 <span
-										id="endRecord">5</span> 筆，共 <span id="totalRecords">0</span> 筆
-									</span>
-								</div>
-								<nav aria-label="分頁導航">
-									<ul class="pagination mb-0" id="pagination">
-										<li class="page-item" id="prevPage"><a class="page-link"
-											href="#" aria-label="上一頁"> <span aria-hidden="true">&laquo;</span>
-										</a></li>
-										<li class="page-item" id="nextPage"><a class="page-link"
-											href="#" aria-label="下一頁"> <span aria-hidden="true">&raquo;</span>
-										</a></li>
-									</ul>
-								</nav>
-							</div>
-						</div>
-					</div>
+                </div>
+            </div>
 
 
 					
@@ -471,6 +436,7 @@ body {
 	<!-- Bootstrap JS -->
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 
 

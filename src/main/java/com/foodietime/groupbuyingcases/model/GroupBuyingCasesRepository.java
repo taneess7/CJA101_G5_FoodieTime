@@ -13,7 +13,7 @@ public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCas
     @Query("SELECT gbc FROM GroupBuyingCasesVO gbc " +
            "JOIN gbc.participants p " +
            "WHERE p.member.memId = :memId AND p.leader = :leader")
-    List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memId, Boolean leader);
+    List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memId, byte leader);
 
     // 查詢某店家開的所有團購案（根據 StoreVO.storId）
     List<GroupBuyingCasesVO> findByStore_StorId(Integer storId);

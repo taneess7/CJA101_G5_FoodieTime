@@ -12,22 +12,13 @@ public class GroupBuyingCasesService {
     @Autowired
     private GroupBuyingCasesRepository groupBuyingCasesRepository;
 
-    
-//  //測試
-//    public long countAll() {
-//        return groupBuyingCasesRepository.count();
-//    }
-    
-    
-    
-    
     // 查詢某會員參加的所有團購案
     public List<GroupBuyingCasesVO> findByMemId(Integer memId) {
         return groupBuyingCasesRepository.findByMember_MemId(memId);
     }
     
     // 查詢某會員開設且是團主的團購案
-    public List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memberId, Boolean leader) {
+    public List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memberId, Byte leader) {
         return groupBuyingCasesRepository.findByMember_MemIdAndLeader(memberId, leader);
     }
     
@@ -52,10 +43,7 @@ public class GroupBuyingCasesService {
         return groupBuyingCasesRepository.save(groupBuyingCasesVO);
     }
 
-//    // 刪除某個團購案
-//    public void deleteGroupBuyingCase(Integer gbId) {
-//        groupBuyingCasesRepository.deleteById(gbId);
-//    }
+
 
     // 修改團購案狀態
     public GroupBuyingCasesVO updateGroupBuyingCaseStatus(Integer gbId, Byte newStatus) {
@@ -87,7 +75,4 @@ public class GroupBuyingCasesService {
     public List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus) {
         return groupBuyingCasesRepository.findByGbTitleContainingAndGbStatus(keyword, gbStatus);
     }
-    
-    
-    
 }
