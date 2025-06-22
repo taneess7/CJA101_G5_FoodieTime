@@ -111,7 +111,9 @@
 					class="restaurant-detail">
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">
-							<img src="images/food/placeholder.svg" th:alt="${store.storName}"
+						 <!-- ✅ 改寫：使用 base64 圖片與 onerror fallback -->
+           
+							<img th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}" th:alt="${store.storName}"
 								class="restaurant-image">
 							<div class="restaurant-primary-info">
 								<h2 class="restaurant-name" th:text="${store.storName}">餐廳名稱</h2>
