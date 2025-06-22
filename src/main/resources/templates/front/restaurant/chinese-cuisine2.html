@@ -104,7 +104,7 @@
 
 <!-- 店家分頁開始 -->
 		<div class="container">
-			<!-- 泰式料理店家列表 -->
+			<!-- 中式料理店家列表 -->
 			<div class="restaurant-list">
 
 				<!--   動態寫法 開始  ----------------------------------------------------------------- -->
@@ -250,10 +250,10 @@
 									    <a th:if="${store.storWeb != null}"
 									       th:href="'http://' + ${store.storWeb}"
 									       target="_blank"
-									       class="website-link">可訂位</a>
+									       class="website-link">可線上訂位</a>
 									
 									    <!-- 沒有網址時，顯示純文字 -->
-									    <span th:unless="${store.storWeb != null}">不可訂位</span>
+									    <span th:unless="${store.storWeb != null}"></span>
 									</div>
 
 								</div> 
