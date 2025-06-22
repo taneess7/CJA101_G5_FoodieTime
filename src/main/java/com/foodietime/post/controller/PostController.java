@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.foodietime.member.model.MemService;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.message.model.MessageService;
+import com.foodietime.message.model.MessageVO;
 import com.foodietime.post.model.PostRepository;
 import com.foodietime.post.model.PostService;
 import com.foodietime.post.model.PostVO;
@@ -22,10 +24,6 @@ import com.foodietime.postcategory.model.PostCategoryVO;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 
 @Controller
 @RequestMapping("/post")
@@ -42,6 +40,9 @@ public class PostController {
 
 	@Autowired
 	MemService memservice;
+
+	@Autowired
+	MessageService messageService;
 
 //	@Autowired
 //	PostCategoryService postcategory;
@@ -204,6 +205,13 @@ public class PostController {
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("postVO", postVO);
+		// 補這行
+	    model.addAttribute("messageVO", new MessageVO());
+
+	    // 你也要補留言列表
+	    List<MessageVO> messageList = messageService.getByPostId(id);
+	    model.addAttribute("messageList", messageList);
+
 		return "front/post/listOnePost";
 	}
 
@@ -221,6 +229,9 @@ public class PostController {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 
+		List<MessageVO> messageList = messageService.getByPostId(postId);
+		model.addAttribute("messageList", messageList);
+		model.addAttribute("messageVO", new MessageVO());
 		return "front/post/listOnePost";
 	}
 

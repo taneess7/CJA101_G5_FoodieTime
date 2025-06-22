@@ -22,16 +22,18 @@ function toggleBookmark(button) {
 
 // 留言展開/收起功能
 function toggleComments() {
-	const commentsList = document.querySelector('.comments-list');
-	const expandBtn = document.querySelector('.expand-btn');
+    const commentsList = document.querySelector('.comments-list');
+    const expandBtn = document.querySelector('.expand-btn');
+    const commentCountSpan = document.getElementById('comment-count');
+    const count = commentCountSpan ? commentCountSpan.textContent : '0';
 
-	if (commentsList.style.display === 'none') {
-		commentsList.style.display = 'block';
-		expandBtn.innerHTML = '<i class="material-icons-outlined">expand_less</i>收起留言';
-	} else {
-		commentsList.style.display = 'none';
-		expandBtn.innerHTML = '<i class="material-icons-outlined">expand_more</i>還有 10 則留言';
-	}
+    if (commentsList.style.display === 'none' || commentsList.style.display === '') {
+        commentsList.style.display = 'block';
+        expandBtn.innerHTML = '<i class="material-icons-outlined">expand_less</i>收起留言';
+    } else {
+        commentsList.style.display = 'none';
+        expandBtn.innerHTML = '<i class="material-icons-outlined">expand_more</i>還有 <span id="comment-count">' + count + '</span> 則留言';
+    }
 }
 
 // 留言輸入框功能

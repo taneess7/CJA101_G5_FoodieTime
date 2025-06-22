@@ -57,7 +57,6 @@ public class PostService {
 		postVO.setPostContent(postContent); // longtext
 		postVO.setLikeCount(likeCount);
 		postVO.setViews(views);
-		
 		return repository.save(postVO);
 	}
 

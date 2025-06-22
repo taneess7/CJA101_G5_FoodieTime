@@ -138,88 +138,89 @@
 				</div>
 	</main>
 	<!-- 貼文互動 -->
-                        <div class="post-interactions">
-                            <div class="interaction-stats">
-                                <span>👍 128 個讚</span>
-                                <span>💬 45 則留言</span>
-                                <span>👁️ 1,234 次瀏覽</span>
-                            </div>
-                            <div class="interaction-buttons">
-                                <button class="interaction-btn" onclick="toggleLike(this)">
-                                    <i class="material-icons-outlined">thumb_up</i>
-                                    <span>讚</span>
-                                </button>
-                                <button class="interaction-btn" onclick="toggleBookmark(this)">
-                                    <i class="material-icons-outlined">bookmark</i>
-                                    <span>收藏</span>
-                                </button>
-                                <button class="interaction-btn">
-                                    <i class="material-icons-outlined">share</i>
-                                    <span>分享</span>
-                                </button>
-                            </div>
-                        </div>
-                    </article>
+	<div class="post-interactions">
+		<div class="interaction-stats">
+			<span>👍 128 個讚</span> <span>💬 45 則留言</span> <span>👁️ 1,234
+				次瀏覽</span>
+		</div>
+		<div class="interaction-buttons">
+			<button class="interaction-btn" onclick="toggleLike(this)">
+				<i class="material-icons-outlined">thumb_up</i> <span>讚</span>
+			</button>
+			<button class="interaction-btn" onclick="toggleBookmark(this)">
+				<i class="material-icons-outlined">bookmark</i> <span>收藏</span>
+			</button>
+			<button class="interaction-btn">
+				<i class="material-icons-outlined">share</i> <span>分享</span>
+			</button>
+		</div>
+	</div>
+	</article>
 
-                    <!-- 留言區 -->
-<section class="comments-section">
-    <div class="comments-header">
-        <h3 class="comments-title">
-            留言
-            <span class="comments-count" th:text="${#lists.size(messageList)}">0</span>
-        </h3>
-        <button class="expand-btn" onclick="toggleComments()">
-            <i class="material-icons-outlined">expand_more</i>
-            還有 <span th:text="${#lists.size(messageList)}">0</span> 則留言
-        </button>
-    </div>
+	<!-- 留言區 -->
+	<section class="comments-section">
+		<div class="comments-header">
+			<h3 class="comments-title">
+				留言 <span class="comments-count"
+					th:text="${#lists.size(messageList)}">0</span>
+			</h3>
+			<button class="expand-btn" onclick="toggleComments()">
+				<i class="material-icons-outlined">expand_more</i> 還有 <span
+					th:text="${#lists.size(messageList)}">0</span> 則留言
+			</button>
+		</div>
 
-    <!-- 留言輸入區 -->
-    <div class="comment-input-section" th:if="${loginMember != null}">
-        <div class="comment-input-header">
-            <div class="comment-avatar" th:text="${loginMember.memName != null ? loginMember.memName.substring(0,1) : '?'}">?</div>
-            <span>留言...</span>
-        </div>
-        <textarea class="comment-textarea" placeholder="分享你的想法..." rows="3"></textarea>
-        <div class="comment-actions">
-            <div class="comment-tools">
-                <button class="tool-btn" title="表情符號">
-                    <i class="material-icons-outlined">sentiment_satisfied</i>
-                </button>
-                <button class="tool-btn" title="上傳圖片">
-                    <i class="material-icons-outlined">image</i>
-                </button>
-            </div>
-            <button class="submit-btn" disabled>發表留言</button>
-        </div>
-    </div>
+		<!-- 留言輸入區 -->
+		<form th:action="@{/message/insert}" th:object="${messageVO}"
+			method="post">
+			<input type="hidden" name="post.postId" th:value="${postVO.postId}" />
+			<input type="hidden" name="member.memId"
+				th:value="${loginMember.memId}" /> <input type="hidden"
+				name="action" value="insert" />
+			<div class="comment-input-header">
+				<div class="comment-avatar"
+					th:text="${loginMember.memName != null ? loginMember.memName.substring(0,1) : '?'}">?</div>
+				<span>留言...</span>
+			</div>
+			<label for="mesContent" class="block mb-1">留言內容</label>
+			<textarea id="mesContent" class="comment-textarea"
+				th:field="*{mesContent}" placeholder="分享你的想法..." rows="3" required></textarea>
+			<div th:if="${#fields.hasErrors('mesContent')}"
+				style="color: red; font-size: 0.9em;">
+				<span th:errors="*{mesContent}"></span>
+			</div>
+			<div class="comment-actions">
+				<!-- ... -->
+				<button class="submit-btn" type="submit">發表留言</button>
+			</div>
+		</form>
 
-    <!-- 留言列表 -->
-    <div class="comments-list">
-        <div class="comment-item" th:each="msg : ${messageList}">
-            <div class="comment-header">
-                <div class="comment-avatar" th:text="${msg.member.memName != null ? msg.member.memName.substring(0,1) : '?'}">?</div>
-                <div class="comment-content">
-                    <div class="comment-meta">
-                        <span class="comment-author" th:text="${msg.member.memName}">留言者</span>
-                        <span class="comment-time" th:text="${#dates.format(msg.mesDate, 'yyyy-MM-dd HH:mm')}">留言時間</span>
-                    </div>
-                    <div class="comment-text" th:text="${msg.mesContent}">留言內容</div>
-                    <div class="comment-actions">
-                        <button class="comment-action">
-                            <i class="material-icons-outlined">thumb_up</i>
-                            <span>讚</span>
-                        </button>
-                        <button class="comment-action">
-                            <i class="material-icons-outlined">reply</i>
-                            <span>回覆</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+		<!-- 留言列表 -->
+		<div class="comments-list">
+			<div class="comment-item" th:each="msg : ${messageList}">
+				<div class="comment-header">
+					<div class="comment-avatar"
+						th:text="${msg.member.memName != null ? msg.member.memName.substring(0,1) : '?'}">?</div>
+					<div class="comment-content">
+						<div class="comment-meta">
+							<span class="comment-author" th:text="${msg.member.memName}">留言者</span>
+							<span class="comment-time"
+								th:text="${#dates.format(msg.mesDate, 'yyyy-MM-dd HH:mm')}">留言時間</span>
+						</div>
+						<div class="comment-text" th:text="${msg.mesContent}">留言內容</div>
+						<div class="comment-actions">
+							<button class="comment-action">
+								<i class="material-icons-outlined">thumb_up</i> <span>讚</span>
+							</button>
+							<button class="comment-action">
+								<i class="material-icons-outlined">reply</i> <span>回覆</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </body>
 <script th:src="@{/js/front/post/selectOnePost.js}"></script>
 
