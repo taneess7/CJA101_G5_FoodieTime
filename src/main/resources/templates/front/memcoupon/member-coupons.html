@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員優惠卷 - FoodieTime 食刻</title>
+    <meta name="description" content="FoodieTime 食刻購物車 - 輕鬆結帳、安全支付，享受美食無負擔。">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/member-coupons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <!-- PWA 支援 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+</head>
+<body>
+    <!-- 導覽列（與購物車頁面完全一致） -->
+    <header class="app-header">
+    <div class="header-container">
+        <!-- Logo 區域 -->
+        <div class="logo-container">
+            <a href="index.html" class="logo">
+                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </a>
+        </div>
+        
+        <!-- 搜尋區域 -->
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="search-icon material-icons-outlined">search</i>
+                <input type="text" class="search-input" placeholder="搜尋餐廳、料理或地址...">
+                <button class="mic-icon" aria-label="語音搜尋">
+                    <i class="material-icons-outlined">mic</i>
+                </button>
+                <button class="camera-icon" aria-label="拍照搜尋">
+                    <i class="material-icons-outlined">photo_camera</i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 導覽選單 -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="map.html" class="nav-link">地圖</a>
+                </li>
+                <li class="nav-item">
+                    <a href="group-order.html" class="nav-link">團購</a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html" class="nav-link">優惠</a>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn">登入/註冊</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+    
+    <!-- 主要內容 -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- 會員區塊 -->
+            <div class="member-section">
+                <!-- 會員側邊欄 -->
+                <aside class="member-sidebar">
+                    <div class="member-profile">
+                        <div class="member-avatar">
+                            <img src="img/avatar.svg" alt="會員頭像">
+                        </div>
+                        <div class="member-info">
+                            <h3 class="member-name">王小明</h3>
+                            <p class="member-level">白金會員</p>
+                        </div>
+                    </div>
+                    
+                    <nav class="member-nav">
+                        <a href="member.html" class="member-nav-item">
+                            <i class="material-icons-outlined">person</i>
+                            <span>會員資料</span>
+                        </a>
+                        <a href="member-orders.html" class="member-nav-item">
+                            <i class="material-icons-outlined">receipt_long</i>
+                            <span>訂單記錄</span>
+                        </a>
+                        <a href="member-coupons.html" class="member-nav-item active">
+                            <i class="material-icons-outlined">local_offer</i>
+                            <span>優惠券</span>
+                        </a>
+                        <a href="member-favorites.html" class="member-nav-item">
+                            <i class="material-icons-outlined">favorite</i>
+                            <span>收藏餐廳</span>
+                        </a>
+                        <a href="member-points.html" class="member-nav-item">
+                            <i class="material-icons-outlined">stars</i>
+                            <span>點數紀錄</span>
+                        </a>
+                        <a href="#" class="member-nav-item logout">
+                            <i class="material-icons-outlined">logout</i>
+                            <span>登出</span>
+                        </a>
+                    </nav>
+                </aside>
+                
+                <!-- 會員內容 -->
+                <div class="member-content">
+                    <div class="member-content-header">
+                        <h1 class="member-content-title">我的優惠券</h1>
+                        <div class="coupon-filter">
+                            <select id="coupon-status-filter" class="filter-select">
+                                <option value="all">全部優惠券</option>
+                                <option value="available">可使用</option>
+                                <option value="used">已使用</option>
+                                <option value="expired">已過期</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 優惠券列表 -->
+                    <div class="coupons-container" id="coupons-container">
+                        <!-- 優惠券將由 JavaScript 動態生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+        <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                    <span class="logo-text">FoodieTime 食刻</span>
+                </div>
+                <div class="footer-nav">
+                    <div class="footer-nav-group">
+                        <h4 class="footer-nav-title">功能</h4>
+                        <ul class="footer-nav-list">
+                            <li><a href="map.html">地圖搜尋</a></li>
+                            <li><a href="group-order.html">團購功能</a></li>
+                            <li><a href="deals.html">比價優惠</a></li>
+                            <li><a href="collections.html">收藏管理</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-nav-group">
+                        <h4 class="footer-nav-title">關於我們</h4>
+                        <ul class="footer-nav-list">
+                            <li><a href="about.html">公司簡介</a></li>
+                            <li><a href="team.html">團隊成員</a></li>
+                            <li><a href="careers.html">加入我們</a></li>
+                            <li><a href="press.html">媒體報導</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-nav-group">
+                        <h4 class="footer-nav-title">幫助</h4>
+                        <ul class="footer-nav-list">
+                            <li><a href="faq.html">常見問題</a></li>
+                            <li><a href="contact.html">聯絡我們</a></li>
+                            <li><a href="terms.html">使用條款</a></li>
+                            <li><a href="privacy.html">隱私政策</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
+                    <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
+                    <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
+                    <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- 優惠券詳情彈窗 -->
+    <div class="modal" id="coupon-details-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">優惠券詳情</h2>
+                <button class="modal-close">
+                    <i class="material-icons-outlined">close</i>
+                </button>
+            </div>
+            <div class="modal-content" id="coupon-details-content">
+                <!-- 優惠券詳情將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/member-coupons.js"></script>
+</body>
+</html>

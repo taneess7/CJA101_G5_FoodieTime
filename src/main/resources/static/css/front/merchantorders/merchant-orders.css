@@ -1,0 +1,482 @@
+/**
+ * FoodieTime 食刻 - 商家訂單管理樣式
+ * 實現訂單管理頁面的 Material Design 風格
+ */
+
+/* 訂單管理頁面基本樣式 */
+.merchant-orders-page {
+    padding: var(--space-4) 0 var(--space-6);
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+/* 訂單篩選器樣式 */
+.order-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+    background-color: var(--bg-light);
+    border-radius: 8px;
+    box-shadow: var(--shadow-1);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+}
+
+.filter-group label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.filter-select {
+    padding: var(--space-2);
+    border: 1px solid var(--neutral-300);
+    border-radius: 4px;
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.filter-btn {
+    align-self: flex-end;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* 訂單列表樣式 */
+.orders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
+.order-card {
+    background-color: var(--bg-light);
+    border-radius: 8px;
+    box-shadow: var(--shadow-1);
+    padding: var(--space-3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.order-id {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.order-status {
+    padding: var(--space-1) var(--space-2);
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background-color: var(--warning);
+    color: var(--bg-dark);
+}
+
+.status-accepted {
+    background-color: var(--info);
+    color: var(--bg-light);
+}
+
+.status-preparing {
+    background-color: var(--accent-blue);
+    color: var(--bg-light);
+}
+
+.status-ready {
+    background-color: var(--accent-green);
+    color: var(--bg-light);
+}
+
+.status-completed {
+    background-color: var(--success);
+    color: var(--bg-light);
+}
+
+.status-cancelled {
+    background-color: var(--error);
+    color: var(--bg-light);
+}
+
+.order-info {
+    margin-bottom: var(--space-2);
+}
+
+.order-info-item {
+    display: flex;
+    margin-bottom: var(--space-1);
+}
+
+.order-info-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    width: 80px;
+}
+
+.order-info-value {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.order-items {
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--neutral-200);
+}
+
+.order-items-title {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    margin-bottom: var(--space-1);
+}
+
+.order-item-name {
+    color: var(--text-primary);
+}
+
+.order-item-quantity {
+    color: var(--text-secondary);
+    margin-left: var(--space-1);
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--neutral-200);
+    font-weight: 600;
+}
+
+.order-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+/* 訂單詳情彈窗樣式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--bg-light);
+    border-radius: 8px;
+    box-shadow: var(--shadow-3);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--space-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: var(--neutral-100);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: var(--space-4);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--neutral-200);
+}
+
+/* 訂單詳情內容樣式 */
+.order-detail-section {
+    margin-bottom: var(--space-4);
+}
+
+.order-detail-section:last-child {
+    margin-bottom: 0;
+}
+
+.order-detail-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.order-detail-title i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.customer-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+}
+
+.customer-info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-info-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.customer-info-value {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.order-items-list {
+    border: 1px solid var(--neutral-200);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.order-item-detail {
+    display: flex;
+    padding: var(--space-2);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.order-item-detail:last-child {
+    border-bottom: none;
+}
+
+.order-item-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+    margin-right: var(--space-2);
+    background-color: var(--neutral-100);
+}
+
+.order-item-info {
+    flex: 1;
+}
+
+.order-item-name-price {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-1);
+}
+
+.order-item-name-detail {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.order-item-price {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.order-item-options {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.order-item-quantity-price {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.order-item-quantity-detail {
+    color: var(--text-secondary);
+}
+
+.order-item-total {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.order-summary {
+    margin-top: var(--space-3);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-1);
+    font-size: 0.875rem;
+}
+
+.summary-label {
+    color: var(--text-secondary);
+}
+
+.summary-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--neutral-200);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.summary-total-label {
+    color: var(--text-primary);
+}
+
+.summary-total-value {
+    color: var(--primary-color);
+}
+
+.delivery-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+}
+
+.delivery-address {
+    grid-column: 1 / -1;
+}
+
+.special-instructions {
+    grid-column: 1 / -1;
+    padding: var(--space-2);
+    background-color: var(--neutral-100);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-style: italic;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .orders-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .customer-info,
+    .delivery-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+}
