@@ -18,6 +18,19 @@ public class GroupBuyingCasesController {
     @Autowired
     private GroupBuyingCasesService groupBuyingCasesService;
     
+    
+    
+//  //測試
+//    @GetMapping("/count")
+//    @ResponseBody
+//    public String countCases() {
+//        long total = groupBuyingCasesService.countAll();  // Service 實作 countAll()
+//        return "目前共有 " + total + " 筆團購案紀錄";
+//    }
+    
+    
+    
+    
     // 查詢某會員參加的所有團購案
     @GetMapping("/member/{memId}")
     public String findByMemId(@PathVariable Integer memId, Model model) {
@@ -38,35 +51,38 @@ public class GroupBuyingCasesController {
     
     // 查詢某會員開設且是團主的團購案
     @GetMapping("/leader/{memId}")
-    public String findByLeader(@PathVariable Integer memId, @RequestParam(required = false) Boolean leader, Model model) {
-       
-        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeader(memId, leader);
+    public String findByLeader(
+            @PathVariable Integer memId,
+            Model model) {
+
+        List<GroupBuyingCasesVO> groupBuyingCases =
+            groupBuyingCasesService.findByMember_MemIdAndLeader(memId, true);
 
         if (groupBuyingCases.isEmpty()) {
             model.addAttribute("error", "找不到該會員開設且為團主的團購案");
-        } else {
-            model.addAttribute("groupBuyingCases", groupBuyingCases);
         }
-        return "front/gb/gbleader/leader-groups"; // 返回顯示團主所開設團購案的頁面
+        model.addAttribute("groupBuyingCases", groupBuyingCases);
+        return "front/gb/gbleader/leader-groups";
     }
 
 
-//    @GetMapping("/store/{storId}")
-//    public String findByStoreId(@PathVariable Integer storId, Model model) {
-//        // 查詢該店家開設的所有團購案
-//        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByStoreId(storId);
-//
-//        if (groupBuyingCases.isEmpty()) {
-//            // 如果該店家沒有開設任何團購案，顯示錯誤訊息
-//            model.addAttribute("error", "找不到該店家開設的團購案");
-//        } else {
-//            // 如果找到了團購案，將資料傳遞到視圖
-//            model.addAttribute("groupBuyingCases", groupBuyingCases);
-//        }
-//
-//        // 返回顯示店家開設的團購案列表視圖
-//        return "group-buying-cases/group-buying-cases-list";
-//    }
+
+    @GetMapping("/store/{storId}")
+    public String findByStoreId(@PathVariable Integer storId, Model model) {
+        // 查詢該店家開設的所有團購案
+        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByStoreId(storId);
+
+        if (groupBuyingCases.isEmpty()) {
+            // 如果該店家沒有開設任何團購案，顯示錯誤訊息
+            model.addAttribute("error", "找不到該店家開設的團購案");
+        } else {
+            // 如果找到了團購案，將資料傳遞到視圖
+            model.addAttribute("groupBuyingCases", groupBuyingCases);
+        }
+
+        // 返回顯示店家開設的團購案列表視圖
+        return "group-buying-cases/group-buying-cases-list";
+    }
 
     
     // 根據商品編號或商品名稱查詢團購案
@@ -90,15 +106,21 @@ public class GroupBuyingCasesController {
     // 根據團購編號查詢團購案
     @GetMapping("/{gbId}")
     public String findById(@PathVariable Integer gbId, Model model) {
-        Optional<GroupBuyingCasesVO> groupBuyingCaseOpt = groupBuyingCasesService.findById(gbId);
+    
+    	System.out.println("findById 被呼叫，gbId 參數 = " + gbId);
+    	
+    	Optional<GroupBuyingCasesVO> groupBuyingCaseOpt = groupBuyingCasesService.findById(gbId);
         if (groupBuyingCaseOpt.isPresent()) {
             model.addAttribute("groupBuyingCase", groupBuyingCaseOpt.get());
-            return "group-buying-cases/group-buying-case-detail"; // 顯示單個團購案的詳情頁面
+            return "front/gb/gbleader/leaderindex"; // 顯示單個團購案的詳情頁面,<-------
         } else {
             model.addAttribute("error", "團購案不存在");
             return "front/gb/gbleader/leaderindex"; // 如果團購案不存在，返回列表頁面並顯示錯誤訊息
+        
         }
     }
+    
+
 
     // 新增修改團購案
     @PostMapping("/save")
@@ -146,4 +168,9 @@ public class GroupBuyingCasesController {
             return "front/gb/gbleader/leader-groups"; // 返回列表頁面並顯示錯誤訊息
         }
     }
+    
+    
+    
+
+
 }

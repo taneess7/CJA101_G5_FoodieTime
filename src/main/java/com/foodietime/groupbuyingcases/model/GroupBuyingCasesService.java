@@ -12,6 +12,15 @@ public class GroupBuyingCasesService {
     @Autowired
     private GroupBuyingCasesRepository groupBuyingCasesRepository;
 
+    
+//  //測試
+//    public long countAll() {
+//        return groupBuyingCasesRepository.count();
+//    }
+    
+    
+    
+    
     // 查詢某會員參加的所有團購案
     public List<GroupBuyingCasesVO> findByMemId(Integer memId) {
         return groupBuyingCasesRepository.findByMember_MemId(memId);
@@ -78,4 +87,7 @@ public class GroupBuyingCasesService {
     public List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus) {
         return groupBuyingCasesRepository.findByGbTitleContainingAndGbStatus(keyword, gbStatus);
     }
+    
+    
+    
 }

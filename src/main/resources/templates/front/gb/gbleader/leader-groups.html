@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -299,7 +299,7 @@ body {
 						</div>
 					</div>
 
-					<!-- 團購列表 -->
+					<!-- 團購列表 舊的-->
 					<div class="group-card">
 						<div class="d-flex justify-content-between mb-2">
 							<div>
@@ -350,6 +350,7 @@ body {
 							</div>
 						</div>
 					</div>
+
 
 					<!-- Edit Order Modal -->
 					<div class="modal fade" id="editCaseModal" tabindex="-1" aria-labelledby="editCaseModalLabel" aria-hidden="true">
@@ -429,148 +430,7 @@ body {
 					</div>
 
 
-
-
-					<!-- 團購範例 2 -->
-					<div class="group-card">
-						<div class="d-flex justify-content-between mb-2">
-							<div>
-								<span class="group-status status-pending">已成團</span> <span
-									class="group-date ms-2">開團日期: 2023-06-02</span>
-							</div>
-							<div>
-								<span>團購編號: #GRP654321</span>
-							</div>
-						</div>
-
-						<div class="row align-items-center mb-3">
-							<div class="col-md-2">
-								<img src="https://via.placeholder.com/150" alt="商品圖片"
-									class="group-product-img">
-							</div>
-							<div class="col-md-6">
-								<h6>韓國正官庄高麗蔘精 30包/盒</h6>
-								<p class="text-muted mb-0">規格: 30包/盒</p>
-								<p class="text-muted mb-0">數量: 2</p>
-								<div class="mt-2">
-									<div
-										class="d-flex justify-content-between align-items-center mb-1">
-										<span>成團進度: 45%</span> <span>22/50人</span>
-									</div>
-									<div class="progress">
-										<div class="progress-bar" role="progressbar"
-											style="width: 45%" aria-valuenow="45" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-2 text-center">
-								<p class="mb-0">NT$ 2,400</p>
-							</div>
-
-						</div>
-
-						<div class="d-flex justify-content-between align-items-center">
-							<div>
-								<span><i class="bi bi-clock"></i> 剩餘 5 天 3 小時</span>
-							</div>
-							<div>
-								<button class="btn btn-sm btn-outline-secondary me-2">編輯團購</button>
-								<button class="btn btn-sm btn-primary">查看訂單</button>
-							</div>
-						</div>
-					</div>
-
-
-
-
-
-
-
-					<!-- Edit Order Modal -->
-					<div class="modal fade" id="editCaseModal" tabindex="-1"
-						aria-labelledby="editCaseModalLabel" aria-hidden="true">
-						<div class="modal-dialog modal-lg">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="editCaseModalLabel">編輯訂單</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Close"></button>
-								</div>
-								<div class="modal-body">
-									<form>
-										<div class="row">
-											<div class="col-md-6">
-												<div class="mb-3">
-													<label for="editCaseStatus" class="form-label">訂單狀態</label>
-													<select class="form-select" id="editCaseStatus">
-														<option value="pending">待確認</option>
-														<option value="paid">已付款</option>
-														<option value="processing">處理中</option>
-														<option value="shipped">已出貨</option>
-														<option value="delivered">已送達</option>
-														<option value="completed">已完成</option>
-														<option value="cancelled">已取消</option>
-														<option value="refunded">已退款</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="mb-3">
-													<label for="editTrackingNumber" class="form-label">追蹤號碼</label>
-													<input type="text" class="form-control"
-														id="editTrackingNumber" placeholder="請輸入物流追蹤號碼">
-												</div>
-											</div>
-										</div>
-
-										<div class="row">
-											<div class="col-md-6">
-												<div class="mb-3">
-													<label for="editShippingCompany" class="form-label">物流公司</label>
-													<select class="form-select" id="editShippingCompany">
-														<option value="black_cat">黑貓宅急便</option>
-														<option value="post_office">中華郵政</option>
-														<option value="family_mart">全家便利商店</option>
-														<option value="seven_eleven">7-ELEVEN</option>
-														<option value="other">其他</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="mb-3">
-													<label for="editDeliveryDate" class="form-label">預計送達日期</label>
-													<input type="date" class="form-control"
-														id="editDeliveryDate">
-												</div>
-											</div>
-										</div>
-
-										<div class="mb-3">
-											<label for="editCaseNote" class="form-label">訂單備註</label>
-											<textarea class="form-control" id="editCaseNote" rows="3"
-												placeholder="請輸入訂單備註.."></textarea>
-										</div>
-
-										<div class="form-check">
-											<input class="form-check-input" type="checkbox"
-												id="notifyMember"> <label class="form-check-label"
-												for="notifyMember"> 通知會員訂單狀態變更 </label>
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">取消</button>
-									<button type="button" class="btn btn-primary"
-										onclick="saveOrderChanges()">儲存變更</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-
-
+			
 
 
 					<!-- 分頁 -->
