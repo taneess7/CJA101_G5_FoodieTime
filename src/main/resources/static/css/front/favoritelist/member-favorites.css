@@ -1,240 +1,866 @@
-/* 會員收藏頁面樣式 */
+/**
+ * 會員收藏餐廳頁面樣式（參考優惠券 member-coupons.css 樣式）
+ * FoodieTime 食刻
+ */
 
-/* 會員資料區塊 */
+/* ========== 變數與基礎重置 ========== */
+:root {
+  --primary-color: #FF5722;
+  --primary-light: #FFCCBC;
+  --primary-dark: #E64A19;
+  --accent-green: #4CAF50;
+  --accent-blue: #2196F3;
+
+  --neutral-50: #FAFAFA;
+  --neutral-100: #F5F5F5;
+  --neutral-200: #EEEEEE;
+  --neutral-300: #E0E0E0;
+  --neutral-400: #BDBDBD;
+  --neutral-500: #9E9E9E;
+  --neutral-600: #757575;
+  --neutral-700: #616161;
+  --neutral-800: #424242;
+  --neutral-900: #212121;
+
+  --success: #4CAF50;
+  --warning: #FFC107;
+  --error: #F44336;
+  --info: #2196F3;
+
+  --text-primary: rgba(0, 0, 0, 0.87);
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-disabled: rgba(0, 0, 0, 0.38);
+  --text-white: #FFFFFF;
+
+  --bg-light: #FFFFFF;
+  --bg-gray: #F5F5F5;
+  --bg-dark: #212121;
+
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
+  --shadow-3: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.12);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 40px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* ========== 基礎重置 ========== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ========== 容器與主要區塊 ========== */
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+
+.main-content {
+  min-height: calc(100vh - 120px);
+  padding: var(--space-4) 0 var(--space-6);
+}
+
+.member-section {
+  display: flex;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  min-height: 600px;
+}
+
+.member-sidebar {
+  flex: 0 0 280px;
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  padding: 0;
+  height: fit-content;
+  position: sticky;
+  top: calc(80px + var(--space-4));
+  border: 1px solid var(--neutral-200);
+}
+
 .member-profile {
-    background-color: var(--primary-color-light);
-    padding: var(--space-5) 0;
-    margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(255, 204, 188, 0.5) 100%);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
+.member-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--neutral-100);
+  flex-shrink: 0;
+  border: 3px solid var(--bg-light);
+  box-shadow: var(--shadow-1);
 }
 
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid var(--bg-light);
-    box-shadow: var(--shadow-1);
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.member-info {
+  flex: 1;
+  min-width: 0;
 }
 
-.profile-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-white);
-    margin-bottom: var(--space-1);
+.member-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 var(--space-1);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.profile-level {
-    color: var(--text-white);
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
+.member-level {
+  font-size: 14px;
+  color: var(--primary-color);
+  margin: 0;
+  font-weight: 600;
+  background-color: var(--bg-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
 }
 
-.level-badge {
-    background-color: var(--warning);
-    color: var(--text-white);
-    padding: 2px 8px;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
+.member-nav {
+  padding: var(--space-3) 0;
 }
 
-/* 收藏統計 */
-.favorites-stats {
-    display: flex;
-    justify-content: space-around;
-    background-color: var(--bg-light);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    margin-bottom: var(--space-5);
-    box-shadow: var(--shadow-1);
+.member-nav-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  gap: var(--space-3);
+  border-left: 3px solid transparent;
+  font-weight: 500;
 }
 
-.stats-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-1);
+.member-nav-item:hover {
+  background-color: var(--neutral-50);
+  color: var(--primary-color);
+  transform: translateX(2px);
 }
 
-.stats-number {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
+.member-nav-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 600;
+  border-left-color: var(--primary-color);
 }
 
-.stats-label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+.member-nav-item.logout {
+  color: var(--error);
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--neutral-200);
+  padding-top: var(--space-4);
 }
 
-/* 收藏區塊標題 */
-.favorites-section {
-    margin-bottom: var(--space-6);
+.member-nav-item.logout:hover {
+  background-color: #FFEBEE;
+  color: var(--error);
 }
 
-.section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-2);
-    border-bottom: 2px solid var(--primary-color-light);
+/* ========== 會員內容 ========== */
+.member-content {
+  flex: 1;
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-5);
+  min-height: 600px;
+  border: 1px solid var(--neutral-200);
+  animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
 }
 
-/* 收藏卡片樣式 */
-.favorite-card {
-    position: relative;
+.member-content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--neutral-200);
 }
 
-.favorite-actions {
-    position: absolute;
-    top: var(--space-2);
-    right: var(--space-2);
-    display: flex;
-    gap: var(--space-2);
-    z-index: 10;
+.member-content-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+  position: relative;
 }
 
-.favorite-btn,
-.share-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-1);
+.member-content-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border-radius: var(--radius-sm);
+}
+
+/* ========== 餐廳篩選 ========== */
+.restaurant-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.filter-select {
+  padding: var(--space-3) var(--space-5) var(--space-3) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--neutral-200);
+  background-color: var(--bg-light);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  background-size: 16px;
+  min-width: 180px;
+  font-weight: 500;
+}
+
+.filter-select:hover,
+.filter-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+}
+
+/* ========== 餐廳列表 ========== */
+.restaurants-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+/* ========== 餐廳卡片 ========== */
+.restaurant-card {
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  border: 1px solid var(--neutral-200);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-2);
+}
+
+.restaurant-image-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.restaurant-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.restaurant-card:hover .restaurant-image {
+  transform: scale(1.05);
+}
+
+.restaurant-actions {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  gap: var(--space-2);
+  z-index: 2;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-1);
+  border: none;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-2);
 }
 
 .favorite-btn i {
-    color: var(--neutral-400);
-    font-size: 1.125rem;
+  color: var(--neutral-400);
+  transition: color var(--transition-fast);
 }
 
 .favorite-btn.active i {
-    color: var(--error);
+  color: var(--error);
 }
 
 .share-btn i {
-    color: var(--primary-color);
-    font-size: 1.125rem;
+  color: var(--primary-color);
 }
 
-.favorite-btn:hover,
-.share-btn:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-2);
+.restaurant-details {
+  padding: var(--space-3);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 優惠券卡片 */
-.coupon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-4);
+.restaurant-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-2);
+  color: var(--text-primary);
 }
 
-.coupon-card {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-1);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-    border-left: 4px solid var(--primary-color);
+.restaurant-category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 
-.coupon-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-3);
+.cuisine-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
 }
 
-.coupon-content {
-    padding: var(--space-3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.cuisine-chinese {
+  background-color: #FFF3E0;
+  color: #E65100;
 }
 
-.coupon-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: var(--space-1);
-    color: var(--text-primary);
+.cuisine-japanese {
+  background-color: #E1F5FE;
+  color: #0288D1;
 }
 
-.coupon-description {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: var(--space-2);
+.cuisine-korean {
+  background-color: #E1F5FE;
+  color: #0288D1;
 }
 
-.coupon-validity {
-    font-size: 0.75rem;
-    color: var(--warning);
+.cuisine-italian {
+  background-color: #E8F5E9;
+  color: #388E3C;
 }
 
-.use-coupon-btn {
-    background-color: var(--primary-color);
-    color: var(--text-white);
-    border: none;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-full);
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color var(--transition-normal);
+.cuisine-american {
+  background-color: #FFEBEE;
+  color: #C62828;
 }
 
-.use-coupon-btn:hover {
-    background-color: var(--primary-color-dark);
+.cuisine-thai {
+  background-color: #F3E5F5;
+  color: #7B1FA2;
 }
 
-/* 響應式設計 */
+.cuisine-vegetarian {
+  background-color: #E0F2F1;
+  color: #00796B;
+}
+
+.restaurant-type {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.restaurant-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.rating-stars {
+  display: flex;
+  align-items: center;
+  color: var(--warning);
+}
+
+.rating-stars i {
+  font-size: 1rem;
+}
+
+.rating-stars i.filled {
+  color: var(--warning);
+}
+
+.rating-stars i.half-filled {
+  color: var(--warning);
+}
+
+.rating-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.rating-count {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.restaurant-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.info-item i {
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+.restaurant-actions-bottom {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.view-btn,
+.order-btn {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+  flex: 1;
+  text-align: center;
+}
+
+.view-btn {
+  background-color: var(--neutral-100);
+  color: var(--text-primary);
+  border: 1px solid var(--neutral-300);
+}
+
+.view-btn:hover {
+  background-color: var(--neutral-200);
+}
+
+.order-btn {
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  border: 1px solid var(--primary-color);
+}
+
+.order-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* ========== 分頁導航 ========== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--space-5);
+  gap: var(--space-2);
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-light);
+  border: 1px solid var(--neutral-200);
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--neutral-100);
+  border-color: var(--neutral-300);
+}
+
+.pagination-btn.active {
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  border-color: var(--primary-color);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========== 空狀態 ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5) 0;
+  color: var(--text-secondary);
+  text-align: center;
+  grid-column: 1 / -1;
+  background-color: var(--neutral-50);
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--neutral-200);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  color: var(--neutral-300);
+}
+
+.empty-state p {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ========== 餐廳詳情彈窗 ========== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  padding: var(--space-4);
+}
+
+.modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-container {
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-2);
+  transform: translateY(20px) scale(0.95);
+  transition: all var(--transition-normal);
+}
+
+.modal.active .modal-container {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--neutral-200);
+  background-color: var(--neutral-50);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+  width: 40px;
+  height: 40px;
+}
+
+.modal-close:hover {
+  background-color: var(--neutral-100);
+  color: var(--text-primary);
+}
+
+.modal-content {
+  padding: var(--space-5);
+}
+
+/* ========== 響應式設計 ========== */
+@media (max-width: 992px) {
+  .member-section {
+    gap: var(--space-3);
+  }
+
+  .member-sidebar {
+    flex: 0 0 220px;
+  }
+
+  .restaurants-container {
+    grid-template-columns: 1fr;
+  }
+
+  .member-content {
+    padding: var(--space-4);
+  }
+}
+
 @media (max-width: 768px) {
-    .favorites-category-list {
-        overflow-x: auto;
-        padding-bottom: var(--space-2);
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .favorites-category-list::-webkit-scrollbar {
-        height: 4px;
-    }
-    
-    .favorites-category-list::-webkit-scrollbar-thumb {
-        background-color: var(--neutral-300);
-        border-radius: var(--radius-full);
-    }
-    
-    .favorites-stats {
-        flex-direction: column;
-        gap: var(--space-3);
-    }
-    
-    .coupon-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-3);
-    }
-    
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
+  .member-section {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .member-sidebar {
+    flex: none;
+    width: 100%;
+    position: static;
+  }
+
+  .member-content {
+    padding: var(--space-3);
+  }
+
+  .member-content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .restaurant-filter {
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .restaurants-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .modal {
+    padding: var(--space-3);
+  }
+
+  .modal-container {
+    max-height: 95vh;
+  }
+
+  .modal-content {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .member-profile {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-3);
+  }
+
+  .member-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .member-content {
+    padding: var(--space-2);
+  }
+
+  .restaurant-card {
+    border-radius: var(--radius-md);
+  }
+
+  .restaurant-actions-bottom {
+    flex-direction: column;
+  }
+
+  .modal-header {
+    padding: var(--space-3);
+  }
+
+  .modal-content {
+    padding: var(--space-2);
+  }
+}
+
+/* ========== 動畫效果 ========== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ========== 無障礙設計 ========== */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ========== 高對比模式支援 ========== */
+@media (prefers-contrast: more) {
+  :root {
+    --primary-color: #D32F2F;
+    --primary-dark: #B71C1C;
+    --accent-green: #2E7D32;
+    --accent-blue: #1565C0;
+  }
+
+  .restaurant-card {
+    border-color: #000;
+  }
+
+  input,
+  textarea,
+  select {
+    border-color: #000;
+  }
+}
+
+/* ========== 自定義滾動條 ========== */
+.modal-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-container::-webkit-scrollbar-track {
+  background: var(--neutral-50);
+  border-radius: var(--radius-sm);
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: var(--radius-sm);
+}
+
+.modal-container::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
 }

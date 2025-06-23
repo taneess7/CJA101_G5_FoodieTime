@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/category")
@@ -61,6 +62,18 @@ public class ProductCategoryController {
         }
         model.addAttribute("productList", allProducts);
 
+     // 加入星期對照表
+        Map<String, String> weekMap = Map.of(
+        		"0", "週日",
+        	    "1", "週一",
+        	    "2", "週二",
+        	    "3", "週三",
+        	    "4", "週四",
+        	    "5", "週五",
+        	    "6", "週六"
+        );
+        model.addAttribute("weekMap", weekMap);
+        
         return "front/restaurant/category"; // 共用模板
     }
     
