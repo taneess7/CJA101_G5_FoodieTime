@@ -234,37 +234,38 @@
                         <h5 class="mb-0">篩選條件</h5>
                     </div>
                     <div class="card-body">
-                        <form class="row g-3">
-                            <div class="col-lg-3 col-md-6">
-                                <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    <input type="text" class="form-control" id="searchKeyword" placeholder="訊息編號或客戶姓名">
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-2 col-md-6">
-                                <label for="ticketStatus" class="form-label">處理狀態</label>
-                                <select class="form-select" id="ticketStatus">
-                                    <option value="">全部狀態</option>
-                                    <option value="pending">待處理</option>
-                                    <option value="processing">處理中</option>
-                                    <option value="completed">已完成</option>
-                                    <option value="closed">已關閉</option>
-                                </select>
-                            </div>
+                        <form class="row g-3" method="get" th:action="@{/smg/admin-service-tickets}">
+						    <div class="col-lg-3 col-md-6">
+						        <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
+						        <div class="input-group">
+						            <span class="input-group-text"><i class="fas fa-search"></i></span>
+						            <input type="text" class="form-control" id="searchKeyword" name="keyword"
+						                   th:value="${keyword}" placeholder="訊息編號或客戶姓名">
+						        </div>
+						    </div>
+						    
+						    <div class="col-lg-2 col-md-6">
+						        <label for="ticketStatus" class="form-label">處理狀態</label>
+						        <select class="form-select" id="ticketStatus" name="type" onchange="this.form.submit()">
+						            <option value="all" th:selected="${type == 'all'}">全部狀態</option>
+									<option value="pending" th:selected="${type == 'pending'}">待處理</option>
+									<option value="completed" th:selected="${type == 'completed'}">已回覆</option>
+						        </select>
+						    </div>
                           
                             <div class="col-lg-3 col-md-6">
                                 <label for="dateRange" class="form-label">日期範圍</label>
-                                <input type="date" class="form-control" id="dateRange">
+                                <input type="date" class="form-control" id="dateRange" name="dateRange" th:value="${dateRange}">
+
                             </div>
                             <div class="col-12 mt-4">
                                 <button type="submit" class="btn btn-primary me-2">
                                     <i class="fas fa-search me-1"></i>搜尋
                                 </button>
-                                <button type="reset" class="btn btn-outline-secondary">
-                                    <i class="fas fa-redo me-1"></i>重置
-                                </button>
+                               <button type="button" class="btn btn-outline-secondary" onclick="resetSearch()">
+								    <i class="fas fa-redo me-1"></i>重置
+							   </button>
+
                             </div>
                         </form>
                     </div>
@@ -274,30 +275,23 @@
                 <div class="card">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">訊息列表</h5>
-                        <div class="mb-3 d-flex gap-2">
-						    <a th:href="@{/smg/admin-service-tickets(type='all')}" 
-						       th:classappend="${type == 'all'} ? 'btn btn-primary' : 'btn btn-outline-primary'">
-						       全部
-						    </a>
-						    <a th:href="@{/smg/admin-service-tickets(type='pending')}" 
-						       th:classappend="${type == 'pending'} ? 'btn btn-primary' : 'btn btn-outline-primary'">
-						       待處理
-						    </a>
-						    <a th:href="@{/smg/admin-service-tickets(type='completed')}" 
-						       th:classappend="${type == 'completed'} ? 'btn btn-primary' : 'btn btn-outline-primary'">
-						       已回覆
-						    </a>
+                        <div class="btn-group" role="group">
+						 <a th:href="@{/smg/admin-service-tickets(type='all', keyword=${keyword})}"
+						   th:classappend="${type == 'all'} ? ' btn-primary' : ' btn-outline-primary'"
+						   class="btn">全部</a>
+						
+						<a th:href="@{/smg/admin-service-tickets(type='pending', keyword=${keyword})}"
+						   th:classappend="${type == 'pending'} ? ' btn-primary' : ' btn-outline-primary'"
+						   class="btn">待處理</a>
+						
+						<a th:href="@{/smg/admin-service-tickets(type='completed', keyword=${keyword})}"
+						   th:classappend="${type == 'completed'} ? ' btn-primary' : ' btn-outline-primary'"
+						   class="btn">已回覆</a>
+
 						</div>
                         
                         
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary btn-sm" onclick="exportTickets()">
-                                <i class="fas fa-file-export me-1"></i>匯出
-                            </button>
-                            <button class="btn btn-outline-success btn-sm" onclick="batchProcess()">
-                                <i class="fas fa-tasks me-1"></i>批次處理
-                            </button>
-                        </div>
+                       
                     </div>
                   
                     <div class="card-body p-0">
@@ -548,13 +542,13 @@
                         
                         // 狀態 badge
                         const statusBadge = document.getElementById('viewTicketStatus');
-	if (data.replyStatus === '待處理') {
-	    statusBadge.textContent = '待處理';
-	    statusBadge.className = 'badge bg-warning-subtle text-warning';
-	} else if (data.replyStatus === '已回覆') {
-	    statusBadge.textContent = '已回覆';
-	    statusBadge.className = 'badge bg-success-subtle text-success';
-	}
+						if (data.replyStatus === '待處理') {
+						    statusBadge.textContent = '待處理';
+						    statusBadge.className = 'badge bg-warning-subtle text-warning';
+						} else if (data.replyStatus === '已回覆') {
+						    statusBadge.textContent = '已回覆';
+						    statusBadge.className = 'badge bg-success-subtle text-success';
+						}
                      // 顯示回覆內容
                         if (data.replyContent) {
                             document.getElementById('viewReplyContent').textContent = data.replyContent;
@@ -625,7 +619,11 @@
                 checkbox.checked = checked;
             });
         });
-    
+    	
+        function resetSearch() {
+            window.location.href = "/smg/admin-service-tickets";
+        }
+
 
     </script>
     <script th:inline="javascript">
