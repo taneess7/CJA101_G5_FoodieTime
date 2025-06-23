@@ -125,13 +125,13 @@ public class ProductDetailService {
         // ==================== 時間資訊 ====================
         if (gbCase.getGbEndTime() != null) {
         	LocalDateTime now = LocalDateTime.now();
-        	Date promotEnd = gbCase.getGbProd().getGbpromotionList().get(0).getPromotEnd();
-        	LocalDateTime end = promotEnd.toInstant()
+        	LocalDateTime promotEnd = gbCase.getGbEndTime();
+        	LocalDateTime end = promotEnd
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
 
-		//計算時間差
-		Duration duration = Duration.between(now, end);
+//計算時間差
+Duration duration = Duration.between(now, end);
             
             dto.setRemainingDays((int) duration.toDays());
             dto.setRemainingHours((int) (duration.toHours() % 24));
@@ -146,6 +146,9 @@ public class ProductDetailService {
                 String base64Avatar = Base64.getEncoder().encodeToString(gbCase.getMember().getMemAvatar());
                 dto.setLeaderAvatar(base64Avatar);
             }
+            dto.setOrganizerRating(gbCase.getMember().getTotalStarNum());
+            dto.setReviewCount(gbCase.getMember().getTotalReviews());
+            dto.setNewStar(gbCase.getMember().getTotalStarNum(),gbCase.getMember().getTotalReviews());
         }
         
         // ==================== 店家資訊 ====================

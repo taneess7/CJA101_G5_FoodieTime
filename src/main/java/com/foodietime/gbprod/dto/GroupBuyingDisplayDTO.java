@@ -10,8 +10,9 @@ public class GroupBuyingDisplayDTO {
     
     // 團購案基本信息
     private Integer gbId;                    // 團購編號
-    private String gbTitle;                  // 團購標題
+    private String gbTitle;                  // 團購標題  
     private String gbDescription;            // 團購簡介
+    private LocalDateTime gbStartTime;		 // 開始時間
     private LocalDateTime gbEndTime;         // 結束時間
     private Byte gbStatus;                   // 團購狀態
     private Integer gbMinProductQuantity;    // 最低成團商品數量

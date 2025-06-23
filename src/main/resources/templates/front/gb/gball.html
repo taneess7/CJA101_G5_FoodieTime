@@ -218,10 +218,10 @@
                       <a class="nav-link active" href="/gb/all">全部團購</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link" href="#">熱門團購</a>
+                      <a class="nav-link" href="/gb/gbindex#hot">熱門團購</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link" href="#">最新上架</a>
+                      <a class="nav-link" href="/gb/gbindex#new">最新上架</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link" href="#">即將結束</a>
@@ -335,7 +335,9 @@
         <h2 class="section-title">全部團購商品</h2>
         <div class="row" id="productContainer">
             <!-- 動態渲染所有團購商品 -->
-            <div th:each="product : ${allProducts}" class="col-lg-3 col-md-4 col-sm-6 product-item">
+            <div th:each="product : ${allProducts}" class="col-lg-3 col-md-4 col-sm-6 product-item"
+                 th:attr="data-create-time=${product.gbStartTime != null ? product.gbStartTime : ''},
+                         data-sales=${product.cumulativePurchaseQuantity != null ? product.cumulativePurchaseQuantity : 0}">
                 <div class="product-card">
                     <div class="badge-container">
                         <span class="badge bg-primary" th:text="${product.badgeText != null ? product.badgeText : '團購中'}">團購中</span>
@@ -531,6 +533,84 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // 分頁設定
+        const ITEMS_PER_PAGE = 8;
+        let currentPage = 1;
+        let allItems = [];
+        
+        // 初始化分頁功能
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePagination();
+        });
+        
+        function initializePagination() {
+            const container = document.getElementById('productContainer');
+            allItems = Array.from(container.querySelectorAll('.product-item'));
+            
+            if (allItems.length > ITEMS_PER_PAGE) {
+                showPage(1);
+                updatePagination();
+            } else {
+                // 如果商品數量不超過8個，隱藏分頁
+                document.querySelector('.pagination-container').style.display = 'none';
+            }
+        }
+        
+        function showPage(page) {
+            currentPage = page;
+            const startIndex = (page - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            
+            // 隱藏所有商品
+            allItems.forEach(item => {
+                item.style.display = 'none';
+            });
+            
+            // 顯示當前頁面的商品
+            for (let i = startIndex; i < endIndex && i < allItems.length; i++) {
+                allItems[i].style.display = 'block';
+            }
+        }
+        
+        function updatePagination() {
+            const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+            const paginationContainer = document.querySelector('.pagination');
+            
+            // 清空現有分頁
+            paginationContainer.innerHTML = '';
+            
+            // 上一頁按鈕
+            const prevLi = document.createElement('li');
+            prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})" tabindex="-1">上一頁</a>`;
+            paginationContainer.appendChild(prevLi);
+            
+            // 頁碼按鈕
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = i === currentPage ? 'page-item active' : 'page-item';
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                paginationContainer.appendChild(li);
+            }
+            
+            // 下一頁按鈕
+            const nextLi = document.createElement('li');
+            nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">下一頁</a>`;
+            paginationContainer.appendChild(nextLi);
+        }
+        
+        function changePage(page) {
+            const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+            if (page < 1 || page > totalPages) return;
+            
+            showPage(page);
+            updatePagination();
+            
+            // 滾動到頁面頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
         // 搜尋功能
         function searchProducts() {
             const searchTerm = document.getElementById('searchInput').value.trim();
@@ -559,17 +639,85 @@
             const container = document.getElementById('productContainer');
             const items = Array.from(container.querySelectorAll('.product-item'));
             
-            // 簡單的排序邏輯示例
-            if (sortValue === '價格低至高') {
-                items.sort((a, b) => {
-                    const priceA = parseInt(a.querySelector('.product-price').textContent.replace('$', ''));
-                    const priceB = parseInt(b.querySelector('.product-price').textContent.replace('$', ''));
-                    return priceA - priceB;
-                });
-                
-                // 重新排列DOM元素
-                items.forEach(item => container.appendChild(item));
+            // 根據不同的排序選項進行排序
+            switch(sortValue) {
+                case '熱門程度':
+                    // 根據售出件數排序（從高到低）
+                    items.sort((a, b) => {
+                        const salesA = parseInt(a.getAttribute('data-sales') || '0');
+                        const salesB = parseInt(b.getAttribute('data-sales') || '0');
+                        return salesB - salesA; // 降序排列
+                    });
+                    break;
+                    
+                case '最新上架':
+                    // 使用 data-create-time 屬性排序
+                    items.sort((a, b) => {
+                        const timeA = a.getAttribute('data-create-time') || '';
+                        const timeB = b.getAttribute('data-create-time') || '';
+                        return timeB.localeCompare(timeA); // 降序排列，最新的在前面
+                    });
+                    break;
+                    
+                case '價格低至高':
+                    items.sort((a, b) => {
+                        const priceA = parseInt(a.querySelector('.product-price').textContent.replace('$', ''));
+                        const priceB = parseInt(b.querySelector('.product-price').textContent.replace('$', ''));
+                        return priceA - priceB;
+                    });
+                    break;
+                    
+                case '價格高至低':
+                    items.sort((a, b) => {
+                        const priceA = parseInt(a.querySelector('.product-price').textContent.replace('$', ''));
+                        const priceB = parseInt(b.querySelector('.product-price').textContent.replace('$', ''));
+                        return priceB - priceA; // 降序排列
+                    });
+                    break;
+                    
+                case '即將結束':
+                    // 根據剩餘時間排序
+                    items.sort((a, b) => {
+                        const timeLeftA = a.querySelector('.time-left span').textContent;
+                        const timeLeftB = b.querySelector('.time-left span').textContent;
+                        
+                        // 提取剩餘天數或小時數進行比較
+                        // 假設格式為「剩餘 X 天」或「剩餘 X 小時」
+                        const getTimeValue = (timeText) => {
+                            if (!timeText.includes('剩餘')) return 9999; // 如果沒有剩餘時間信息，放到最後
+                            
+                            const match = timeText.match(/剩餘\s+(\d+)\s+([天小時])/);
+                            if (!match) return 9999;
+                            
+                            const value = parseInt(match[1]);
+                            const unit = match[2];
+                            
+                            // 將天轉換為小時以便比較
+                            return unit === '天' ? value * 24 : value;
+                        };
+                        
+                        const valueA = getTimeValue(timeLeftA);
+                        const valueB = getTimeValue(timeLeftB);
+                        
+                        return valueA - valueB; // 升序排列，剩餘時間少的在前面
+                    });
+                    break;
+                    
+                default:
+                    // 默認不排序
+                    return;
             }
+            
+            // 清空容器
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            
+            // 重新排列DOM元素
+            items.forEach(item => container.appendChild(item));
+            
+            // 重新初始化分頁
+            initializePagination();
         }
         
         // 搜尋框回車事件
