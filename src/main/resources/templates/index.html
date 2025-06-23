@@ -3,229 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodieTime 食刻 - 探索、分享、省錢的美食平台</title>
-    <meta name="description" content="FoodieTime 食刻美食地圖平台讓您省錢、省時、便利地探索、記錄、推薦與交流美食資訊。支援多元飲食需求、比價、團購與個人化記錄。">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" th:href="@{/css/common/style.css}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <!-- PWA 支援 -->
-    <link rel="manifest" th:href="@{/manifest.json}">
-    <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" th:href="@{/images/icons/icon-192x192.png}">
+    <title>FoodieTime 食刻 - 大地黏土風</title>
+
+    <!-- Fonts: Nunito (for its rounded, friendly style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common/index.css}">
+    <style>
+
+    </style>
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-container">
-            <a href="index.html" class="logo">
-                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </a>
-            <div class="search-container">
-                <div class="search-bar">
-                    <i class="material-icons-outlined search-icon">search</i>
-                    <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-                    <i class="material-icons-outlined mic-icon">mic</i>
-                    <i class="material-icons-outlined camera-icon">photo_camera</i>
-                </div>
-            </div>
-            <nav class="main-nav">
-                <ul class="nav-list">
-                    <li class="nav-item"><a th:href="@{/cart/cart}" class="nav-link">地圖</a></li>
-                    <li class="nav-item"><a th:href="@{/group-order}" class="nav-link">團購</a></li>
-                    <li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a th:href="@{/login}" class="nav-link login-btn">登入/註冊</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-    <main>
-        <!-- 英雄區塊 -->
-        <section class="hero-section container">
-            <div class="hero-content">
-                <h1 class="hero-title">發現您附近的美食寶藏</h1>
-                <p class="hero-subtitle">省錢、省時、便利地探索、記錄、推薦與交流美食資訊</p>
-                <div class="hero-actions">
-                    <a th:href="@{/map.html}" class="btn btn-primary">探索地圖</a>
-                    <a th:href="@{/register.html}" class="btn btn-secondary">加入我們</a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <img th:src="@{/images/hero-image.svg}" alt="美食探索" class="responsive-img">
-            </div>
-        </section>
-        <!-- 特色功能區塊 -->
-        <section class="features-section container">
-            <h2 class="section-title">特色功能</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="material-icons-outlined">map</i></div>
-                    <h3 class="feature-title">智慧地圖</h3>
-                    <p class="feature-desc">根據您的位置、偏好和預算，智能推薦附近美食</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="material-icons-outlined">groups</i></div>
-                    <h3 class="feature-title">即時團購</h3>
-                    <p class="feature-desc">輕鬆發起或加入團購，享受更多優惠與社交樂趣</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="material-icons-outlined">local_offer</i></div>
-                    <h3 class="feature-title">比價優惠</h3>
-                    <p class="feature-desc">自動比較不同平台價格，獲取最佳折扣和優惠券</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="material-icons-outlined">bookmark</i></div>
-                    <h3 class="feature-title">個人收藏</h3>
-                    <p class="feature-desc">創建多主題美食清單，記錄用餐體驗和消費統計</p>
-                </div>
-            </div>
-        </section>
-        <!-- 用戶群體區塊 -->
-        <section class="users-section container">
-            <h2 class="section-title">適合各種需求的美食夥伴</h2>
-            <div class="users-grid">
-                <div class="user-card">
-                    <img th:src="@{/images/student.svg}" alt="學生" class="user-img">
-                    <h3 class="user-title">學生族</h3>
-                    <p class="user-desc">發掘高CP值美食，省錢省時的最佳選擇</p>
-                </div>
-                <div class="user-card">
-                    <img th:src="@{/office-worker.svg}" alt="上班族" class="user-img">
-                    <h3 class="user-title">上班族</h3>
-                    <p class="user-desc">快速決策，提升午餐和聚餐效率</p>
-                </div>
-                <div class="user-card">
-                    <img th:src="@{/images/traveler.svg}" alt="旅客" class="user-img">
-                    <h3 class="user-title">旅客</h3>
-                    <p class="user-desc">獲取在地推薦，體驗道地美食文化</p>
-                </div>
-                <div class="user-card">
-                    <img th:src="@{/images/foodie.svg}" alt="美食愛好者" class="user-img">
-                    <h3 class="user-title">美食愛好者</h3>
-                    <p class="user-desc">分享美食體驗，建立個人美食檔案</p>
-                </div>
-            </div>
-        </section>
-        <!-- 熱門餐廳區塊 -->
-        <section class="popular-section container">
-            <div class="section-header">
-                <h2 class="section-title">熱門餐廳</h2>
-                <a th:href="@{/map.html}" class="view-all">查看全部 <i class="material-icons-outlined">arrow_forward</i></a>
-            </div>
-            <div class="restaurant-grid">
-                <div class="restaurant-card skeleton"></div>
-                <div class="restaurant-card skeleton"></div>
-                <div class="restaurant-card skeleton"></div>
-                <div class="restaurant-card skeleton"></div>
-            </div>
-        </section>
-        <!-- 最新評論區塊 -->
-        <section class="reviews-section container">
-            <div class="section-header">
-                <h2 class="section-title">最新評論</h2>
-                <a th:href="@{/reviews}" class="view-all">查看全部 <i class="material-icons-outlined">arrow_forward</i></a>
-            </div>
-            <div class="reviews-slider">
-                <div class="review-card skeleton"></div>
-                <div class="review-card skeleton"></div>
-                <div class="review-card skeleton"></div>
-            </div>
-        </section>
-        <!-- 下載應用區塊 -->
-        <section class="download-section container">
-            <div class="download-content">
-                <h2 class="download-title">隨時隨地探索美食</h2>
-                <p class="download-desc">下載我們的應用程式，享受更完整的功能和離線瀏覽</p>
-                <div class="download-buttons">
-                    <a href="#" class="download-btn">
-                        <img th:src="@{/images/google-play.svg}" alt="Google Play下載" class="store-img">
-                    </a>
-                    <a href="#" class="download-btn">
-                        <img th:src="@{/images/app-store.svg}" alt="App Store下載" class="store-img">
-                    </a>
-                </div>
-            </div>
-            <div class="download-image">
-                <img th:src="@{/images/app-preview.svg}" alt="應用程式預覽" class="responsive-img">
-            </div>
-        </section>
-    </main>
-    <footer class="app-footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-logo">
-                    <img th:src="@{/images/logo.svg}" alt="FoodieTime 食刻" class="logo-img">
-                    <span class="logo-text">FoodieTime 食刻</span>
-                </div>
-                <div class="footer-nav">
-                    <div class="footer-nav-group">
-                        <h4 class="footer-nav-title">功能</h4>
-                        <ul class="footer-nav-list">
-                            <li><a th:href="@{/map}">地圖搜尋</a></li>
-                            <li><a th:href="@{/group-order}">團購功能</a></li>
-                            <li><a th:href="@{/deals}">比價優惠</a></li>
-                            <li><a th:href="@{/collections}">收藏管理</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-nav-group">
-                        <h4 class="footer-nav-title">關於</h4>
-                        <ul class="footer-nav-list">
-                            <li><a th:href="@{/about}">關於我們</a></li>
-                            <li><a th:href="@{/privacy}">隱私政策</a></li>
-                            <li><a th:href="@{/terms}">使用條款</a></li>
-                            <li><a th:href="@{/contact}">聯絡我們</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-nav-group">
-                        <h4 class="footer-nav-title">社群</h4>
-                        <ul class="footer-nav-list social-links">
-                            <li><a href="#" aria-label="Facebook"><i class="material-icons-outlined">facebook</i></a></li>
-                            <li><a href="#" aria-label="Instagram"><i class="material-icons-outlined">instagram</i></a></li>
-                            <li><a href="#" aria-label="Twitter"><i class="material-icons-outlined">twitter</i></a></li>
-                            <li><a href="#" aria-label="YouTube"><i class="material-icons-outlined">youtube</i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
-                <div class="language-selector">
-                    <select name="language" id="language-select" aria-label="選擇語言">
-                        <option value="zh-TW">繁體中文</option>
-                        <option value="en">English</option>
-                        <option value="ja">日本語</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- 登入/註冊模態框 -->
-    <div class="modal" id="auth-modal">
-        <div class="modal-content">
-            <button class="modal-close" aria-label="關閉">
-                <i class="material-icons-outlined">close</i>
-            </button>
-            <div class="modal-body"></div>
-        </div>
+
+<!-- ====================================================== -->
+<!--      SVG 圖標定義 (3D Claymorphism Icon System)        -->
+<!-- ====================================================== -->
+<svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+    <defs>
+        <!-- 漸變效果，模擬左上角光照 -->
+        <linearGradient id="clay-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--accent-highlight); stop-opacity:0.8" />
+            <stop offset="100%" style="stop-color:var(--accent-color-1); stop-opacity:1" />
+        </linearGradient>
+        <!-- 陰影濾鏡 -->
+        <filter id="clay-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="3" dy="3" stdDeviation="3" flood-color="#BCAAA4" flood-opacity="0.6"/>
+        </filter>
+    </defs>
+
+    <!-- Icons -->
+    <symbol id="icon-map" viewBox="0 0 24 24">
+        <g style="filter: url(#clay-shadow);">
+            <path fill="url(#clay-gradient)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </g>
+    </symbol>
+    <symbol id="icon-groups" viewBox="0 0 24 24">
+        <g style="filter: url(#clay-shadow);">
+            <path fill="url(#clay-gradient)" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0C9.66 11 11 9.66 11 8s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18h14v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V18h6v-1.5c0-2.33-4.67-3.5-7-3.5z"/>
+        </g>
+    </symbol>
+    <symbol id="icon-offer" viewBox="0 0 24 24">
+        <g style="filter: url(#clay-shadow);">
+            <path fill="url(#clay-gradient)" d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.22-1.05-.59-1.42zM13 20.99l-9-9V4h7l9 9-7 7.01zM6.5 8C5.67 8 5 7.33 5 6.5S5.67 5 6.5 5 8 5.67 8 6.5 7.33 8 6.5 8z"/>
+        </g>
+    </symbol>
+    <symbol id="icon-bookmark" viewBox="0 0 24 24">
+        <g style="filter: url(#clay-shadow);">
+            <path fill="url(#clay-gradient)" d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+        </g>
+    </symbol>
+    <symbol id="icon-school" viewBox="0 0 24 24">
+        <g style="filter: url(#clay-shadow);">
+            <path fill="url(#clay-gradient)" d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+        </g>
+    </symbol>
+    <symbol id="icon-work" viewBox="0 0 24 24">
+        <g style="filter: url(#clay-shadow);">
+            <path fill="url(#clay-gradient)" d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM10 6h4v2h-4V6zm10 13H4V8h16v11z"/>
+        </g>
+    </symbol>
+</svg>
+
+<!-- Header (Thymeleaf compatible) -->
+<header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+        <a th:href="@{/}" class="logo" style="font-weight: 800; font-size: 1.5rem; text-decoration: none;">
+            FoodieTime<span style="color: var(--accent-color-1);">食刻</span>
+        </a>
+        <nav class="main-nav">
+            <a th:href="@{/login}" class="clay clay-button clay-convex">登入 / 註冊</a>
+        </nav>
     </div>
-    <!-- 載入中指示器 -->
-    <div class="loading-indicator">
-        <div class="spinner"></div>
+</header>
+
+<main>
+    <!-- Hero Section -->
+    <section class="hero-section container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                用<span class="highlight">溫暖</span>的方式，<br>探索每一口<span class="highlight">滋味</span>
+            </h1>
+            <p class="hero-subtitle">告別冰冷的選擇，FoodieTime 用大地般的溫厚，為您捧上最貼心的美食推薦。省錢、省時，更省心。</p>
+            <div style="display: flex; justify-content: center; gap: 1rem;">
+                <a th:href="@{/map.html}" class="clay clay-button clay-convex">開始探索</a>
+                <a th:href="@{/group-order}" class="clay clay-button clay-convex">發起團購</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section container">
+        <h2 class="section-title">核心功能</h2>
+        <div class="features-grid">
+            <!-- Card 1 -->
+            <div class="clay clay-card clay-convex">
+                <svg class="feature-icon"><use href="#icon-map"></use></svg>
+                <h3 class="card-title">智慧地圖</h3>
+                <p class="card-desc">像陶匠一樣精心為您篩選，智能推薦最合口味的美食地點。</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="clay clay-card clay-convex">
+                <svg class="feature-icon"><use href="#icon-groups"></use></svg>
+                <h3 class="card-title">即時團購</h3>
+                <p class="card-desc">聚沙成塔，集結大家的力量，享受溫暖的團購優惠。</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="clay clay-card clay-convex">
+                <svg class="feature-icon"><use href="#icon-offer"></use></svg>
+                <h3 class="card-title">比價優惠</h3>
+                <p class="card-desc">為您淘盡所有平台的優惠，確保每一分錢都花得質樸實在。</p>
+            </div>
+            <!-- Card 4 -->
+            <div class="clay clay-card clay-convex">
+                <svg class="feature-icon"><use href="#icon-bookmark"></use></svg>
+                <h3 class="card-title">個人收藏</h3>
+                <p class="card-desc">捏塑專屬於您的美食清單，記錄下每一段溫暖的味蕾記憶。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Users Section -->
+    <section class="users-section container">
+        <h2 class="section-title">為你量身打造</h2>
+        <div class="users-grid">
+            <!-- User Card 1 -->
+            <div class="clay clay-card clay-convex">
+                <svg class="user-icon"><use href="#icon-school"></use></svg>
+                <h3 class="card-title">學生族</h3>
+                <p class="card-desc">在預算內，找到最暖心暖胃的實在好料。</p>
+            </div>
+            <!-- User Card 2 -->
+            <div class="clay clay-card clay-convex">
+                <svg class="user-icon"><use href="#icon-work"></use></svg>
+                <h3 class="card-title">上班族</h3>
+                <p class="card-desc">快速找到高效又美味的午餐，告別選擇困難。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Visualization Section -->
+    <section class="popular-section container">
+        <h2 class="section-title">熱門餐廳趨勢</h2>
+        <div class="clay clay-card clay-convex">
+            <img class="placeholder-image" src="https://source.unsplash.com/400x300/?pottery,clay" alt="Pottery detail">
+            <h3 class="card-title">社區熱度趨勢圖</h3>
+            <p class="card-desc" style="max-width: 500px;">下圖展示了過去一週內，社區用戶對「暖食料理」的關注度變化，感受大家對溫暖美食的熱愛。</p>
+            <!-- 動態折線圖 SVG -->
+            <svg id="data-chart-svg" viewBox="0 0 100 40">
+                <path class="chart-line" d="M 0,30 C 10,10 20,15 30,25 S 50,35 60,20 S 80,5 90,15 S 100,25 100,25" />
+            </svg>
+        </div>
+    </section>
+
+</main>
+
+<footer class="app-footer">
+    <div class="container">
+        <p>© 2025 FoodieTime 食刻. All Rights Reserved.</p>
+        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 0.5rem;">Crafted with Claymorphism Style</p>
     </div>
-    <!-- JavaScript 文件 -->
-    <script th:src="@{/js/main.js}"></script>
-    <!-- Service Worker 註冊 -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker 註冊成功:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Service Worker 註冊失敗:', error);
-                    });
-            });
-        }
-    </script>
+</footer>
+
+<!-- Thymeleaf/PWA JS Scripts (kept from original) -->
+<script th:src="@{/js/main.js}" defer></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker: Registered'))
+                .catch(err => console.log(`Service Worker: Error: ${err}`));
+        });
+    }
+</script>
 </body>
 </html>
