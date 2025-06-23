@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodietime.product.model.ProductVO;
+
+
+
 
 
 
@@ -104,13 +108,67 @@ public class StoreService {
 		repository.save(store); //存回資料庫
 	}
 	
-	//泰式餐廳-改 - 可動態帶入資料庫店家--查只有泰式料理的店家
-	
-	public List<StoreVO> getThaiRestaurants() { 
-		String keyword = "%泰式%";
-	    return repository.findByStoreCateNameLike(keyword);
+	/*********** 可動態帶入資料庫店家類別 ******************/
+
+	// 中式餐廳-改
+
+	public List<StoreVO> getChRestaurants() {
+		String keyword = "%中式%";
+		return repository.findByStoreCateNameLike(keyword);
 	}
-	
+
+	// 日式餐廳-改
+
+	public List<StoreVO> getJaRestaurants() {
+		String keyword = "%日式%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	// 韓式餐廳-改
+
+	public List<StoreVO> getKoRestaurants() {
+		String keyword = "%韓式%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	// 泰式餐廳-改
+
+	public List<StoreVO> getThaiRestaurants() {
+		String keyword = "%泰式%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	// 義式餐廳-改
+
+	public List<StoreVO> getItRestaurants() {
+		String keyword = "%義式%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	// 美式餐廳-改
+
+	public List<StoreVO> getAmRestaurants() {
+		String keyword = "%美式%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	// 甜點餐廳-改
+
+	public List<StoreVO> getSwRestaurants() {
+		String keyword = "%甜點%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	// 素食餐廳-改
+
+	public List<StoreVO> getVeRestaurants() {
+		String keyword = "%素食%";
+		return repository.findByStoreCateNameLike(keyword);
+	}
+
+	public List<ProductVO> getProdsByStoreId(Integer storId){
+		return repository.findProdsByStorId(storId);
+	}
 	
 
 
