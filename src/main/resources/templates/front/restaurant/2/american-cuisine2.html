@@ -1,26 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>泰式料理 - FoodieTime 食刻</title>
+<title>美式料理 - FoodieTime 食刻</title>
 <meta name="description"
-	content="探索各種泰式料理，尋找您喜愛的泰國風味美食。FoodieTime 食刻提供多樣化的泰式餐廳選擇，滿足您的味蕾需求。">
+	content="探索各種美式料理，尋找您喜愛的美國風味美食。FoodieTime 食刻提供多樣化的美式餐廳選擇，滿足您的味蕾需求。">
+<!-- <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}"> -->
+<!-- <link rel="stylesheet" -->
+<!-- 	th:href="@{/css/front/restaurant/restaurant-categories.css}"> -->
+<!-- <link rel="stylesheet" -->
+<!-- 	th:href="@{/css/front/restaurant/food-categories.css}"> -->
+<!-- <link rel="stylesheet" -->
+<!-- 	th:href="@{/css/front/restaurant/american-cuisine.css}"> -->
 <link rel="stylesheet" href="css/front/restaurant/style.css">
 <link rel="stylesheet" href="css/front/restaurant/restaurant-categories.css">
 <link rel="stylesheet" href="css/front/restaurant/food-categories.css">
-<link rel="stylesheet" href="css/front/restaurant/thai-cuisine.css">
+<link rel="stylesheet" href="css/front/restaurant/american-cuisine.css">
 <link rel="stylesheet" href="css/front/restaurant//responsive.css">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 <link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
 	rel="stylesheet">
 <!-- PWA 支援 -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FF5722">
-<link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+</head>
 <style>
 .restaurant-contact-info {
     display: flex;
@@ -37,8 +45,19 @@
     min-width: 180px;       /* 控制每一欄寬度，防止黏在一起 */
     color: #444;
 }
+
+.info-title{
+    border-bottom: 1px solid #eee;
+}
+
+.restaurant-image {
+    width: 70%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 20px;
+}
 </style>
-</head>
 <body>
 	<header class="app-header">
 		<div class="header-container">
@@ -74,43 +93,60 @@
 	</header>
 
 	<main>
-		<!-- 頁面標題 -->
-		<section class="page-header">
-			<div class="container">
-				<h1 class="page-title">泰式料理</h1>
-				<p class="page-description">探索道地的泰國風味，從酸辣湯到綠咖哩，體驗泰國多元飲食文化的精髓</p>
-				<div class="breadcrumbs">
-					<a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a>
-					&gt; <span>泰式料理</span>
+
+		<section class="menu-section">
+			<h2>店家菜單</h2>
+			<div class="menu-list" th:if="${productList != null}">
+				<div class="menu-item" th:each="product : ${productList}">
+					<img th:if="${product.prodPhoto != null}"
+						th:src="'data:image/jpeg;base64,' + ${T(org.apache.tomcat.util.codec.binary.Base64).encodeBase64String(product.prodPhoto)}"
+						alt="商品圖片" class="menu-image" />
+					<h3 class="menu-name" th:text="${product.prodName}">商品名稱</h3>
+					<p class="menu-desc" th:text="${product.prodDesc}">商品描述</p>
+					<p class="menu-price" th:text="'$' + ${product.prodPrice}">價格</p>
 				</div>
 			</div>
+			<div th:if="${productList == null || productList.isEmpty()}">
+				<p>目前沒有菜單資料。</p>
+			</div>
 		</section>
+		<!-- 頁面標題 -->
+		<!-- 		<section class="page-header"> -->
+		<!-- 			<div class="container"> -->
+		<!-- 				<h1 class="page-title">美式料理</h1> -->
+		<!-- 				<p class="page-description">探索道地的美式風味，從經典漢堡到香脆炸雞，體驗美國多元飲食文化的精髓</p> -->
+		<!-- 				<div class="breadcrumbs"> -->
+		<!-- 					<a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a> -->
+		<!-- 					&gt; <span>美式料理</span> -->
+		<!-- 				</div> -->
+		<!-- 			</div> -->
+		<!-- 		</section> -->
 
-		<!-- 泰式料理分類導航 -->
+		<!-- 美式料理分類導航 -->
 		<nav class="category-nav">
 			<div class="container">
-				<ul class="category-list thai-category-list">
-					<li class="category-item active">所有泰式料理</li>
-					<li class="category-item">咖哩</li>
-					<li class="category-item">酸辣湯</li>
-					<li class="category-item">炒河粉</li>
-					<li class="category-item">沙拉</li>
-					<li class="category-item">甜點</li>
-					<li class="category-item">飲料</li>
+				<ul class="category-list american-category-list">
+					<li class="category-item active">所有美式料理</li>
+					<li class="category-item">漢堡</li>
+					<li class="category-item">披薩</li>
+					<li class="category-item">炸雞</li>
+					<li class="category-item">牛排</li>
+					<li class="category-item">三明治</li>
+					<li class="category-item">墨西哥捲餅</li>
 				</ul>
 			</div>
 		</nav>
-		
+
 		<!-- 店家分頁開始 -->
 		<div class="container">
-			<!-- 泰式料理店家列表 -->
+			<!-- 美式料理店家列表 -->
 			<div class="restaurant-list">
 
 				<!--   動態寫法 開始  ----------------------------------------------------------------- -->
 
 				<!-- 外層循環：遍歷店家 -->
 
-				<th:block th:each="store, iterStat : ${thaiStores}"
+				<th:block th:each="store, iterStat : ${amStores}"
 					class="restaurant-detail">
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">
@@ -121,7 +157,7 @@
 							<div class="restaurant-primary-info">
 								<h2 class="restaurant-name" th:text="${store.storName}">餐廳名稱</h2>
 								<span class="cuisine-tag cuisine-thai"
-									th:text="${store.storeCate.storCatName}">泰式料理</span>
+									th:text="${store.storeCate.storCatName}">美式料理</span>
 								<p class="restaurant-category" th:text=${store.storDesc}>湯品
 									• 炒飯 • 沙拉</p>
 
@@ -279,17 +315,11 @@
 								
 							</div>
 						</div>
-
-
-
-
-
 					</div>
-
-
 				</th:block>
 			</div>
 		</div>
+	<!-- 店家分頁結束 -->
 	</main>
 
 	<footer class="app-footer">
@@ -299,80 +329,80 @@
 	</footer>
 
 	<script>
-        // 分類切換功能
-        document.querySelectorAll('.category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelector('.category-item.active').classList.remove('active');
-                this.classList.add('active');
-                // 這裡可以添加過濾顯示對應分類的美食邏輯
-            });
+	 // 分類切換功能
+    document.querySelectorAll('.category-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelector('.category-item.active').classList.remove('active');
+            this.classList.add('active');
+            // 這裡可以添加過濾顯示對應分類的美食邏輯
         });
-        document.querySelectorAll('.restaurant-details-tabs').forEach(tabs => {
-            const firstTab = tabs.querySelector('.tab-btn');
-            if (firstTab) firstTab.dispatchEvent(new Event('mouseenter'));
-        });
-        
-        // 標籤切換功能
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                // 找到當前活動的標籤按鈕和內容
-                const parent = this.closest('.restaurant-details-tabs');
-                parent.querySelector('.tab-btn.active').classList.remove('active');
-                this.classList.add('active');
-                
-                // 切換內容
-             // 標籤切換功能（支援多間店家）
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.addEventListener('mouseover', function () {
-                        const parent = this.closest('.restaurant-details-tabs');
+    });
+    document.querySelectorAll('.restaurant-details-tabs').forEach(tabs => {
+        const firstTab = tabs.querySelector('.tab-btn');
+        if (firstTab) firstTab.dispatchEvent(new Event('mouseenter'));
+    });
+    
+    // 標籤切換功能
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            // 找到當前活動的標籤按鈕和內容
+            const parent = this.closest('.restaurant-details-tabs');
+            parent.querySelector('.tab-btn.active').classList.remove('active');
+            this.classList.add('active');
+            
+            // 切換內容
+         // 標籤切換功能（支援多間店家）
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('mouseover', function () {
+                    const parent = this.closest('.restaurant-details-tabs');
 
-                        // 切換 tab 樣式
-                        parent.querySelector('.tab-btn.active')?.classList.remove('active');
-                        this.classList.add('active');
+                    // 切換 tab 樣式
+                    parent.querySelector('.tab-btn.active')?.classList.remove('active');
+                    this.classList.add('active');
 
-                        // 切換對應內容區塊
-                        const tabId = this.getAttribute('data-tab');
-                        const storeId = this.getAttribute('data-store-id');
+                    // 切換對應內容區塊
+                    const tabId = this.getAttribute('data-tab');
+                    const storeId = this.getAttribute('data-store-id');
 
-                        // 找出該店家自己的內容區塊，隱藏全部、只顯示目標 tab
-                        const outer = parent.parentElement; // 包住 .restaurant-detail 的區塊
-                        outer.querySelectorAll('.tab-content').forEach(content => {
-                            content.classList.remove('active');
-                        });
-                        const targetContent = outer.querySelector(`#${tabId}-content-${storeId}`);
-                        if (targetContent) {
-                            targetContent.classList.add('active');
-                        }
+                    // 找出該店家自己的內容區塊，隱藏全部、只顯示目標 tab
+                    const outer = parent.parentElement; // 包住 .restaurant-detail 的區塊
+                    outer.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
                     });
+                    const targetContent = outer.querySelector(`#${tabId}-content-${storeId}`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
                 });
             });
         });
+    });
 
-        // 菜單分類切換
-        document.querySelectorAll('.menu-category').forEach(category => {
-            category.addEventListener('click', function() {
-                const parent = this.closest('.menu-categories');
-                parent.querySelector('.menu-category.active').classList.remove('active');
-                this.classList.add('active');
-                // 這裡可以添加過濾顯示對應菜單分類的邏輯
-            });
+    // 菜單分類切換
+    document.querySelectorAll('.menu-category').forEach(category => {
+        category.addEventListener('click', function() {
+            const parent = this.closest('.menu-categories');
+            parent.querySelector('.menu-category.active').classList.remove('active');
+            this.classList.add('active');
+            // 這裡可以添加過濾顯示對應菜單分類的邏輯
         });
+    });
 
-        // 收藏按鈕功能
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('far')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                    this.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
-                } else {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                    this.innerHTML = '<i class="far fa-heart"></i> 收藏';
-                }
-            });
+    // 收藏按鈕功能
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                this.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                this.innerHTML = '<i class="far fa-heart"></i> 收藏';
+            }
         });
+    });
     </script>
 </body>
 </html>

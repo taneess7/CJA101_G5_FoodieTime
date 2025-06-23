@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甜點飲料 - FoodieTime 食刻</title>
+    <meta name="description" content="探索各種甜點飲料，尋找您喜愛的甜品和飲品。FoodieTime 食刻提供多樣化的甜點飲料店家選擇，滿足您的味蕾需求。">
+<!--     <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}"> -->
+<!--     <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}"> -->
+<!--     <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}"> -->
+<!--     <link rel="stylesheet" th:href="@{/css/front/restaurant/dessert-drinks.css}"> -->
+<link rel="stylesheet" href="css/front/restaurant/style.css">
+<link rel="stylesheet" href="css/front/restaurant/restaurant-categories.css">
+<link rel="stylesheet" href="css/front/restaurant/food-categories.css">
+<link rel="stylesheet" href="css/front/restaurant/american-cuisine.css">
+<link rel="stylesheet" href="css/front/restaurant//responsive.css">
+<!--     <link rel="stylesheet" href="css/responsive.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- PWA 支援 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+</head>
+<style>
+.restaurant-contact-info {
+    display: flex;
+    flex-wrap: wrap;       /* 換行時自動往下排 */
+    gap: 12px 20px;         /* 上下左右間距（行距、欄距） */
+    align-items: center;
+    font-size: 16px;
+}
+
+.restaurant-contact-info .info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;               /* icon 與文字的間距 */
+    min-width: 180px;       /* 控制每一欄寬度，防止黏在一起 */
+    color: #444;
+}
+
+.restaurant-image {
+    width: 70%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+.menu-card {
+  display: flex;
+  flex-wrap: wrap;     /* ✅ 換行 */
+  justify-content: left; /* ✅ 水平置中（你可改 space-between） */
+  gap: 20px;           /* ✅ 卡片間距 */
+}
+
+.menu-item {
+    width: 300px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: row; /* ❗圖片在上，文字在下 */
+    align-items: center;
+    margin: 15px;
+  ;
+}
+
+.menu-item img {
+    width: 100px;
+    height: 100%; /* ✅ 統一高度 */
+    object-fit: cover; /* ✅ 填滿並裁切多餘部分 */
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.menu-item-info {
+    text-align: center;
+    width: 100%;
+}
+
+.menu-item-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.menu-item-description {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+}
+
+.menu-item-price {
+    font-size: 16px;
+    color: #c0392b;
+    margin: 10px 0;
+}
+
+.add-to-cart-btn {
+    background-color: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+</style>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <a th:href="@{/category/index}" class="logo">
+                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                    <span class="logo-text">FoodieTime 食刻</span>
+                </a>
+            </div>
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="material-icons-outlined search-icon">search</i>
+                    <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+                    <i class="material-icons-outlined mic-icon">mic</i>
+                    <i class="material-icons-outlined camera-icon">photo_camera</i>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
+                    <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
+                    <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
+                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="開啟選單">
+                    <i class="material-icons-outlined">menu</i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- 頁面標題 -->
+        <section class="page-header">
+            <div class="container">
+                <h1 class="page-title">甜點飲料</h1>
+                <p class="page-description">探索各式各樣的甜點和飲品，從手工珍珠奶茶到精緻蛋糕，滿足您的甜蜜味蕾</p>
+                <div class="breadcrumbs">
+                    <a href="index.html">首頁</a> &gt; 
+                    <a href="food-categories.html">美食分類</a> &gt; 
+                    <span>甜點飲料</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 甜點飲料分類導航 -->
+        <nav class="category-nav">
+            <div class="container">
+                <ul class="category-list dessert-category-list">
+                    <li class="category-item active">所有甜點飲料</li>
+                    <li class="category-item">手搖飲料</li>
+                    <li class="category-item">咖啡</li>
+                    <li class="category-item">蛋糕</li>
+                    <li class="category-item">冰淇淋</li>
+                    <li class="category-item">甜品</li>
+                    <li class="category-item">麵包</li>
+                </ul>
+            </div>
+        </nav>
+		
+		<!-- 店家分頁開始 -->
+		<div class="container">
+			<!-- 甜點飲料店家列表 -->
+			<div class="restaurant-list">
+
+				<!--   動態寫法 開始  ----------------------------------------------------------------- -->
+
+				<!-- 外層循環：遍歷店家 -->
+
+				<th:block th:each="store, iterStat : ${swStores}"
+					class="restaurant-detail">
+					<div class="restaurant-header">
+						<div class="restaurant-main-info">
+						 <!-- ✅ 改寫：使用 base64 圖片與 onerror fallback -->
+           
+<!-- 							<img th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}" th:alt="${store.storName}" -->
+<!-- 								class="restaurant-image"> -->
+								<img src="https://placehold.co/300x200/ffcc00/333?>" th:alt="${store.storName}"
+								class="restaurant-image">
+							<div class="restaurant-primary-info">
+								<h2 class="restaurant-name" th:text="${store.storName}">餐廳名稱</h2>
+								<span class="cuisine-tag cuisine-american"
+									th:text="${store.storeCate.storCatName}">美式料理</span>
+								<p class="restaurant-category" th:text=${store.storDesc}>湯品
+									• 炒飯 • 沙拉</p>
+
+
+
+									<!-- 評價星星開始 -->
+									<div class="restaurant-rating"
+									     th:with="
+									        reviews=${store.reviews != null ? store.reviews : 0},
+									        rating=${store.starNum != null ? store.starNum : 0},
+									        avg=${reviews > 0 ? rating / reviews : 0},
+									        staravg=${#numbers.formatDecimal(avg, 1, 1)}">
+									
+									    <span class="rating-stars">
+									        <i th:each="i : ${#numbers.sequence(1, 5)}"
+									           th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
+									                           (${i - 1 < avg and i > avg} ? 'fas fa-star-half-alt' : 'far fa-star')">
+									        </i>
+									    </span>
+									
+									    <span th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
+									        0，共 0 則評價
+									    </span>
+									</div>
+									<!-- 評價星星結束 -->
+									<!-- 主頁按鈕列 -->
+								<div class="restaurant-actions">
+									<button class="action-btn favorite-btn">
+										<i class="far fa-heart"></i> 收藏
+									</button>
+									<button class="action-btn share-btn">
+										<i class="fas fa-share-alt"></i> 分享
+									</button>
+									<button class="action-btn directions-btn">
+										<i class="fas fa-directions"></i> 導航
+									</button>
+								</div>
+							</div>
+						</div>
+						<!-- 商家外層資訊-->
+						<div class="restaurant-contact-info">
+							<div class="info-item">
+								<i class="fas fa-map-marker-alt"></i> <span
+									th:text="${store.storAddr}">地址</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-phone"></i> <span th:text="${store.storPhone}">電話</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-clock"></i> 
+								<span th:text="${store.storOpen} == 0 ? '未營業' : ${store.storOnTime} + ' - ' + ${store.storOffTime}"></span>
+							</div>
+							<div class="info-item">
+										<i class="fa-solid fa-motorcycle"></i>
+										<span th:text="${store.storDeliver} == 0 ? '無外送服務' : '可外送'"></span>
+									</div>
+							
+						</div>
+						<!--   外層資訊 結束  ----------------------------------------------------------------- -->
+
+						<!-- 菜單、評價、照片、店家資訊分頁標籤按鈕 -->					
+						<div class="restaurant-details-tabs">
+							<div class="tabs-header">
+								<button class="tab-btn active" th:data-store-id="${iterStat.index}"
+									data-tab="menu">菜單</button>
+								<button class="tab-btn" th:data-store-id="${iterStat.index}"
+									data-tab="reviews">評價</button>
+								<button class="tab-btn" th:data-store-id="${iterStat.index}"
+									data-tab="photos">照片</button>
+								<button class="tab-btn" th:data-store-id="${iterStat.index}"
+									data-tab="info">店家資訊</button>
+								<button class="tab-btn" th:data-store-id="${iterStat.index}"
+									data-tab="coupon">優惠券</button>
+							</div>
+						</div>
+						
+
+						<!-- 內層資訊開始	     -->
+						<!-- 菜單資訊分頁內容開始 -->
+						<form method="post" th:action="@{/}">
+							<div class="tab-content" th:id="'menu-content-' + ${iterStat.index}">
+                                <div class="card menu-card" >
+                                <!-- 遍歷商品 -->
+                                    <div style="background-color: rgba(255,127,80, 0.08);"class="menu-item" th:each="menu : ${storeProductMap[store.storId]}">
+                                        <img th:src="'data:image/jpeg;base64,' + ${storeProdImageMap[store.storId][menu.prodId]}"/>
+                                        <div class="menu-item-info">
+                                            <h3 class="menu-item-name" th:text="${menu.prodName}">經典珍珠奶茶</h3>
+                                            <p class="menu-item-description" th:text="${menu.prodDesc}">使用進口阿薩姆紅茶，搭配手工熬煮的黑糖珍珠，香醇濃郁</p	>
+                                            <span class="menu-item-price" th:text="'NT$ ' + ${menu.prodPrice}">NT$ 60</span>
+                                        </div>
+                                        <!-- 加入商品按鈕 -->
+                                        <input type="hidden" name="prodId"
+                                        th:value=${menu.prodId}/>
+                                        <button class="add-to-cart-btn" type="submit">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                 </div>
+                                </div>
+                             </div>
+                         </form>
+						<!-- 菜單資訊分頁內容結束 -->
+						
+						<!-- 店家資訊分頁內容 -->
+						<!-- 店家section1-營業時間 -->
+						<div class="tab-content"
+							th:id="'info-content-' + ${iterStat.index}">
+							<div class="info-section">
+								<h3 class="info-title">營業時間</h3>
+								<div class="business-hours-horizontal" th:with="weekdays=${ {'星期日','星期一','星期二','星期三','星期四','星期五','星期六'} },
+              								offDays=${store.storOffDay != null ? #strings.arraySplit(store.storOffDay, ',') : {}}"
+     											style="display: flex; flex-wrap: wrap; gap: 10px;">
+
+    									<div th:each="day, iterStat : ${weekdays}" style="margin-right: 15px;">
+										        <span class="day" th:text="${day}">星期一</span>
+										        <span class="hours" style="color: #757575"
+              		th:text="${#lists.contains(offDays, iterStat.index.toString()) ? '公休' : store.storOnTime + ' - ' + store.storOffTime}">11:00 - 21:30
+        										</span>
+   									  </div>
+								</div>
+							</div>
+							
+							<!-- 店家section2-設施與服務 -->
+							<div class="info-section">
+								<h3 class="info-title">設施與服務</h3>
+								<div class="facilities">
+									<div class="facility-item">
+										<i class="fas fa-wifi"></i> <span>免費WiFi</span>
+									</div>
+									<div class="facility-item">
+										<i class="fas fa-credit-card"></i> <span>接受信用卡</span>
+									</div>
+									<div class="facility-item">
+										<i class="fas fa-parking"></i> <span>附近有停車場</span>
+									</div>
+									<div class="facility-item">
+										<i class="fas fa-baby"></i> <span>提供兒童座椅</span>
+									</div>
+								
+									<div class="facility-item">
+    									<i class="fas fa-globe"></i>
+    
+									    <!-- 有網址時，顯示超連結「可訂位」 -->
+									    <a th:if="${store.storWeb != null}"
+									       th:href="'http://' + ${store.storWeb}"
+									       target="_blank"
+									       class="website-link">可線上訂位</a>
+									
+									    <!-- 沒有網址時，顯示純文字 -->
+									    <span th:unless="${store.storWeb != null}"></span>
+									</div>
+
+								</div> 
+							</div>
+
+							<!--店家 section3-地圖 -->
+							<div class="info-section">
+								<h3 class="info-title">店家位置</h3>
+								<div class="map-container">
+								<h3 th:text="${store.storName}">店家名稱</h3>
+								<p th:text="${store.storAddr}">地址資訊</p>
+								<iframe
+									  width="600"
+									  height="450"
+									  style="border:0"
+									  loading="lazy"
+									  allowfullscreen
+									  referrerpolicy="no-referrer-when-downgrade"
+									  th:src="'https://www.google.com/maps?q=' + ${store.storLat} + ',' + ${store.storLon} + '&hl=zh-TW&z=16&output=embed'">
+									</iframe>
+									<img src="images/map-placeholder.svg" alt="地圖"class="location-map"
+    									 th:if="${store.storLat == null or store.storLon == null}" />
+								</div>
+								
+							</div>
+						</div>
+						<!-- 店家資訊 分頁內容結束 -->
+						 <!-- 優惠券 分頁內容開始-->
+						  <form method="post" th:action="@{/coupon/add}">
+                             <div class="tab-content" th:id="'coupon-content-' + ${iterStat.index}">
+                                <div class="menu-items">
+                                 <!-- 遍歷優惠券 -->
+                                    <div style="background-color: rgba(255,127,80, 0.08);" class="menu-item" th:each="coupon : ${storeCouponMap[store.storId]}">
+                                        <div class="menu-item-info">
+                                            <h3 class="menu-item-name" th:text="${coupon.couType} + '，' + ${coupon.couDes}">新開幕，買500送500</h3>
+                                            <p class="menu-item-description" th:text="'低消' + ${coupon.couMinOrd}">低消500</p>
+                                            <span class="menu-item-price">優惠代碼</span>
+                                        </div>
+                                         <!-- 加入優惠券按鈕 -->       
+										            <input type="hidden" name="couId" th:value="${coupon.couId}" />
+										            <button class="add-to-cart-btn" type="submit">
+										                <i class="fas fa-plus"></i>
+										            </button>
+                                    	</div>                                  
+                                	</div>
+                            	</div>
+                           </form>
+                            <!-- 優惠券 分頁內容結束-->
+					
+				</th:block>
+			</div>
+		</div>
+	<!-- 店家動態結束 -->
+	
+	<!-- 原始無動態帶入資料的網頁版本 -->
+        <div class="container">
+            <!-- 甜點飲料店家列表 -->
+            <div class="restaurant-list">
+                <!-- 手工珍珠奶茶 -->
+                <article class="restaurant-detail">
+                    <div class="restaurant-header">
+                        <div class="restaurant-main-info">
+                            <img th:src="@{/images/restaurant/bubble-tea.svg}" alt="手工珍珠奶茶" class="restaurant-image">
+                            <div class="restaurant-primary-info">
+                                <h2 class="restaurant-name">手工珍珠奶茶</h2>
+                                <span class="cuisine-tag cuisine-dessert">甜點飲料</span>
+                                <p class="restaurant-category">奶茶 • 咖啡 • 甜點</p>
+                                <div class="restaurant-rating">
+                                    <span class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                    <span>4.9 (198則評價)</span>
+                                </div>
+                                <div class="restaurant-actions">
+                                    <button class="action-btn favorite-btn">
+                                        <i class="far fa-heart"></i> 收藏
+                                    </button>
+                                    <button class="action-btn share-btn">
+                                        <i class="fas fa-share-alt"></i> 分享
+                                    </button>
+                                    <button class="action-btn directions-btn">
+                                        <i class="fas fa-directions"></i> 導航
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="restaurant-contact-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>台北市大安區忠孝東路四段216號</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>(02) 2771-3456</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>營業時間: 10:00-22:00 (週一至週日)</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-globe"></i>
+                                <a href="#" class="website-link">www.handmade-bubbletea.com.tw</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="restaurant-details-tabs">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="menu">菜單</button>
+                            <button class="tab-btn" data-tab="reviews">評價</button>
+                            <button class="tab-btn" data-tab="photos">照片</button>
+                            <button class="tab-btn" data-tab="info">店家資訊</button>
+                            <button class="tab-btn" data-tab="coupon">優惠券</button>
+                        </div>
+                        <div class="tabs-content">
+                            <!-- 菜單標籤內容 -->
+                            <div class="tab-content active" id="menu-content">
+                                <div class="menu-categories">
+                                    <button class="menu-category active">奶茶</button>
+                                    <button class="menu-category">水果茶</button>
+                                    <button class="menu-category">咖啡</button>
+                                    <button class="menu-category">甜點</button>
+                                </div>
+                                
+                                <!-- 菜單 -->
+                                <div class="menu-items">
+                                    <div class="menu-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="經典珍珠奶茶" class="menu-item-image">
+                                        <div class="menu-item-info">
+                                            <h3 class="menu-item-name">經典珍珠奶茶</h3>
+                                            <p class="menu-item-description">使用進口阿薩姆紅茶，搭配手工熬煮的黑糖珍珠，香醇濃郁</p>
+                                            <span class="menu-item-price">NT$ 60</span>
+                                        </div>
+                                        <button class="add-to-cart-btn">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="menu-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="黑糖珍珠鮮奶" class="menu-item-image">
+                                        <div class="menu-item-info">
+                                            <h3 class="menu-item-name">黑糖珍珠鮮奶</h3>
+                                            <p class="menu-item-description">使用當日鮮奶，搭配手工黑糖珍珠，層次分明，口感豐富</p>
+                                            <span class="menu-item-price">NT$ 75</span>
+                                        </div>
+                                        <button class="add-to-cart-btn">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="menu-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="芋圓奶茶" class="menu-item-image">
+                                        <div class="menu-item-info">
+                                            <h3 class="menu-item-name">芋圓奶茶</h3>
+                                            <p class="menu-item-description">使用台灣在地芋頭製作的芋圓，搭配香醇奶茶，口感Q彈</p>
+                                            <span class="menu-item-price">NT$ 70</span>
+                                        </div>
+                                        <button class="add-to-cart-btn">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 評價標籤內容 -->
+                            <div class="tab-content" id="reviews-content">
+                                <div class="reviews-summary">
+                                    <div class="overall-rating">
+                                        <span class="rating-number">4.9</span>
+                                        <div class="rating-stars-large">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="total-reviews">198則評價</span>
+                                    </div>
+                                    <div class="rating-breakdown">
+                                        <div class="rating-bar">
+                                            <span class="rating-label">5星</span>
+                                            <div class="progress-bar">
+                                                <div class="progress" style="width: 85%"></div>
+                                            </div>
+                                            <span class="rating-percent">85%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span class="rating-label">4星</span>
+                                            <div class="progress-bar">
+                                                <div class="progress" style="width: 10%"></div>
+                                            </div>
+                                            <span class="rating-percent">10%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span class="rating-label">3星</span>
+                                            <div class="progress-bar">
+                                                <div class="progress" style="width: 3%"></div>
+                                            </div>
+                                            <span class="rating-percent">3%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span class="rating-label">2星</span>
+                                            <div class="progress-bar">
+                                                <div class="progress" style="width: 1%"></div>
+                                            </div>
+                                            <span class="rating-percent">1%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span class="rating-label">1星</span>
+                                            <div class="progress-bar">
+                                                <div class="progress" style="width: 1%"></div>
+                                            </div>
+                                            <span class="rating-percent">1%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="user-reviews">
+                                    <div class="review-item">
+                                        <div class="reviewer-info">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
+                                            <div class="reviewer-details">
+                                                <h4 class="reviewer-name">王小明</h4>
+                                                <div class="review-rating">
+                                                    <span class="rating-stars">
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    </span>
+                                                    <span class="review-date">2024-03-20</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="review-text">這家店的珍珠奶茶真的太好喝了！珍珠Q彈有嚼勁，奶茶香醇不膩口，甜度剛剛好。店員服務態度也很好，環境乾淨舒適。強烈推薦！</p>
+                                        <div class="review-photos">
+                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="食物照片" class="review-photo">
+                                        </div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="reviewer-info">
+                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
+                                            <div class="reviewer-details">
+                                                <h4 class="reviewer-name">林小華</h4>
+                                                <div class="review-rating">
+                                                    <span class="rating-stars">
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    </span>
+                                                    <span class="review-date">2024-03-15</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="review-text">黑糖珍珠鮮奶真的很讚！黑糖香氣十足，珍珠軟Q不硬，鮮奶很新鮮。店內環境也很舒適，適合久坐。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 照片標籤內容 -->
+                            <div class="tab-content" id="photos-content">
+                                <div class="photo-gallery">
+                                    <div class="gallery-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="經典珍珠奶茶" class="gallery-image">
+                                    </div>
+                                    <div class="gallery-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="黑糖珍珠鮮奶" class="gallery-image">
+                                    </div>
+                                    <div class="gallery-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="芋圓奶茶" class="gallery-image">
+                                    </div>
+                                    <div class="gallery-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="店內環境" class="gallery-image">
+                                    </div>
+                                    <div class="gallery-item">
+                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="製作過程" class="gallery-image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+ 
+	 // 分類切換功能
+   document.querySelectorAll('.category-item').forEach(item => {
+       item.addEventListener('click', function() {
+           document.querySelector('.category-item.active').classList.remove('active');
+           this.classList.add('active');
+           // 這裡可以添加過濾顯示對應分類的美食邏輯
+       });
+   });
+   document.querySelectorAll('.restaurant-details-tabs').forEach(tabs => {
+       const firstTab = tabs.querySelector('.tab-btn');
+       if (firstTab) firstTab.dispatchEvent(new Event('mouseenter'));
+   });
+   
+   // 標籤切換功能
+   document.querySelectorAll('.tab-btn').forEach(btn => {
+       btn.addEventListener('mouseenter', function() {
+           // 找到當前活動的標籤按鈕和內容
+           const parent = this.closest('.restaurant-details-tabs');
+           parent.querySelector('.tab-btn.active').classList.remove('active');
+           this.classList.add('active');
+           
+           // 切換內容
+        // 標籤切換功能（支援多間店家）
+           document.querySelectorAll('.tab-btn').forEach(btn => {
+               btn.addEventListener('mouseover', function () {
+                   const parent = this.closest('.restaurant-details-tabs');
+
+                   // 切換 tab 樣式
+                   parent.querySelector('.tab-btn.active')?.classList.remove('active');
+                   this.classList.add('active');
+
+                   // 切換對應內容區塊
+                   const tabId = this.getAttribute('data-tab');
+                   const storeId = this.getAttribute('data-store-id');
+
+                   // 找出該店家自己的內容區塊，隱藏全部、只顯示目標 tab
+                   const outer = parent.parentElement; // 包住 .restaurant-detail 的區塊
+                   outer.querySelectorAll('.tab-content').forEach(content => {
+                       content.classList.remove('active');
+                   });
+                   const targetContent = outer.querySelector(`#${tabId}-content-${storeId}`);
+                   if (targetContent) {
+                       targetContent.classList.add('active');
+                   }
+               });
+           });
+       });
+   });
+
+   // 菜單分類切換
+   document.querySelectorAll('.menu-category').forEach(category => {
+       category.addEventListener('click', function() {
+           const parent = this.closest('.menu-categories');
+           parent.querySelector('.menu-category.active').classList.remove('active');
+           this.classList.add('active');
+           // 這裡可以添加過濾顯示對應菜單分類的邏輯
+       });
+   });
+
+   // 收藏按鈕功能
+   document.querySelectorAll('.favorite-btn').forEach(btn => {
+       btn.addEventListener('click', function() {
+           const icon = this.querySelector('i');
+           if (icon.classList.contains('far')) {
+               icon.classList.remove('far');
+               icon.classList.add('fas');
+               this.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
+           } else {
+               icon.classList.remove('fas');
+               icon.classList.add('far');
+               this.innerHTML = '<i class="far fa-heart"></i> 收藏';
+           }
+       });
+   });
+//         // 分類切換功能
+//         document.querySelectorAll('.category-item').forEach(item => {
+//             item.addEventListener('click', function() {
+//                 document.querySelector('.category-item.active').classList.remove('active');
+//                 this.classList.add('active');
+//                 // 這裡可以添加過濾顯示對應分類的美食邏輯
+//             });
+//         });
+
+//         // 標籤切換功能
+//         document.querySelectorAll('.tab-btn').forEach(btn => {
+//             btn.addEventListener('click', function() {
+//                 // 找到當前活動的標籤按鈕和內容
+//                 const parent = this.closest('.restaurant-details-tabs');
+//                 parent.querySelector('.tab-btn.active').classList.remove('active');
+//                 this.classList.add('active');
+                
+//                 // 切換內容
+//                 const tabId = this.getAttribute('data-tab');
+//                 parent.querySelectorAll('.tab-content').forEach(content => {
+//                     content.classList.remove('active');
+//                 });
+//                 parent.querySelector(`#${tabId}-content`).classList.add('active');
+//             });
+//         });
+
+//         // 菜單分類切換
+//         document.querySelectorAll('.menu-category').forEach(category => {
+//             category.addEventListener('click', function() {
+//                 const parent = this.closest('.menu-categories');
+//                 parent.querySelector('.menu-category.active').classList.remove('active');
+//                 this.classList.add('active');
+//                 // 這裡可以添加過濾顯示對應菜單分類的邏輯
+//             });
+//         });
+
+//         // 收藏按鈕功能
+//         document.querySelectorAll('.favorite-btn').forEach(btn => {
+//             btn.addEventListener('click', function() {
+//                 const icon = this.querySelector('i');
+//                 if (icon.classList.contains('far')) {
+//                     icon.classList.remove('far');
+//                     icon.classList.add('fas');
+//                     this.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
+//                 } else {
+//                     icon.classList.remove('fas');
+//                     icon.classList.add('far');
+//                     this.innerHTML = '<i class="far fa-heart"></i> 收藏';
+//                 }
+//             });
+//         });
+    </script>
+</body>
+</html>

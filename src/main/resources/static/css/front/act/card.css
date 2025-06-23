@@ -1,0 +1,222 @@
+@charset "UTF-8";
+
+body {
+
+	font-family: Arial, sans-serif;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: linear-gradient(
+		  to bottom,
+		  rgba(255, 140, 0, 0.4) 0%,
+		  rgba(255, 140, 0, 0.1) 50%,
+		  rgba(255, 140, 0, 0.4) 100%
+		);
+	flex-wrap: wrap;
+	padding: 50px 20px 20px; /* 增加上邊距 */
+}
+
+/* 調整 act-card 為左右排版 */
+.act-card {
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 100%;
+    min-height: 160px;
+}
+
+/* 右側資訊欄 */
+.card-right {
+    flex: 1;
+    min-width: 300px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+/* 左側紅色欄 */
+.card-left {
+  background-color: rgba(255, 127, 80, 0.1); /* 珊瑚橘半透明背景 */
+  width: 150px; /* 視你需要固定寬度 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* ⬅ 水平置中 */
+  justify-content: center; /* ⬆ 垂直置中 */
+  padding: 16px;
+  border-radius: 12px 0 0 12px;
+}
+
+
+/* 領取按鈕 */
+.card-right button {
+	font-size: 36px;  
+    align-self: flex-end;
+    background-color: #d60000;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.card-right button:hover {
+    background-color: #b50000;
+}
+
+.campaign-tag {
+    color: #d60000;
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid #d60000;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.price {
+    font-weight: bold;
+    font-size: 20px;
+    color: #333;
+}
+/*調整圖片置中*/
+.img-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/*調整圖片置中*/
+.img-wrapper {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #fff;
+/*   border: 2px dashed red; */
+}
+/*調整圖片置中*/
+.img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* .act-container { */
+/*     display: flex; */
+/*     flex-wrap: wrap; */
+/*     justify-content: center; */
+/*     gap: 24px; */
+/*     max-width: 960px; 每張 220px，4 張就是 880，加 gap 就約 960px */
+/*     margin: 0 auto; */
+/* } */
+
+/* .act-container { */
+/*   display: flex; */
+/*   flex-wrap: wrap; */
+/*   justify-content: space-between; 讓卡片平均分配 */
+/*   gap: 24px; */
+/* } */
+
+
+/*一排幾個*/
+.act-container { 
+  width: 70%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+
+
+/* .act-card { */
+/*  	width: 22%; */
+/*   	min-width: 220px; */
+/*     min-height: 360px; */
+/*     background: white; */
+/*     padding: 16px; */
+/*     margin: 8px; */
+/*     border-radius: 12px; */
+/*     box-shadow: 0 0 10px rgba(0,0,0,0.1); */
+/*     text-align: center; */
+/*     display: flex; */
+/*     flex-direction: column; */
+/*     justify-content: space-between; */
+/* } */
+
+/* .act-card img { */
+/*     width: 200px; */
+/*     height: 200px; */
+/*     object-fit: cover; */
+/*     margin: 10px auto; */
+/*     border-radius: 8px; */
+/* } */
+
+/* .act-card h2 { */
+/* 	color: #28a745; */
+/* 	margin: 15px 0 10px; */
+/* 	min-height: 50px; 統一標題高度，避免位移 */
+/* } */
+
+/* .act-card p { */
+/* 	color: gray; */
+/* 	flex-grow: 1; 讓描述區塊可以填充空間，保持卡片統一高度 */
+/* 	min-height: 30px; 增加最小高度，確保按鈕對齊 */
+/* } */
+
+/* .act-card .price { */
+/* 	font-size: 18px; */
+/* 	font-weight: bold; */
+/* 	color: #e44d26; */
+/* 	margin: 10px 0; */
+/* 	min-height: 30px; 確保價格區域一致 */
+/* } */
+
+/* .act-card button { */
+/* 	background-color: #28a745; */
+/* 	color: white; */
+/* 	border: none; */
+/* 	padding: 10px; */
+/* 	width: 100%; */
+/* 	border-radius: 5px; */
+/* 	cursor: pointer; */
+/* 	margin-top: 10px; 確保按鈕對齊 */
+/* } */
+
+/* .act-card button:hover { */
+/* 	background-color: #218838; */
+/* } */
+
+/* @media (max-width: 768px) { */
+/*   .act-card { */
+/*     width: 45%; */
+/*   } */
+/* } */
+
+/* @media (max-width: 480px) { */
+/*   .act-card { */
+/*     width: 100%; */
+/*   } */
+/* } */
+
+
