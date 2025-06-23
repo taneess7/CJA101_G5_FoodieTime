@@ -66,6 +66,35 @@ body {
 	border: 3px solid #ff6b6b;
 }
 
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .profile-stats {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        
+                .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
 .profile-content {
 	background-color: white;
 	border-radius: 10px;
@@ -289,7 +318,25 @@ body {
 				<div class="profile-content">
 					<h3 class="mb-4">團購管理</h3>
 					<p>在這裡，您可以查看和管理所有的團購案。您可以設置團購的進度、目標人數，並控制團購的狀態。</p>
-
+					
+					<!-- 參與團購統計 -->
+                    <div class="profile-stats">
+                        <div class="row">
+                            <div class="col-md-3 col-6 stat-item">
+                                <div class="stat-number">30</div>
+                                <div class="stat-label">已開設團購</div>
+                            </div>
+                            <div class="col-md-3 col-6 stat-item">
+                                <div class="stat-number">5</div>
+                                <div class="stat-label">待岀貨</div>
+                            </div>
+                            <div class="col-md-3 col-6 stat-item">
+                                <div class="stat-number">10</div>
+                                <div class="stat-label">待收貨</div>
+                            </div>
+                        </div>
+                    </div>
+                    
 					<!-- 團購篩選 -->
 					
 

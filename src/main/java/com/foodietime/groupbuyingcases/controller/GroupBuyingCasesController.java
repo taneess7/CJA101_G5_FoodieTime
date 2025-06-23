@@ -51,40 +51,40 @@ public class GroupBuyingCasesController {
 		return "front/gb/gbleader/leader-groups";
 	}
 
-	// 查詢某店家開設的所有團購案
-    @GetMapping("/store/{storId}")
-    public String findByStoreId(@PathVariable Integer storId, Model model) {
-        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByStoreId(storId);
-
-        if (groupBuyingCases.isEmpty()) {
-            // 如果該店家沒有開設任何團購案，顯示錯誤訊息
-            model.addAttribute("error", "找不到該店家開設的團購案");
-        } else {
-            // 如果找到了團購案，將資料傳遞到視圖
-            model.addAttribute("groupBuyingCases", groupBuyingCases);
-        }
-
-        // 返回顯示店家開設的團購案列表視圖
-        return "front/gb/gbleader/leader-searchresult";
-    }
-
-	// 根據商品編號或商品名稱查詢團購案
-	@GetMapping("/product/{gbProdId}")
-	public String findByProdIdOrName(@PathVariable Integer gbProdId, @RequestParam(required = false) String gbProdName,
-			Model model) {
-		// 查詢該商品對應的所有團購案
-		List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByProdIdOrName(gbProdId, gbProdName);
-
-		if (groupBuyingCases.isEmpty()) {
-			// 如果該商品沒有對應的團購案，顯示錯誤訊息
-			model.addAttribute("error", "找不到該商品對應的團購案");
-			return "front/gb/gbleader/leaderindex"; // 返回團購案列表頁面並顯示錯誤訊息
-		}
-
-		// 如果找到了團購案，將資料傳遞到視圖
-		model.addAttribute("groupBuyingCases", groupBuyingCases);
-		return "front/gb/gbleader/leader-searchresult"; // 顯示商品對應的團購案列表視圖
-	}
+//	// 查詢某店家開設的所有團購案
+//    @GetMapping("/store/{storId}")
+//    public String findByStoreId(@PathVariable Integer storId, Model model) {
+//        List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByStoreId(storId);
+//
+//        if (groupBuyingCases.isEmpty()) {
+//            // 如果該店家沒有開設任何團購案，顯示錯誤訊息
+//            model.addAttribute("error", "找不到該店家開設的團購案");
+//        } else {
+//            // 如果找到了團購案，將資料傳遞到視圖
+//            model.addAttribute("groupBuyingCases", groupBuyingCases);
+//        }
+//
+//        // 返回顯示店家開設的團購案列表視圖
+//        return "front/gb/gbleader/leader-searchresult";
+//    }
+//
+//	// 根據商品編號或商品名稱查詢團購案
+//	@GetMapping("/product/{gbProdId}")
+//	public String findByProdIdOrName(@PathVariable Integer gbProdId, @RequestParam(required = false) String gbProdName,
+//			Model model) {
+//		// 查詢該商品對應的所有團購案
+//		List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByProdIdOrName(gbProdId, gbProdName);
+//
+//		if (groupBuyingCases.isEmpty()) {
+//			// 如果該商品沒有對應的團購案，顯示錯誤訊息
+//			model.addAttribute("error", "找不到該商品對應的團購案");
+//			return "front/gb/gbleader/leaderindex"; // 返回團購案列表頁面並顯示錯誤訊息
+//		}
+//
+//		// 如果找到了團購案，將資料傳遞到視圖
+//		model.addAttribute("groupBuyingCases", groupBuyingCases);
+//		return "front/gb/gbleader/leader-searchresult"; // 顯示商品對應的團購案列表視圖
+//	}
 
 	// 根據團購編號查詢團購案
 	@GetMapping("/leader/{gbId}")
@@ -124,4 +124,37 @@ public class GroupBuyingCasesController {
 //			return "front/gb/gbleader/leader-groups"; // 返回列表頁面並顯示錯誤訊息
 //		}
 //	}
+	
+//	@GetMapping("/search")
+//    public String searchCases(
+//            @RequestParam(required = false) Integer gbId,
+//            @RequestParam(required = false) Integer gbProdId,
+//            @RequestParam(required = false) String gbProdName,
+//            Model model) {
+//
+//        // 1. 查單筆詳情
+//        if (gbId != null) {
+//            Optional<GroupBuyingCasesVO> voOpt = groupBuyingCasesService.findById(gbId);
+//            if (voOpt.isPresent()) {
+//                model.addAttribute("groupBuyingCase", voOpt.get());
+//                return "front/gb/gbleader/leader-gbdetail";
+//            } else {
+//                model.addAttribute("error", "團購案不存在");
+//                return "front/gb/gbleader/leaderindex";
+//            }
+//        }
+//
+//        // 2. 查多筆列表（商品編號 或 名稱）
+//        List<GroupBuyingCasesVO> list =
+//            groupBuyingCasesService.findByProdIdOrName(gbProdId, gbProdName);
+//
+//        if (list.isEmpty()) {
+//            model.addAttribute("error", "找不到符合條件的團購案");
+//            // 你可以回原列表頁或搜尋結果頁，看你要怎麼顯示
+//            return "front/gb/gbleader/leaderindex";
+//        }
+//
+//        model.addAttribute("groupBuyingCases", list);
+//        return "front/gb/gbleader/leader-searchresult";
+//    }
 }
