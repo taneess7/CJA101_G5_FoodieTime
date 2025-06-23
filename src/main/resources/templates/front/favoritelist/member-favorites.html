@@ -21,7 +21,7 @@
     <header class="app-header">
         <div class="header-container">
             <div class="logo-container">
-                <a href="index.html" class="logo">
+                <a th:href="@{/category/index}" class="logo">
                     <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
                     <span class="logo-text">FoodieTime 食刻</span>
                 </a>
@@ -30,16 +30,14 @@
                 <div class="search-bar">
                     <i class="material-icons-outlined search-icon">search</i>
                     <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-                    <i class="material-icons-outlined mic-icon">mic</i>
-                    <i class="material-icons-outlined camera-icon">photo_camera</i>
                 </div>
             </div>
             <nav class="main-nav">
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
-                    <li class="nav-item"><a href="group-order.html" class="nav-link">團購</a></li>
-                    <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a href="login.html" class="nav-link login-btn">登入/註冊</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">地圖</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">團購</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">優惠</a></li>
+                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
                 </ul>
                 <button class="menu-toggle" aria-label="開啟選單">
                     <i class="material-icons-outlined">menu</i>
@@ -48,220 +46,72 @@
         </div>
     </header>
 
-    <main>
-        <!-- 會員資訊區塊 -->
-        <section class="member-profile">
-            <div class="container">
-                <div class="profile-header">
-                    <div class="profile-avatar">
-                        <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="會員頭像" class="avatar-img">
+    <main class="main-content">
+        <div class="member-section">
+            <aside class="member-sidebar">
+                <div class="member-profile">
+                    <div class="member-avatar">
+                        <img th:src="@{/images/icons/avatar-placeholder.svg}" alt="會員頭像">
                     </div>
-                    <div class="profile-info">
-                        <h1 class="profile-name">王小明</h1>
-                        <p class="profile-level">美食達人 <span class="level-badge">Lv.3</span></p>
+                    <div class="member-info">
+                        <h3 class="member-name"></h3>
+                        <p class="member-level"></p>
                     </div>
                 </div>
-            </div>
-        </section>
+                <nav class="member-nav">
+                    <a th:href="@{/member}" class="member-nav-item">
+                        <i class="material-icons-outlined">person</i><span>會員資料</span>
+                    </a>
+                    <a th:href="@{/member/orders}" class="member-nav-item">
+                        <i class="material-icons-outlined">receipt_long</i><span>訂單記錄</span>
+                    </a>
+                    <a th:href="@{/member/coupons}" class="member-nav-item">
+                        <i class="material-icons-outlined">local_offer</i><span>優惠券</span>
+                    </a>
+                    <a th:href="@{/member/favorites}" class="member-nav-item active">
+                        <i class="material-icons-outlined">favorite</i><span>收藏餐廳</span>
+                    </a>        
+                </nav>
+            </aside>
 
-        <!-- 收藏分類導航 -->
-        <nav class="category-nav">
-            <div class="container">
-                <ul class="category-list favorites-category-list">
-                    <li class="category-item active">所有收藏</li>
-                    <li class="category-item">餐廳</li>
-                    <li class="category-item">美食</li>
-                    <li class="category-item">優惠券</li>
-                </ul>
-            </div>
-        </nav>
-
-        <div class="container">
-            <!-- 收藏統計 -->
-            <div class="favorites-stats">
-                <div class="stats-item">
-                    <span class="stats-number">24</span>
-                    <span class="stats-label">收藏餐廳</span>
+            <div class="member-content">
+                <div class="member-content-header">
+                    <h1 class="member-content-title">我的收藏餐廳</h1>
                 </div>
-                <div class="stats-item">
-                    <span class="stats-number">36</span>
-                    <span class="stats-label">收藏美食</span>
-                </div>
-                <div class="stats-item">
-                    <span class="stats-number">12</span>
-                    <span class="stats-label">收藏優惠券</span>
-                </div>
-            </div>
-
-            <!-- 收藏的餐廳和美食 -->
-            <div class="favorites-section">
-                <h2 class="section-title">收藏的餐廳</h2>
-                <div class="restaurant-grid favorites-grid">
-                    <!-- 收藏的餐廳 1 -->
-                    <article class="restaurant-card favorite-card">
-                        <div class="favorite-actions">
-                            <button class="favorite-btn active" aria-label="取消收藏">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="share-btn" aria-label="分享">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="築地市場" class="restaurant-image">
-                        <div class="restaurant-info">
-                            <h3 class="restaurant-name">築地市場</h3>
-                            <span class="cuisine-tag cuisine-japanese">日式料理</span>
-                            <p class="restaurant-category">壽司 • 生魚片 • 海鮮丼</p>
-                            <div class="restaurant-rating">
-                                <span class="rating-stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </span>
-                                <span>4.5 (238則評價)</span>
+                <div class="restaurants-container" id="restaurants-container">
+                    <div class="restaurant-card" th:each="fav : ${favoriteList}">
+                        <div class="restaurant-image-container">
+                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳圖片" class="restaurant-image">
+                            <div class="restaurant-actions">
+                                <button class="action-btn favorite-btn active" aria-label="取消收藏">
+                                    <i class="material-icons-outlined">favorite</i>
+                                </button>
+                                <button class="action-btn share-btn" aria-label="分享">
+                                    <i class="material-icons-outlined">share</i>
+                                </button>
                             </div>
                         </div>
-                    </article>
-
-                    <!-- 收藏的餐廳 2 -->
-                    <article class="restaurant-card favorite-card">
-                        <div class="favorite-actions">
-                            <button class="favorite-btn active" aria-label="取消收藏">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="share-btn" aria-label="分享">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="江南美食" class="restaurant-image">
-                        <div class="restaurant-info">
-                            <h3 class="restaurant-name">江南美食</h3>
-                            <span class="cuisine-tag cuisine-chinese">中式料理</span>
-                            <p class="restaurant-category">小籠包 • 點心 • 麵食</p>
-                            <div class="restaurant-rating">
-                                <span class="rating-stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </span>
-                                <span>4.0 (186則評價)</span>
+                        <div class="restaurant-details">
+                            <h3 class="restaurant-name" th:text="${fav.product.store.storName}">店名</h3>
+                            <div class="restaurant-category">
+                                <span class="cuisine-tag" th:text="${fav.product.productCategory.prodCate}">分類</span>
+                            </div>
+                            <div class="restaurant-info">
+                                <div class="info-item">
+                                    <i class="material-icons-outlined">location_on</i>
+                                    <span th:text="${fav.product.store.storAddr}">地址</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="material-icons-outlined">access_time</i>
+                                    <span th:text="${fav.product.store.storOnTime} + ' - ' + ${fav.product.store.storOffTime}">營業時間</span>
+                                </div>
+                            </div>
+                            <div class="restaurant-actions-bottom">
+                                <button class="view-btn">查看餐廳</button>
+                                <button class="order-btn">立即訂餐</button>
                             </div>
                         </div>
-                    </article>
-                </div>
-            </div>
-
-            <div class="favorites-section">
-                <h2 class="section-title">收藏的美食</h2>
-                <div class="restaurant-grid food-grid favorites-grid">
-                    <!-- 收藏的美食 1 -->
-                    <article class="restaurant-card food-card favorite-card">
-                        <div class="favorite-actions">
-                            <button class="favorite-btn active" aria-label="取消收藏">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="share-btn" aria-label="分享">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                        <img th:src="@{/images/restaurant/pasta.svg}" alt="義大利麵" class="restaurant-image">
-                        <div class="restaurant-info">
-                            <h3 class="restaurant-name">經典義大利麵</h3>
-                            <span class="cuisine-tag cuisine-italian">義式料理</span>
-                            <p class="restaurant-category">義大利麵 • 燉飯 • 前菜</p>
-                            <div class="restaurant-rating">
-                                <span class="rating-stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </span>
-                                <span>4.8 (312則評價)</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- 收藏的美食 2 -->
-                    <article class="restaurant-card food-card favorite-card">
-                        <div class="favorite-actions">
-                            <button class="favorite-btn active" aria-label="取消收藏">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="share-btn" aria-label="分享">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                        <img th:src="@{/images/restaurant/beef-noodle.svg}" alt="牛肉麵" class="restaurant-image">
-                        <div class="restaurant-info">
-                            <h3 class="restaurant-name">傳統牛肉麵</h3>
-                            <span class="cuisine-tag cuisine-chinese">中式料理</span>
-                            <p class="restaurant-category">麵食 • 湯品 • 小菜</p>
-                            <div class="restaurant-rating">
-                                <span class="rating-stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </span>
-                                <span>4.5 (238則評價)</span>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-
-            <div class="favorites-section">
-                <h2 class="section-title">收藏的優惠券</h2>
-                <div class="coupon-grid">
-                    <!-- 收藏的優惠券 1 -->
-                    <article class="coupon-card favorite-card">
-                        <div class="favorite-actions">
-                            <button class="favorite-btn active" aria-label="取消收藏">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="share-btn" aria-label="分享">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                        <div class="coupon-content">
-                            <div class="coupon-info">
-                                <h3 class="coupon-title">新會員首單8折</h3>
-                                <p class="coupon-description">適用於所有餐廳，最高折抵100元</p>
-                                <div class="coupon-validity">有效期限：2024/12/31</div>
-                            </div>
-                            <div class="coupon-action">
-                                <button class="use-coupon-btn">立即使用</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- 收藏的優惠券 2 -->
-                    <article class="coupon-card favorite-card">
-                        <div class="favorite-actions">
-                            <button class="favorite-btn active" aria-label="取消收藏">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="share-btn" aria-label="分享">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                        </div>
-                        <div class="coupon-content">
-                            <div class="coupon-info">
-                                <h3 class="coupon-title">日式料理滿500送100</h3>
-                                <p class="coupon-description">適用於所有日式餐廳</p>
-                                <div class="coupon-validity">有效期限：2024/08/31</div>
-                            </div>
-                            <div class="coupon-action">
-                                <button class="use-coupon-btn">立即使用</button>
-                            </div>
-                        </div>
-                    </article>
+                    </div>
                 </div>
             </div>
         </div>
@@ -272,32 +122,5 @@
             <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        // 分類切換功能
-        document.querySelectorAll('.category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelector('.category-item.active').classList.remove('active');
-                this.classList.add('active');
-                // 這裡可以添加過濾顯示對應分類的收藏項目邏輯
-            });
-        });
-
-        // 收藏按鈕功能
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.classList.toggle('active');
-                // 這裡可以添加取消收藏的邏輯
-            });
-        });
-
-        // 分享按鈕功能
-        document.querySelectorAll('.share-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // 這裡可以添加分享功能邏輯
-                alert('分享功能即將上線！');
-            });
-        });
-    </script>
 </body>
 </html>
