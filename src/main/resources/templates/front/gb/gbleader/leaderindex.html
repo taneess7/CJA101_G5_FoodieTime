@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -262,19 +262,31 @@
 
     <!-- 搜尋區塊 -->
     <section class="search-section">
-        <div class="container">
-            <div class="search-container text-center">
-                <h1 class="search-title">挑選開團商品</h1>
-                <p class="search-subtitle">選擇您想開設的團購商品，讓我們幫助您更方便的管理團購活動</p>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg" placeholder="搜尋商品...">
-                    <button class="btn btn-primary btn-lg" type="button">
-                        <i class="bi bi-search"></i> 搜尋
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
+	  <div class="container">
+	    <div class="search-container text-center">
+	      <h1 class="search-title">挑選開團商品</h1>
+	      <p class="search-subtitle">
+	        選擇您想開設的團購商品，讓我們幫助您更方便的管理團購活動
+	      </p>
+	
+	      <!-- 1. 用 form 包起來，action 指到 searchCases 的 Mapping -->
+	      <form th:action="@{/gb/search}" method="get" class="input-group mb-3">
+			  <!-- <input type="hidden" name="gbId" th:value="${gbId}" /> -->
+
+			  <input type="text"
+			         name="gbProdName"
+		             class="form-control form-control-lg"
+		             placeholder="搜尋商品..."
+		             th:value="${gbProdName}"/>
+		             
+			  <button type="submit" class="btn btn-primary btn-lg">
+			    <i class="bi bi-search"></i> 搜尋
+			  </button>
+			</form>
+	    </div>
+	  </div>
+	</section>
+
 
     <!-- 篩選欄 -->
     <div class="container">

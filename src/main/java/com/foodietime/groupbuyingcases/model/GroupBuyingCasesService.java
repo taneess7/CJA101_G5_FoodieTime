@@ -18,7 +18,7 @@ public class GroupBuyingCasesService {
     }
     
     // 查詢某會員開設且是團主的團購案
-    public List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memberId, Boolean leader) {
+    public List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memberId, Byte leader) {
         return groupBuyingCasesRepository.findByMember_MemIdAndLeader(memberId, leader);
     }
     
@@ -43,10 +43,7 @@ public class GroupBuyingCasesService {
         return groupBuyingCasesRepository.save(groupBuyingCasesVO);
     }
 
-//    // 刪除某個團購案
-//    public void deleteGroupBuyingCase(Integer gbId) {
-//        groupBuyingCasesRepository.deleteById(gbId);
-//    }
+
 
     // 修改團購案狀態
     public GroupBuyingCasesVO updateGroupBuyingCaseStatus(Integer gbId, Byte newStatus) {
