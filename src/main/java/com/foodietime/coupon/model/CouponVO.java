@@ -3,6 +3,7 @@ package com.foodietime.coupon.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orders.model.OrdersVO;
@@ -20,8 +21,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"memCoupon", "orders"})
 @Entity
 @Table(name = "coupon")
 public class CouponVO implements Serializable {
@@ -58,12 +64,6 @@ public class CouponVO implements Serializable {
 	@Column(name = "COU_DATE")
 	private Timestamp couDate; 
 
-	// 取得or設置
-
-	public CouponVO() {
-		super();
-
-	}
 	
 	//OneToMany
 	@OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
@@ -72,5 +72,29 @@ public class CouponVO implements Serializable {
 	@OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 
+
+	// 取得or設置
+
+	public CouponVO() {
+		super();
+
+	}
+	// ==================== 2. 手動實作 equals 和 hashCode ====================
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			CouponVO couponVO = (CouponVO) o;
+			// 關鍵：只比較主鍵 (ID)，並且只有當 ID 不是 null 時才比較
+			return couId != null && Objects.equals(couId, couponVO.couId);
+		}
+
+		@Override
+		public int hashCode() {
+			// 關鍵：返回一個固定的值，這個值對於同一個類的所有實例都是一樣的。
+			// 這可以確保在物件被持久化前後（ID從null變為有值），雜湊碼保持不變。
+			// 這避免了在 HashMap 或 HashSet 中找不到物件的問題。
+			return getClass().hashCode();
+		}
 
 }
