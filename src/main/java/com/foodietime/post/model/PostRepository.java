@@ -6,32 +6,35 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface PostRepository extends JpaRepository<PostVO, Integer>{
+public interface PostRepository extends JpaRepository<PostVO, Integer> {
 	// 1. 取得正常狀態的貼文
-    List<PostVO> findByPostStatus(Integer postStatus);
-    
-    // 2. 根據會員查詢貼文
-    List<PostVO> findByMemberMemId(Integer memId);
-    
-    // 3. 關鍵字搜尋
-//    List<PostVO> findByPostTitleContainingAndPostStatus(String keyword, Integer postStatus);
-    
-    // 4. 熱門貼文
-    List<PostVO> findTop5ByPostStatusOrderByLikeCountDesc(byte postStatus);
+	List<PostVO> findByPostStatus(Integer postStatus);
 
-    // 按分類查詢
-    List<PostVO> findByPostCate_PostCateId(Integer postCateId);
+	// 2. 根據會員查詢貼文
+	List<PostVO> findByMemberMemId(Integer memId);
 
-    @Query("SELECT p FROM PostVO p WHERE p.postTitle LIKE %:kw% ORDER BY p.likeCount DESC")
-    List<PostVO> getPopularPosts(@Param("kw") String keyword);
+	// 3. 關鍵字搜尋
+    List<PostVO> findByPostTitleContainingAndPostStatus(String keyword, Integer postStatus);
 
-    // 按讚數排序
-    List<PostVO> findAllByOrderByLikeCountDesc();
+	// 4. 熱門貼文
+	List<PostVO> findTop5ByPostStatusOrderByLikeCountDesc(byte postStatus);
 
-    // 瀏覽數排序
-    List<PostVO> findAllByOrderByViewsDesc();
-    List<PostVO> findAllByOrderByViewsAsc();
-    
+	// 按分類查詢
+	@Query("SELECT p FROM PostVO p WHERE p.postCate.postCateId = :categoryId ORDER BY "
+			+ "CASE WHEN :sort = 'like_Count' THEN p.likeCount END DESC, "
+			+ "CASE WHEN :sort = 'views' THEN p.views END DESC, " + "p.editDate DESC")
+	List<PostVO> findByCategoryAndSort(@Param("categoryId") Integer categoryId, @Param("sort") String sort);
+
+	@Query("SELECT p FROM PostVO p WHERE p.postTitle LIKE %:kw% ORDER BY p.likeCount DESC")
+	List<PostVO> getPopularPosts(@Param("kw") String keyword);
+
+	// 按讚數排序
+	List<PostVO> findAllByOrderByLikeCountDesc();
+
+	// 瀏覽數排序
+	List<PostVO> findAllByOrderByViewsDesc();
+
+	List<PostVO> findAllByOrderByViewsAsc();
+
 }

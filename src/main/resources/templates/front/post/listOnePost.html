@@ -212,12 +212,41 @@
 							<button class="comment-action">
 								<i class="material-icons-outlined">thumb_up</i> <span>讚</span>
 							</button>
-							<button class="comment-action">
-								<i class="material-icons-outlined">reply</i> <span>回覆</span>
+							<button class="comment-action" type="button"
+								th:onclick="'openReportMessageModal(' + ${msg.mesId} + ')'">
+								<i class="material-icons-outlined">block</i> <span>檢舉</span>
 							</button>
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<!-- 檢舉留言 Modal -->
+		<div id="reportMessageModal"
+			style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
+			<div
+				style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
+				<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
+				<form th:action="@{/reportmessage/insert}" method="post">
+					<input type="hidden" name="mes.mesId" id="reportMessageId" />
+					<input type="hidden" name="member.memId"
+						th:value="${loginMember.memId}" /> <input type="hidden"
+						name="repMessageStatus" value="0" /> <input type="hidden"
+						name="action" value="insert" />
+					<div class="mb-2">
+						<label for="repMessageReason" class="block mb-1">檢舉原因</label>
+						<textarea id="repMesReason" name="repMesReason"
+							class="w-full border rounded px-2 py-1" rows="3" maxlength="255"
+							required></textarea>
+					</div>
+					<div class="flex justify-end space-x-2 mt-3">
+						<button type="button" class="btn btn-secondary"
+							onclick="closeReportMessageModal()">取消</button>
+						<button type="submit" class="btn btn-danger">送出檢舉</button>
+					</div>
+				</form>
+				<button onclick="closeReportMessageModal()"
+					style="position: absolute; top: 8px; right: 12px;">✕</button>
 			</div>
 		</div>
 	</section>
