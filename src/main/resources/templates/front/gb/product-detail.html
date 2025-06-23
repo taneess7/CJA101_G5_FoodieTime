@@ -978,17 +978,34 @@
                         <a class="nav-link" href="#">即將結束</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">我要開團</a>
-                    </li>
+                         <!-- 未登入狀態：顯示登入模態視窗 -->
+                      <a th:if="${session.loggedInMember == null}" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
+                      <!-- 已登入狀態：直接跳轉到團長專區 -->
+                      <a th:if="${session.loggedInMember != null}" class="nav-link" href="/gb/leader">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
                 </ul>
                 <div class="d-flex">
-                    <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <i class="bi bi-person"></i> 登入
-                    </a>
-                    <a href="#" class="btn btn-outline-primary me-2">
-                        <i class="bi bi-person-plus"></i> 註冊
-                    </a>              
+                     <!-- 未登入狀態：顯示登入 / 註冊 -->
+			    <div th:if="${session.loggedInMember == null}">
+			        <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+			            <i class="bi bi-person"></i> 登入
+			        </a>
+			        <a href="/register" class="btn btn-outline-primary me-2">
+			            <i class="bi bi-person-plus"></i> 註冊
+			        </a>            
                 </div>
+                <div th:if="${session.loggedInMember != null}" class="dropdown">
+			        <a href="#" class="btn btn-outline-success dropdown-toggle me-2" data-bs-toggle="dropdown" aria-expanded="false">
+			            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
+			        </a>
+			        <ul class="dropdown-menu">
+			            <li><a class="dropdown-item" href="/member/profile">會員中心</a></li>
+			            <li><a class="dropdown-item" href="/logout">登出</a></li>
+			        </ul>
+			    </div>
             </div>
         </div>
     </nav>
@@ -998,7 +1015,7 @@
         <!-- 麵包屑導航 -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="gbindex.html">首頁</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/index}">首頁</a></li>
                 <li class="breadcrumb-item"><a href="#">美食團購</a></li>
                 <li class="breadcrumb-item"><a href="#">台南美食</a></li>
                 <li class="breadcrumb-item active" aria-current="page" th:text="${productDetail != null ? productDetail.gbProdName : '商品詳情'}">商品詳情</li>
@@ -1045,15 +1062,24 @@
                     <div class="organizer-info">
                         <img th:src="${productDetail != null and productDetail.organizerAvatar != null ? productDetail.organizerAvatar : 'https://randomuser.me/api/portraits/women/45.jpg'}" alt="團長頭像" class="organizer-avatar">
                         <div>
-                            <div class="organizer-name" th:text="${productDetail != null ? productDetail.organizerName : '團長'}">團長</div>
+                            <div class="organizer-name" th:text="${productDetail != null ? productDetail.leaderNickname : '團長'}">團長</div>
                             <div class="organizer-rating">
-                                <th:block th:each="i : ${#numbers.sequence(1, productDetail != null and productDetail.organizerRating != null ? productDetail.organizerRating : 4)}">
-                                    <i class="bi bi-star-fill"></i>
-                                </th:block>
-                                <th:block th:if="${productDetail != null and productDetail.organizerRating != null and productDetail.organizerRating % 1 != 0}">
-                                    <i class="bi bi-star-half"></i>
-                                </th:block>
-                                <span class="ms-1" th:text="${productDetail != null and productDetail.organizerRating != null ? productDetail.organizerRating + ' (' + productDetail.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
+                                <!-- 整星 -->
+								<th:block th:each="i : ${#numbers.sequence(1, productDetail != null and productDetail.newStar != null ? T(java.lang.Math).floor(productDetail.newStar).intValue() : 4)}">
+								    <i class="bi bi-star-fill"></i>
+								</th:block>
+								
+								<!-- 半星 -->
+								<th:block th:if="${productDetail != null and productDetail.newStar != null and (productDetail.newStar % 1) >= 0.5}">
+								    <i class="bi bi-star-half"></i>
+								</th:block>
+								<!-- 空星 -->
+								<th:block
+								    th:each="i : ${#numbers.sequence(1, 5 - (productDetail != null and productDetail.newStar != null ? T(java.lang.Math).floor(productDetail.newStar).intValue() + ((productDetail.newStar % 1) >= 0.5 ? 1 : 0) : 4))}">
+								    <i class="bi bi-star"></i>
+								</th:block>
+
+                                <span class="ms-1" th:text="${productDetail != null and productDetail.newStar != null ? productDetail.newStar + ' (' + productDetail.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
                             </div>
                         </div>
                     </div>
@@ -1064,9 +1090,7 @@
                         <span class="product-discount" th:if="${productDetail != null and productDetail.discountPercent != null}" th:text="${productDetail.discountPercent} + ' OFF'">40% OFF</span>
                     </div>
                     
-                    <div class="time-left">
-                        <i class="bi bi-clock"></i> <span th:text="${productDetail != null and productDetail.timeLeft != null ? productDetail.timeLeft + ' (' + productDetail.endDate + ' 結束)' : '剩餘 2 天 18 小時 (2023/12/31 23:59 結束)'}">剩餘 2 天 18 小時 (2023/12/31 23:59 結束)</span>
-                    </div>
+                    
                     
                     <div class="progress">
                         <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${productDetail != null ? productDetail.progressPercent : 75} + '%'" th:aria-valuenow="${productDetail != null ? productDetail.progressPercent : 75}" aria-valuemin="0" aria-valuemax="100"></div>
@@ -1080,8 +1104,7 @@
                     <div class="group-buy-progress-section">
                         <div class="progress-header">
                             <h3 class="progress-title">
-                                <i class="bi bi-fire text-danger"></i>
-                                團購進度
+                               
                                 <span class="pulse-badge">熱烈進行中</span>
                             </h3>
                         </div>
@@ -1141,44 +1164,19 @@
                                         <span class="time-label">分</span>
                                     </div>
                                 </div>
-                                <div class="countdown-end-time" th:text="'結束時間：' + ${productDetail != null ? productDetail.endDate : '2023/12/31 23:59'}">結束時間：2023/12/31 23:59</div>
-                            </div>
+<div class="countdown-end-time"
+     th:text="'結束時間：' + ${productDetail != null ? #temporals.format(productDetail.gbEndTime, 'yyyy/MM/dd HH:mm') : '2023/12/31 23:59'}">
+    結束時間：2023/12/31 23:59
+</div>                            </div>
                         </div>
                         
-                        <div class="urgency-message">
-                            <div class="urgency-card">
-                                <i class="bi bi-lightning-charge text-warning"></i>
-                                <span class="urgency-text" th:text="'把握機會！距離最優惠價只差 ' + ${productDetail != null ? productDetail.nextTierRemaining : 15} + ' 件'">把握機會！距離最優惠價只差 15 件</span>
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
-                        </div>
+                        
                     </div>
                     
                     <div class="quantity-selection-section">
                         <div class="quantity-label">選擇數量</div>
                         
-                        <!-- 數量門檻優惠表格 -->
-                        <div class="quantity-discount-table">
-                            <div class="discount-table-header">
-                                <i class="bi bi-gift"></i> 數量優惠
-                            </div>
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>數量門檻</th>
-                                        <th>單價</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="discount-row" 
-									    th:each="tier : ${productDetail != null ? productDetail.priceTiers : defaultTiers}" 
-									    th:data-min="${tier.minQuantity}" th:data-price="${tier.price}">
-									    <td th:text="'≧ ' + ${tier.minQuantity} + ' 件'">≧ 10 件</td>
-									    <td class="price-cell" th:text="'$' + ${tier.price}">$380</td>
-									</tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        
                         
                         <div class="quantity-selector">
                             <button class="quantity-btn minus" type="button">-</button>
@@ -1193,7 +1191,8 @@
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary btn-lg join-btn">立即參團</button>
+                        <button th:if="${session.loggedInMember != null}" class="btn btn-primary btn-lg join-btn" onclick="joinGroup()">立即參團</button>
+                        <button th:unless="${session.loggedInMember != null}" class="btn btn-primary btn-lg join-btn" onclick="showLoginModal()">立即參團</button>
                         <button class="btn btn-outline-primary">加入收藏</button>
                     </div>
                     
@@ -1585,14 +1584,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form th:action=@{/front/member/login} method="post">
                         <div class="mb-3">
-                            <label for="email" class="form-label">電子郵件</label>
-                            <input type="email" class="form-control" id="email" placeholder="請輸入電子郵件">
+                            <label for="email" class="form-label">帳號</label>
+                            <input type="text" class="form-control" id="mem_account"  name="mem_account" placeholder="帳號">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">密碼</label>
-                            <input type="password" class="form-control" id="password" placeholder="請輸入密碼">
+                            <input type="password" class="form-control" id="mem_password" name="mem_password" placeholder="請輸入密碼">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="rememberMe">
@@ -1711,23 +1710,12 @@
             const totalAmountSpan = document.querySelector('.total-amount');
             const discountRows = document.querySelectorAll('.discount-row');
             
-            // 價格階層數據（從 Thymeleaf 模板獲取或使用默認值）
-            const priceTiers = [
-                { minQuantity: 1, price: 299 },
-                { minQuantity: 10, price: 280 },
-                { minQuantity: 30, price: 250 },
-                { minQuantity: 60, price: 220 }
-            ];
+            // 固定單價（從 Thymeleaf 模板獲取）
+            const fixedUnitPrice = parseInt(document.querySelector('.current-unit-price').textContent) || 299;
             
-            // 獲取當前數量對應的單價
+            // 獲取固定單價
             function getCurrentPrice(quantity) {
-                let currentPrice = priceTiers[0].price;
-                for (let tier of priceTiers) {
-                    if (quantity >= tier.minQuantity) {
-                        currentPrice = tier.price;
-                    }
-                }
-                return currentPrice;
+                return fixedUnitPrice;
             }
             
             // 更新價格顯示
@@ -1738,15 +1726,6 @@
                 
                 currentUnitPriceSpan.textContent = unitPrice;
                 totalAmountSpan.textContent = totalPrice;
-                
-                // 更新數量門檻表格的高亮
-                discountRows.forEach(row => {
-                    const minQuantity = parseInt(row.dataset.min);
-                    row.classList.remove('active');
-                    if (quantity >= minQuantity) {
-                        row.classList.add('active');
-                    }
-                });
             }
             
             // 減少數量
@@ -1782,35 +1761,23 @@
                 updatePriceDisplay();
             });
             
-            // 點擊數量門檻行直接設置數量
-            discountRows.forEach(row => {
-                row.addEventListener('click', function() {
-                    const minQuantity = parseInt(this.dataset.min);
-                    quantityInput.value = minQuantity;
-                    updatePriceDisplay();
-                });
-            });
+            // 數量門檻功能已移除
             
             // 初始化價格顯示
             updatePriceDisplay();
             
-            // 參團按鈕
-            const joinBtn = document.querySelector('.join-btn');
+            // 參團按鈕功能函數
+            window.joinGroup = function() {
+                // 已登入用戶直接前往訂單頁面
+                alert('即將前往訂單頁面...');
+                // window.location.href = '/order';
+            };
             
-            joinBtn.addEventListener('click', function() {
-                // 檢查用戶是否已登入
-                const isLoggedIn = false; // 實際應用中這裡會檢查用戶登入狀態
-                
-                if (isLoggedIn) {
-                    // 導向訂單頁面
-                    // window.location.href = 'order.html';
-                    alert('即將前往訂單頁面...');
-                } else {
-                    // 顯示登入彈窗
-                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                    loginModal.show();
-                }
-            });
+            window.showLoginModal = function() {
+                // 未登入用戶顯示登入彈窗
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            };
         });
     </script>
 </body>

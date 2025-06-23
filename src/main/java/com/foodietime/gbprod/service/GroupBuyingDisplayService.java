@@ -57,6 +57,7 @@ public class GroupBuyingDisplayService {
         dto.setGbId(gbCase.getGbId());
         dto.setGbTitle(gbCase.getGbTitle());
         dto.setGbDescription(gbCase.getGbDescription());
+        dto.setGbStartTime(gbCase.getGbCreateAt());
         dto.setGbEndTime(gbCase.getGbEndTime());
         dto.setGbStatus(gbCase.getGbStatus());
         dto.setGbMinProductQuantity(gbCase.getGbMinProductQuantity());

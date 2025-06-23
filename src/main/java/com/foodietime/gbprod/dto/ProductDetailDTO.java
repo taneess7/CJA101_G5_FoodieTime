@@ -49,10 +49,11 @@ public class ProductDetailDTO {
     // ==================== 團長資訊 ====================
     private String organizerName;    // 團長姓名
     private String organizerAvatar;  // 團長頭像
-    private Double organizerRating;  // 團長評價
+    private Integer organizerRating;  // 團長評價
     private Integer reviewCount;     // 評價數量
     private String leaderNickname;   // 團長暱稱
     private String leaderAvatar;     // 團長頭像
+    private Double newStar; //星星/評價數 
     
     // ==================== 店家資訊 ====================
     private String storeName;        // 店家名稱
@@ -198,8 +199,8 @@ public class ProductDetailDTO {
     public String getOrganizerAvatar() { return organizerAvatar; }
     public void setOrganizerAvatar(String organizerAvatar) { this.organizerAvatar = organizerAvatar; }
     
-    public Double getOrganizerRating() { return organizerRating; }
-    public void setOrganizerRating(Double organizerRating) { this.organizerRating = organizerRating; }
+    public Integer getOrganizerRating() { return organizerRating; }
+    public void setOrganizerRating(Integer organizerRating) { this.organizerRating = organizerRating; }
     
     public Integer getReviewCount() { return reviewCount; }
     public void setReviewCount(Integer reviewCount) { this.reviewCount = reviewCount; }
@@ -253,7 +254,15 @@ public class ProductDetailDTO {
     public String getQuantity() { return quantity; }
     public void setQuantity(String quantity) { this.quantity = quantity; }
     
-    // ==================== 計算方法 ====================
+    public Double getNewStar() {return newStar;}
+    public void setNewStar(Integer organizerRating, Integer reviewCount) {
+    	if (organizerRating != null && reviewCount != null && reviewCount != 0) {
+            newStar = organizerRating.doubleValue() / reviewCount;
+        } else {
+            newStar = 0.0; // 或者給 null，看你業務需求
+        }
+    }
+       // ==================== 計算方法 ====================
     
     /**
      * 計算進度百分比
