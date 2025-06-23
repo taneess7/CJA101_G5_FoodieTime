@@ -43,6 +43,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	});
 
+	// 搜尋功能（點按鈕）
+	document.getElementById('searchPostBtn').addEventListener('click', function() {
+		const keyword = document.getElementById('searchTitle').value.trim();
+		if (keyword.length === 0) {
+			alert('請輸入關鍵字');
+			return;
+		}
+		window.location.href = '/post/search?title=' + encodeURIComponent(keyword);
+	});
+
+	// 搜尋功能（按 Enter）
+	document.getElementById('searchTitle').addEventListener('keydown', function(e) {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			document.getElementById('searchPostBtn').click();
+		}
+	});
+
 	//點擊「發布貼文」時會員登入判斷
 	//	var loggedIn = /*[[${loggedIn}]]*/ false;
 	//	document.getElementById('addPostBtn').addEventListener('click', function() {
@@ -53,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	//			window.location.href = /*[[@{/login}]]*/ '/login';
 	//		}
 	//	});
-	
+
 	//為了省略登入的判斷(有會員時可刪)
 	document.getElementById('addPostBtn').addEventListener('click', function() {
 		window.location.href = '/post/addPost';

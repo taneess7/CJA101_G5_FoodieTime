@@ -2,6 +2,8 @@ package com.foodietime.post.controller;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -236,7 +238,7 @@ public class PostController {
 	}
 
 	// ================ GET ALL 查詢所有貼文 ================
-	@GetMapping("/")
+	@GetMapping({"", "/"})
 	public String listAllPost(@RequestParam(value = "sort", required = false, defaultValue = "editDate") String sort,
 			ModelMap model, HttpSession session) {
 
@@ -244,7 +246,7 @@ public class PostController {
 		List<PostVO> list = postservice.getAll();
 		// 排序
 		switch (sort) {
-		case "likes":
+		case "like_Count":
 			list.sort((a, b) -> b.getLikeCount().compareTo(a.getLikeCount()));
 			break;
 		case "views":
@@ -281,6 +283,7 @@ public class PostController {
 			ModelMap model, HttpSession session) {
 		return listAllPost(sort, model, session); // 重定向到 listAllPost 方法
 	}
+	
 
 	// ================ 選擇頁面 ================
 	@GetMapping("/select_page")
@@ -288,7 +291,7 @@ public class PostController {
 		return "front/post/select_page";
 	}
 
-	// ================ 新增：按讚數排序 ================
+//	// ================ 新增：按讚數排序 ================
 //	@GetMapping("/byLikes")
 //	public String getPostsByLikes(ModelMap model, HttpSession session) {
 //
@@ -331,7 +334,7 @@ public class PostController {
 //			return "redirect:/post/";
 //		}
 //
-//		List<PostVO> list = postRepository.searchPostsByKeyword(keyword.trim(), sort);
+//		List<PostVO> list = postRepository.findByPostTitleContaining(keyword.trim(), sort);
 //		List<PostCategoryVO> categories = postCategoryservice.getAll();
 //
 //		model.addAttribute("threads", list);
@@ -346,28 +349,31 @@ public class PostController {
 //
 //		return "front/post/listallpost";
 //	}
-//
-//	// ================ 新增：分類查詢 ================
-//	@GetMapping("/category")
-//	public String getPostsByCategory(@RequestParam("categoryId") Integer categoryId,
-//			@RequestParam(value = "sort", defaultValue = "date") String sort, ModelMap model, HttpSession session) {
-//
-//		List<PostVO> list = postRepository.getPostsByCategory(categoryId, sort);
-//		List<PostCategoryVO> categories = postCategoryservice.getAll();
-//
-//		// 找到當前分類名稱
-//		String currentCategoryName = categories.stream().filter(cat -> cat.getPostCateId().equals(categoryId))
-//				.map(PostCategoryVO::getPostCate).findFirst().orElse("未知分類");
-//
-//		model.addAttribute("threads", list);
-//		model.addAttribute("categories", categories);
-//		model.addAttribute("currentSort", sort);
-//		model.addAttribute("currentCategory", categoryId);
-//		model.addAttribute("currentCategoryName", currentCategoryName);
-//
-//		boolean loggedIn = session.getAttribute("loginMember") != null;
-//		model.addAttribute("loggedIn", loggedIn);
-//
-//		return "front/post/listallpost";
-//	}
+
+	// ================ 分類查詢 ================
+	@GetMapping("/category")
+	public String getPostsByCategory(@RequestParam("categoryId") Integer categoryId,
+			@RequestParam(value = "sort", defaultValue = "date") String sort, ModelMap model, HttpSession session) {
+
+		List<PostVO> list = postRepository.findByCategoryAndSort(categoryId, sort);
+		List<PostCategoryVO> categories = postCategoryservice.getAll();
+
+	    // 找到當前分類名稱
+	    String currentCategoryName = categories.stream()
+	        .filter(cat -> cat.getPostCateId().equals(categoryId))
+	        .map(PostCategoryVO::getPostCate)
+	        .findFirst()
+	        .orElse("未知分類");
+
+	    model.addAttribute("threads", list);
+	    model.addAttribute("categories", categories);
+	    model.addAttribute("currentSort", sort);
+	    model.addAttribute("currentCategory", categoryId);
+	    model.addAttribute("currentCategoryName", currentCategoryName);
+
+	    boolean loggedIn = session.getAttribute("loginMember") != null;
+	    model.addAttribute("loggedIn", loggedIn);
+
+	    return "front/post/listallpost";
+	}
 }

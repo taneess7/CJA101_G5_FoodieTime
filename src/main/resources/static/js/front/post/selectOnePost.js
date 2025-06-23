@@ -69,3 +69,11 @@ setTimeout(function() {
 	var alert = document.querySelector('.alert-success');
 	if (alert) alert.style.display = 'none';
 }, 2000);
+
+function openReportMessageModal(mesId) {
+    document.getElementById('reportMessageId').value = mesId;
+    document.getElementById('reportMessageModal').style.display = 'block';
+}
+function closeReportMessageModal() {
+    document.getElementById('reportMessageModal').style.display = 'none';
+}

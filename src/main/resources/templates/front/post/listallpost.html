@@ -11,9 +11,9 @@
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 <!-- PWA 設定 -->
-<link rel="manifest" th:href="@{/manifest.json}">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#FF5722">
-<link rel="apple-touch-icon" th:href="@{/img/logo.png}">
+<link rel="apple-touch-icon" th:href="@{/images/icons/icon-192x192.png}">
 </head>
 <body class="min-h-screen bg-gray-100">
 
@@ -99,8 +99,15 @@
 
 		<div class="bg-white border-b border-gray-200">
 			<div class="flex space-x-4 px-4 py-2">
-				<button th:each="cat : ${categories}" class="btn btn-ghost"
-					th:text="${cat.postCate}"></button>
+				<!-- 查詢所有分類 -->
+				<a class="btn btn-ghost" th:href="@{/post/}"
+					th:classappend="${currentCategory == null} ? 'btn-primary' : ''">
+					全部 </a>
+				<!-- 其他分類 -->
+				<a th:each="cat : ${categories}" class="btn btn-ghost"
+					th:href="@{/post/category(categoryId=${cat.postCateId})}"
+					th:text="${cat.postCate}"
+					th:classappend="${currentCategory == cat.postCateId} ? 'btn-primary' : ''"></a>
 			</div>
 		</div>
 
@@ -125,7 +132,7 @@
 						style="display: inline;">
 						<select name="sort"
 							onchange="document.getElementById('sortForm').submit()">
-							<option value="likes" th:selected="${sort == 'likes'}">讚數</option>
+							<option value="like_Count" th:selected="${sort == 'like_Count'}">讚數</option>
 							<option value="messagecount"
 								th:selected="${sort == 'messagecount'}">留言數</option>
 							<option value="views" th:selected="${sort == 'views'}">瀏覽數</option>
