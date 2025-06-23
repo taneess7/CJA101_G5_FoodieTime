@@ -37,33 +37,55 @@ public class AdminMessageController {
     private MemService memService;
     
     @GetMapping
-    public String listTickets(@RequestParam(required = false, defaultValue = "pending") String type,Model model) {
+    public String listTickets(@RequestParam(required = false, defaultValue = "all") String type,@RequestParam(required = false) String keyword,@RequestParam(required = false) String dateRange
+,Model model) {
         List<DirectMessageDTO> allMessages = dmService.getAllMemberMessagesWithLatestReply();
         
-    	// 判斷 type：pending → 撈待處理，completed → 撈已處理
-        List<DirectMessageDTO> messageList;
+        // keyword 過濾
+        if (keyword != null && !keyword.isBlank()) {
+            allMessages = allMessages.stream()
+                .filter(m -> m.getMemName().contains(keyword)
+                          || String.valueOf(m.getDmId()).contains(keyword))
+                .toList();
+        }
+        
+        // 日期篩選
+        if (dateRange != null && !dateRange.isBlank()) {
+            allMessages = allMessages.stream()
+                .filter(m -> m.getMessTime().toLocalDate().toString().equals(dateRange))
+                .toList();
+        }
+        
+     // 預設
+        List<DirectMessageDTO> messageList = allMessages;
 
-        switch (type) {
-        case "pending":
+        // 條件篩選
+        if ("pending".equals(type)) {
             messageList = allMessages.stream()
                 .filter(m -> "待處理".equals(m.getReplyStatus()))
                 .toList();
-            break;
-        case "completed":
+        } else if ("completed".equals(type)) {
             messageList = allMessages.stream()
                 .filter(m -> "已回覆".equals(m.getReplyStatus()))
                 .toList();
-            break;
-        case "all":
-        default:
-            messageList = allMessages;
-            break;
         }
+        
+        // 統計數
+        long pendingCount = allMessages.stream()
+            .filter(m -> "待處理".equals(m.getReplyStatus()))
+            .count();
 
-        model.addAttribute("messages", messageList);
-        model.addAttribute("pendingCount", allMessages.stream().filter(m -> "待處理".equals(m.getReplyStatus())).count());
-        model.addAttribute("type", type); // 回傳 type，讓前端可以做 active 按鈕
-        model.addAttribute("completedCount", allMessages.stream().filter(m -> "已回覆".equals(m.getReplyStatus())).count());
+        long completedCount = allMessages.stream()
+            .filter(m -> "已回覆".equals(m.getReplyStatus()))
+            .count();
+	
+	
+	    model.addAttribute("messages", messageList);
+	    model.addAttribute("pendingCount", pendingCount);
+	    model.addAttribute("completedCount", completedCount);
+	    model.addAttribute("type", type);
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("dateRange", dateRange);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         List<String> formattedTimes = messageList.stream()
