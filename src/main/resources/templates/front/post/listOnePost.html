@@ -140,22 +140,51 @@
 	<!-- 貼文互動 -->
 	<div class="post-interactions">
 		<div class="interaction-stats">
-			<span>👍 128 個讚</span> <span>💬 45 則留言</span> <span>👁️ 1,234
-				次瀏覽</span>
-		</div>
-		<div class="interaction-buttons">
-			<button class="interaction-btn" onclick="toggleLike(this)">
-				<i class="material-icons-outlined">thumb_up</i> <span>讚</span>
-			</button>
-			<button class="interaction-btn" onclick="toggleBookmark(this)">
-				<i class="material-icons-outlined">bookmark</i> <span>收藏</span>
-			</button>
-			<button class="interaction-btn">
-				<i class="material-icons-outlined">share</i> <span>分享</span>
-			</button>
+			<span>👍 <span th:text="${postVO.likeCount}">0</span> 個讚
+			</span> <span>💬 <span th:text="${#lists.size(messageList)}">0</span>
+				則留言
+			</span> <span>👁️ <span th:text="${postVO.Views}">0</span> 次瀏覽
+			</span>
 		</div>
 	</div>
-	</article>
+	<!--     </div>div class="interaction-buttons"> -->
+	<!-- 讚/取消讚按鈕 -->
+<form th:action="@{/post/unlike}" method="post" style="display: inline;" th:if="${liked}">
+    <input type="hidden" name="postId" th:value="${postVO.postId}" />
+    <button class="interaction-btn active" type="submit">
+        <i class="material-icons-outlined" style="color: #1976d2;">thumb_up</i>
+        <span>已讚</span>
+    </button>
+</form>
+<form th:action="@{/post/like}" method="post" style="display: inline;" th:unless="${liked}">
+    <input type="hidden" name="postId" th:value="${postVO.postId}" />
+    <button class="interaction-btn" type="submit">
+        <i class="material-icons-outlined">thumb_up_off_alt</i>
+        <span>讚</span>
+    </button>
+</form>
+
+	<!-- 收藏/取消收藏按鈕 -->
+	<form th:action="@{/FavoritePost/delete}" method="post"
+		style="display: inline;" th:if="${bookmarked}">
+		<input type="hidden" name="postId" th:value="${postVO.postId}" />
+		<button class="interaction-btn active" type="submit">
+			<i class="material-icons-outlined" style="color: #f59e42;">bookmark</i>
+			<span>已收藏</span>
+		</button>
+	</form>
+	<form th:action="@{/FavoritePost/insert}" method="post"
+		style="display: inline;" th:unless="${bookmarked}">
+		<input type="hidden" name="postId" th:value="${postVO.postId}" />
+		<button class="interaction-btn" type="submit">
+			<i class="material-icons-outlined">bookmark_border</i> <span>收藏</span>
+		</button>
+	</form>
+	<!-- 分享按鈕 -->
+	<!--         <button class="interaction-btn" type="button" onclick="sharePost()"> -->
+	<!--             <i class="material-icons-outlined">share</i> <span>分享</span> -->
+	<!--         </button> -->
+
 
 	<!-- 留言區 -->
 	<section class="comments-section">
@@ -228,11 +257,10 @@
 				style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
 				<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
 				<form th:action="@{/reportmessage/insert}" method="post">
-					<input type="hidden" name="mes.mesId" id="reportMessageId" />
-					<input type="hidden" name="member.memId"
-						th:value="${loginMember.memId}" /> <input type="hidden"
-						name="repMessageStatus" value="0" /> <input type="hidden"
-						name="action" value="insert" />
+					<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input
+						type="hidden" name="member.memId" th:value="${loginMember.memId}" />
+					<input type="hidden" name="repMessageStatus" value="0" /> <input
+						type="hidden" name="action" value="insert" />
 					<div class="mb-2">
 						<label for="repMessageReason" class="block mb-1">檢舉原因</label>
 						<textarea id="repMesReason" name="repMesReason"
