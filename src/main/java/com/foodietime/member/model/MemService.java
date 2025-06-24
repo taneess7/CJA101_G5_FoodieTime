@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -118,6 +120,30 @@ public class MemService {
     public long countByRegTimeBetween(Timestamp start, Timestamp end) {
         return memberRepository.countByMemTimeBetween(start, end);
     }
+    
+    @Autowired
+    private JavaMailSender mailSender;
+
+    public void sendVerificationEmail(String to, String code) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("會員註冊驗證碼");
+        message.setText("您好，您的驗證碼是：" + code + "\n請於 10 分鐘內完成驗證！");
+        mailSender.send(message);
+    }
+    
+    public MemberVO getByMemCode(String code) {
+        return memberRepository.findByMemCode(code);
+    }
+
+    public void sendActivationEmail(String to, String link) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("會員啟用信");
+        message.setText("您好，請點擊以下連結啟用您的帳號：\n" + link + "\n\n如果不是您本人操作，請忽略此郵件。");
+        mailSender.send(message);
+    }
+
 
 
 

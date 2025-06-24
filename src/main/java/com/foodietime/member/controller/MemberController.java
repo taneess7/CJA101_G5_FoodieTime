@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import com.foodietime.member.model.MemberVO;
 import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -79,23 +81,14 @@ public class MemberController {
         }
 
         storeService.addStore(store); // ✅ 儲存 storeVO
-        return "redirect:/front/member/success";
+        return "redirect:/front/member/member_center";
     }
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-    	 if (!model.containsAttribute("member")) {
-    	        MemberVO member = new MemberVO();
-    	        member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
-    	        member.setMemNoSpeak(MemberVO.NoSpeakStatus.INACTIVE);
-    	        member.setMemNoPost(MemberVO.NoPostStatus.INACTIVE);
-    	        member.setMemNoGroup(MemberVO.NoGroupStatus.INACTIVE);
-    	        member.setMemNoJoingroup(MemberVO.NoJoingroupStatus.INACTIVE);
-    	        member.setTotalStarNum(0);
-    	        member.setTotalReviews(0);
-    	        member.setMemTime(Timestamp.from(Instant.now()));
-    	        model.addAttribute("member", member); // 這行不能少！
-    	    }
+    	if (!model.containsAttribute("member")) {
+    	    model.addAttribute("member", prepareMember());
+    	}
         return "front/member/register"; // 對應 src/main/resources/templates/member/register.html
     }
 
@@ -135,34 +128,89 @@ public class MemberController {
             model.addAttribute("error", "Email 已註冊過，請使用其他信箱");
             return "front/member/register";
         }
-
         
+        // 產生驗證碼
+        String verificationCode = String.valueOf((int)((Math.random() * 900000) + 100000)); // 6 位數
+        member.setMemCode(verificationCode); // 存進 VO
+
+        // 暫存
+        session.setAttribute("pendingMember", member);
+        session.setAttribute("verificationCode", verificationCode);
+        session.setAttribute("isStore", isStore);
+
+        // 寄信
+        memService.sendVerificationEmail(member.getMemEmail(), verificationCode);
+
+        return "front/member/verify";
+   
+    }
+    
+    @PostMapping("/verify")
+    public String verifyEmail(@RequestParam("code") String codeInput, HttpSession session, Model model) {
+    	String codeSent = (String) session.getAttribute("verificationCode");
+        MemberVO pendingMember = (MemberVO) session.getAttribute("pendingMember");
+
+        if (codeSent == null || pendingMember == null) {
+            model.addAttribute("error", "驗證流程已過期，請重新註冊");
+            return "redirect:/front/member/register";
+        }
+
+        if (!codeSent.equals(codeInput)) {
+            model.addAttribute("error", "驗證碼錯誤，請重新輸入");
+            return "front/member/verify";
+        }
+
+     // 通過驗證碼 → 產生啟用碼
+        String activationCode = UUID.randomUUID().toString();
+        pendingMember.setMemCode(activationCode);
+        pendingMember.setMemStatus(MemberVO.MemberStatus.INACTIVE);
+
+        memService.save(pendingMember);
+
+        // 寄 activation link
+        String activationLink = "http://localhost:8080/front/member/activate?code=" + activationCode;
+        memService.sendActivationEmail(pendingMember.getMemEmail(), activationLink);
+
+        // 清除 session
+        session.removeAttribute("pendingMember");
+        session.removeAttribute("verificationCode");
+
+        model.addAttribute("email", pendingMember.getMemEmail());
+        return "front/member/activation_notice";  // 提示會員去點啟用信
+    }
+    
+    @GetMapping("/activate")
+    public String activateAccount(@RequestParam("code") String code, Model model, HttpSession session) {
+        MemberVO member = memService.getByMemCode(code);
+
+
+        if (member == null) {
+            model.addAttribute("error", "啟用失敗，啟用碼無效！");
+            return "front/member/activation_failed";
+        }
+
+        member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
+        member.setMemCode(null);  // 清掉啟用碼
         memService.save(member);
 
         session.setAttribute("loggedInMember", member);
         model.addAttribute("nickname", member.getMemNickname());
-  
-        
+        Boolean isStore = (Boolean) session.getAttribute("isStore");
         if (Boolean.TRUE.equals(isStore)) {
-        	session.setAttribute("registeringStore", member); // 傳遞到 store 註冊
-            return "redirect:/front/member/storeregister"; // ⬅️ 第二階段：前往填寫店家資料
+            session.setAttribute("registeringStore", member);
+            session.removeAttribute("isStore");  // 別忘了清掉 isStore
+            return "redirect:/front/member/storeregister";
         }
-
-        return "front/member/success"; // ⬅️ 原有流程：一般會員註冊成功
+        return "front/member/activation_success";
     }
 
-    @GetMapping("/success")
-    public String registerSuccess(HttpSession session, Model model) {
-        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-        if (member != null) {
-            model.addAttribute("nickname", member.getMemNickname());
-        }
-        return "front/member/success";
-    }
     
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
-        model.addAttribute("member", new MemberVO()); // 可加可不加
+    public String showLoginForm(HttpSession session,Model model) {
+    	   // 如果已經登入，直接回會員中心
+        if (session.getAttribute("loggedInMember") != null) {
+            return "redirect:/front/member/member_center";
+        }
         return "front/member/login";
     }
 
@@ -178,6 +226,11 @@ public class MemberController {
 
         if (member == null) {
             model.addAttribute("error", "帳號或密碼錯誤！");
+            return "front/member/login";
+        }
+        
+        if (member.getMemStatus() != MemberVO.MemberStatus.ACTIVE) {
+            model.addAttribute("error", "帳號尚未啟用，請至信箱啟用！");
             return "front/member/login";
         }
 
@@ -297,5 +350,25 @@ public class MemberController {
 
         return "front/member/messages"; // 這頁就是 messages.html
     }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session,HttpServletResponse response) {
+        session.invalidate();
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        return "redirect:/index";
+    }
+    
+    @GetMapping("/memcoupon/member-coupons")
+    public String showMemberCoupons(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "redirect:/front/member/login";
+        }
+
+        return "front/memcoupon/member-coupons"; // 對應 templates/front/memcoupon/member-coupons.html
+    }
+
 
 }
