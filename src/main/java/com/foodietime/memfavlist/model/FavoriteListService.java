@@ -7,9 +7,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FavoriteListService {
-//
-//	private final FavoriteListRepository fvlistrepo;
-//
+
+	@Autowired
+    private FavoriteListRepository repository;
+	
+	 public void addFavoriteList(Integer memId, Integer prodId) {
+	        FavoriteListVO vo = new FavoriteListVO();
+	        vo.setMemId(memId);
+	        vo.setProdId(prodId);
+	        repository.save(vo);
+	    }
+	 
 //	@Autowired
 //	public FavoriteListService(FavoriteListRepository fvlistrepo) {
 //		this.fvlistrepo = fvlistrepo;
