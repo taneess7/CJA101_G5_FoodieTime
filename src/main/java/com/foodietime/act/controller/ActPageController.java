@@ -15,9 +15,8 @@ import com.foodietime.store.model.StoreVO;
 
 
 
-
 @Controller 
-public class ActListController {
+public class ActPageController {
 	@Autowired
 	ActService actSvc;
 	
@@ -25,28 +24,24 @@ public class ActListController {
 	StoreService storeSvc;
 	
 	/***進到前台畫面***/
-	@GetMapping("/front/act")
+	@GetMapping("/act")
     public String index() {
-        return "front/act/act"; 
+        return "/front/act/act"; // 對應 templates/act.html
     }
 	
-	/*** 進到查詢頁 /src/main/resources/templates/admin/act/select_page.html 與 listAllAct.html ***/  
+	/*** 進到後台查詢頁 /src/main/resources/templates/admin/act/select_page.html 與 listAllAct.html ***/  
 	@GetMapping("/act/select_page")
 	public String act_select_page(Model model){//事先塞好getAllActs，直接用 ${actListData} 就能拿到
 		model.addAttribute("actVO", new ActVO());
-		return "admin/act/select_page";
+		return "admin/act/select_page"; //select_page.html
 	}
 	
 	@GetMapping("/act/listAllAct")
 	public String listAllAct(Model model) { 
-		return "admin/act/listAllAct";
+		return "admin/act/listAllAct";  //listAllAct.html
 	}
 	
-	@GetMapping("/addAct")
-	public String addAct(Model model) { 
-		return "admin/act/addAct";
-	}
-	
+
 	
 	/***執行同一個Controller方法前，先準備資料，不用每個方法手動加model.addAttribute(...) 直接用 ${actListData} 就能拿到。 ***/  
 
