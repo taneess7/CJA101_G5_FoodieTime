@@ -43,7 +43,12 @@ public class CouponVO implements Serializable {
 	@ManyToOne
     @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID") // 外鍵名稱
 	private StoreVO store; 
-	
+
+	// 新增：優惠卷名稱
+	@NotEmpty(message="優惠券名稱: 請勿空白")
+	@Column(name = "COU_NAME", length = 255)
+	private String couName;
+
 	// 3.優惠券類型
 	@NotEmpty(message="優惠券類型: 請勿空白")
 	@Column(name = "COU_TYPE", length = 255)
@@ -51,9 +56,8 @@ public class CouponVO implements Serializable {
 	
 	// 4.優惠券說明
 	@NotEmpty(message="優惠券說明: 請勿空白")
-	@Column(name = "COU_DES", length = 255)
-	private String couDes;
-	
+	@Column(name = "COU_DESC", length = 255)
+	private String couDesc;
 
 	// 5.最低消費金額限制
 	@Column(name = "COU_MIN_ORD")
