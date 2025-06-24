@@ -12,22 +12,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.foodietime.member.model.MemberVO;
-import com.foodietime.store.model.StoreService;
-import com.foodietime.store.model.StoreVO;
-
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 
 import com.foodietime.directmessage.model.DirectMessageService;
 import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.member.model.MemService;
+import com.foodietime.member.model.MemberVO;
+import com.foodietime.store.model.StoreService;
+import com.foodietime.store.model.StoreVO;
+import com.foodietime.storeCate.model.StoreCateService;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/front/member")
@@ -39,8 +44,9 @@ public class MemberController {
     @Autowired
     private DirectMessageService dmService;
     
+    
     @Autowired
-    private StoreService storeService;
+    private StoreCateService storeCateSvc;
 
     
     // ✅ 初始化預設值（讓驗證不會失敗）
@@ -60,27 +66,58 @@ public class MemberController {
     
     @GetMapping("/storeregister")
     public String showStoreForm(HttpSession session, Model model) {
-        model.addAttribute("store", new StoreVO());
-        
+    	 // 先取得會員
         MemberVO member = (MemberVO) session.getAttribute("registeringStore");
-        if (member != null) {
-            System.out.println("準備為會員 ID " + member.getMemId() + " 建立店家資料");
-            // 你也可以在 StoreVO 中預設 storEmail = member.getMemEmail() 這類邏輯
+        if (member == null) {
+            // 沒登入，或流程錯誤，回會員登入
+            return "redirect:/front/member/login";
         }
+        if (member.getMemStatus() == MemberVO.MemberStatus.INACTIVE) {
+            model.addAttribute("errorMessage", "請先完成帳號啟用，才能註冊店家！");
+            return "front/member/login";
+        }
+        model.addAttribute("store", new StoreVO());
+        model.addAttribute("storeCateList", storeCateSvc.getAll	());
+        System.out.println("準備為會員 ID " + member.getMemId() + " 建立店家資料");
+        
 
         return "front/member/storeregister";
     }
     
     @PostMapping("/storeregister")
-    public String processStoreForm(@ModelAttribute("store") StoreVO store,
+    public String processStoreForm(@Valid @ModelAttribute("store") StoreVO store,
                                    BindingResult result,
-                                   Model model) {
+                                   @RequestParam("photoFile") MultipartFile photoFile,
+                                   HttpSession session,
+                                   Model model) throws IOException {
 
         if (result.hasErrors()) {
+        	model.addAttribute("storeCateList", storeCateSvc.getAll());
             return "front/member/storeregister";
         }
+        
+        // 設定預設值
+        store.setStorStatus((byte) 2); // 未上架
+        store.setStorReportCount((byte) 0);
+        store.setStarNum(0);
+        store.setReviews(0);
+        store.setStorOpen((byte) 1); // 預設營業
+        
+        // 處理圖片
+        if (photoFile != null && !photoFile.isEmpty()) {
+            store.setStorPhoto(photoFile.getBytes());
+        }
+        
+        // 取出會員
+        MemberVO member = (MemberVO) session.getAttribute("registeringStore");
+        if (member != null) {
+            store.setStorEmail(member.getMemEmail());
+            // 如果你之後有 FK，可以寫 store.setMember(member);
+        }
 
-        storeService.addStore(store); // ✅ 儲存 storeVO
+//        storeService.addStore(store); // ✅ 儲存 storeVO
+        
+        session.removeAttribute("registeringStore"); // 記得清掉！
         return "redirect:/front/member/member_center";
     }
 
@@ -149,7 +186,14 @@ public class MemberController {
     public String verifyEmail(@RequestParam("code") String codeInput, HttpSession session, Model model) {
     	String codeSent = (String) session.getAttribute("verificationCode");
         MemberVO pendingMember = (MemberVO) session.getAttribute("pendingMember");
-
+        
+        
+        // 🌟 存 pendingIsStore，給 activate 判斷
+        Boolean isStore = (Boolean) session.getAttribute("isStore");
+        session.setAttribute("pendingIsStore", isStore);
+        session.removeAttribute("isStore"); // 清掉原本的
+        
+        
         if (codeSent == null || pendingMember == null) {
             model.addAttribute("error", "驗證流程已過期，請重新註冊");
             return "redirect:/front/member/register";
@@ -160,7 +204,7 @@ public class MemberController {
             return "front/member/verify";
         }
 
-     // 通過驗證碼 → 產生啟用碼
+        // 通過驗證碼 → 產生啟用碼
         String activationCode = UUID.randomUUID().toString();
         pendingMember.setMemCode(activationCode);
         pendingMember.setMemStatus(MemberVO.MemberStatus.INACTIVE);
@@ -174,6 +218,8 @@ public class MemberController {
         // 清除 session
         session.removeAttribute("pendingMember");
         session.removeAttribute("verificationCode");
+        
+        
 
         model.addAttribute("email", pendingMember.getMemEmail());
         return "front/member/activation_notice";  // 提示會員去點啟用信
@@ -183,22 +229,49 @@ public class MemberController {
     public String activateAccount(@RequestParam("code") String code, Model model, HttpSession session) {
         MemberVO member = memService.getByMemCode(code);
 
-
-        if (member == null) {
+        // 🌟 Case 1：該 code 已被清除，但帳號已啟用 → 直接顯示成功頁
+        if (member == null) {	
+        	// 嘗試 fallback
+            String fallbackEmail = (String) session.getAttribute("lastActivatedEmail");
+            if (fallbackEmail != null) {
+                MemberVO fallbackMember = memService.getByMemEmail(fallbackEmail);
+                if (fallbackMember != null && fallbackMember.getMemStatus() == MemberVO.MemberStatus.ACTIVE) {
+                    session.setAttribute("loggedInMember", fallbackMember);
+                    model.addAttribute("nickname", fallbackMember.getMemNickname());
+                    return "front/member/activation_success";
+                }
+            }
             model.addAttribute("error", "啟用失敗，啟用碼無效！");
+            session.removeAttribute("pendingIsStore"); // 確保清掉
+            session.removeAttribute("lastActivatedEmail");
             return "front/member/activation_failed";
         }
+        
+        // 🌟 Case 2：該帳號已經啟用過 → 再點一次，不要失敗，直接當作成功
+        if (member.getMemStatus() == MemberVO.MemberStatus.ACTIVE) {
+            session.setAttribute("loggedInMember", member);
+            model.addAttribute("nickname", member.getMemNickname());
+            return "front/member/activation_success";
+        }
 
+        // Case 3：正常啟用流程
         member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
         member.setMemCode(null);  // 清掉啟用碼
         memService.save(member);
 
         session.setAttribute("loggedInMember", member);
         model.addAttribute("nickname", member.getMemNickname());
-        Boolean isStore = (Boolean) session.getAttribute("isStore");
+        
+        // 記住 fallback email
+        session.setAttribute("lastActivatedEmail", member.getMemEmail());
+
+        
+
+        // 🌟 用 pendingIsStore
+        Boolean isStore = (Boolean) session.getAttribute("pendingIsStore");
         if (Boolean.TRUE.equals(isStore)) {
             session.setAttribute("registeringStore", member);
-            session.removeAttribute("isStore");  // 別忘了清掉 isStore
+            session.removeAttribute("pendingIsStore");  
             return "redirect:/front/member/storeregister";
         }
         return "front/member/activation_success";

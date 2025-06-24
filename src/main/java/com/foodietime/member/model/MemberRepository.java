@@ -22,5 +22,7 @@ public interface MemberRepository extends JpaRepository<MemberVO, Integer>{
     long countByMemTimeBetween(Timestamp start, Timestamp end);
     
     MemberVO findByMemCode(String memCode);
+    
+    MemberVO findByMemEmail(String memEmail);
 
 }

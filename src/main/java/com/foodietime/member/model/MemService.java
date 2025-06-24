@@ -143,6 +143,11 @@ public class MemService {
         message.setText("您好，請點擊以下連結啟用您的帳號：\n" + link + "\n\n如果不是您本人操作，請忽略此郵件。");
         mailSender.send(message);
     }
+    
+    public MemberVO getByMemEmail(String email) {
+        return memberRepository.findByMemEmail(email);
+    }
+
 
 
 
