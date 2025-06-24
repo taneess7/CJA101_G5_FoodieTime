@@ -24,6 +24,12 @@ public class ActListController {
 	@Autowired
 	StoreService storeSvc;
 	
+	/***進到前台畫面***/
+	@GetMapping("/front/act")
+    public String index() {
+        return "front/act/act"; 
+    }
+	
 	/*** 進到查詢頁 /src/main/resources/templates/admin/act/select_page.html 與 listAllAct.html ***/  
 	@GetMapping("/act/select_page")
 	public String act_select_page(Model model){//事先塞好getAllActs，直接用 ${actListData} 就能拿到
