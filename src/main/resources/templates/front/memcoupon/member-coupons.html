@@ -133,13 +133,14 @@
                     </div>
 
                     <!-- 使用 th:each 迭代優惠券列表 -->
-                    <div th:each="memCoupon : ${memberCoupons}" ...
+                    <div th:each="memCoupon : ${memberCoupons}"
                          th:with="
         coupon=${memCoupon.coupon},
         isUsed=${memCoupon.useStatus == 1},
         isExpired=${memCoupon.useStatus == 0 and now.after(coupon.couEndDate)},
         isAvailable=${memCoupon.useStatus == 0 and !now.after(coupon.couEndDate) and !now.before(coupon.couStartDate)}
-     ">
+     "
+                         class="coupon-card"  th:classappend="${isUsed ? 'used' : (isExpired ? 'expired' : '')}">
 
                         <!-- 卡片頭部 -->
                         <div class="coupon-header">
