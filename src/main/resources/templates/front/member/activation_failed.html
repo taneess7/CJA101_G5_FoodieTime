@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>啟用失敗</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-red-100">
+    <div class="bg-white p-10 rounded-2xl shadow-xl text-center w-96">
+        <h2 class="text-2xl font-bold mb-4 text-red-700">啟用失敗！</h2>
+        <p class="mb-6" th:text="${error}">啟用碼無效或已過期，請重新註冊。</p>
+        <a th:href="@{/front/member/register}" class="block w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">重新註冊</a>
+    </div>
+</body>
+</html>

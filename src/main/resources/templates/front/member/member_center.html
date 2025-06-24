@@ -5,10 +5,55 @@
     <meta charset="UTF-8">
     <title>會員中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+            // 如果是 Back-Forward Cache，強制 reload
+            window.location.reload();
+        }
+    });
+	</script>
+    
 </head>
 
 <body class="bg-gradient-to-br from-orange-100 to-rose-200 min-h-screen py-10 px-4 font-sans">
+	<header class="bg-white shadow-md py-4 mb-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6">
+        <!-- Logo 區域 -->
+        <a th:href="@{/index}" class="flex items-center space-x-3">
+            <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="w-10 h-10 object-contain">
+            <span class="text-xl font-bold text-orange-700">FoodieTime 食刻</span>
+        </a>
 
+        <!-- 會員選單 -->
+        <nav>
+            <ul class="flex items-center space-x-6">
+                <!-- 已登入時顯示 -->
+                <li th:if="${session.loggedInMember != null}">
+                    <a th:href="@{/front/member/member_center}" 
+                       class="text-gray-700 hover:text-orange-600 font-medium">
+                        會員中心
+                    </a>
+                </li>
+              
+                <li>
+                    <a th:href="@{/front/memcoupon/member-coupons}" class="text-gray-700 hover:text-orange-600 font-medium">我的優惠券</a>
+                </li>
+                <li>
+                    <a th:href="@{/front/member/orders}" class="text-gray-700 hover:text-orange-600 font-medium">我的訂單</a>
+                </li>
+                  <li th:if="${session.loggedInMember != null}">
+                    <a th:href="@{/front/member/logout}" 
+                       class="text-white bg-orange-600 px-4 py-2 rounded-md hover:bg-orange-700 font-medium inline-block text-center">
+                        登出
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
     <div class="max-w-4xl mx-auto bg-white p-10 rounded-3xl shadow-2xl transition-all duration-300">
         <h2 class="text-4xl font-bold text-orange-700 mb-8 text-center tracking-wide">會員中心</h2>
 
