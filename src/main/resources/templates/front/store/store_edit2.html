@@ -19,7 +19,7 @@
 
 body {
 	font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-	background-color: #f8f9fa;
+	background-color: rgba(255,127,80, 0.08);
 	color: #333;
 	line-height: 1.6;
 }
@@ -441,8 +441,7 @@ select.form-input {
 	box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-@
-keyframes slideIn {from { opacity:0;
+@keyframes slideIn {from { opacity:0;
 	transform: translateY(-20px);
 }
 
@@ -648,17 +647,10 @@ to {
 	white-space: nowrap;
 }
 
-#storeimg img {
-	max-width: 200px; /* 圖片最大寬度 */
-	max-height: 200px; /* 圖片最大高度 */
-	width: auto; /* 自動寬 */
-	height: auto; /* 自動高 */
-	object-fit: contain; /* 保持比例顯示 */
-	display: block;
-}
+
 
 div.welcome {
-	padding: 10px 0px 10px 50px;
+	padding: 10px 0px 10px 10px;
 }
 
 .form-container {
@@ -687,21 +679,22 @@ div.welcome {
   align-items: baseline; /* 或 center，看你想要的對齊方式 */
   gap: 20px; /* 控制兩者間距 */
 }
+
+
 </style>
 
 </head>
 <body>
 	<main>
-
+		<h2	th:utext="'<span style=\'color:green;\'>歡迎  ' + ${storeVO.storName} + '</span>'">預設名稱</h2>
 		<!-- 歡迎光臨區塊 -->
 		<div th:fragment="storeEditFragment">
 			<div class="welcome">
-				<h2
-					th:utext="'<span style=\'color:green;\'>歡迎  ' + ${storeVO.storName} + '</span>'">預設名稱</h2>
-				<!-- 店家圖片 -->
-				<div id="storeimg">
-					<img th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="商家圖片">
-				</div>
+				
+<!-- 				店家圖片 -->
+<!-- 				<div id="storeimg"> -->
+<!-- 					<img th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="商家圖片"> -->
+<!-- 				</div> -->
 				<div class="section-header">
 				<h1 class="section-title">編輯店家資訊</h1><span class="section-subtitle">更新您的店家資訊，讓更多顧客找到您</span>
 				</div>
@@ -714,7 +707,7 @@ div.welcome {
 
 
 <!-- form 開始:  action 目前執行更新商品功能 -->
-						<form th:object="${storeVO}" th:action="@{/updateAll}"
+						<form th:object="${storeVO}" th:action="@{/store/updateAll}"
 							method="post" enctype="multipart/form-data">
 							<br>
 							<!-- 顯示錯誤驗證訊息 -->
@@ -853,11 +846,13 @@ div.welcome {
 								</select>
 							</div>
 							<br>
+							
 							<!-- 店家信箱（不可編輯） -->
 							<div class="form-group">
-								<label class="form-label">Email</label> <input type="email"
-									class="form-input" th:field="*{storEmail}" readonly>
+								<label class="form-label">Email</label> 
+								<input type="email" class="form-input" th:field="*{storEmail}" readonly>
 							</div>
+							
 							<br>
 							<!-- 店家照片上傳含預覽功能 ，頁面載入時可見-綁定th:src -->
 							<div class="form-group">
@@ -867,9 +862,23 @@ div.welcome {
 								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
 								<img id="imagePreview"
 									th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="預覽圖片"
-									style="max-width: 200px; margin-top: 10px;" />
+									style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
 
 							</div>
+							
+							<div style="text-align: right;">
+							<input type="hidden" th:field="*{storReportCount}"></span>
+							<!-- 顯示文字 -->
+							<div style="text-align: right;">
+							  <span th:text="'評價星數：' + ${storeVO.starNum}"></span>
+							  <span th:text="' 評價人數：' + ${storeVO.reviews}"></span>
+							</div>
+							
+							<!-- 實際送出的資料（readonly） -->
+							<input type="hidden" th:field="*{starNum}" />
+							<input type="hidden" th:field="*{reviews}" />
+							</div>
+							
 
 							<!-- 送出按鈕 -->
 							<div class="form-actions">

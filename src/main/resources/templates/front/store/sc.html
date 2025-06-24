@@ -78,7 +78,7 @@
       border: none;
       width: 100%;
 	  overflow: hidden;
-  	  height: 80vh;
+  	  height: 89vh;
 
     }
     .form-group {
@@ -825,13 +825,13 @@ select:disabled {
       <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
       <button class="tab-btn" data-tab="product">上傳商品</button>
       <button class="tab-btn" data-tab="product-view">查看商品</button>
-      <button class="tab-btn" data-tab="product-view">查看優惠券</button>
-      <button class="tab-btn" data-tab="product-view">查看活動</button>
+      <button class="tab-btn" data-tab="coupon-view">查看優惠券</button>
+      <button class="tab-btn" data-tab="activity-view">查看活動</button>
     </aside>
 
 <!-- 店家資料維護頁 -->
     <section class="content-panel active" id="tab-store">
-      <iframe th:src="@{/store_edit2}" height="1400"></iframe>
+      <iframe th:src="@{/store/store_edit2}" height="1400"></iframe>
 <!--           <div th:replace="store_edit :: storeEditFragment"></div> -->
     </section>
 
@@ -874,11 +874,13 @@ select:disabled {
     </section>
     
 <!-- 查看優惠券 -->    
+    <section class="content-panel" id="tab-coupon-view">
     
-    
-  
+     </section>
 <!-- 查看活動 -->    
-
+	<section class="content-panel" id="tab-activity-view">
+      <iframe th:src="@{/act}" height="1000"></iframe>
+    </section>
 
 
 

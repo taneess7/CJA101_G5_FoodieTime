@@ -257,7 +257,7 @@ public class AddUpdateController {
 		protected Map<Integer, String> referenceStore(){
 			Map<Integer, String> map = new LinkedHashMap<Integer, String>();
 			map.put(0, "店家");//false
-			map.put(1, "店家");//true
+			map.put(1, "全店家");//true
 			return map;
 		}
 	

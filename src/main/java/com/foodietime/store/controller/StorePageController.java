@@ -32,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodietime.cart.model.CartVO;
 import com.foodietime.coupon.model.CouponService;
 import com.foodietime.coupon.model.CouponVO;
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.product.model.ProductService;
 import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreService;
@@ -71,13 +73,26 @@ public class StorePageController {
         return "front/store/sc";
     	
     }
+    
+    //取得店家登入資訊
+//    @GetMapping("/store_edit2")
+//    public String goStoreEdit(Model model, HttpSession session) {
+//    	StoreVO storeVO = (StoreVO) session.getAttribute("loggedInStore");
+//    	if (storeVO == null) {
+//    		return "redirect:/login";
+//    	}
+//    	Integer currentStorId = storeVO.getStorId();
+//    	}
+//    	
+    
 /*------------------------------------------------------------------------------------------------------*/
 	
     // 主要頁面 store_edit2 - 簡單版店家頁面 - store_edit2 - 目前可自動撈資料
 	@GetMapping("/store_edit2")
 	public String goStoreEdit(Model model) { // th:field="*{storName}" 一定要給model storeVO
 		StoreVO storeVO = new StoreVO(); // 從資料庫撈資料
-		storeVO = storeSvc.findById(2); // 取出店家編號 ---- 這行控制進入網頁帶出的店家
+		Integer currentStorId = 5;
+		storeVO = storeSvc.findById(currentStorId); // 取出店家編號 ---- 這行控制進入網頁帶出的店家
 		model.addAttribute("storeVO", storeVO); // 這一行必不可少！
 		model.addAttribute("storCatNameList", storeCateSvc.getAll());
 		// 顯示預覽圖//
@@ -85,7 +100,7 @@ public class StorePageController {
 			String base64Image = Base64.getEncoder().encodeToString(storeVO.getStorPhoto());
 			model.addAttribute("base64Image", base64Image);
 		} else {
-			model.addAttribute("base64Image", ""); // 或放預設圖片連結
+			model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?"); // 或放預設圖片連結
 		}
 
 		// 撈取資料後回到原頁面//
@@ -98,34 +113,57 @@ public class StorePageController {
 			@RequestParam("upFiles") MultipartFile[] parts, @RequestParam("storWeeklyOffDay") String[] offDays // 公休日欄位：多選
 	) throws IOException {
 
-		System.out.println("[後端進入 update]");
+		System.out.println("[後端進入 updateAll]");
 		System.out.println("接收到 ID：" + storeVO.getStorId());
 
-		// 1. 若有驗證錯誤（來自 @NotBlank, @Email 等），就返回原頁
+		// 1. 若有驗證錯誤（來自 @NotN @NotBlank, @Email 等），就返回原頁
 		if (result.hasErrors()) {
+			if (storeVO.getStorOffDay() == null) {
+				storeVO.setStorOffDay(""); }// 轉空字串以避免 Thymeleaf contains 錯誤
 			model.addAttribute("storeVO", storeVO);
 			model.addAttribute("error", "請檢查欄位輸入");
 			model.addAttribute("storCatNameList", storeCateSvc.getAll());
-			return "front/store/store_edit2"; // 下一頁
+			System.out.println("hasErrors1");
+			return "front/store/store_edit2"; 
 		}
 
 		// 2. 處理圖片欄位（若未上傳新圖片，保留舊圖）
 		if (parts[0].isEmpty()) {
 			byte[] originalPhoto = storeSvc.findById(storeVO.getStorId()).getStorPhoto();
 			storeVO.setStorPhoto(originalPhoto);
+			System.out.println("hasErrors2");
 		} else {
 			byte[] photo = parts[0].getBytes();
 			storeVO.setStorPhoto(photo);
+			System.out.println("圖片設置成功");
 		}
 
-		// 2.1 處理經緯度欄位（若為 null 則保留原本資料）
+		// 2.1 處理欄位（若為 null 則保留原本資料）
+		// 先抓出原本的 Store 資料
 		StoreVO originalStore = storeSvc.findById(storeVO.getStorId());
+		// 保留經緯度
 		if (storeVO.getStorLat() == null) {
 			storeVO.setStorLat(originalStore.getStorLat());
 		}
 		if (storeVO.getStorLon() == null) {
 			storeVO.setStorLon(originalStore.getStorLon());
 		}
+
+		// 保留檢舉數
+		if (storeVO.getStorReportCount() == null) {
+			storeVO.setStorReportCount(originalStore.getStorReportCount());
+		}
+
+		// 保留總星星數
+		if (storeVO.getStarNum() == null) {
+			storeVO.setStarNum(originalStore.getStarNum());
+		}
+
+		// 保留總評論數
+		if (storeVO.getReviews() == null) {
+			storeVO.setReviews(originalStore.getReviews());
+		}
+	
 
 		// 放入所有類別
 		List<StoreCateVO> storCatNameList = storeCateSvc.getAll();
@@ -137,9 +175,15 @@ public class StorePageController {
 
 		// 4. 更新
 		storeSvc.updateStore(storeVO);
-
-		return "redirect:/"; // 或你想回去的頁面
+		System.out.println("更新成功");
+		return "redirect:/store/success";
 	}
+	
+	 @GetMapping("/success")
+	    public String home() {
+		 System.out.println("進入成功頁");
+	        return "front/store/success"; 
+	    }
 
 //============================甜點飲料餐廳===============================//
 
@@ -158,7 +202,7 @@ public class StorePageController {
 				String base64Image = Base64.getEncoder().encodeToString(store.getStorPhoto());
 				storeImageMap.put(store.getStorId(), base64Image);
 			} else {
-				storeImageMap.put(store.getStorId(), ""); // 可改成預設圖連結
+				storeImageMap.put(store.getStorId(), "https://placehold.co/300x200/ffcc00/333?"); // 可改成預設圖連結
 			}
 		}
 		model.addAttribute("storeImageMap", storeImageMap); // 傳給前端 HTML 使用

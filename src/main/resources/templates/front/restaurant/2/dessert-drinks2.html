@@ -168,12 +168,15 @@
 					class="restaurant-detail">
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">
-						 <!-- ✅ 改寫：使用 base64 圖片與 onerror fallback -->
+<!-- 						 ✅ 改寫：使用 base64 圖片與 onerror fallback -->
            
-<!-- 							<img th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}" th:alt="${store.storName}" -->
+							<img th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}"
+    						 th:alt="${store.storName}" class="restaurant-image"
+     							onerror="this.src='https://placehold.co/300x200/ffcc00/333?'" />
+								
+								
+<!-- 								<img src="https://placehold.co/300x200/ffcc00/333?>" th:alt="${store.storName}" -->
 <!-- 								class="restaurant-image"> -->
-								<img src="https://placehold.co/300x200/ffcc00/333?>" th:alt="${store.storName}"
-								class="restaurant-image">
 							<div class="restaurant-primary-info">
 								<h2 class="restaurant-name" th:text="${store.storName}">餐廳名稱</h2>
 								<span class="cuisine-tag cuisine-american"
