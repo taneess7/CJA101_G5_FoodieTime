@@ -181,44 +181,46 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">即將結束</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/gb/leader}">
-						    <i class="bi bi-person-badge"></i> 我是團長
-						</a>
+                    
+                    
+                    <li class="nav-item">                                     
+                      <!-- 未登入狀態：顯示登入模態視窗 -->
+                      <a th:if="${session.loggedInMember == null}" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
+                      <!-- 已登入狀態：直接跳轉到團長專區 -->
+                      <a th:if="${session.loggedInMember != null}" class="nav-link" href="/gb/leader">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
                   </li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    
-                    <!-- 通知圖標 -->
-                    <div class="position-relative me-3">
-                        <a href="#" class="btn btn-outline-secondary position-relative">
-                            <i class="bi bi-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
-                                3
-                            </span>
-                        </a>
-                    </div>
-
                     <!-- 用戶資訊下拉選單 -->
                     <div class="dropdown">
-                        <a class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="用戶頭像" class="user-avatar">
-                            <span>林小美</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" th:href="@{/gb/leader}"><i class="bi bi-person"></i> 我是團長</a></li>
-                            <li><a class="dropdown-item" th:href="@{/gb/leader-groups}"><i class="bi bi-box"></i> 團購管理</a></li>
-                            <li><a class="dropdown-item" th:href="@{/gb/leader-orders}"><i class="bi bi-bag"></i> 訂單管理</a></li>
-                            <li><a class="dropdown-item" th:href="@{/gb/leader-cashflow}"><i class="bi bi-credit-card"></i> 金流管理</a></li>
-                            <li><a class="dropdown-item" th:href="@{/gb/leader-address}"><i class="bi bi-geo-alt"></i> 收貨地址</a></li>
-                            <li><a class="dropdown-item" th:href="@{/gb/leader-notifications}"><i class="bi bi-bell"></i> 通知管理</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> 幫助中心</a></li>
-                            <li><a class="dropdown-item text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a></li>
-                        </ul>
+                        <!-- 未登入狀態：顯示登入 / 註冊 -->
+					    <div th:if="${session.loggedInMember == null}">
+					        <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+					            <i class="bi bi-person"></i> 登入
+					        </a>
+					        <a href="/register" class="btn btn-outline-primary me-2">
+					            <i class="bi bi-person-plus"></i> 註冊
+					        </a>
+					    </div>
+					
+					    <!-- 已登入狀態：顯示帳號 -->
+					    <div th:if="${session.loggedInMember != null}" class="dropdown">
+					        <a href="#" class="btn btn-outline-success dropdown-toggle me-2" data-bs-toggle="dropdown" aria-expanded="false">
+					            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
+					        </a>
+					        <ul class="dropdown-menu">
+					            <li><a class="dropdown-item" href="/member/profile">會員中心</a></li>
+					            <li><a class="dropdown-item" href="/logout">登出</a></li>
+					        </ul>
+					    </div>
                     </div>
-
                 </div>
+                
+                
             </div>
         </div>
     </nav>
@@ -236,13 +238,49 @@
                     </div>
                     
                     <nav class="nav flex-column">
-                        <a class="nav-link" th:href="@{/gb/leader}"><i class="bi bi-person"></i> 我是團長</a>
-                        <a class="nav-link" th:href="@{/gb/leader-groups}"><i class="bi bi-box"></i> 團購管理</a>
-                        <a class="nav-link" th:href="@{/gb/leader-orders}"><i class="bi bi-bag"></i> 訂單管理</a>
-                        <a class="nav-link active" th:href="@{/gb/leader-cashflow}"><i class="bi bi-credit-card"></i> 金流管理</a>
-                        <a class="nav-link" th:href="@{/gb/leader-address}"><i class="bi bi-geo-alt"></i> 收貨地址</a>
-                        <a class="nav-link" th:href="@{/gb/leader-notifications}"><i class="bi bi-bell"></i> 通知管理</a>
-                        <a class="nav-link text-danger" href="../gp/gbindex.html"><i class="bi bi-box-arrow-right"></i> 登出</a>
+                        <!-- 未登入狀態：顯示登入頁面 -->
+						<div th:if="${session.loggedInMember == null}">
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-person"></i> 我是團長
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-box"></i> 團購管理
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-bag"></i> 訂單管理
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-credit-card"></i> 金流管理
+						    </a>
+						    <a class="nav-link active" th:href="@{/login}">
+						        <i class="bi bi-geo-alt"></i> 收貨地址
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-bell"></i> 通知管理
+						    </a>
+						</div>
+						
+						<!-- 已登入狀態：顯示相應頁面 -->
+						<div th:if="${session.loggedInMember != null}">
+						    <a class="nav-link" th:href="@{/gb/leader}">
+						        <i class="bi bi-person"></i> 我是團長
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-groups}">
+						        <i class="bi bi-box"></i> 團購管理
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-orders}">
+						        <i class="bi bi-bag"></i> 訂單管理
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-cashflow}">
+						        <i class="bi bi-credit-card"></i> 金流管理
+						    </a>
+						    <a class="nav-link active" th:href="@{/gb/leader-address}">
+						        <i class="bi bi-geo-alt"></i> 收貨地址
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-notifications}">
+						        <i class="bi bi-bell"></i> 通知管理
+						    </a>
+						</div>
                     </nav>
                 </div>
             </div>
@@ -307,6 +345,106 @@
         </div>
     </div>
 
+
+<!-- 登入彈窗 -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">會員登入</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/front/member/login" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">帳號</label>
+                            <input type="text" class="form-control" name="mem_account" id="mem_account" placeholder="帳號">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密碼</label>
+                            <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">記住我</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">登入</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <p>還沒有帳號？ <a href="#" class="text-decoration-none">立即註冊</a></p>
+                        <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-outline-danger">
+                            <i class="bi bi-google"></i> 使用 Google 登入
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-facebook"></i> 使用 Facebook 登入
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="organizerModal" tabindex="-1" aria-labelledby="organizerModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="organizerModalLabel">團長專區</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-center mb-4">
+                      <i class="bi bi-person-badge" style="font-size: 3rem; color: #ff6b6b;"></i>
+                      <h4 class="mt-2">團長登入</h4>
+                      <p class="text-muted">登入您的團長帳號，管理您的團購活動</p>
+                  </div>
+                  <form>
+                      <div class="mb-3">
+                          <label for="organizerEmail" class="form-label">帳號</label>
+                          <input type="text" class="form-control" name="mem_account" id="mem_account" placeholder="帳號">
+                      </div>
+                      <div class="mb-3">
+                          <label for="organizerPassword" class="form-label">密碼</label>
+                          <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
+                      </div>
+                      <div class="mb-3 form-check">
+                          <input type="checkbox" class="form-check-input" id="organizerRememberMe">
+                          <label class="form-check-label" for="organizerRememberMe">記住我</label>
+                      </div>
+                      <div class="d-grid">
+                          <button type="submit" class="btn btn-primary">登入團長專區</button>
+                      </div>
+                  </form>
+                  <hr>
+                  <div class="text-center">
+                      <p>還不是團長？ <a href="#" class="text-decoration-none">立即申請成為團長</a></p>
+                      <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                  </div>
+                  <div class="mt-4">
+                      <h5 class="text-center mb-3">團長專區功能</h5>
+                      <div class="row text-center">
+                          <div class="col-4">
+                              <i class="bi bi-shop" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">開設團購</p>
+                          </div>
+                          <div class="col-4">
+                              <i class="bi bi-graph-up" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">銷售分析</p>
+                          </div>
+                          <div class="col-4">
+                              <i class="bi bi-people" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">會員管理</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
     <!-- 頁腳 -->
     <footer class="footer">
         <div class="container">

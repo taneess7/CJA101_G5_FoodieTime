@@ -15,6 +15,9 @@ public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCas
            "WHERE p.member.memId = :memId AND p.leader = :leader")
     List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memId, byte leader);
 
+    //依團購編號(gbId)與會員編號(memId)查詢單筆團購，確保只能看到自己的紀錄
+    GroupBuyingCasesVO findByGbIdAndMember_MemId(Integer gbId, Integer memId);
+
     // 查詢某店家開的所有團購案（根據 StoreVO.storId）
     List<GroupBuyingCasesVO> findByStore_StorId(Integer storId);
 

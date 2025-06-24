@@ -12,10 +12,17 @@ import com.foodietime.member.model.MemberVO;
 import jakarta.persistence.*;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Data
 @Table(name = "group_purchase_report")
+@JsonIdentityInfo(
+	    generator = ObjectIdGenerators.PropertyGenerator.class,
+	    property  = "reportId",
+	    scope     = GroupPurchaseReportVO.class
+	)
 public class GroupPurchaseReportVO implements Serializable {
 
     @Id

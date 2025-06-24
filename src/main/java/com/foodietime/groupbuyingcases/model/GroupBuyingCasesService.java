@@ -22,6 +22,11 @@ public class GroupBuyingCasesService {
         return groupBuyingCasesRepository.findByMember_MemIdAndLeader(memberId, leader);
     }
     
+    //依群組ID與會員ID查詢團購，確保只能看到自己的團購詳情
+    public GroupBuyingCasesVO findByIdAndMemId(Integer gbId, Integer memId) {
+        return groupBuyingCasesRepository.findByGbIdAndMember_MemId(gbId, memId);
+    }
+    
     // 查詢某店家開的所有團購案
     public List<GroupBuyingCasesVO> findByStoreId(Integer storId) {
         return groupBuyingCasesRepository.findByStore_StorId(storId);

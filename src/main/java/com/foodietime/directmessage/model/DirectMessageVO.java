@@ -17,9 +17,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+
 
 @Entity
+@ToString(exclude = {"member","smgr"})
+@EqualsAndHashCode(exclude = {"member","smgr"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "dmId")
+
 @Data
 @ToString(exclude = {"member"})
 @Table(name = "direct_message")
