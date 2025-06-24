@@ -3,6 +3,8 @@ package com.foodietime.orders.controller;
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.memcoupon.model.MemCouponService;
+import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orders.model.OrdersService;
 import com.foodietime.orders.model.OrdersVO;
 import jakarta.servlet.http.HttpSession;
@@ -24,11 +26,13 @@ public class OrdersController {
 
     private final CartService cartService;
     private final OrdersService ordersService;
+    private final MemCouponService memCouponService;
 
     @Autowired
-    public OrdersController(CartService cartService, OrdersService ordersService) {
+    public OrdersController(CartService cartService, OrdersService ordersService, MemCouponService memCouponService) {
         this.cartService = cartService;
         this.ordersService = ordersService;
+        this.memCouponService = memCouponService;
     }
 
     /** ========================================================================================================================================= **/
@@ -79,30 +83,69 @@ public class OrdersController {
      * 這個方法現在從 Session 中讀取經過驗證的商品數據，而不是直接查詢資料庫。
      */
     @GetMapping("/checkout")
-    public String showCheckoutPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        // -------------------- 步驟1：從 Session 讀取已驗證的商品 --------------------
-        List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
+    public String showCheckoutPage(Model model,
+                                   HttpSession session,
+                                   RedirectAttributes redirectAttributes,
+                                   // 【新增】接收使用者選擇的優惠券 ID (用於更新預覽)
+                                   @RequestParam(name = "selectedCouponId", required = false, defaultValue = "0") Integer selectedCouponId) {
 
+        List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
         if (checkoutItems == null || checkoutItems.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "無結帳商品，請從購物車重新選擇。");
             return "redirect:/cart/cart";
         }
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO == null) {
+            return "redirect:/cart/login";
+        }
 
-        // -------------------- 步驟2：基於 Session 中的商品計算金額 --------------------
-        int totalAmount = checkoutItems.stream()
-                .mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN())
-                .sum();
-        int shippingFee = totalAmount >= 500 ? 0 : 60;
-        int finalTotal = totalAmount + shippingFee;
+        // 1. 計算商品總金額 (小計)
+        Integer subtotalAmount = checkoutItems.stream().mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN()).sum();
+        model.addAttribute("totalAmount", subtotalAmount); // 將小計金額傳給前端
 
-        // -------------------- 步驟3：將數據傳遞給前端頁面 --------------------
-        model.addAttribute("checkoutItems", checkoutItems); // 將過濾後的列表傳給前端
-        model.addAttribute("totalAmount", totalAmount);
+        // 2. 計算運費
+        Integer shippingFee = subtotalAmount >= 500 ? 0 : 60;
         model.addAttribute("shippingFee", shippingFee);
-        model.addAttribute("finalTotal", finalTotal);
-        model.addAttribute("orderData", new OrdersVO()); // 為表單綁定提供一個空物件
 
-        return "/front/cart/checkout";
+        // 3. 查詢可用優惠券
+        Integer storeId = checkoutItems.get(0).getProduct().getStore().getStorId();
+        List<MemCouponVO> availableCoupons = memCouponService.findAvailableCouponsByMemberAndStore(memberVO.getMemId(), storeId);
+        model.addAttribute("availableCoupons", availableCoupons);
+
+        // 4. 【核心】根據 selectedCouponId 預計算優惠券折扣和最終總計
+        Integer couponDiscount = 0; // 初始化為 0
+        Integer finalTotal = subtotalAmount + shippingFee; // 初始化為未折扣的總計
+        Integer validatedCouponId = selectedCouponId;
+
+        if (selectedCouponId != null && selectedCouponId > 0) {
+            Optional<MemCouponVO> selectedCouponOpt = availableCoupons.stream()
+                    .filter(mc -> mc.getMemCouId().equals(selectedCouponId))
+                    .findFirst(); // 從已查詢出的可用優惠券中找
+
+            if (selectedCouponOpt.isPresent()) {
+                MemCouponVO selectedMemCoupon = selectedCouponOpt.get();
+                // 再次驗證最低消費門檻 (防止直接從 URL 提交不符合門檻的優惠券 ID)
+                if (subtotalAmount >= selectedMemCoupon.getCoupon().getCouMinOrd()) {
+                    couponDiscount = selectedMemCoupon.getCoupon().getCouDiscount().intValue(); // 獲取折扣金額
+                    finalTotal = finalTotal - couponDiscount;
+                } else {
+                    // 如果不滿足低消，將選中的優惠券 ID 設為 0，防止前端顯示錯誤折扣
+                    validatedCouponId = 0;
+                    model.addAttribute("errorMessage", "所選優惠券未達最低消費門檻，請重新選擇。");
+                }
+            }
+        }
+
+        model.addAttribute("couponDiscount", couponDiscount); // 將預期的優惠券折扣傳給前端
+        model.addAttribute("finalTotal", Math.max(0, finalTotal)); // 確保總計不為負數
+
+        model.addAttribute("checkoutItems", checkoutItems); // 傳遞購物車商品列表
+        model.addAttribute("orderData", new OrdersVO());    // 傳遞一個空的 OrdersVO 物件用於表單綁定
+        model.addAttribute("selectedCouponId", selectedCouponId); // 傳遞當前選中的優惠券ID，用於前端 select 預選
+
+        model.addAttribute("now", new java.util.Date()); // 如果 HTML 中日期判斷仍使用，需要保留
+
+        return "/front/cart/checkout"; // 返回結帳頁面
     }
 
     /** ========================================================================================================================================= **/
@@ -157,38 +200,33 @@ public class OrdersController {
          */
         @PostMapping("/placeOrder")
         public String placeOrder(@ModelAttribute("orderData") OrdersVO newOrderData,
+                                 // 【新增】接收從表單提交的優惠券ID
+                                 @RequestParam(name = "selectedCouponId", required = false) Integer selectedCouponId,
                                  RedirectAttributes redirectAttributes,
                                  HttpSession session) {
 
-            // -------------------- 步驟1：獲取會員和已驗證的商品列表 --------------------
+            // ... (您原有的獲取會員和商品列表的邏輯不變)
             MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
-            if (memberVO == null) {
-                return "redirect:/cart/login";
-            }
-            Integer currentMemberId = memberVO.getMemId();
-
-            // 【核心修正】從 Session 中取出已驗證的商品列表
+            if (memberVO == null) return "redirect:/cart/login";
             List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
-
             if (checkoutItems == null || checkoutItems.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "結帳已逾時或無商品，請重新操作。");
                 return "redirect:/cart/cart";
             }
 
-            // -------------------- 步驟2：調用修改後的 Service 方法 --------------------
             try {
-                // 將 checkoutItems 傳遞給 Service
-                OrdersVO createdOrder = ordersService.createOrderFromCart(currentMemberId, newOrderData, checkoutItems);
+                // ★★★ 將 selectedCouponId 傳遞給 Service ★★★
+                OrdersVO createdOrder = ordersService.createOrderFromCart(memberVO.getMemId(), newOrderData, checkoutItems, selectedCouponId);
 
-                // -------------------- 步驟3：成功後清理 Session 並重定向 --------------------
-                session.removeAttribute("checkoutItems"); // 清除暫存
+                // ... (您原有的成功後清理 Session 並重定向的邏輯不變)
+                session.removeAttribute("checkoutItems");
                 redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
                 redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());
                 return "redirect:/orders/order-confirmation";
 
             } catch (IllegalStateException e) {
                 redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-                return "redirect:/orders/checkout"; // 返回結帳頁面顯示錯誤
+                return "redirect:/orders/checkout";
             } catch (Exception e) {
                 e.printStackTrace();
                 redirectAttributes.addFlashAttribute("errorMessage", "建立訂單時發生未知錯誤。");
