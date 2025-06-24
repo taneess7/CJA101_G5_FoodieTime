@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foodietime.gbprod.dto.ProductDetailDTO;
+import com.foodietime.gbprod.model.GbprodVO;
 import com.foodietime.gbpromotion.model.GbpromotionVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
@@ -37,7 +38,18 @@ public class ProductDetailService {
         GroupBuyingCasesVO gbCase = gbCaseOpt.get();
         return convertToProductDetailDTO(gbCase);
     }
-    
+    public byte[] getImageByGroupBuyingId(Integer gbId) {
+        GroupBuyingCasesVO gbCase = groupBuyingCasesService.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+
+        GbprodVO product = gbCase.getGbProd(); // 關聯商品
+
+        if (product == null || product.getGbProdPhoto() == null) {
+            throw new RuntimeException("找不到商品圖片");
+        }
+
+        return product.getGbProdPhoto();
+    }
     /**
      * 將GroupBuyingCasesVO轉換為ProductDetailDTO
      * @param gbCase 團購案VO
@@ -61,32 +73,20 @@ public class ProductDetailService {
             dto.setGbProdDescription(gbCase.getGbProd().getGbProdDescription());
             dto.setGbProdSpecification(gbCase.getGbProd().getGbProdSpecification());
             
-            Byte[] photoWrapper = gbCase.getGbProd().getGbProdPhoto(); // 你的 Byte[] 來源
-            if (photoWrapper != null) {
-                byte[] photo = new byte[photoWrapper.length];
-                for (int i = 0; i < photoWrapper.length; i++) {
-                    photo[i] = photoWrapper[i]; // 自動 unbox
-                }
-                dto.setGbProdPhoto(photo);
-            }
+//            Byte[] photoWrapper = gbCase.getGbProd().getGbProdPhoto(); // 你的 Byte[] 來源
+//            if (photoWrapper != null) {
+//                byte[] photo = new byte[photoWrapper.length];
+//                for (int i = 0; i < photoWrapper.length; i++) {
+//                    photo[i] = photoWrapper[i]; // 自動 unbox
+//                }
+//                dto.setGbProdPhoto(photo);
+//            }
             
             dto.setGbProdQuantity(gbCase.getGbProd().getGbProdQuantity());
             dto.setGbProdStatus(gbCase.getGbProd().getGbProdStatus());
             
             // 設置商品圖片的Base64編碼
-            if (gbCase.getGbProd().getGbProdPhoto() != null) {
-                // 將 Byte[] 轉為 byte[]
-                Byte[] wrapperBytes = gbCase.getGbProd().getGbProdPhoto();
-                byte[] primitiveBytes = new byte[wrapperBytes.length];
-                for (int i = 0; i < wrapperBytes.length; i++) {
-                    primitiveBytes[i] = wrapperBytes[i]; // Auto-unboxing
-                }
-
-                // Base64 編碼
-                String base64Image = Base64.getEncoder().encodeToString(primitiveBytes);
-                dto.setProductImageBase64(base64Image);
-            }
-            
+                     
             // 設置促銷資訊
             if (gbCase.getGbProd().getGbpromotionList() != null && !gbCase.getGbProd().getGbpromotionList().isEmpty()) {
                 GbpromotionVO promotion = gbCase.getGbProd().getGbpromotionList().get(0);
@@ -126,12 +126,10 @@ public class ProductDetailService {
         if (gbCase.getGbEndTime() != null) {
         	LocalDateTime now = LocalDateTime.now();
         	LocalDateTime promotEnd = gbCase.getGbEndTime();
-        	LocalDateTime end = promotEnd
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
+        
 
-//計算時間差
-Duration duration = Duration.between(now, end);
+			//計算時間差
+			Duration duration = Duration.between(now, promotEnd);
             
             dto.setRemainingDays((int) duration.toDays());
             dto.setRemainingHours((int) (duration.toHours() % 24));
@@ -158,10 +156,7 @@ Duration duration = Duration.between(now, end);
             dto.setStoreDescription(gbCase.getStore().getStorDesc());
         }
         
-        // ==================== 階梯價格資訊（暫時設為固定值） ====================
-        dto.setNextTierPrice(dto.getCurrentPrice() != null ? dto.getCurrentPrice() - 30 : 269);
-        dto.setNextTierRemaining(5);
-        dto.setCanSaveAmount(30);
+
         
         // ==================== 商品規格（暫時設為固定值） ====================
         dto.setPackageOptions("精美禮盒裝、簡約包裝、加購提袋");
@@ -169,4 +164,5 @@ Duration duration = Duration.between(now, end);
         
         return dto;
     }
+    
 }

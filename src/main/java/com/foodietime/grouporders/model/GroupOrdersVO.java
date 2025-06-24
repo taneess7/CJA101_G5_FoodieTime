@@ -18,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
@@ -27,13 +29,18 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
+@ToString(exclude = {"groupBuyingCase","store","gbprod"})
+@EqualsAndHashCode(exclude = {"groupBuyingCase","store","gbprod"})
 @Table(name="group_orders")
 public class GroupOrdersVO implements Serializable{ 
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="GB_OR_ID", nullable = false)
 	private Integer gbOrId;  //團購訂單編號
 	
@@ -146,9 +153,9 @@ public class GroupOrdersVO implements Serializable{
 	
 	@Column(name = "RATING", nullable = false)
     @NotNull(message = "星等: 請指定評價星等")
-    @Min(value = 1, message = "星等: 最少 1 顆星")
+    @Min(value = 0, message = "星等: 最少 0 顆星 (0表示未評價)")
     @Max(value = 5, message = "星等: 最多 5 顆星")
-    private Byte rating;  // 星等 (1: 1 顆星, 2: 2 顆星, ... 5: 5 顆星)
+    private Byte rating;  // 星等 (0:未評價, 1: 1 顆星, ... 5: 5 顆星)
 
 	
 		

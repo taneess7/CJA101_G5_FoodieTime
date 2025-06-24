@@ -1,12 +1,15 @@
 package com.foodietime.gbprod.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foodietime.gbprod.dto.GroupBuyingDisplayDTO;
+import com.foodietime.gbprod.dto.ProductDetailDTO;
+import com.foodietime.gbprod.model.GbprodVO;
 import com.foodietime.gbpromotion.model.GbpromotionVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
@@ -17,6 +20,28 @@ public class GroupBuyingDisplayService {
     @Autowired
     private GroupBuyingCasesService groupBuyingCasesService;
     
+    public GroupBuyingDisplayDTO getGroupBuyingDisplay(Integer gbId) {
+        Optional<GroupBuyingCasesVO> gbCaseOpt = groupBuyingCasesService.findById(gbId);
+        
+        if (!gbCaseOpt.isPresent()) {
+            return null;
+        }
+        
+        GroupBuyingCasesVO gbCase = gbCaseOpt.get();
+        return convertToDTO(gbCase);
+    }
+    public byte[] getImageByGroupBuyingId(Integer gbId) {
+        GroupBuyingCasesVO gbCase = groupBuyingCasesService.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+
+        GbprodVO product = gbCase.getGbProd(); // 關聯商品
+
+        if (product == null || product.getGbProdPhoto() == null) {
+            throw new RuntimeException("找不到商品圖片");
+        }
+
+        return product.getGbProdPhoto();
+    }
     /**
      * 獲取熱門團購商品列表
      * @return 熱門團購DTO列表
@@ -68,7 +93,7 @@ public class GroupBuyingDisplayService {
             // dto.setGbProdId(gbCase.getGbProd().getGbProdId()); // 未使用
             dto.setGbProdName(gbCase.getGbProd().getGbProdName());
             // dto.setGbProdDescription(gbCase.getGbProd().getGbProdDescription()); // 未使用
-            dto.setGbProdPhoto(gbCase.getGbProd().getGbProdPhoto());
+//            dto.setGbProdPhoto(gbCase.getGbProd().getGbProdPhoto());
             // dto.setGbProdSpecification(gbCase.getGbProd().getGbProdSpecification()); // 未使用
             
             // 設置促銷信息（從商品的促銷列表中獲取最新的促銷信息）
@@ -84,10 +109,7 @@ public class GroupBuyingDisplayService {
             dto.setGbProdName(gbCase.getGbTitle());
         }
         
-        // 設置店家信息
-        // if (gbCase.getStore() != null) {
-        //     dto.setStoreName(gbCase.getStore().getStorName()); // 未使用
-        // }
+
         
         // 設置價格相關屬性
         dto.setOriginalPrice(dto.getGbProdSpe() != null ? dto.getGbProdSpe() : 399);
