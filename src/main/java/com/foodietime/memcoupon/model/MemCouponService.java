@@ -63,4 +63,30 @@ public class MemCouponService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<MemCouponVO> findAvailableCouponsByMemberAndStore(Integer memberId, Integer storeId) {
+        MemberVO member = memberRepo.findById(memberId)
+                .orElseThrow(() -> new IllegalStateException("找不到會員ID " + memberId));
+
+        // 先獲取會員所有的優惠券
+        List<MemCouponVO> allCoupons = memCouponRepo.findByMemberIdWithDetails(member);
+        final Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        // 使用 Stream 進行過濾
+        return allCoupons.stream()
+                .filter(memCoupon -> {
+                    CouponVO coupon = memCoupon.getCoupon();
+
+                    // 條件1: 必須是未使用的
+                    boolean isUnused = memCoupon.getUseStatus() == 0;
+                    // 條件2: 必須在有效期內
+                    boolean isNotExpired = !now.after(coupon.getCouEndDate());
+                    boolean isStarted = !now.before(coupon.getCouStartDate());
+                    // 條件3: 必須屬於該店家 (或為全平台通用券，store為null)
+                    boolean isStoreMatch = (coupon.getStore() == null || coupon.getStore().getStorId().equals(storeId));
+
+                    return isUnused && isNotExpired && isStarted && isStoreMatch;
+                })
+                .collect(Collectors.toList());
+    }
 }
