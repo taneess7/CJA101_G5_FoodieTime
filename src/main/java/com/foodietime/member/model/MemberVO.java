@@ -24,8 +24,16 @@ import com.foodietime.participants.model.ParticipantsVO;
 import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.model.ReportPostVO;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
-@Data
+@ToString(exclude = {"directMessages", "favoriteList", "cart" ,"memCoupon","participants","groupBuyingCollectionList",
+"groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message",
+"reportMessage","appropriationCommRecord"})
+@Getter
+@Setter
 @Table(name = "member")
 public class MemberVO implements Serializable {
 	@Id
