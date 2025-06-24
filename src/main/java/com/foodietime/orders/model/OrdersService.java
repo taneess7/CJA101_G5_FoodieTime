@@ -4,6 +4,8 @@ import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
 import com.foodietime.member.model.MemberRepository;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.memcoupon.model.MemCouponRepository;
+import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orddet.model.OrdDetRepository;
 import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.product.model.ProductVO; // 確保 ProductVO 可以被引用
@@ -28,6 +30,7 @@ public class OrdersService {
     private final CartService cartService;
     private final MemberRepository memberRepo;
     private final OrdDetRepository ordDetRepo;
+    private final MemCouponRepository memCouponRepo;
     private final StoreRepository storeRepo;
 
     /**
@@ -42,12 +45,13 @@ public class OrdersService {
     public OrdersService(OrdersRepository ordersRepo,
                          CartService cartService,
                          MemberRepository memberRepo,
-                         OrdDetRepository ordDetRepo,
+                         OrdDetRepository ordDetRepo, MemCouponRepository memCouponRepo,
                          StoreRepository storeRepo) {
         this.ordersRepo = ordersRepo;
         this.cartService = cartService;
         this.memberRepo = memberRepo;
         this.ordDetRepo = ordDetRepo;
+        this.memCouponRepo = memCouponRepo;
         this.storeRepo = storeRepo;
     }
 
@@ -65,80 +69,80 @@ public class OrdersService {
      * @throws IllegalStateException 當購物車為空、找不到會員或店家時拋出。
      */
     @Transactional
-    public OrdersVO createOrderFromCart(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems) { // <<<<<< 【修改點 1】新增第三個參數
+    public OrdersVO createOrderFromCart(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems, Integer selectedMemCouId) {
 
-        // ======================================== 步驟1：獲取必要基礎資料 ========================================
-        // 1.1 獲取會員資訊
+        // ======================================== 步驟1：獲取基礎資料 (與您原版相似) ========================================
         MemberVO member = memberRepo.findById(memberId)
                 .orElseThrow(() -> new IllegalStateException("訂單建立失敗：找不到會員ID " + memberId));
 
-        // 1.2 【修改點 2】不再從資料庫撈取完整購物車，而是直接使用傳入的 checkoutItems
-        // List<CartVO> cartItems = cartService.getByMemId(memberId); // <<<<<<<<<<< 刪除或註解掉此行
-
-        // 1.3 驗證傳入的商品列表是否為空
         if (checkoutItems == null || checkoutItems.isEmpty()) {
             throw new IllegalStateException("訂單建立失敗：沒有需要結帳的商品。");
         }
 
-        // 1.4 確定訂單所屬店家 (邏輯不變，但基於 checkoutItems)
         StoreVO orderStore = checkoutItems.get(0).getProduct().getStore();
-        if (orderStore == null || orderStore.getStorId() == null) {
-            throw new IllegalStateException("訂單建立失敗：商品未關聯到有效店家。");
-        }
-
-        // 1.5 店家驗證邏輯可以保留作為雙重保險，但理論上在控制器已驗證過
-        boolean allFromSameStore = checkoutItems.stream()
-                .allMatch(item -> item.getProduct().getStore().getStorId().equals(orderStore.getStorId()));
-        if (!allFromSameStore) {
-            throw new IllegalStateException("內部錯誤：嘗試用多個店家的商品建立訂單。");
-        }
 
         // ======================================== 步驟2：建立 OrdersVO 主物件並設定屬性 ========================================
         OrdersVO order = new OrdersVO();
         order.setMember(member);
         order.setStore(orderStore);
-        order.setOrdDate(new Timestamp(System.currentTimeMillis()));
-        order.setPaymentStatus(0);
-        order.setOrderStatus(0);
+        // ... (設定 ordAddr, payMethod 等，與您原版相同)
         order.setOrdAddr(orderFormData.getOrdAddr());
         order.setPayMethod(orderFormData.getPayMethod());
         order.setDeliver(orderFormData.getDeliver());
         order.setComment(orderFormData.getComment());
+        order.setOrdDate(new Timestamp(System.currentTimeMillis()));
+        order.setPaymentStatus(0); // 待付款
+        order.setOrderStatus(0);   // 處理中
 
-        // ======================================== 步驟3：處理訂單明細並計算金額 ========================================
+        // ======================================== 步驟3：處理訂單明細並計算原始總金額 ========================================
         Integer ordSum = 0;
         Set<OrdDetVO> orderDetails = new HashSet<>();
-
-        // 【修改點 3】迴圈遍歷 checkoutItems 而不是 cartItems
         for (CartVO cartItem : checkoutItems) {
             OrdDetVO ordDet = new OrdDetVO();
             ordDet.setOrders(order);
             ordDet.setProduct(cartItem.getProduct());
             ordDet.setProdQty(cartItem.getProdN());
             ordDet.setProdPrice(cartItem.getProduct().getProdPrice());
-
             orderDetails.add(ordDet);
             ordSum += cartItem.getProdN() * cartItem.getProduct().getProdPrice();
         }
-        order.setOrdSum(ordSum);
-
-        Integer shippingFee = ordSum >= 500 ? 0 : 60;
-        order.setPromoDiscount(0);
-        order.setCouponDiscount(0);
-        Integer actualPayment = ordSum + shippingFee - order.getPromoDiscount() - order.getCouponDiscount();
-        order.setActualPayment(Math.max(0, actualPayment));
+        order.setOrdSum(ordSum); // 設定訂單原始總額
         order.setOrdDet(orderDetails);
 
-        // ======================================== 步驟4：保存訂單至資料庫 ========================================
+        // ======================================== 步驟4：【核心】處理優惠券折扣 ========================================
+        Integer couponDiscount = 0;
+        if (selectedMemCouId != null && selectedMemCouId > 0) {
+            // 4.1 查找並驗證優惠券
+            MemCouponVO memCoupon = memCouponRepo.findById(selectedMemCouId)
+                    .orElseThrow(() -> new IllegalStateException("優惠券無效或已不存在。"));
+
+            // ★★★ 安全性與業務邏輯驗證 ★★★
+            if (!memCoupon.getMember().getMemId().equals(memberId)) throw new IllegalStateException("權限錯誤：不能使用不屬於您的優惠券。");
+            if (memCoupon.getUseStatus() != 0) throw new IllegalStateException("該優惠券已被使用或失效。");
+            if (new Timestamp(System.currentTimeMillis()).after(memCoupon.getCoupon().getCouEndDate())) throw new IllegalStateException("該優惠券已過期。");
+            if (ordSum < memCoupon.getCoupon().getCouMinOrd()) throw new IllegalStateException("訂單金額未達到優惠券最低消費門檻。");
+
+            // 4.2 驗證通過，應用折扣
+            couponDiscount = memCoupon.getCoupon().getCouDiscount().intValue(); // 假設折扣是整數
+            order.setCoupon(memCoupon.getCoupon()); // 在 OrdersVO 中關聯 CouponVO
+
+            // ★★★ 關鍵：更新會員優惠券狀態 ★★★
+            memCoupon.setUseStatus(1); // 1 代表已使用
+            memCouponRepo.save(memCoupon);
+        }
+        order.setCouponDiscount(couponDiscount);
+        order.setPromoDiscount(0); // 活動優惠暫設為0
+
+        // ======================================== 步驟5：計算最終金額 ========================================
+        Integer actualPayment = ordSum - couponDiscount - order.getPromoDiscount();
+        order.setActualPayment(Math.max(0, actualPayment)); // 確保實付金額不為負
+
+        // ======================================== 步驟6：保存訂單並清理購物車 ========================================
         OrdersVO savedOrder = ordersRepo.save(order);
 
-        // ======================================== 步驟5：從購物車中移除已結帳的商品 ========================================
-        // 【修改點 4】不再是清空整個購物車，而是只移除被結帳的商品
-        // cartService.clearCart(memberId); // <<<<<<<<<<< 不再清空整個購物車
         List<Integer> checkedOutShopIds = checkoutItems.stream().map(CartVO::getShopId).collect(Collectors.toList());
-        cartService.deleteCartItems(checkedOutShopIds); // 使用現有的 deleteCartItems 方法
+        cartService.deleteCartItems(checkedOutShopIds);
 
-        // ======================================== 步驟6：返回建立的訂單物件 ========================================
         return savedOrder;
     }
 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>驗證您的信箱</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-orange-100">
+    <div class="bg-white p-10 rounded-2xl shadow-xl text-center w-96">
+        <h2 class="text-2xl font-bold mb-4">驗證您的信箱</h2>
+        <p class="mb-6">我們已寄出 6 碼驗證碼至您的信箱，請輸入驗證碼完成註冊。</p>
+        <form th:action="@{/front/member/verify}" method="post">
+            <input type="text" name="code" placeholder="輸入驗證碼" class="border p-2 rounded mb-4 w-full" required>
+            <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition">確認</button>
+        </form>
+        <p th:text="${error}" class="text-red-500 mt-4"></p>
+    </div>
+</body>
+</html>

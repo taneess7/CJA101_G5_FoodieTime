@@ -22,7 +22,9 @@ public interface ActRepository extends JpaRepository<ActVO, Integer>{
 	@Query("SELECT a FROM ActVO a WHERE a.actStartTime >= :start AND a.actEndTime <= :end")
 	List<ActVO> findActsBetween(@Param("start") String start, @Param("end") String end);
 	
-
+	//取得活動照片
+	@Query("SELECT a.actPhoto FROM ActVO a WHERE a.actId = :id")
+	byte[] findActPhotoById(@Param("id") Integer id);
 	
 }
 

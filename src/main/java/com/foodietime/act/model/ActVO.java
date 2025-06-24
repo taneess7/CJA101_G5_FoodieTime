@@ -2,7 +2,6 @@ package com.foodietime.act.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
 
@@ -26,15 +26,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude= {"orders"})
 @Entity
 @Table(name = "activity")
 public class ActVO implements Serializable {
@@ -47,6 +46,7 @@ public class ActVO implements Serializable {
 	private Integer actId; 
 	
 	//2.店家物件（外鍵：STORE_ID）
+	@JsonIgnore //Jackson 無法自動處理懶加載的 JPA 關聯對象，會噴 500
 	@ManyToOne
     @JoinColumn(name = "STOR_ID", referencedColumnName = "STOR_ID",nullable = true) // 外鍵名稱
 	private StoreVO store;
@@ -117,6 +117,7 @@ public class ActVO implements Serializable {
 	
 	// 12.活動圖片
 	@Lob 
+	@JsonIgnore//Jackson 就不會試圖把圖片轉成 JSON
 	@Column(name = "ACT_PHOTO")
 	private byte[] actPhoto; 
 	
@@ -141,23 +142,22 @@ public class ActVO implements Serializable {
 		super();
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		ActVO actVO = (ActVO) o;
-		// 關鍵：只比較主鍵 (ID)，並且只有當 ID 不是 null 時才比較
-		return actId != null && Objects.equals(actId, actVO.actId);
-	}
+	// ==================== 2. 手動實作 equals 和 hashCode ====================
+			@Override
+			public boolean equals(Object o) {
+				if (this == o) return true;
+				if (o == null || getClass() != o.getClass()) return false;
+				ActVO couponVO = (ActVO) o;
+				// 關鍵：只比較主鍵 (ID)，並且只有當 ID 不是 null 時才比較
+				return actId != null && Objects.equals(actId, couponVO.actId);
+			}
 
-	@Override
-	public int hashCode() {
-		// 關鍵：返回一個固定的值，這個值對於同一個類的所有實例都是一樣的。
-		// 這可以確保在物件被持久化前後（ID從null變為有值），雜湊碼保持不變。
-		// 這避免了在 HashMap 或 HashSet 中找不到物件的問題。
-		return getClass().hashCode();
-	}
-	
-	
+			@Override
+			public int hashCode() {
+				// 關鍵：返回一個固定的值，這個值對於同一個類的所有實例都是一樣的。
+				// 這可以確保在物件被持久化前後（ID從null變為有值），雜湊碼保持不變。
+				// 這避免了在 HashMap 或 HashSet 中找不到物件的問題。
+				return getClass().hashCode();
+			}
 
 }

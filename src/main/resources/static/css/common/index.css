@@ -76,6 +76,8 @@ body {
     cursor: pointer;
     outline: none;
     border-radius: var(--border-radius-round);
+    margin-right: 1rem;
+    margin-left: 1rem;
 }
 .clay-button:active {
     /* 交互時陰影反轉，模擬按壓效果 */
@@ -120,6 +122,7 @@ header, footer {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius-round);
     transition: all 0.2s ease-in-out;
+
 }
 .main-nav .nav-link:hover {
     color: var(--accent-color-1);

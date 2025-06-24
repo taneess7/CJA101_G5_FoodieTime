@@ -1,14 +1,21 @@
 package com.foodietime.memfavlist.controller;
 
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.memfavlist.model.FavoriteListService;
 import com.foodietime.memfavlist.model.FavoriteListVO;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/favorite")
@@ -25,9 +32,25 @@ public class FavoriteListController {
 		return "/front/favoritelist/member-favorites";
   }
 	
-	
-	
-	
+	// 收藏餐廳 API，從 JS 發送 prodId，session 取 memId
+	@PostMapping("/add")
+	@ResponseBody
+	public ResponseEntity<?> addFavorite(@RequestBody Map<String, Integer> payload, HttpSession session) {
+	    MemberVO member = (MemberVO) session.getAttribute("member");
+	    if (member == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "請先登入會員"));
+	    }
+
+	    Integer memId = member.getMemId();
+	    Integer prodId = payload.get("prodId");
+
+	    try {
+	        favoriteListService.addFavoriteList(memId, prodId);
+	        return ResponseEntity.ok(Map.of("status", "success"));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "加入失敗"));
+	    }
+	}
 //
 //	// 主頁
 //    @GetMapping("/select_page")
@@ -64,14 +87,7 @@ public class FavoriteListController {
 //        return "favorite/addFavorite";
 //    }
 //
-//    @PostMapping("/add")
-//    public String addFavorite(@RequestParam Integer memId,
-//                              @RequestParam Integer prodId,
-//                              Model model) {
-//        FavoriteListVO favorite = favoriteListService.addFavoriteList(memId, prodId);
-//        model.addAttribute("favoriteVO", favorite);
-//        return "favorite/listOneFavorite";
-//    }
+//    
 //
 //    // 查詢所有收藏
 //    @GetMapping("/listAll")

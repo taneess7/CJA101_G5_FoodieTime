@@ -18,6 +18,7 @@ import com.foodietime.act.hibernate.HibernateUtil_CompositeQuery_Act;
 
 import jakarta.transaction.Transactional;
 
+@Transactional// 管理這個 Service 裡的交易行為
 @Service
 public class ActService {
 
@@ -61,8 +62,7 @@ public class ActService {
 
 	
 	
-	//測試1- 更新活動名稱 -查資料後再改欄位
-	
+	//更新 - 查資料後再改欄位
 	  public String updateStoreAct(Integer id, ActVO newActData) {
 	        ActVO act = repository.findById(id).orElse(null);
 	        if (act != null) return "找不到活動";
@@ -87,7 +87,6 @@ public class ActService {
 	  
 	  
 	// 更新所有圖片
-	@Transactional
 	public void updateAllActPhotos(MultipartFile[] files) throws IOException {
 		List<ActVO> actList = repository.findAll(); // 撈出所有活動
 		int count = Math.min(files.length, actList.size());
@@ -103,9 +102,22 @@ public class ActService {
 
 	}
 
+	//複合查詢
 	public List<ActVO> getAllMap(Map<String, String[]> map) {
 		
 		return HibernateUtil_CompositeQuery_Act.getAllC(map,sessionFactory.openSession()); 
 	}
+	
+//	//取得活動列表 ToJSON
+//	public String getAllActsToJSON() {
+//		List<ActVO> actList = repository.findAll();
+//		return new Gson().toJson(actList);
+//	}
+	
+	//取得圖片ById
+	public byte[] getPhotoById(Integer id) {
+		return repository.findActPhotoById(id);
+	}
+	
 
 }

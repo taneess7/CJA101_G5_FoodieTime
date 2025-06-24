@@ -88,6 +88,16 @@ public class GbprodVO implements Serializable {
     @Min(value = 0, message = "檢舉次數不能小於 0")
     @Column(name = "GB_PROD_REPORT_COUNT")
     private Byte gbProdReportCount;
-
+     
+    public byte[] getGbProdPhoto() {
+        if (gbProdPhoto == null) {
+            return null;
+        }
+        byte[] bytes = new byte[gbProdPhoto.length];
+        for (int i = 0; i < gbProdPhoto.length; i++) {
+            bytes[i] = gbProdPhoto[i];
+        }
+        return bytes;
+    }
   
 }

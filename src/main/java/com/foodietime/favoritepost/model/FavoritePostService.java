@@ -2,71 +2,68 @@ package com.foodietime.favoritepost.model;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.post.model.PostVO;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+
+@Service("FavoritePostService")
 public class FavoritePostService {
-	/*
-	private FavoritePostDAO_interface dao;
+
+	@Autowired
+	private FavoritePostRepository repository;
 	
-	public FavoritePostService() {
-		dao = new FavoritePostDAOImpl(); 
-	}
-	
+	@PersistenceContext
+    private EntityManager entityManager;
+
 	public FavoritePostVO addFavoritePost(PostVO post, MemberVO member) {
-		
 		FavoritePostVO favoritePostVO = new FavoritePostVO();
-		
-		favoritePostVO.setPostId(post);
-		favoritePostVO.setMemId(member);		
-		dao.insert(favoritePostVO);
-		
-		return favoritePostVO;
+		FavoritePostId id = new FavoritePostId(post.getPostId(), member.getMemId());
+		favoritePostVO.setId(id);
+		favoritePostVO.setPost(post);
+		favoritePostVO.setMember(member);
+		return repository.save(favoritePostVO);
 	}
-	
+
 	public FavoritePostVO updateFavoritePost(PostVO post, MemberVO member) {
 		FavoritePostVO favoritePostVO = new FavoritePostVO();
-		favoritePostVO.setPostId(post);
-		favoritePostVO.setMemId(member);
-		dao.update(favoritePostVO);
-		
-		return favoritePostVO;
+		favoritePostVO.setPost(post);
+		favoritePostVO.setMember(member);
+
+		return repository.save(favoritePostVO);
 	}
-	
-	public int deleteFavoritePost(Integer postId, Integer memId) {
-		return dao.delete(postId, memId);
+
+	public void deleteFavoritePost(Integer postId, Integer memId) {
+		FavoritePostId id = new FavoritePostId(postId, memId);
+		repository.deleteById(id);
 	}
-	
+
 	public FavoritePostVO findByPK(Integer postId, Integer memId) {
-		return dao.findByPK(postId, memId);
-	}
-	
-	public List<FavoritePostVO> getAll(){
-		return dao.getAll();
-	}*/
-	
-	
-	
-	
-	/*
-	private FavoritePostDAO dao;
-
-	public FavoritePostServiceImpl() {
-		dao = new FavoritePostDAO_interface;
-	}
-	@Override
-	public List<FavoritePostVO> getAllfavoritepost(int currentPage) {
-		return dao.getAll(currentPage);
+		FavoritePostId id = new FavoritePostId(postId, memId);
+		return repository.findById(id).orElse(null);
 	}
 
-	@Override
-	public int getPageTotal() {
-		long total = dao.getTotal();
-		int pageQty = (int)(total % PAGE_MAX_RESULT == 0 ? (total / PAGE_MAX_RESULT) : (total / PAGE_MAX_RESULT + 1));
-		return pageQty;
+	public List<FavoritePostVO> getAll() {
+		return repository.findAll();
 	}
 	
-	*/
-	
+	//Spring Boot/JPA 實作 Criteria Query 寫法
+    public List<PostVO> findFavoritePostsByMemberIdCriteria(Integer memId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<PostVO> cq = cb.createQuery(PostVO.class);
+        Root<FavoritePostVO> favoriteRoot = cq.from(FavoritePostVO.class);
+        Join<FavoritePostVO, PostVO> postJoin = favoriteRoot.join("post");
+        cq.select(postJoin)
+          .where(cb.equal(favoriteRoot.get("member").get("memId"), memId));
+        return entityManager.createQuery(cq).getResultList();
+    }
 
 }

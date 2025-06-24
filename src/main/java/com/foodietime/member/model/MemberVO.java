@@ -28,12 +28,18 @@ import com.foodietime.participants.model.ParticipantsVO;
 import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.model.ReportPostVO;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
+
 @ToString(exclude = {"directMessages","favoriteList","cart","memCoupon","participants","groupBuyingCollectionList","groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message","reportMessage","appropriationCommRecord"})
 @EqualsAndHashCode(exclude = {"directMessages","favoriteList","cart","memCoupon","participants","groupBuyingCollectionList","groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message","reportMessage","appropriationCommRecord"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "memId")
 
 @Data
+
 @Table(name = "member")
 public class MemberVO implements Serializable {
 	@Id

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>請啟用您的帳號</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-orange-100">
+    <div class="bg-white p-10 rounded-2xl shadow-xl text-center w-96">
+        <h2 class="text-2xl font-bold mb-4 text-orange-700">請前往信箱啟用帳號</h2>
+        <p class="mb-6">
+            我們已寄出啟用信至 <span th:text="${email}" class="font-semibold text-blue-700"></span>，<br>
+            請點擊信中的連結完成啟用。
+        </p>
+        <a th:href="@{/index}" class="block w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">回首頁</a>
+    </div>
+</body>
+</html>

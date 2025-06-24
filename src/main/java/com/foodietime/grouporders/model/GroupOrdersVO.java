@@ -153,9 +153,11 @@ public class GroupOrdersVO implements Serializable{
 	
 	@Column(name = "RATING", nullable = false)
     @NotNull(message = "星等: 請指定評價星等")
+
 	@Min(value = 0, message = "星等: 最少 0 顆星 (0表示未評價)")
     @Max(value = 5, message = "星等: 最多 5 顆星")
 	private Byte rating;  // 星等 (0:未評價, 1: 1 顆星, ... 5: 5 顆星)
+
 
 	
 		

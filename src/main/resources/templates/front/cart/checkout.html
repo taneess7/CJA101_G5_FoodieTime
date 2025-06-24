@@ -125,7 +125,23 @@
                 </div>
               </div>
             </div>
-
+            <!-- 在訂單摘要區塊或合適位置，加入優惠券選單 -->
+            <div class="coupon-selection">
+              <label for="coupon-select">使用優惠券:</label>
+              <!-- 【重要】name 屬性必須是 "selectedCouponId"，以對應控制器中的 @RequestParam -->
+              <select name="selectedCouponId" id="coupon-select" class="form-select" onchange="this.form.submit()">
+                <option value="0">-- 不使用優惠券 --</option>
+                <!-- 使用 th:if 檢查是否有可用的優惠券 -->
+                <th:block th:if="${not #lists.isEmpty(availableCoupons)}">
+                  <!-- 遍歷從控制器傳來的優惠券列表 -->
+                  <option th:each="memCoupon : ${availableCoupons}"
+                          th:value="${memCoupon.memCouId}"
+                          th:text="${memCoupon.coupon.couName} + ' (折抵$' + ${memCoupon.coupon.couDiscount} + '，低消$' + ${memCoupon.coupon.couMinOrd} + ')'">
+                    [範例] 全館九折優惠券
+                  </option>
+                </th:block>
+              </select>
+            </div>
             <!-- 訂單備註 - 對應 OrdersVO 的 comment -->
             <div class="form-section">
               <h2 class="section-title">訂單備註 (選填)</h2>
@@ -149,8 +165,7 @@
           <div class="order-summary cart-summary">
             <h2 class="summary-title">訂單摘要</h2>
             <div id="checkout-items" class="checkout-items">
-              <!-- 結帳項目由Thymeleaf動態生成 -->
-              <div th:each="item : ${cartListData}" class="checkout-item">
+              <div th:each="item : ${checkoutItems}" class="checkout-item">
                 <div class="item-info">
                   <span class="item-name" th:text="${item.product.prodName}">商品名稱</span>
                 </div>
@@ -168,6 +183,7 @@
               <span id="checkout-shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
             </div>
             <!-- 折扣行，如果沒有折扣可以隱藏 -->
+            <!-- 【修改點 3】: 這裡的 th:if 判斷應該是 ${couponDiscount != null and couponDiscount > 0} -->
             <div class="summary-row discount-row" th:if="${couponDiscount != null and couponDiscount > 0}">
               <span>折扣</span>
               <span id="checkout-discount" th:text="'-NT$ ' + ${couponDiscount}">-NT$ 0</span>
@@ -177,7 +193,6 @@
               <span>總計</span>
               <span id="checkout-total" th:text="'NT$ ' + ${finalTotal}">NT$ 0</span>
             </div>
-
           </div>
         </div>
       </div>

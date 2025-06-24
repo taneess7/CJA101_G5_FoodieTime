@@ -107,15 +107,10 @@ button {
 }
 
 /* ========== 容器與主要區塊 ========== */
-.content-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--space-3);
-}
 
 .main-content {
   min-height: calc(100vh - 120px);
-  padding: var(--space-4) 0 var(--space-6);
+  padding: 48px 40px;
 }
 
 .member-section {

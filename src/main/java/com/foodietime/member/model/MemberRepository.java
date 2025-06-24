@@ -20,4 +20,9 @@ public interface MemberRepository extends JpaRepository<MemberVO, Integer>{
     
     // 新增會員（註冊日期區間）
     long countByMemTimeBetween(Timestamp start, Timestamp end);
+    
+    MemberVO findByMemCode(String memCode);
+    
+    MemberVO findByMemEmail(String memEmail);
+
 }

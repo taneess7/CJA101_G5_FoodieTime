@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.foodietime.favoritepost.model.FavoritePostService;
 import com.foodietime.member.model.MemService;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.message.model.MessageService;
@@ -45,6 +46,9 @@ public class PostController {
 
 	@Autowired
 	MessageService messageService;
+
+	@Autowired
+	FavoritePostService favoritePostService;
 
 //	@Autowired
 //	PostCategoryService postcategory;
@@ -208,11 +212,11 @@ public class PostController {
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("postVO", postVO);
 		// 補這行
-	    model.addAttribute("messageVO", new MessageVO());
+		model.addAttribute("messageVO", new MessageVO());
 
-	    // 你也要補留言列表
-	    List<MessageVO> messageList = messageService.getByPostId(id);
-	    model.addAttribute("messageList", messageList);
+		// 你也要補留言列表
+		List<MessageVO> messageList = messageService.getByPostId(id);
+		model.addAttribute("messageList", messageList);
 
 		return "front/post/listOnePost";
 	}
@@ -225,6 +229,13 @@ public class PostController {
 		session.setAttribute("loginMember", fakeMember);
 		// ====== 測試用結束 ======
 		PostVO postVO = postservice.getOnePost(postId);
+
+		// 瀏覽數+1 並存回資料庫
+		postVO.setViews(postVO.getViews() + 1);
+		postservice.updatePost(postVO.getPostId(), postVO.getMember().getMemId(), postVO.getPostCate().getPostCateId(),
+				postVO.getPostDate(), postVO.getPostStatus(), postVO.getEditDate(), postVO.getPostTitle(),
+				postVO.getPostContent(), postVO.getLikeCount(), postVO.getViews());
+
 		model.addAttribute("postVO", postVO);
 
 		// 加這行
@@ -234,34 +245,45 @@ public class PostController {
 		List<MessageVO> messageList = messageService.getByPostId(postId);
 		model.addAttribute("messageList", messageList);
 		model.addAttribute("messageVO", new MessageVO());
+		model.addAttribute("liked"); // boolean
+		// 假設你有 loginMember 和 postVO
+		boolean bookmarked = favoritePostService.findByPK(postVO.getPostId(), loginMember.getMemId()) != null;
+		model.addAttribute("bookmarked", bookmarked);
 		return "front/post/listOnePost";
 	}
 
 	// ================ GET ALL 查詢所有貼文 ================
-	@GetMapping({"", "/"})
+	@GetMapping({ "", "/" })
 	public String listAllPost(@RequestParam(value = "sort", required = false, defaultValue = "editDate") String sort,
 			ModelMap model, HttpSession session) {
 
 		/***************************** 1.接收請求參數 (無參數) *********************************/
-		List<PostVO> list = postservice.getAll();
-		// 排序
-		switch (sort) {
-		case "like_Count":
-			list.sort((a, b) -> b.getLikeCount().compareTo(a.getLikeCount()));
-			break;
-		case "views":
-			list.sort((a, b) -> b.getViews().compareTo(a.getViews()));
-			break;
-//		case "messagecount":
-//			list.sort((a, b) -> {
-//				int aCount = a.getMessageVOs() != null ? a.getMessageVOs().size() : 0;
-//				int bCount = b.getMessageVOs() != null ? b.getMessageVOs().size() : 0;
-//				return Integer.compare(bCount, aCount);
-//			});
-//			break;
-		default:
-			list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate()));
-		}
+		 List<PostVO> list = postservice.getAll();
+		    
+		    // 取得所有留言
+		    List<MessageVO> allMessages = messageService.getAll();
+
+		    // 分組計算每篇貼文的留言數
+		    Map<Integer, Long> postIdToMsgCount = allMessages.stream()
+		        .collect(Collectors.groupingBy(m -> m.getPost().getPostId(), Collectors.counting()));
+		    // 排序
+		    switch (sort) {
+		        case "like_Count":
+		            list.sort((a, b) -> b.getLikeCount().compareTo(a.getLikeCount()));
+		            break;
+		        case "views":
+		            list.sort((a, b) -> b.getViews().compareTo(a.getViews()));
+		            break;
+		        case "messagecount":
+		            list.sort((a, b) -> {
+		                long aCount = postIdToMsgCount.getOrDefault(a.getPostId(), 0L);
+		                long bCount = postIdToMsgCount.getOrDefault(b.getPostId(), 0L);
+		                return Long.compare(bCount, aCount);
+		            });
+		            break;
+		        default:
+		            list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate())); // 最新貼文
+		    }
 
 		/*************************** 2.開始查詢資料 *****************************************/
 
@@ -271,6 +293,8 @@ public class PostController {
 //		model.addAttribute("postListData", list);
 		model.addAttribute("threads", list);
 		model.addAttribute("categories", categories);
+		model.addAttribute("currentCategory", null); // 全部分類
+	    model.addAttribute("currentSort", sort);
 
 		// 判斷是否登入
 		boolean loggedIn = session.getAttribute("loginMember") != null;
@@ -278,12 +302,11 @@ public class PostController {
 		return "front/post/listallpost";
 	}
 
-	@GetMapping
-	public String postHome(@RequestParam(value = "sort", required = false, defaultValue = "editDate") String sort,
-			ModelMap model, HttpSession session) {
-		return listAllPost(sort, model, session); // 重定向到 listAllPost 方法
-	}
-	
+//	@GetMapping
+//	public String postHome(@RequestParam(value = "sort", required = false, defaultValue = "editDate") String sort,
+//			ModelMap model, HttpSession session) {
+//		return listAllPost(sort, model, session); // 重定向到 listAllPost 方法
+//	}
 
 	// ================ 選擇頁面 ================
 	@GetMapping("/select_page")
@@ -291,64 +314,62 @@ public class PostController {
 		return "front/post/select_page";
 	}
 
-//	// ================ 新增：按讚數排序 ================
-//	@GetMapping("/byLikes")
-//	public String getPostsByLikes(ModelMap model, HttpSession session) {
-//
-//		List<PostVO> list = postRepository.getPostsOrderByLikes();
-//		List<PostCategoryVO> categories = postCategoryservice.getAll();
-//
-//		model.addAttribute("threads", list);
-//		model.addAttribute("categories", categories);
-//		model.addAttribute("currentSort", "likes");
-//
-//		boolean loggedIn = session.getAttribute("loginMember") != null;
-//		model.addAttribute("loggedIn", loggedIn);
-//
-//		return "front/post/listallpost";
-//	}
-//
-//	// ================ 新增：瀏覽數排序 ================
-//	@GetMapping("/byViews")
-//	public String getPostsByViews(ModelMap model, HttpSession session) {
-//
-//		List<PostVO> list = postRepository.getPostsOrderByViews();
-//		List<PostCategoryVO> categories = postCategoryservice.getAll();
-//
-//		model.addAttribute("threads", list);
-//		model.addAttribute("categories", categories);
-//		model.addAttribute("currentSort", "views");
-//
-//		boolean loggedIn = session.getAttribute("loginMember") != null;
-//		model.addAttribute("loggedIn", loggedIn);
-//
-//		return "front/post/listallpost";
-//	}
-//
-//	// ================ 新增：關鍵字搜尋 ================
-//	@GetMapping("/search")
-//	public String searchPosts(@RequestParam("keyword") String keyword,
-//			@RequestParam(value = "sort", defaultValue = "date") String sort, ModelMap model, HttpSession session) {
-//
-//		if (keyword == null || keyword.trim().isEmpty()) {
-//			return "redirect:/post/";
-//		}
-//
-//		List<PostVO> list = postRepository.findByPostTitleContaining(keyword.trim(), sort);
-//		List<PostCategoryVO> categories = postCategoryservice.getAll();
-//
-//		model.addAttribute("threads", list);
-//		model.addAttribute("categories", categories);
-//		model.addAttribute("currentSort", sort);
-//		model.addAttribute("currentKeyword", keyword);
-//		model.addAttribute("searchResults", true);
-//		model.addAttribute("searchCount", list.size());
-//
-//		boolean loggedIn = session.getAttribute("loginMember") != null;
-//		model.addAttribute("loggedIn", loggedIn);
-//
-//		return "front/post/listallpost";
-//	}
+	// ================ 新增：按讚數排序 ================
+	@PostMapping("/like")
+	public String likePost(@RequestParam("postId") Integer postId, HttpSession session) {
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			return "redirect:/login";
+		}
+		// 你可以限制只能對自己的貼文按讚，也可以允許所有人按讚
+		PostVO post = postservice.getOnePost(postId);
+		// 假設你允許所有人按讚
+		post.setLikeCount(post.getLikeCount() + 1);
+		postservice.updatePost(post.getPostId(), post.getMember().getMemId(), post.getPostCate().getPostCateId(),
+				post.getPostDate(), post.getPostStatus(), post.getEditDate(), post.getPostTitle(),
+				post.getPostContent(), post.getLikeCount(), post.getViews());
+		// 你可以記錄誰按過讚，避免重複（進階功能）
+		return "redirect:/post/one?postId=" + postId;
+	}
+
+	// ================ 新增：瀏覽數排序 ================
+	
+
+	// ================ 新增：關鍵字搜尋 ================
+	@GetMapping("/search")
+	public String searchPosts(@RequestParam("title") String title,
+			@RequestParam(value = "sort", defaultValue = "date") String sort, ModelMap model, HttpSession session) {
+
+		if (title == null || title.trim().isEmpty()) {
+			return "redirect:/post/";
+		}
+
+		List<PostVO> list = postRepository.findByPostTitleContainingAndPostStatus(title.trim(), 0);
+		// 你可以再依 sort 排序
+		switch (sort) {
+		case "like_Count":
+			list.sort((a, b) -> b.getLikeCount().compareTo(a.getLikeCount()));
+			break;
+		case "views":
+			list.sort((a, b) -> b.getViews().compareTo(a.getViews()));
+			break;
+		default:
+			list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate()));
+		}
+		List<PostCategoryVO> categories = postCategoryservice.getAll();
+
+		model.addAttribute("threads", list);
+		model.addAttribute("categories", categories);
+		model.addAttribute("currentSort", sort);
+		model.addAttribute("currentKeyword", title);
+		model.addAttribute("searchResults", true);
+		model.addAttribute("searchCount", list.size());
+
+		boolean loggedIn = session.getAttribute("loginMember") != null;
+		model.addAttribute("loggedIn", loggedIn);
+
+		return "front/post/listallpost";
+	}
 
 	// ================ 分類查詢 ================
 	@GetMapping("/category")
@@ -358,22 +379,19 @@ public class PostController {
 		List<PostVO> list = postRepository.findByCategoryAndSort(categoryId, sort);
 		List<PostCategoryVO> categories = postCategoryservice.getAll();
 
-	    // 找到當前分類名稱
-	    String currentCategoryName = categories.stream()
-	        .filter(cat -> cat.getPostCateId().equals(categoryId))
-	        .map(PostCategoryVO::getPostCate)
-	        .findFirst()
-	        .orElse("未知分類");
+		// 找到當前分類名稱
+		String currentCategoryName = categories.stream().filter(cat -> cat.getPostCateId().equals(categoryId))
+				.map(PostCategoryVO::getPostCate).findFirst().orElse("未知分類");
 
-	    model.addAttribute("threads", list);
-	    model.addAttribute("categories", categories);
-	    model.addAttribute("currentSort", sort);
-	    model.addAttribute("currentCategory", categoryId);
-	    model.addAttribute("currentCategoryName", currentCategoryName);
+		model.addAttribute("threads", list);
+		model.addAttribute("categories", categories);
+		model.addAttribute("currentSort", sort);
+		model.addAttribute("currentCategory", categoryId);
+		model.addAttribute("currentCategoryName", currentCategoryName);
 
-	    boolean loggedIn = session.getAttribute("loginMember") != null;
-	    model.addAttribute("loggedIn", loggedIn);
+		boolean loggedIn = session.getAttribute("loginMember") != null;
+		model.addAttribute("loggedIn", loggedIn);
 
-	    return "front/post/listallpost";
+		return "front/post/listallpost";
 	}
 }

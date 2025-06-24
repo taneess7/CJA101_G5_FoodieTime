@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.post.model.PostVO;
+import com.foodietime.product.model.ProductVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -13,9 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Embeddable
-
+@Getter
+@Setter
 public class FavoritePostId implements Serializable {
 
 	
@@ -43,25 +47,6 @@ public class FavoritePostId implements Serializable {
 		return Objects.equals(postId, that.postId) && Objects.equals(memId, that.memId);
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(postId, memId);
-	}
 
-	public Integer getPostId() {
-		return postId;
-	}
-
-	public void setPostId(Integer postId) {
-		this.postId = postId;
-	}
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
 
 }

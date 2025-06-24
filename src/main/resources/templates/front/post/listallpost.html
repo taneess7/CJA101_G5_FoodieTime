@@ -132,15 +132,18 @@
 						style="display: inline;">
 						<select name="sort"
 							onchange="document.getElementById('sortForm').submit()">
-							<option value="like_Count" th:selected="${sort == 'like_Count'}">讚數</option>
+							<option value="editDate"
+								th:selected="${currentSort == 'editDate'}">最新貼文</option>
+							<option value="like_Count"
+								th:selected="${currentSort == 'like_Count'}">讚數</option>
 							<option value="messagecount"
-								th:selected="${sort == 'messagecount'}">留言數</option>
-							<option value="views" th:selected="${sort == 'views'}">瀏覽數</option>
+								th:selected="${currentSort == 'messagecount'}">留言數</option>
+							<option value="views" th:selected="${currentSort == 'views'}">瀏覽數</option>
 						</select>
 					</form>
 				</div>
-				<button class="btn btn-secondary px-3 py-1 text-sm"
-					th:classappend="${featured} ? '' : 'btn-ghost'">精選</button>
+				<a class="btn px-3 py-1 text-sm" th:href="@{/FavoritePost/my}">
+					我的收藏 </a>
 				<button class="btn px-3 py-1 text-sm"
 					style="background-color: #ea580c; color: white;">熱門</button>
 			</div>

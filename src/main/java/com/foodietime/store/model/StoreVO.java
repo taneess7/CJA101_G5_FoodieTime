@@ -37,9 +37,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
@@ -103,13 +105,13 @@ public class StoreVO implements Serializable {
 	private String storWeb; 
 	
 	// 10.店家開店時間
-	@NotBlank(message="開店時間: 請勿空白")
+	@NotNull(message="開店時間: 請勿空白")
 	@DateTimeFormat(pattern = "HH:mm")
 	@Column(name = "STOR_OPEN_TIME")
 	private LocalTime storOnTime;
 	
 	// 11.店家關店時間
-	@NotBlank(message="關店時間: 請勿空白")
+	@NotNull(message="關店時間: 請勿空白")
 	@DateTimeFormat(pattern = "HH:mm")
 	@Column(name = "STOR_CLOSE_TIME")
 	private LocalTime storOffTime; 
@@ -151,8 +153,11 @@ public class StoreVO implements Serializable {
 	
 	
 	// 20.店家信箱
-	@Pattern(regexp = "^(?!\\\\.)[\\\\w!#$%&'*+/=?^`{|}~.-]+(?<!\\\\.)@([A-Za-z0-9-]+\\\\.)+[A-Za-z]{2,}$", message = "信箱格式不正確")
-	@NotBlank(message="Email: 請勿空白")
+	@NotBlank(message="不可為空")
+	@Pattern(
+		    regexp = "^(?!\\.)[\\w!#$%&'*+/=?^`{|}~.-]+(?<!\\.)@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$",
+		    message = "信箱格式不符合"
+		)
 	@Column(name = "STOR_EMAIL", updatable = false)
 	private String storEmail; 
 	
