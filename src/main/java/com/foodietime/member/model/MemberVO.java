@@ -4,11 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.foodietime.accrec.model.AccrecVO;
 import com.foodietime.cart.model.CartVO;
 import com.foodietime.directmessage.model.DirectMessageVO;
@@ -25,6 +29,10 @@ import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.model.ReportPostVO;
 @Entity
+@ToString(exclude = {"directMessages","favoriteList","cart","memCoupon","participants","groupBuyingCollectionList","groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message","reportMessage","appropriationCommRecord"})
+@EqualsAndHashCode(exclude = {"directMessages","favoriteList","cart","memCoupon","participants","groupBuyingCollectionList","groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message","reportMessage","appropriationCommRecord"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "memId")
+
 @Data
 @Table(name = "member")
 public class MemberVO implements Serializable {

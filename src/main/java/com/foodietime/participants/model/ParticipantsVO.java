@@ -2,7 +2,11 @@ package com.foodietime.participants.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.member.model.MemberVO;
 
@@ -15,10 +19,21 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Data
+@ToString(exclude = {"groupBuyingCase","member"})
+@EqualsAndHashCode(exclude = {"groupBuyingCase","member"})
 @Table(name="participants")
+@JsonIdentityInfo(
+		  generator = ObjectIdGenerators.PropertyGenerator.class,
+		  property  = "parId",
+		  scope     = ParticipantsVO.class
+		)
 public class ParticipantsVO implements Serializable {
 
 	@Id
@@ -102,7 +117,5 @@ public class ParticipantsVO implements Serializable {
 	public ParticipantsVO() {  //必需有一個不傳參數建構子
 	
 	}
-	
-	
 		
 }

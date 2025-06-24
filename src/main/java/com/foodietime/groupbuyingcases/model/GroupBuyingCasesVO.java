@@ -2,11 +2,16 @@ package com.foodietime.groupbuyingcases.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.foodietime.gbprod.model.GbprodVO;
 import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListVO;
 import com.foodietime.grouporders.model.GroupOrdersVO;
@@ -32,10 +37,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 
 @Entity
 @Data
 @Table(name="group_buying_cases")
+@ToString(exclude = {"participants","groupPurchaseReport","groupBuyingCollectionList","groupOrders"})
+@EqualsAndHashCode(exclude = {"participants","groupPurchaseReport","groupBuyingCollectionList","groupOrders"})
+@JsonIdentityInfo(
+		  generator = ObjectIdGenerators.PropertyGenerator.class,
+		  property  = "gbId",    // 子類別用自己的 id 屬性
+		  scope     = GroupBuyingCasesVO.class
+		)
 public class GroupBuyingCasesVO implements Serializable{
 
 	@Id
@@ -103,7 +118,6 @@ public class GroupBuyingCasesVO implements Serializable{
 
 	
 	@Column(name = "CANCEL_REASON", nullable = false, length = 65)
-	@NotBlank(message = "取消原因: 請勿空白")
 	@Size(max = 65, message = "取消原因: 最多 65 個字元")
 	private String cancelReason;  // 取消原因
 
@@ -119,7 +133,7 @@ public class GroupBuyingCasesVO implements Serializable{
 	}
 	
 	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
-    private List<ParticipantsVO> participants;
+	private List<ParticipantsVO> participants;
 	
 	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<GroupPurchaseReportVO> groupPurchaseReport;
@@ -130,6 +144,10 @@ public class GroupBuyingCasesVO implements Serializable{
 	@OneToMany(mappedBy = "groupBuyingCase", cascade = CascadeType.ALL)
     private List<GroupOrdersVO> groupOrders;
 	
+	public String getFormattedGbStartTime() {
+        return gbStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
 	
 	
 }

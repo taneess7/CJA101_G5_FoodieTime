@@ -18,11 +18,18 @@ import com.foodietime.smgauth.model.SmgauthVO;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name="group_buying_collection_list")
+@JsonIdentityInfo(
+	    generator = ObjectIdGenerators.PropertyGenerator.class,
+	    property  = "collectionId",
+	    scope     = GroupBuyingCollectionListVO.class
+	)
 public class GroupBuyingCollectionListVO implements Serializable{
 	
 	@EmbeddedId

@@ -9,6 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.member.model.MemberVO;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
 
 @Controller
@@ -38,10 +42,11 @@ public class GroupBuyingCasesController {
 
 	// 查詢某會員開設且是團主的團購案
 	@GetMapping("/leader-groups/{memId}")
-	public String findByLeader(@PathVariable Integer memId, Model model) {
-		// 1 = 是團主 (對應資料表 participants.IS_LEADER = 1)
+	public String findByLeader( @SessionAttribute("loggedInMember") MemberVO loggedInMember, Model model) {
+		// 0 = 是團主 (對應資料表 participants.IS_LEADER = 0)
+		  Integer memId = loggedInMember.getMemId();
 		List<GroupBuyingCasesVO> groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeader(memId,
-				(byte) 1);
+				(byte) 0);
 
 		if (groupBuyingCases.isEmpty()) {
 			model.addAttribute("error", "找不到該會員開設且為團主的團購案");
@@ -99,6 +104,36 @@ public class GroupBuyingCasesController {
 		}
 	}
 
+	//團購詳細頁搜尋by memId, gbId
+	@GetMapping("/detail-mem/{gbId}")
+	public String groupbuyDetail(
+	        @PathVariable("gbId") Integer gbId,
+	        HttpSession session,
+	        Model model) {
+
+	    // 1. 登入檢查
+	    MemberVO me = (MemberVO) session.getAttribute("loggedInMember");
+	    if (me == null) {
+	        return "redirect:/front/member/login";
+	    }
+
+	    // 2. 只查自己會員的團購
+	    GroupBuyingCasesVO group = groupBuyingCasesService.findByIdAndMemId(gbId, me.getMemId());
+	    if (group == null) {
+	        return "redirect:/front/gb/gbleader/leader-gproups";
+	    }
+
+	    // 3. 放入 Model
+	    model.addAttribute("group", group);
+	    model.addAttribute("participants", group.getParticipants());
+
+	    return "front/gb/gbleader/leader-gbdetail";
+	}
+
+
+	
+	
+	
 	// 新增修改團購案
 	@PostMapping("/save")
 	public String saveGroupBuyingCase(@ModelAttribute GroupBuyingCasesVO groupBuyingCasesVO, Model model) {
