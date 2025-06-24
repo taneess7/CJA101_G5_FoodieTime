@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>帳號啟用成功</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex justify-center items-center min-h-screen bg-green-100">
+
+<body class="flex justify-center items-center min-h-screen bg-orange-100">
     <div class="bg-white p-10 rounded-2xl shadow-xl text-center w-96">
-        <h2 class="text-2xl font-bold mb-4 text-green-700">帳號啟用成功！</h2>
+        <h2 class="text-2xl font-bold mb-4 text-orange-700">帳號啟用成功！</h2>
         <p class="mb-6">
-            歡迎，<span th:text="${nickname}" class="font-semibold text-green-900"></span>，您的帳號已成功啟用。
+            歡迎。<span th:text="${nickname}" class="font-semibold text-green-900"></span>您的帳號已成功啟用。
         </p>
-        <a th:href="@{/front/member/login}" class="block w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">立即登入</a>
+        <a th:href="@{/front/member/login}"
+            class="block w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700 transition">立即登入</a>
     </div>
 </body>
+
 </html>
