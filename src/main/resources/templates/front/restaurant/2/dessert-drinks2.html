@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>甜點飲料 - FoodieTime 食刻</title>
     <meta name="description" content="探索各種甜點飲料，尋找您喜愛的甜品和飲品。FoodieTime 食刻提供多樣化的甜點飲料店家選擇，滿足您的味蕾需求。">
-<!--     <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}"> -->
-<!--     <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}"> -->
-<!--     <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}"> -->
-<!--     <link rel="stylesheet" th:href="@{/css/front/restaurant/dessert-drinks.css}"> -->
-<link rel="stylesheet" href="css/front/restaurant/style.css">
-<link rel="stylesheet" href="css/front/restaurant/restaurant-categories.css">
-<link rel="stylesheet" href="css/front/restaurant/food-categories.css">
-<link rel="stylesheet" href="css/front/restaurant/american-cuisine.css">
-<link rel="stylesheet" href="css/front/restaurant//responsive.css">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet" th:href="@{/css/front/restaurant/dessert-drinks.css}">
+<!-- <link rel="stylesheet" href="css/front/restaurant/style.css"> -->
+<!-- <link rel="stylesheet" href="css/front/restaurant/restaurant-categories.css"> -->
+<!-- <link rel="stylesheet" href="css/front/restaurant/food-categories.css"> -->
+<!-- <link rel="stylesheet" href="css/front/restaurant/american-cuisine.css"> -->
+<!-- <link rel="stylesheet" href="css/front/restaurant//responsive.css"> -->
 <!--     <link rel="stylesheet" href="css/responsive.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -368,7 +368,7 @@
 						</div>
 						<!-- 店家資訊 分頁內容結束 -->
 						 <!-- 優惠券 分頁內容開始-->
-						  <form method="post" th:action="@{/coupon/add}">
+						  
                              <div class="tab-content" th:id="'coupon-content-' + ${iterStat.index}">
                                 <div class="menu-items">
                                  <!-- 遍歷優惠券 -->
@@ -386,7 +386,7 @@
                                     	</div>                                  
                                 	</div>
                             	</div>
-                           </form>
+                       
                             <!-- 優惠券 分頁內容結束-->
 					
 				</th:block>
@@ -394,238 +394,6 @@
 		</div>
 	<!-- 店家動態結束 -->
 	
-	<!-- 原始無動態帶入資料的網頁版本 -->
-        <div class="container">
-            <!-- 甜點飲料店家列表 -->
-            <div class="restaurant-list">
-                <!-- 手工珍珠奶茶 -->
-                <article class="restaurant-detail">
-                    <div class="restaurant-header">
-                        <div class="restaurant-main-info">
-                            <img th:src="@{/images/restaurant/bubble-tea.svg}" alt="手工珍珠奶茶" class="restaurant-image">
-                            <div class="restaurant-primary-info">
-                                <h2 class="restaurant-name">手工珍珠奶茶</h2>
-                                <span class="cuisine-tag cuisine-dessert">甜點飲料</span>
-                                <p class="restaurant-category">奶茶 • 咖啡 • 甜點</p>
-                                <div class="restaurant-rating">
-                                    <span class="rating-stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </span>
-                                    <span>4.9 (198則評價)</span>
-                                </div>
-                                <div class="restaurant-actions">
-                                    <button class="action-btn favorite-btn">
-                                        <i class="far fa-heart"></i> 收藏
-                                    </button>
-                                    <button class="action-btn share-btn">
-                                        <i class="fas fa-share-alt"></i> 分享
-                                    </button>
-                                    <button class="action-btn directions-btn">
-                                        <i class="fas fa-directions"></i> 導航
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="restaurant-contact-info">
-                            <div class="info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>台北市大安區忠孝東路四段216號</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-phone"></i>
-                                <span>(02) 2771-3456</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-clock"></i>
-                                <span>營業時間: 10:00-22:00 (週一至週日)</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-globe"></i>
-                                <a href="#" class="website-link">www.handmade-bubbletea.com.tw</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="restaurant-details-tabs">
-                        <div class="tabs-header">
-                            <button class="tab-btn active" data-tab="menu">菜單</button>
-                            <button class="tab-btn" data-tab="reviews">評價</button>
-                            <button class="tab-btn" data-tab="photos">照片</button>
-                            <button class="tab-btn" data-tab="info">店家資訊</button>
-                            <button class="tab-btn" data-tab="coupon">優惠券</button>
-                        </div>
-                        <div class="tabs-content">
-                            <!-- 菜單標籤內容 -->
-                            <div class="tab-content active" id="menu-content">
-                                <div class="menu-categories">
-                                    <button class="menu-category active">奶茶</button>
-                                    <button class="menu-category">水果茶</button>
-                                    <button class="menu-category">咖啡</button>
-                                    <button class="menu-category">甜點</button>
-                                </div>
-                                
-                                <!-- 菜單 -->
-                                <div class="menu-items">
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="經典珍珠奶茶" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">經典珍珠奶茶</h3>
-                                            <p class="menu-item-description">使用進口阿薩姆紅茶，搭配手工熬煮的黑糖珍珠，香醇濃郁</p>
-                                            <span class="menu-item-price">NT$ 60</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="黑糖珍珠鮮奶" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">黑糖珍珠鮮奶</h3>
-                                            <p class="menu-item-description">使用當日鮮奶，搭配手工黑糖珍珠，層次分明，口感豐富</p>
-                                            <span class="menu-item-price">NT$ 75</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="menu-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="芋圓奶茶" class="menu-item-image">
-                                        <div class="menu-item-info">
-                                            <h3 class="menu-item-name">芋圓奶茶</h3>
-                                            <p class="menu-item-description">使用台灣在地芋頭製作的芋圓，搭配香醇奶茶，口感Q彈</p>
-                                            <span class="menu-item-price">NT$ 70</span>
-                                        </div>
-                                        <button class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 評價標籤內容 -->
-                            <div class="tab-content" id="reviews-content">
-                                <div class="reviews-summary">
-                                    <div class="overall-rating">
-                                        <span class="rating-number">4.9</span>
-                                        <div class="rating-stars-large">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                        <span class="total-reviews">198則評價</span>
-                                    </div>
-                                    <div class="rating-breakdown">
-                                        <div class="rating-bar">
-                                            <span class="rating-label">5星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 85%"></div>
-                                            </div>
-                                            <span class="rating-percent">85%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">4星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 10%"></div>
-                                            </div>
-                                            <span class="rating-percent">10%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">3星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 3%"></div>
-                                            </div>
-                                            <span class="rating-percent">3%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">2星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 1%"></div>
-                                            </div>
-                                            <span class="rating-percent">1%</span>
-                                        </div>
-                                        <div class="rating-bar">
-                                            <span class="rating-label">1星</span>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: 1%"></div>
-                                            </div>
-                                            <span class="rating-percent">1%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="user-reviews">
-                                    <div class="review-item">
-                                        <div class="reviewer-info">
-                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
-                                            <div class="reviewer-details">
-                                                <h4 class="reviewer-name">王小明</h4>
-                                                <div class="review-rating">
-                                                    <span class="rating-stars">
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                    </span>
-                                                    <span class="review-date">2024-03-20</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="review-text">這家店的珍珠奶茶真的太好喝了！珍珠Q彈有嚼勁，奶茶香醇不膩口，甜度剛剛好。店員服務態度也很好，環境乾淨舒適。強烈推薦！</p>
-                                        <div class="review-photos">
-                                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="食物照片" class="review-photo">
-                                        </div>
-                                    </div>
-                                    <div class="review-item">
-                                        <div class="reviewer-info">
-                                            <img th:src="@{/images/restaurant/avatar-placeholder.svg}" alt="用戶頭像" class="reviewer-avatar">
-                                            <div class="reviewer-details">
-                                                <h4 class="reviewer-name">林小華</h4>
-                                                <div class="review-rating">
-                                                    <span class="rating-stars">
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                    </span>
-                                                    <span class="review-date">2024-03-15</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="review-text">黑糖珍珠鮮奶真的很讚！黑糖香氣十足，珍珠軟Q不硬，鮮奶很新鮮。店內環境也很舒適，適合久坐。</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 照片標籤內容 -->
-                            <div class="tab-content" id="photos-content">
-                                <div class="photo-gallery">
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="經典珍珠奶茶" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="黑糖珍珠鮮奶" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="芋圓奶茶" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="店內環境" class="gallery-image">
-                                    </div>
-                                    <div class="gallery-item">
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="製作過程" class="gallery-image">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
     </main>
 
     <footer class="app-footer">
