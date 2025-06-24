@@ -1,6 +1,7 @@
 package com.foodietime.coupon.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,15 +67,15 @@ public class CouponVO implements Serializable {
 
     // 7.新增 優惠額度
     @Column(name = "COU_DISCOUNT")
-    private Double couDiscount;
+    private BigDecimal couDiscount;
 
     // 8.啟用期限
-    @NotEmpty(message = "啟用期限: 請勿空白")
+    @NotNull(message = "啟用期限: 請勿空白")
     @Column(name = "COU_START_DATE")
     private Timestamp couStartDate;
 
     // 9.截止期限
-    @NotEmpty(message = "截止期限: 請勿空白")
+    @NotNull(message = "截止期限: 請勿空白")
     @Column(name = "COU_END_DATE")
     private Timestamp couEndDate;
 
@@ -82,7 +84,7 @@ public class CouponVO implements Serializable {
     @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
     private List<MemCouponVO> memCoupon;
 
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "coupon")
     private List<OrdersVO> orders;
 
 
