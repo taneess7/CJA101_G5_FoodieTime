@@ -38,8 +38,10 @@ public class GroupBuyingDisplayDTO {
     private String timeLeft;                 // 剩餘時間
     private String badgeType;                // 徽章類型 (熱門、新品、即將結束等)
     private String badgeText;                // 徽章文字
-    private String productImageBase64;       // Base64編碼的圖片
-    
+    private String imageUrl;       
+    public String getImageUrl() {
+        return "/gb/group/image/" + gbId;
+    }
     // 價格相關屬性
     // private Integer currentPrice;            // 當前價格 - 未使用
     private Integer originalPrice;           // 原價

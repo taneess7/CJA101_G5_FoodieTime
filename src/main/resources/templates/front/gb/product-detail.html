@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title >商品詳情 - 團購樂</title>
+    <title>商品詳情 - 團購樂</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
@@ -229,6 +229,7 @@
         }
         
         .reviewer-name {
+        	font-size: 20px;
             font-weight: 500;
         }
         
@@ -966,13 +967,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/index}">首頁</a>
+                        <a class="nav-link" href="/index">首頁</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">熱門團購</a>
+                        <a class="nav-link" href="/gb/gbindex#hot">熱門團購</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">最新上架</a>
+                        <a class="nav-link" href="/gb/gbindex#new">最新上架</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">即將結束</a>
@@ -986,6 +987,7 @@
                       <a th:if="${session.loggedInMember != null}" class="nav-link" href="/gb/leader">
                           <i class="bi bi-person-badge"></i> 我是團長
                       </a>
+                    </li>
                 </ul>
                 <div class="d-flex">
                      <!-- 未登入狀態：顯示登入 / 註冊 -->
@@ -994,9 +996,9 @@
 			            <i class="bi bi-person"></i> 登入
 			        </a>
 			        <a href="/register" class="btn btn-outline-primary me-2">
-			            <i class="bi bi-person-plus"></i> 註冊
-			        </a>            
-                </div>
+                            <i class="bi bi-person-plus"></i> 註冊
+                        </a>            
+                    </div>
                 <div th:if="${session.loggedInMember != null}" class="dropdown">
 			        <a href="#" class="btn btn-outline-success dropdown-toggle me-2" data-bs-toggle="dropdown" aria-expanded="false">
 			            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
@@ -1015,7 +1017,7 @@
         <!-- 麵包屑導航 -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/index}">首頁</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/gbindex}">首頁</a></li>
                 <li class="breadcrumb-item"><a href="#">美食團購</a></li>
                 <li class="breadcrumb-item"><a href="#">台南美食</a></li>
                 <li class="breadcrumb-item active" aria-current="page" th:text="${productDetail != null ? productDetail.gbProdName : '商品詳情'}">商品詳情</li>
@@ -1029,26 +1031,39 @@
                 <div class="product-container">
                     <!-- 主要輪播 -->
                     <div class="swiper main-swiper">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide" th:if="${productDetail != null and productDetail.productImageBase64 != null}">
-                                <img th:src="'data:image/jpeg;base64,' + ${productDetail.productImageBase64}" th:alt="${productDetail.gbProdName + ' - 商品圖片'}">
-                            </div>
-                            <div class="swiper-slide" th:each="image, iterStat : ${images != null ? images : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80', 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80'}}" th:if="${productDetail == null or productDetail.productImageBase64 == null}">
-                                <img th:src="${image}" th:alt="${productDetail != null ? productDetail.gbProdName + ' - 圖片' + (iterStat.index + 1) : '商品圖片'}">
-                            </div>
-                        </div>
+                       <div class="swiper-slide"
+						     th:each="image, iterStat : ${productDetail.imageUrl != null and !productDetail.imageUrl.isEmpty() 
+						                                 ? productDetail.imageUrl 
+						                                 : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80',
+						                                    'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80'}}">
+						    <img th:src="${image}" 
+						         th:alt="${productDetail.gbProdName + ' - 圖片 ' + (iterStat.index + 1)}"
+						         loading="lazy" />
+						</div>
                         <div class="swiper-pagination"></div>
                     </div>
-                    
+              		
                     <!-- 縮圖輪播 -->
                     <div class="swiper thumbnail-swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide" th:if="${productDetail != null and productDetail.productImageBase64 != null}">
-                                    <img th:src="'data:image/jpeg;base64,' + ${productDetail.productImageBase64}" th:alt="'縮圖'">
-                                </div>
-                                <div class="swiper-slide" th:each="image, iterStat : ${images != null ? images : {'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80', 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1978&q=80'}}" th:if="${productDetail == null or productDetail.productImageBase64 == null}">
-                                <img th:src="${image}" th:alt="'縮圖' + (iterStat.index + 1)">
-                            </div>
+                            <!-- 如果沒有 productDetail 或沒有 images，就顯示預設縮圖 -->
+							<div th:if="${productDetail == null or productDetail.imageUrl == null or productDetail.imageUrl.isEmpty()}">
+							    <div class="swiper-slide"
+							         th:each="image, iterStat : ${{
+							            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80',
+							            'https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1978&q=80'
+							         }}">
+							        <img th:src="${image}" th:alt="'預設縮圖' + ${iterStat.index + 1}" />
+							    </div>
+							</div>
+							
+							<!-- 否則顯示真實圖片 -->
+							<div th:if="${productDetail != null and productDetail.imageUrl != null and !productDetail.imageUrl.isEmpty()}">
+							    <div class="swiper-slide"
+							         th:each="image, iterStat : ${productDetail.imageUrl}">
+							        <img th:src="@{${image}}" th:alt="'商品縮圖' + ${iterStat.index + 1}" />
+							    </div>
+							</div>
                         </div>
                     </div>
                 </div>
@@ -1079,7 +1094,7 @@
 								    <i class="bi bi-star"></i>
 								</th:block>
 
-                                <span class="ms-1" th:text="${productDetail != null and productDetail.newStar != null ? productDetail.newStar + ' (' + productDetail.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
+                                <span class="ms-1" th:text="${productDetail != null and productDetail.newStar != null ? #numbers.formatDecimal(productDetail.newStar, 1, 1) + ' (' + productDetail.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
                             </div>
                         </div>
                     </div>
@@ -1164,10 +1179,11 @@
                                         <span class="time-label">分</span>
                                     </div>
                                 </div>
-<div class="countdown-end-time"
-     th:text="'結束時間：' + ${productDetail != null ? #temporals.format(productDetail.gbEndTime, 'yyyy/MM/dd HH:mm') : '2023/12/31 23:59'}">
-    結束時間：2023/12/31 23:59
-</div>                            </div>
+									<div class="countdown-end-time"
+									     th:text="'結束時間：' + ${productDetail != null ? #temporals.format(productDetail.gbEndTime, 'yyyy/MM/dd HH:mm') : '2023/12/31 23:59'}">
+									    結束時間：2023/12/31 23:59
+									</div>                           
+							 </div>
                         </div>
                         
                         
@@ -1217,7 +1233,7 @@
                     <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="false">規格參數</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">用戶評價 (42)</button>
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">用戶評價 (<span id="tab-review-count">0</span>)</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab" aria-controls="shipping" aria-selected="false">配送與退貨</button>
@@ -1332,122 +1348,38 @@
                 <!-- 用戶評價 -->
                 <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">用戶評價 (38)</h4>
+                        <h4 class="mb-0">用戶評價 (<span id="review-count">0</span>)</h4>
                         <div>
-                            <span class="fs-4 fw-bold text-warning">4.8</span>
-                            <span class="text-warning ms-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                            </span>
+                            <span class="fs-4 fw-bold text-warning" id="average-rating">0.0</span>
+                            <span class="text-warning ms-2" id="average-stars"></span>
                         </div>
                     </div>
-                    
                     <!-- 評價過濾 -->
-                    <div class="mb-4">
-                        <button class="btn btn-sm btn-outline-secondary me-2 active">全部 (38)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">5星 (32)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">4星 (5)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">3星 (1)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">2星 (0)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">1星 (0)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">有圖評價 (18)</button>
+                    <div class="mb-4" id="review-filters">
+                        <button class="btn btn-sm btn-outline-secondary me-2 active" data-filter="all">全部 (<span id="filter-all">0</span>)</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" data-filter="5">5星 (<span id="filter-5">0</span>)</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" data-filter="4">4星 (<span id="filter-4">0</span>)</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" data-filter="3">3星 (<span id="filter-3">0</span>)</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" data-filter="2">2星 (<span id="filter-2">0</span>)</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" data-filter="1">1星 (<span id="filter-1">0</span>)</button>
                     </div>
-                    
                     <!-- 評價列表 -->
-                    <div class="review-list">
-                        <!-- 評價項目 1 -->
-                        <div class="review-item">
+                    <div class="review-list" id="review-list">
+                        <div th:each="review : ${reviews}" class="review-item" th:attr="data-rating=${review.rating}">
                             <div class="review-header">
                                 <div class="reviewer-info">
-                                    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="評價者頭像" class="reviewer-avatar">
-                                    <div>
-                                        <div class="reviewer-name">林小美</div>
-                                        <div class="review-date">2023-12-15</div>
-                                    </div>
+                                    <div style="color:red" class="reviewer-name" th:text="${review.reviewerName}">使用者名稱</div>
                                 </div>
-                                <div class="review-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                </div>
+                                <div class="review-rating" th:attr="data-rating=${review.rating}"></div>
                             </div>
                             <div class="review-content">
-                                <p>鳳梨酥真的超級好吃！酥脆的外皮配上香甜的鳳梨餡，一口咬下去滿滿的台南古早味。包裝也很精美，送人自用都很棒。這次團購價格很優惠，已經推薦給朋友們了！</p>
-                                <div class="review-images">
-                                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="評價圖片" class="review-image">
-                                    <img src="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="評價圖片" class="review-image">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 評價項目 2 -->
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="評價者頭像" class="reviewer-avatar">
-                                    <div>
-                                        <div class="reviewer-name">王大明</div>
-                                        <div class="review-date">2023-12-10</div>
-                                    </div>
-                                </div>
-                                <div class="review-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                </div>
-                            </div>
-                            <div class="review-content">
-                                <p>第二次參加這個團購了！鳳梨酥的品質一直很穩定，每一個都很香甜。保存期限也很長，可以慢慢享用。團長人很好，出貨速度也很快，非常滿意這次的購買體驗！</p>
-                            </div>
-                        </div>
-                        
-                        <!-- 評價項目 3 -->
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="評價者頭像" class="reviewer-avatar">
-                                    <div>
-                                        <div class="reviewer-name">陳小華</div>
-                                        <div class="review-date">2023-12-05</div>
-                                    </div>
-                                </div>
-                                <div class="review-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-half"></i>
-                                </div>
-                            </div>
-                            <div class="review-content">
-                                <p>鳳梨酥口感很棒，鳳梨餡料豐富不會太甜。禮盒包裝很有質感，拿來送長輩很合適。唯一小缺點是收到時有一個稍微破損，但不影響食用。整體來說很推薦這個團購！</p>
-                                <div class="review-images">
-                                    <img src="https://images.unsplash.com/photo-1464454709131-ffd692591ee5?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="評價圖片" class="review-image">
-                                </div>
+                                <p th:text="${review.comment}">這裡是使用者評論內容</p>
                             </div>
                         </div>
                     </div>
-                    
                     <!-- 分頁 -->
                     <nav aria-label="評價分頁" class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一頁</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">下一頁</a>
-                            </li>
-                        </ul>
+                        <ul class="pagination justify-content-center" id="review-pagination"></ul>
                     </nav>
                 </div>
                 
@@ -1512,68 +1444,7 @@
             </div>
         </div>
         
-        <!-- 相關商品 -->
-        <div class="related-products">
-            <h2 class="related-title">其他熱門團購美食</h2>
-            <div class="row">
-                <!-- 相關商品 1 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=764&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">【高雄團購】港式點心組合 - 經典茶點</h5>
-                            <div>
-                                <span class="related-product-price">$680</span>
-                                <span class="related-product-original-price">$980</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 相關商品 2 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">【新竹團購】手工牛軋糖禮盒 - 花生口味</h5>
-                            <div>
-                                <span class="related-product-price">$450</span>
-                                <span class="related-product-original-price">$650</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 相關商品 3 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">【雲林團購】古坑咖啡豆禮盒 - 精選烘焙</h5>
-                            <div>
-                                <span class="related-product-price">$580</span>
-                                <span class="related-product-original-price">$800</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 相關商品 4 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">【宜蘭團購】手工蛋捲禮盒 - 酥脆香甜</h5>
-                            <div>
-                                <span class="related-product-price">$380</span>
-                                <span class="related-product-original-price">$520</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        
 
     <!-- 登入彈窗 -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -1671,6 +1542,13 @@
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const memberInfoJson = /*[[${loggedInMemberInfoJson}]]*/ 'null';
+        const loggedInMemberInfo = JSON.parse(memberInfoJson);
+        /*]]>*/
+    </script>
+
     <!-- 自定義 JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1768,9 +1646,74 @@
             
             // 參團按鈕功能函數
             window.joinGroup = function() {
-                // 已登入用戶直接前往訂單頁面
-                alert('即將前往訂單頁面...');
-                // window.location.href = '/order';
+                const pathParts = window.location.pathname.split('/');
+                const gbId = parseInt(pathParts[pathParts.length - 1], 10);
+                if (isNaN(gbId)) {
+                    alert('無法獲取團購ID，請重新整理頁面。');
+                    return;
+                }
+
+                if (!loggedInMemberInfo) {
+                    alert('請先登入會員再進行此操作。');
+                    window.showLoginModal();
+                    return;
+                }
+
+                const quantity = parseInt(document.querySelector('.quantity-input').value, 10);
+                const amount = parseInt(document.querySelector('.total-amount').textContent, 10);
+                const productName = document.querySelector('.product-title').textContent.trim();
+
+                // 直接從後端傳來的會員資料取得資訊
+                const parName = loggedInMemberInfo.memName;
+                const parAddress = loggedInMemberInfo.memCity + loggedInMemberInfo.memCityarea + loggedInMemberInfo.memAddress;
+                const parPhone = loggedInMemberInfo.memPhone;
+
+                const confirmationMessage = `請確認您的訂單：\n\n` +
+                                      `商品：${productName}\n` +
+                                      `數量：${quantity} 件\n` +
+                                      `總計：NT$ ${amount}\n\n` +
+                                      `收件人：${parName}\n` +
+                                      `電話：${parPhone}\n` +
+                                      `地址：${parAddress}\n\n` +
+                                      `是否確認參團？`;
+
+                if (confirm(confirmationMessage)) {
+                    const payload = {
+                        gbId: gbId,
+                        quantity: quantity,
+                        amount: amount,
+                        parName: parName,
+                        parAddress: parAddress,
+                        parLongitude: 121.5654, // 範例：台北101經度
+                        parLatitude: 25.0339,   // 範例：台北101緯度
+                        parPhone: parPhone,
+                        deliveryMethod: 0, // 預設 0: 宅配
+                        payMethod: 1       // 預設 1: 現金
+                    };
+
+                    fetch('/gb/join', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            return response.text().then(text => { throw new Error(text || '參團失敗') });
+                        }
+                    })
+                    .then(data => {
+                        alert(data); // 顯示後端回傳的 "參團成功"
+                        window.location.href = '/gb/gbindex'; // 成功後跳轉到團購首頁
+                    })
+                    .catch(error => {
+                        console.error('參團時發生錯誤:', error);
+                        alert('發生錯誤：' + error.message);
+                    });
+                }
             };
             
             window.showLoginModal = function() {
@@ -1778,6 +1721,114 @@
                 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                 loginModal.show();
             };
+        });
+
+        // ===== 評價星星渲染、分頁、篩選、統計 =====
+        function renderStarsToDOM() {
+            document.querySelectorAll('.review-rating').forEach(div => {
+                const rating = parseFloat(div.getAttribute('data-rating'));
+                let html = '';
+                const full = Math.floor(rating);
+                const half = rating % 1 >= 0.5 ? 1 : 0;
+                const empty = 5 - full - half;
+                for (let i = 0; i < full; i++) html += '<i class="bi bi-star-fill text-warning"></i>';
+                if (half) html += '<i class="bi bi-star-half text-warning"></i>';
+                for (let i = 0; i < empty; i++) html += '<i class="bi bi-star text-warning"></i>';
+                div.innerHTML = html;
+            });
+        }
+
+        let currentPage = 1;
+        const reviewsPerPage = 5;
+        let currentFilter = 'all';
+
+        function getAllReviewItems() {
+            return Array.from(document.querySelectorAll('.review-item'));
+        }
+
+        function getFilteredReviewItems() {
+            const all = getAllReviewItems();
+            if (currentFilter === 'all') return all;
+            return all.filter(item => Math.floor(parseFloat(item.getAttribute('data-rating'))) == currentFilter);
+        }
+
+        function renderReviewStats() {
+            const all = getAllReviewItems();
+            const count = all.length;
+            let sum = 0;
+            all.forEach(item => sum += parseFloat(item.getAttribute('data-rating')));
+            const avg = count ? (sum / count) : 0;
+            document.getElementById('review-count').textContent = count;
+            document.getElementById('average-rating').textContent = avg.toFixed(1);
+            // 星星
+            let html = '';
+            const full = Math.floor(avg);
+            const half = avg % 1 >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            for (let i = 0; i < full; i++) html += '<i class="bi bi-star-fill text-warning"></i>';
+            if (half) html += '<i class="bi bi-star-half text-warning"></i>';
+            for (let i = 0; i < empty; i++) html += '<i class="bi bi-star text-warning"></i>';
+            document.getElementById('average-stars').innerHTML = html;
+            // 篩選數量
+            document.getElementById('filter-all').textContent = count;
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById('filter-' + i).textContent = all.filter(item => Math.floor(parseFloat(item.getAttribute('data-rating'))) == i).length;
+            }
+        }
+
+        function renderReviewList() {
+            const filtered = getFilteredReviewItems();
+            const totalPages = Math.max(1, Math.ceil(filtered.length / reviewsPerPage));
+            if (currentPage > totalPages) currentPage = totalPages;
+            filtered.forEach((item, idx) => {
+                if (idx >= (currentPage - 1) * reviewsPerPage && idx < currentPage * reviewsPerPage) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            // 分頁
+            const pag = document.getElementById('review-pagination');
+            let html = '';
+            html += `<li class="page-item${currentPage === 1 ? ' disabled' : ''}"><a class="page-link" href="#" data-page="prev">上一頁</a></li>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<li class="page-item${currentPage === i ? ' active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+            }
+            html += `<li class="page-item${currentPage === totalPages ? ' disabled' : ''}"><a class="page-link" href="#" data-page="next">下一頁</a></li>`;
+            pag.innerHTML = html;
+            pag.querySelectorAll('a.page-link').forEach(a => {
+                a.onclick = function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    if (page === 'prev' && currentPage > 1) currentPage--;
+                    else if (page === 'next' && currentPage < totalPages) currentPage++;
+                    else if (!isNaN(page)) currentPage = parseInt(page);
+                    renderReviewList();
+                };
+            });
+        }
+
+        function bindReviewFilters() {
+            document.querySelectorAll('#review-filters button').forEach(btn => {
+                btn.onclick = function() {
+                    document.querySelectorAll('#review-filters button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    currentPage = 1;
+                    renderReviewList();
+                };
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStarsToDOM();
+            renderReviewStats();
+            renderReviewList();
+            bindReviewFilters();
+            // 同步tab上的用戶評價數字
+            var tabCount = document.getElementById('tab-review-count');
+            var reviewCount = document.getElementById('review-count');
+            if(tabCount && reviewCount) tabCount.textContent = reviewCount.textContent;
         });
     </script>
 </body>

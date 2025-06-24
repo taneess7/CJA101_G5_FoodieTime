@@ -5,11 +5,18 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.aspectj.lang.reflect.MethodSignature;
+import java.lang.reflect.Method;
 
 @Aspect
 @Component
@@ -99,6 +106,19 @@ public class ExceptionAspect {
         
         String className = joinPoint.getTarget().getClass().getSimpleName();
         
+        // 簡化的錯誤訊息
+        String errorMessage = "系統發生錯誤: " + e.getMessage();
+        
+        // 判斷是否為 REST API，如果是，則返回 ResponseEntity
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        if (method.isAnnotationPresent(ResponseBody.class) || 
+            joinPoint.getTarget().getClass().isAnnotationPresent(RestController.class)) {
+            
+            logger.error("REST API 執行異常: {}.{}, 返回錯誤訊息: {}", className, methodName, errorMessage);
+            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
         // 取得方法參數，尋找 Model 物件
         Object[] args = joinPoint.getArgs();
         Model model = null;
@@ -111,9 +131,6 @@ public class ExceptionAspect {
                 redirectAttributes = (RedirectAttributes) arg;
             }
         }
-        
-        // 簡化的錯誤訊息
-        String errorMessage = "系統發生錯誤: " + e.getMessage();
         
         // 根據控制器類別和方法名稱決定返回的錯誤頁面
         String errorView;

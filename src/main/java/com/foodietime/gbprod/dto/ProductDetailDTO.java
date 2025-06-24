@@ -30,7 +30,7 @@ public class ProductDetailDTO {
     private Integer originalPrice;      // 原價
     private Integer currentPrice;       // 現價
     private String discountPercent;     // 折扣百分比
-    private List<PriceTier> priceTiers; // 階梯價格
+
     
     // ==================== 進度資訊 ====================
     private Integer gbMinProductQuantity;        // 最低成團數量
@@ -70,36 +70,12 @@ public class ProductDetailDTO {
     // ==================== 計算屬性 ====================
     private String badgeType;          // 徽章類型
     private String badgeText;          // 徽章文字
-    private String productImageBase64;  // 商品圖片 Base64
+    private String ImageUrl;  // 商品圖片 Base64
     
     // ==================== 商品規格 ====================
     private String packageOptions;     // 包裝選項
     private String quantity;            // 數量規格
     
-    // ==================== 內部類別：價格階梯 ====================
-    public static class PriceTier {
-        private Integer minQuantity;  // 最小數量
-        private Integer price;        // 對應價格
-        private String description;   // 描述
-        
-        public PriceTier() {}
-        
-        public PriceTier(Integer minQuantity, Integer price, String description) {
-            this.minQuantity = minQuantity;
-            this.price = price;
-            this.description = description;
-        }
-        
-        // Getters and Setters
-        public Integer getMinQuantity() { return minQuantity; }
-        public void setMinQuantity(Integer minQuantity) { this.minQuantity = minQuantity; }
-        
-        public Integer getPrice() { return price; }
-        public void setPrice(Integer price) { this.price = price; }
-        
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
-    }
     
     // ==================== 建構子 ====================
     public ProductDetailDTO() {}
@@ -156,9 +132,6 @@ public class ProductDetailDTO {
     
     public String getDiscountPercent() { return discountPercent; }
     public void setDiscountPercent(String discountPercent) { this.discountPercent = discountPercent; }
-    
-    public List<PriceTier> getPriceTiers() { return priceTiers; }
-    public void setPriceTiers(List<PriceTier> priceTiers) { this.priceTiers = priceTiers; }
     
     // 進度資訊
     public Integer getGbMinProductQuantity() { return gbMinProductQuantity; }
@@ -244,8 +217,10 @@ public class ProductDetailDTO {
     public String getBadgeText() { return badgeText; }
     public void setBadgeText(String badgeText) { this.badgeText = badgeText; }
     
-    public String getProductImageBase64() { return productImageBase64; }
-    public void setProductImageBase64(String productImageBase64) { this.productImageBase64 = productImageBase64; }
+    public String getImageUrl() {
+        return "/gb/group/image/" + gbId;
+    }
+    public void setImageUrl(String ImageUrl) { this.ImageUrl = ImageUrl; }
     
     // 商品規格
     public String getPackageOptions() { return packageOptions; }
