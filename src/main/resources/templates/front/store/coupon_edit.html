@@ -1,0 +1,80 @@
+<!-- coupon_edit.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編輯優惠券 - FoodieTime 食刻</title>
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link rel="stylesheet" href="/css/front/coupon/cou.css">
+
+</head>
+<body>
+	<main>
+		<h1 class="section-title">編輯優惠券</h1>
+		<p class="section-subtitle">填寫優惠券資訊以吸引顧客使用</p>
+
+		<!-- 下拉選單: 只顯示此店家的優惠券 -->
+		<form th:action="@{/store/editCoupon}" method="get" id="couponForm">
+			<label>選擇優惠券 (空值表示新增)</label> <select name="couId">
+				<option value="0">--新增優惠券--</option>
+				<option th:each="cou : ${coupons}" th:value="${cou.couId}"
+					th:text="${cou.couId + ' - ' + cou.couDes}"></option>
+			</select>
+			<button type="submit">進入表單</button>
+		</form>
+
+		<!-- 若 coupon 有值才顯示表單 -->
+		<th:block th:if="${coupon != null}">
+			<form th:action="@{/store/coupon/save}" th:object="${coupon}"
+				method="post">
+				<input type="hidden" th:field="*{couId}" />
+
+
+				<div>
+					<label>店家編號</label> 
+					<input type="hidden" th:field="*{store.storId}" />
+				</div>
+				
+				<div>
+					<label>優惠券名稱</label> 
+					<input type="text" th:field="*{couName}" />
+				</div>
+				
+				<div>
+					<label>優惠券類型</label> 
+					<input type="text" th:field="*{couType}" />
+				</div>
+				
+				<div>
+					<label>優惠券說明</label> 
+					<input type="text" th:field="*{couDesc}" />
+				</div>
+				
+				<div>
+					<label>最低消費金額限制</label> 
+					<input type="text" th:field="*{couMinOrd}" />
+				</div>
+				
+				<div>
+					<label>優惠額度</label> 
+					<input type="text" th:field="*{couDiscount}" />
+				</div>
+				
+				<div>
+					<label>啟用期限</label> 
+					<input type="text" th:field="*{couStartDate}" />
+				</div>
+				
+				<div>
+					<label>截止期限</label> 
+					<input type="text" th:field="*{couEndDate}" />
+				</div>
+				
+				<button type="submit">送出</button>
+			</form>
+	</main>
+
+</body>
+</html>

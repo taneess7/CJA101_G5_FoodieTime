@@ -1,0 +1,145 @@
+@charset "UTF-8";
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 40px;
+    }
+
+    .edit-store-form {
+      display: grid;
+      gap: 30px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .form-label .required {
+      color: #FF5722;
+      margin-left: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      font-size: 16px;
+      background: white;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #FF5722;
+      box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #adb5bd;
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.5;
+    }
+
+    select.form-input {
+      cursor: pointer;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 20px;
+      justify-content: flex-start;
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 160px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: #FF5722;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #e64a19;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #666;
+      border: 2px solid #e9ecef;
+    }
+
+    .btn-secondary:hover {
+      background: #f8f9fa;
+      border-color: #adb5bd;
+    }
+
+    input[readonly] {
+	  background-color: #e9ecef;     /* 白底，不要灰色 */
+	  color: black;                /* 字的顏色 */
+	  cursor: default;             /* 不顯示可輸入的游標 */
+	  border: 1px solid #ccc;      /* 如果邊框變淡，也可自訂 */
+}
