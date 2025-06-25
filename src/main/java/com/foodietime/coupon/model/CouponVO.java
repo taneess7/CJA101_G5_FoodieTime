@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -36,7 +37,7 @@ import lombok.ToString;
 @Table(name = "coupon")
 public class CouponVO implements Serializable {
 
-    // 寫上所有欄位
+	// 寫上所有欄位
     // 1.優惠券編號
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,24 +65,27 @@ public class CouponVO implements Serializable {
     private String couDesc;
 
     // 6.最低消費金額限制
+    @NotNull(message = "最低消費金額不可為空")
     @Column(name = "COU_MIN_ORD", nullable = false)
     private Integer couMinOrd;
 
     // 7.新增 優惠額度
+    @NotNull(message = "最低消費金額不可為空")
     @Column(name = "COU_DISCOUNT", nullable = false)
     private BigDecimal couDiscount;
 
     // 8.啟用期限
+    @Future(message = "日期必須是未來時間")
     @NotNull(message = "啟用期限: 請勿空白")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "COU_START_DATE")
     private Timestamp couStartDate;
 
     // 9.截止期限
+    @Future(message = "日期必須是未來時間")
     @NotNull(message = "截止期限: 請勿空白")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "COU_END_DATE")
     private Timestamp couEndDate;
+
 
 
     //OneToMany
