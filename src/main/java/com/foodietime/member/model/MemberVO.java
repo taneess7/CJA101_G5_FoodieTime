@@ -1,12 +1,4 @@
 package com.foodietime.member.model;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
@@ -28,17 +20,32 @@ import com.foodietime.participants.model.ParticipantsVO;
 import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.model.ReportPostVO;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-
+@Getter
+@Setter
 @ToString(exclude = {"directMessages","favoriteList","cart","memCoupon","participants","groupBuyingCollectionList","groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message","reportMessage","appropriationCommRecord"})
 @EqualsAndHashCode(exclude = {"directMessages","favoriteList","cart","memCoupon","participants","groupBuyingCollectionList","groupPurchaseReport","groupBuyingCases","orders","post","favoritePost","reportPost","message","reportMessage","appropriationCommRecord"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "memId")
 
-@Data
 
 @Table(name = "member")
 public class MemberVO implements Serializable {
