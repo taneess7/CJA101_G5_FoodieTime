@@ -1,6 +1,8 @@
 package com.foodietime.groupbuyingcases.model;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,8 +17,14 @@ public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCas
            "WHERE p.member.memId = :memId AND p.leader = :leader")
     List<GroupBuyingCasesVO> findByMember_MemIdAndLeader(Integer memId, byte leader);
 
+    // JOIN participants 表，按 member.memId AND participants.leader 筛选
+    List<GroupBuyingCasesVO> findDistinctByParticipants_Member_MemIdAndParticipants_Leader(
+        Integer memId,   // 同 MemberVO.memId
+        Byte leader      // 0＝團主、1＝非團主
+      );
+    
     //依團購編號(gbId)與會員編號(memId)查詢單筆團購，確保只能看到自己的紀錄
-    GroupBuyingCasesVO findByGbIdAndMember_MemId(Integer gbId, Integer memId);
+    Optional<GroupBuyingCasesVO> findByGbIdAndMember_MemId(Integer gbId,Integer memId);
 
     // 查詢某店家開的所有團購案（根據 StoreVO.storId）
     List<GroupBuyingCasesVO> findByStore_StorId(Integer storId);

@@ -22,10 +22,26 @@ public class GroupBuyingCasesService {
         return groupBuyingCasesRepository.findByMember_MemIdAndLeader(memberId, leader);
     }
     
-    //依群組ID與會員ID查詢團購，確保只能看到自己的團購詳情
-    public GroupBuyingCasesVO findByIdAndMemId(Integer gbId, Integer memId) {
-        return groupBuyingCasesRepository.findByGbIdAndMember_MemId(gbId, memId);
+    /**
+     * 查單筆：同時符合 gbId、member.memId、以及參與者表的 leader 欄位
+     * 只有當前會員是該團購的團主 (leader = 0) 時，才會回傳
+     */
+    public GroupBuyingCasesVO findByGbIdAndMember_MemIdAndLeader(
+            Integer gbId, Integer memId, Byte leader) {
+        return groupBuyingCasesRepository
+           .findDistinctByParticipants_Member_MemIdAndParticipants_Leader(memId, leader)
+           .stream()
+           .filter(g -> g.getGbId().equals(gbId))
+           .findFirst()
+           .orElse(null);
     }
+    
+    
+    
+    public List<GroupBuyingCasesVO> findLeaderCases(Integer memId) {
+        return groupBuyingCasesRepository.findDistinctByParticipants_Member_MemIdAndParticipants_Leader(memId, (byte)0);
+    }
+    
     
     // 查詢某店家開的所有團購案
     public List<GroupBuyingCasesVO> findByStoreId(Integer storId) {

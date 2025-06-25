@@ -256,95 +256,126 @@ body {
 					</div>
 
 					<nav class="nav flex-column">
-						<a class="nav-link" th:href="@{/gb/leader}"><i
-							class="bi bi-person"></i> 我是團長</a> <a class="nav-link active"
-							th:href="@{/gb/leader-groups/1}"><i class="bi bi-box"></i> 團購管理</a>
-						<a class="nav-link" th:href="@{/gb/leader-orders}"><i
-							class="bi bi-bag"></i> 訂單管理</a> <a class="nav-link"
-							th:href="@{/gb/leader-cashflow}"><i class="bi bi-credit-card"></i>
-							金流管理</a> <a class="nav-link" th:href="@{/gb/leader-address}"><i
-							class="bi bi-geo-alt"></i> 收貨地址</a> <a class="nav-link"
-							th:href="@{/gb/leader-notifications}"><i class="bi bi-bell"></i>
-							通知管理</a> <a class="nav-link text-danger" href="../gp/gbindex.html"><i
-							class="bi bi-box-arrow-right"></i> 登出</a>
+						<!-- 未登入狀態：顯示登入頁面 -->
+						<div th:if="${session.loggedInMember == null}">
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-person"></i> 我是團長
+						    </a>
+						    <a class="nav-link active" th:href="@{/login}">
+						        <i class="bi bi-box"></i> 團購管理
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-bag"></i> 訂單管理
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-credit-card"></i> 金流管理
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-geo-alt"></i> 收貨地址
+						    </a>
+						    <a class="nav-link" th:href="@{/login}">
+						        <i class="bi bi-bell"></i> 通知管理
+						    </a>
+						</div>
+						
+						<!-- 已登入狀態：顯示相應頁面 -->
+						<div th:if="${session.loggedInMember != null}">
+						    <a class="nav-link" th:href="@{/gb/leader}">
+						        <i class="bi bi-person"></i> 我是團長
+						    </a>
+						    <a class="nav-link active" th:href="@{/gb/leader-groups}">
+						        <i class="bi bi-box"></i> 團購管理
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-orders}">
+						        <i class="bi bi-bag"></i> 訂單管理
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-cashflow}">
+						        <i class="bi bi-credit-card"></i> 金流管理
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-address}">
+						        <i class="bi bi-geo-alt"></i> 收貨地址
+						    </a>
+						    <a class="nav-link" th:href="@{/gb/leader-notifications}">
+						        <i class="bi bi-bell"></i> 通知管理
+						    </a>
+						</div>
 					</nav>
 				</div>
 			</div>
 
-			        <!-- 主要內容 -->
-                    <!-- Edit Order Modal -->
-            <div class="col-lg-9">
+					        <!-- 主要內容 -->
+		                    <!-- Edit Order Modal -->
+            				<div class="col-lg-9">
 					            <div class="modal-body">
-					                <form>
+					                <form th:action="@{/gb/update/{gbId}(gbId=${groupBuyingCase.gbId})}"
+						              th:object="${groupBuyingCase}"
+						              method="post">
+						              <!-- 隱藏原本沒編輯但要驗證的欄位 -->
+									  <input type="hidden" th:field="*{gbTitle}" />
+									  <input type="hidden" th:field="*{gbDescription}" />
 					                    <div class="row">
 					                        <!-- 團購狀態 -->
 					                        <div class="col-md-6">
 					                            <div class="mb-3">
 					                                <label for="editCaseStatus" class="form-label">團購狀態</label>
-					                                <select class="form-select" id="editCaseStatus">
-					                                    <option value="pending">待開團</option>
-					                                    <option value="recruiting">招募中</option>
-					                                    <option value="closing soon">即將截止</option>
-					                                    <option value="group opened">已開團</option>
-					                                    <option value="closed">已截止</option>
-					                                    <option value="cancelled">已取消</option>
-					                                    <option value="group failed">開團失敗</option>
+					                                <select th:field="*{gbStatus}" class="form-select" id="editCaseStatus">
+					                                    <!--  <option th:value="0">待開團</option>   -->
+										                <option th:value="1">招募中</option>
+										                <!--  <option th:value="2">即將截止</option>   -->
+										                <!--  <option th:value="3">已開團</option>   -->
+										                <!--  <option th:value="4">已截止</option>   -->
+										                <option th:value="5">已取消</option>
+										                <!--  <option th:value="6">開團失敗</option>   -->
 					                                </select>
 					                            </div>
 					                        </div>
 					                        
 					                        <!-- 最低成團數量 -->
-					                        <div class="col-md-6">
-					                            <div class="mb-3">
-					                                <label for="minGroupSize" class="form-label">最低成團數量</label>
-					                                <input type="number" class="form-control" id="minGroupSize" min="1" placeholder="請輸入最低成團數量">
-					                            </div>
-					                        </div>
-					                    </div>
+					                        <div class="col-md-6 mb-3">
+								              <label class="form-label">最低成團數量</label>
+								              <input type="number" th:field="*{gbMinProductQuantity}"
+								                     class="form-control" min="1"/>
+								            </div>
+					                    
 					
 					                    <div class="row">
 					                        <!-- 開始時間 -->
-					                        <div class="col-md-6">
-					                            <div class="mb-3">
-					                                <label for="startTime" class="form-label">開始時間</label>
-					                                <input type="datetime-local" class="form-control" id="startTime">
-					                            </div>
-					                        </div>
+					                        <div class="col-md-6 mb-3">
+								              <label class="form-label">開始時間</label>
+								              <input type="datetime-local" th:field="*{gbStartTime}" class="form-control"/>
+								            </div>
 					                        
 					                        <!-- 結束時間 -->
-					                        <div class="col-md-6">
-					                            <div class="mb-3">
-					                                <label for="endTime" class="form-label">結束時間</label>
-					                                <input type="datetime-local" class="form-control" id="endTime">
-					                            </div>
-					                        </div>
+					                        <div class="col-md-6 mb-3">
+								              <label class="form-label">結束時間</label>
+								              <input type="datetime-local" th:field="*{gbEndTime}" class="form-control"/>
+								            </div>
 					                    </div>
 					
 					                    <!-- 取消原因 -->
 					                    <div class="mb-3">
-					                        <label for="editCaseNote" class="form-label">取消原因</label>
-					                        <textarea class="form-control" id="editCaseNote" rows="3" placeholder="請輸入取消原因.."></textarea>
-					                    </div>
+								            <label class="form-label">取消原因</label>
+								            <textarea th:field="*{cancelReason}" class="form-control" rows="2"></textarea>
+								        </div>
 					
 					                    <!-- 通知會員 -->
-					                    <div class="form-check">
-					                        <input class="form-check-input" type="checkbox" id="notifyMember">
-					                        <label class="form-check-label" for="notifyMember">
-					                            通知會員團購狀態變更
-					                        </label>
-					                    </div>
-					                </form>
-					            </div>
-					            <div class="modal-footer">
-					                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-					                <button type="button" class="btn btn-primary" onclick="saveOrderChanges()">儲存變更</button>
-					            </div>
-					        </div>
-					    </div>
-					</div>
-                </div>
-            </div>
-
+								        <div class="form-check">
+								          <input class="form-check-input" type="checkbox" id="notifyMember">
+								          <label class="form-check-label" for="notifyMember">
+								            通知會員團購狀態變更
+								          </label>
+								        </div>
+					          
+							            <div class="modal-footer">
+							                <button type="submit" class="btn btn-danger">儲存變更</button>
+		          							<a th:href="@{/gb/leader-groups}" class="btn btn-secondary">取消</a>
+							            </div>
+					        		</div>
+					      		 </form>
+					        
+					   		 </div>
+						</div>
+      
 
 					
 

@@ -7,16 +7,30 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/grouporders")
+@RequestMapping("/gb")
 public class GroupOrdersController {
 
     @Autowired
     private GroupOrdersService groupOrdersService;
 
+    
+    @GetMapping("/my-leader-orders")
+    public String showMyOrders(Principal principal, Model model) {
+        // 取得當前會員 ID
+        Integer memId = Integer.valueOf(principal.getName());
+
+        // 撈出該會員作為團長的所有訂單
+        List<GroupOrdersVO> orders = groupOrdersService.getOrdersForLeader(memId);
+
+        model.addAttribute("orders", orders);
+        return "front/gb/gbleader/leader-orders";
+    }
+    
     // 查詢某會員的所有團購訂單
     @GetMapping("/member/{memId}")
     public String getOrdersByMemberId(@PathVariable Integer memId, Model model) {

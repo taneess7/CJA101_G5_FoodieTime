@@ -149,6 +149,8 @@ public class GroupBuyingCasesVO implements Serializable{
         return gbStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
-	
+	public String getFormattedGbEndTime() {
+        return gbEndTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
 	
 }

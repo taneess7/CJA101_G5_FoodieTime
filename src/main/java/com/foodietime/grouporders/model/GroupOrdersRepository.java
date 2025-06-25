@@ -5,6 +5,9 @@ import java.util.List;
 
 public interface GroupOrdersRepository extends JpaRepository<GroupOrdersVO, Integer> {
 
+	 //根據多個 gbId 撈出所有對應訂單
+    List<GroupOrdersVO> findByGroupBuyingCase_GbIdIn(List<Integer> gbIds);
+    
     // 查詢某會員的所有團購訂單，通過參與的團購（GroupBuyingCasesVO）中的會員ID
     List<GroupOrdersVO> findByGroupBuyingCase_Member_MemId(Integer memId);
 
