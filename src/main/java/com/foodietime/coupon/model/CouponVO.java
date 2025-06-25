@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
@@ -20,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -34,7 +37,7 @@ import lombok.ToString;
 @Table(name = "coupon")
 public class CouponVO implements Serializable {
 
-    // 寫上所有欄位
+	// 寫上所有欄位
     // 1.優惠券編號
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,36 +51,41 @@ public class CouponVO implements Serializable {
 
     // 3.新增：優惠卷名稱
     @NotEmpty(message = "優惠券名稱: 請勿空白")
-    @Column(name = "COU_NAME", length = 255)
+    @Column(name = "COU_NAME", length = 255, nullable = false)
     private String couName;
 
     // 4.優惠券類型
     @NotEmpty(message = "優惠券類型: 請勿空白")
-    @Column(name = "COU_TYPE", length = 255)
+    @Column(name = "COU_TYPE", length = 255, nullable = false)
     private String couType;
 
     // 5.優惠券說明
     @NotEmpty(message = "優惠券說明: 請勿空白")
-    @Column(name = "COU_DESC", length = 255)
+    @Column(name = "COU_DESC", length = 255, nullable = false)
     private String couDesc;
 
     // 6.最低消費金額限制
-    @Column(name = "COU_MIN_ORD")
+    @NotNull(message = "最低消費金額不可為空")
+    @Column(name = "COU_MIN_ORD", nullable = false)
     private Integer couMinOrd;
 
     // 7.新增 優惠額度
-    @Column(name = "COU_DISCOUNT")
+    @NotNull(message = "最低消費金額不可為空")
+    @Column(name = "COU_DISCOUNT", nullable = false)
     private BigDecimal couDiscount;
 
     // 8.啟用期限
+    @Future(message = "日期必須是未來時間")
     @NotNull(message = "啟用期限: 請勿空白")
     @Column(name = "COU_START_DATE")
     private Timestamp couStartDate;
 
     // 9.截止期限
+    @Future(message = "日期必須是未來時間")
     @NotNull(message = "截止期限: 請勿空白")
     @Column(name = "COU_END_DATE")
     private Timestamp couEndDate;
+
 
 
     //OneToMany

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
 @Service
 public class CouponService {
 
@@ -21,8 +23,20 @@ public class CouponService {
 		repository.save(couVO);  //原廠save可以用在新增和修改，有主鍵是update，沒有主鍵是insert
 	}
 	
-	public void updateCoupon(CouponVO couVO) {
-		repository.save(couVO);
+	public void updateCoupon(CouponVO newData) {
+		CouponVO existing = repository.findById(newData.getCouId())
+	            .orElseThrow(() -> new RuntimeException("找不到資料"));
+
+	    //  只更新基本欄位，不碰 set<Order>、set<MemCoupon>
+	    existing.setCouName(newData.getCouName());
+	    existing.setCouType(newData.getCouType());
+	    existing.setCouDesc(newData.getCouDesc());
+	    existing.setCouMinOrd(newData.getCouMinOrd());
+	    existing.setCouDiscount(newData.getCouDiscount());
+	    existing.setCouStartDate(newData.getCouStartDate());
+	    existing.setCouEndDate(newData.getCouEndDate());
+
+	    repository.save(existing); // ✅ 儲存不包含集合欄位的修改
 	}
 	
 	public void deleteCoupon(Integer couId) {

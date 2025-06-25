@@ -31,11 +31,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "activity")
+@ToString(exclude = {"orders"})
 public class ActVO implements Serializable {
 
 	// 寫上所有欄位

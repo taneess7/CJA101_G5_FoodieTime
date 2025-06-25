@@ -1,0 +1,162 @@
+<!-- coupon_edit.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編輯優惠券 - FoodieTime 食刻</title>
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link rel="stylesheet" href="/css/front/coupon/cou.css">
+
+</head>
+<body>
+	<main>
+		<h1 class="section-title">編輯優惠券</h1>
+		<p class="section-subtitle">填寫優惠券資訊以吸引顧客使用</p>
+
+		<!-- 顯示新增成功訊息（置中） -->
+		<div th:if="${successMessage}"
+		     id="successMessage"
+		     class="success-message"
+		     style="color: green; font-weight: bold;">
+		  <p th:text="${successMessage}"></p>
+		</div>
+		
+		<!-- 顯示錯誤訊息（置中） -->
+		<ul th:if="${errorMessages}" style="color: red;">
+  			<li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
+		</ul>
+	
+				
+		<!-- 下拉選單: 只顯示此店家的優惠券 -->
+		<form th:action="@{/store/editCoupon}" method="get">
+			<label>選擇優惠券 (空值表示新增)</label> <select name="couId">
+				<option value="0">---新增優惠券---</option>
+				<option th:each="cou : ${coupons}" th:value="${cou.couId}"
+					th:text="'優惠券編號:' + ${cou.couId + ' - ' + cou.couDesc}"></option>
+			</select>
+			<button type="submit">進入表單</button>
+		</form>
+		<br>
+		<!-- 若 coupon 有值才顯示表單 -->
+		<th:block th:if="${coupon != null}">
+			<form th:action="@{/store/coupon/save}" th:object="${coupon}" method="post" id="couponForm" >
+				
+				<!-- 修改特定coupon需要couId -->
+				<input type="hidden" th:field="*{couId}" />
+
+
+				<div>
+					<label>店家編號: </lable> <span th:text="*{store.storId}"></span>
+					<input type="hidden" th:field="*{store.storId}" />
+				</div>
+				
+				<div>
+					<label>優惠券名稱<span class="required">*</span></label> 
+					<input type="text" th:field="*{couName}" placeholder="開幕500" />
+					 <div style="color:red;" th:if="${#fields.hasErrors('couName')}" th:errors="*{couName}"></div>
+				</div>
+				
+				<div>
+					<label>優惠券類型<span class="required">*</span></label> 
+					<input type="text" th:field="*{couType}" placeholder="新開幕" />
+					<div style="color:red;" th:if="${#fields.hasErrors('couType')}" th:errors="*{couType}"></div>
+				</div>
+				
+				<div>
+					<label>優惠券說明<span class="required">*</span></label> 
+					<input type="text" th:field="*{couDesc}" placeholder="買500送500" />
+					<div style="color:red;" th:if="${#fields.hasErrors('couDesc')}" th:errors="*{couDesc}"></div>
+				</div>
+				
+				<div>
+					<label>最低消費金額限制<span class="required">*</span></label> 
+					<input type="text" th:field="*{couMinOrd}" placeholder="最低金額為0" />
+					<div style="color:red;" th:if="${#fields.hasErrors('couMinOrd')}" th:errors="*{couMinOrd}"></div>
+				</div>
+				
+				<div>
+					<label>優惠額度<span class="required">*</span></label> 
+					<input type="text" th:field="*{couDiscount}" placeholder="折扣金直接寫數字 ; 打8折寫 0.8"/>
+					<div style="color:red;" th:if="${#fields.hasErrors('couDiscount')}" th:errors="*{couDiscount}"></div>
+				</div>
+				
+				
+				<div class="date-range">
+					<div class="form-group" style="display: flex; gap: 1rem;">
+						<label>啟用期限<span class="required">*</span></label>
+						  <input type="datetime-local"
+						         th:field="*{couStartDate}"  id="couStartDate"/>
+						  <div style="color:red;" th:if="${#fields.hasErrors('couStartDate')}" th:errors="*{couStartDate}"></div>
+					
+					
+				
+						<label>截止期限<span class="required">*</span></label>
+						<input type="datetime-local"
+         					   th:field="*{couEndDate}" id="couEndDate"/>
+  						<div style="color:red;" th:if="${#fields.hasErrors('couEndDate')}" th:errors="*{couEndDate}"></div>
+					</div>
+				</div>
+
+				
+				<button type="submit">送出</button>
+			</form>
+	</main>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const message = document.getElementById('successMessage');
+  const form = document.getElementById('couponForm');
+  const startInput = document.getElementById('couStartDate');
+  const endInput = document.getElementById('couEndDate');
+
+  // ✅ 1. 成功訊息淡出
+  if (message) {
+    setTimeout(() => {
+      message.classList.add('fade-out');
+    }, 1000);
+
+    setTimeout(() => {
+      message.remove();
+    }, 3000);
+  }
+
+  // ✅ 2. 設定現在時間為 startInput 最小值
+  function getNowDatetimeLocal() {
+    const now = new Date();
+    now.setSeconds(0, 0); // 移除秒與毫秒
+    const offset = now.getTimezoneOffset();
+    const localISOTime = new Date(now.getTime() - offset * 60000)
+      .toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+    return localISOTime;
+  }
+
+  if (startInput) {
+    startInput.min = getNowDatetimeLocal();
+  }
+
+  // ✅ 3. 啟用日期變動時，更新截止日的 min 限制
+  if (startInput && endInput) {
+    startInput.addEventListener('change', () => {
+      endInput.min = startInput.value;
+    });
+  }
+
+  // ✅ 4. 截止日不可早於啟用日（前端阻擋）
+  if (form && startInput && endInput) {
+    form.addEventListener('submit', function (e) {
+      const start = new Date(startInput.value);
+      const end = new Date(endInput.value);
+      if (start && end && end < start) {
+        e.preventDefault();
+        alert("⚠️ 截止期限不能早於啟用期限！");
+        endInput.focus();
+      }
+    });
+  }
+});
+</script>
+
+
+</body>
+</html>

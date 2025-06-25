@@ -1,0 +1,150 @@
+/* 背景與整體色調 */
+body {
+  margin: 0;
+  font-family: 'Noto Sans TC', sans-serif;
+  background-color: rgba(255, 127, 80, 0.08); /* 珊瑚橘透明底色 */
+  color: #333;
+}
+
+/* 區塊標題 */
+.section-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #ff7f50;
+}
+
+.section-subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+/* 表單容器 */
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: rgba(255, 127, 80, 0.12); /* 較深的透明珊瑚橘底 */
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 表單欄位 */
+form div {
+  margin-bottom: 1.2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #444;
+}
+
+
+span.required {
+	color: #FF5722;
+	margin-left: 4px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 90%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #ff7f50;
+  box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2);
+}
+
+/* 按鈕 */
+button {
+  background-color: #ff7f50;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  margin: 1.5rem auto 0;
+}
+
+button:hover {
+  background-color: #ff5722;
+}
+
+/* 將啟用期限與截止期限並排 */
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* 手機上可自動換行 */
+  margin-bottom: 1.5rem;
+}
+
+/* 個別表單欄位寬度控制 */
+.date-range .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 日期輸入框圓弧外觀 */
+input[type="datetime-local"] {
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  background-color: #fff;
+  box-sizing: border-box;
+  width: 95%;
+  transition: border-color 0.3s;
+}
+
+input[type="datetime-local"]:focus {
+  border-color: #ff7f50;
+  box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2);
+  outline: none;
+}
+
+.success-message {
+  text-align: center;
+  margin: 0 auto; /* 讓整塊區塊置中 */
+  color: green;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  padding: 0.8rem;
+  background-color: #e8fbe9;
+  border: 1px solid #b2e2b3;
+  border-radius: 12px;
+  width: 80%;
+  box-sizing: border-box;
+}
+
+/* 初始樣式 */
+.success-message {
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+/* 淡出樣式 */
+.success-message.fade-out {
+  opacity: 0;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
