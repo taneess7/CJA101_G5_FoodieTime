@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.product.model.ProductVO;
 import com.foodietime.smg.model.SmgVO;
 
 import jakarta.persistence.Column;
@@ -16,22 +17,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-
-
+@Getter
+@Setter
 @Entity
 @ToString(exclude = {"member","smgr"})
 @EqualsAndHashCode(exclude = {"member","smgr"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "dmId")
 
-@Data
-@ToString(exclude = {"member"})
+
 @Table(name = "direct_message")
 public class DirectMessageVO implements Serializable{
 	@Id
