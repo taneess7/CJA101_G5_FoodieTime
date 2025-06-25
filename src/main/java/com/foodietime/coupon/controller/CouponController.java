@@ -28,7 +28,7 @@ import com.foodietime.store.model.StoreVO;
 
 import jakarta.servlet.http.HttpSession;
 
-@Controller
+//@Controller
 @RequestMapping("/store")
 public class CouponController {
 
