@@ -1,145 +1,150 @@
-@charset "UTF-8";
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+/* 背景與整體色調 */
+body {
+  margin: 0;
+  font-family: 'Noto Sans TC', sans-serif;
+  background-color: rgba(255, 127, 80, 0.08); /* 珊瑚橘透明底色 */
+  color: #333;
+}
 
-    body {
-      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      line-height: 1.6;
-    }
+/* 區塊標題 */
+.section-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #ff7f50;
+}
 
-    main {
-      max-width: 900px;
-      margin: 60px auto;
-      padding: 0 20px;
-    }
+.section-subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #666;
+}
 
-    .section-title {
-      font-size: 36px;
-      font-weight: 700;
-      color: #333;
-      margin-bottom: 10px;
-    }
+/* 表單容器 */
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: rgba(255, 127, 80, 0.12); /* 較深的透明珊瑚橘底 */
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-    .section-subtitle {
-      color: #666;
-      font-size: 18px;
-      margin-bottom: 40px;
-    }
+/* 表單欄位 */
+form div {
+  margin-bottom: 1.2rem;
+}
 
-    .edit-store-form {
-      display: grid;
-      gap: 30px;
-    }
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #444;
+}
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
 
-    .form-label {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
+span.required {
+	color: #FF5722;
+	margin-left: 4px;
+}
 
-    .form-label .required {
-      color: #FF5722;
-      margin-left: 4px;
-    }
+input[type="text"],
+input[type="number"],
+select {
+  width: 90%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
 
-    .form-input {
-      width: 100%;
-      padding: 16px;
-      border: 2px solid #e9ecef;
-      border-radius: 12px;
-      font-size: 16px;
-      background: white;
-      transition: all 0.3s ease;
-      font-family: inherit;
-    }
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #ff7f50;
+  box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2);
+}
 
-    .form-input:focus {
-      outline: none;
-      border-color: #FF5722;
-      box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
-    }
+/* 按鈕 */
+button {
+  background-color: #ff7f50;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  margin: 1.5rem auto 0;
+}
 
-    .form-input::placeholder {
-      color: #adb5bd;
-    }
+button:hover {
+  background-color: #ff5722;
+}
 
-    textarea.form-input {
-      resize: vertical;
-      min-height: 120px;
-      line-height: 1.5;
-    }
+/* 將啟用期限與截止期限並排 */
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* 手機上可自動換行 */
+  margin-bottom: 1.5rem;
+}
 
-    select.form-input {
-      cursor: pointer;
-    }
+/* 個別表單欄位寬度控制 */
+.date-range .form-group {
+  display: flex;
+  flex-direction: column;
+}
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-    }
+/* 日期輸入框圓弧外觀 */
+input[type="datetime-local"] {
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  background-color: #fff;
+  box-sizing: border-box;
+  width: 95%;
+  transition: border-color 0.3s;
+}
 
-    .form-actions {
-      display: flex;
-      gap: 20px;
-      justify-content: flex-start;
-      margin-top: 40px;
-      padding-top: 30px;
-      border-top: 1px solid #e9ecef;
-    }
+input[type="datetime-local"]:focus {
+  border-color: #ff7f50;
+  box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2);
+  outline: none;
+}
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 16px 32px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 160px;
-      justify-content: center;
-    }
+.success-message {
+  text-align: center;
+  margin: 0 auto; /* 讓整塊區塊置中 */
+  color: green;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  padding: 0.8rem;
+  background-color: #e8fbe9;
+  border: 1px solid #b2e2b3;
+  border-radius: 12px;
+  width: 80%;
+  box-sizing: border-box;
+}
 
-    .btn-primary {
-      background: #FF5722;
-      color: white;
-    }
+/* 初始樣式 */
+.success-message {
+  opacity: 1;
+  transition: opacity 1s ease;
+}
 
-    .btn-primary:hover {
-      background: #e64a19;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
-    }
+/* 淡出樣式 */
+.success-message.fade-out {
+  opacity: 0;
+}
 
-    .btn-secondary {
-      background: white;
-      color: #666;
-      border: 2px solid #e9ecef;
-    }
-
-    .btn-secondary:hover {
-      background: #f8f9fa;
-      border-color: #adb5bd;
-    }
-
-    input[readonly] {
-	  background-color: #e9ecef;     /* 白底，不要灰色 */
-	  color: black;                /* 字的顏色 */
-	  cursor: default;             /* 不顯示可輸入的游標 */
-	  border: 1px solid #ccc;      /* 如果邊框變淡，也可自訂 */
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease-out;
 }
