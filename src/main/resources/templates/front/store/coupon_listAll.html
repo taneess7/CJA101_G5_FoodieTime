@@ -1,12 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-TW">
 <head>
-    <title>首頁</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的優惠券 - FoodieTime 食刻</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+  <link rel="stylesheet" href="/css/front/coupon/cou.css">
+  <style>
+    .coupon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    .coupon-card {
+      background: #fff9e5;
+      border: 1px solid #ffcc00;
+      border-radius: 10px;
+      padding: 1.2rem;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+    }
+
+    .coupon-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #d35400;
+    }
+
+    .coupon-detail {
+      margin: 0.2rem 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .coupon-footer {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #666;
+    }
+
+    .coupon-date {
+      font-size: 0.8rem;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
-    <h1>優惠券列表</h1>
-    <form action="/coupon/store_edit2" method="get">
-        <button type="submit">返回店家編輯頁</button>
-    </form>
+  <main>
+    <h1 class="section-title">我持有的優惠券</h1>
+    <p class="section-subtitle">以下是您目前店家建立的優惠券清單：</p>
+
+    <div class="coupon-grid">
+      <div class="coupon-card" th:each="cou : ${couponList}">
+        <div class="coupon-title" th:text="${cou.couName}">開幕大放送</div>
+        <div class="coupon-detail">
+          類型：<span th:text="${cou.couType}">折價券</span>
+        </div>
+        <div class="coupon-detail">
+          說明：<span th:text="${cou.couDes}">滿千折百</span>
+        </div>
+        <div class="coupon-detail">
+          最低消費：NT$<span th:text="${cou.couMinOrd}">0</span>
+        </div>
+        <div class="coupon-detail">
+          折扣額度：<span th:text="${cou.couDiscount}">100</span>
+        </div>
+        <div class="coupon-date">
+          使用期限：<span th:text="${#dates.format(cou.couStartDate, 'yyyy-MM-dd HH:mm')}"></span> - 
+          <span th:text="${#dates.format(cou.couEndDate, 'yyyy-MM-dd HH:mm')}"></span>
+        </div>
+        <div class="coupon-footer">
+          店家編號：<span th:text="${cou.store.storId}"></span>
+        </div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>
