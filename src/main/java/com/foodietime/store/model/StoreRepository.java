@@ -66,9 +66,12 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
 	
 	List<StoreVO> findByStoreCate_StorCateId(Integer id);
 	
-	//搜尋「店家名稱 + 地址」
+	//搜尋「店家名稱 + 地址」(丰)
 	@Query("SELECT s FROM StoreVO s WHERE " +
 		       "LOWER(s.storName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
 		       "LOWER(s.storAddr) LIKE LOWER(CONCAT('%', :keyword, '%'))")
 		List<StoreVO> searchByKeyword(@Param("keyword") String keyword);
+	
+	//餐廳首頁模糊搜尋(丰)
+	List<StoreVO> findByStorNameContainingIgnoreCaseOrStorAddrContainingIgnoreCase(String storName, String storAddr);
 }

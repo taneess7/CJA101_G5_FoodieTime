@@ -60,6 +60,10 @@ public class StoreService {
 		return repository.findById(id).orElse(null);
 	}
 	
+	//餐廳首頁模糊搜尋(丰)
+	public List<StoreVO> searchStores(String keyword) {
+	    return repository.findByStorNameContainingIgnoreCaseOrStorAddrContainingIgnoreCase(keyword, keyword);
+	}
 //	//註冊 storeSvc.register(storeVO) + 防止重複註冊
 //	public void register(StoreVO storeVO) {
 //		if (repository.findByStorEmail(storeVO.getStorEmail()) != null)

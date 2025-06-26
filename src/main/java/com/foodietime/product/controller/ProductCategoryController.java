@@ -9,6 +9,7 @@ import com.foodietime.product.model.ProductCategoryService;
 import com.foodietime.product.model.ProductCategoryVO;
 import com.foodietime.product.model.ProductService;
 import com.foodietime.product.model.ProductVO;
+import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -39,6 +40,8 @@ public class ProductCategoryController {
 	private CouponService couponService;
 	@Autowired
 	private FavoriteListService favoriteListService;
+	@Autowired
+	private StoreService storeService;
 	
     // 查全部
     @GetMapping("/food-categories")
@@ -209,6 +212,83 @@ public class ProductCategoryController {
 
         return "/front/restaurant/category";
     }
+    
+    //餐廳首頁的模糊搜尋
+ // 餐廳首頁的模糊搜尋（強化版）
+    @GetMapping("/search")
+    public String searchByKeyword(@RequestParam String keyword,
+                                  Model model,
+                                  HttpSession session) {
+
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO != null) {
+            model.addAttribute("member", memberVO);
+            List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
+            Set<Integer> favoriteProdIds = favorites.stream()
+                    .map(FavoriteListVO::getProdId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("favoriteProdIds", favoriteProdIds);
+        }
+
+        model.addAttribute("categoryName", "搜尋結果");
+        model.addAttribute("keyword", keyword);
+
+        // 1. 搜尋商品與店家
+        List<StoreVO> storeList = storeService.searchStores(keyword);
+        List<ProductVO> productList = productService.searchProductsByKeyword(keyword);
+
+        Set<StoreVO> productStoreSet = productList.stream()
+                .map(ProductVO::getStore)
+                .collect(Collectors.toSet());
+
+        Set<StoreVO> combinedStores = new HashSet<>(storeList);
+        combinedStores.addAll(productStoreSet);
+        List<StoreVO> finalStoreList = new ArrayList<>(combinedStores);
+        model.addAttribute("storeList", finalStoreList);
+        model.addAttribute("productList", productList);
+
+        // 2. 店家圖片轉 base64
+        Map<Integer, String> storeImageMap = new HashMap<>();
+        for (StoreVO store : finalStoreList) {
+            byte[] imageBytes = store.getStorPhoto();
+            if (imageBytes != null && imageBytes.length > 0) {
+                String base64 = Base64.getEncoder().encodeToString(imageBytes);
+                storeImageMap.put(store.getStorId(), base64);
+            }
+        }
+        model.addAttribute("storeImageMap", storeImageMap);
+
+        // 3. 店家商品 Map
+        Map<Integer, List<ProductVO>> storeProductMap = new HashMap<>();
+        for (StoreVO store : finalStoreList) {
+            List<ProductVO> products = productService.findByStoreId(store.getStorId());
+            storeProductMap.put(store.getStorId(), products);
+        }
+        model.addAttribute("storeProductMap", storeProductMap);
+
+        // 4. 店家優惠券 Map
+        Map<Integer, List<CouponVO>> storeCouponMap = new HashMap<>();
+        for (StoreVO store : finalStoreList) {
+            List<CouponVO> coupons = couponService.getCouponsByStorId(store.getStorId());
+            storeCouponMap.put(store.getStorId(), coupons);
+        }
+        model.addAttribute("storeCouponMap", storeCouponMap);
+
+        // 5. 星期對照表（必要才加）
+        Map<String, String> weekMap = Map.of(
+                "0", "週日",
+                "1", "週一",
+                "2", "週二",
+                "3", "週三",
+                "4", "週四",
+                "5", "週五",
+                "6", "週六"
+        );
+        model.addAttribute("weekMap", weekMap);
+
+        return "front/restaurant/category";
+    }
+    
     //中式料理
     @GetMapping("/chinese-cuisine")
     public String listChinese() {
