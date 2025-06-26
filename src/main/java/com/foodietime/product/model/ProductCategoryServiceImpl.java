@@ -32,7 +32,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService{
         return storeRepo.findByStoreCate_StorCateId(cateId);
     }
     
-    
+    @Override
+    public List<StoreVO> searchStoresByKeyword(String keyword) {
+        return storeRepo.searchByKeyword(keyword);
+    }
     // 美式餐廳 (可動態帶入資料庫店家 分類ID = 6)
 //	public List<StoreVO> getAmericanRestaurants() {
 //        return storeRepo.findByStoreCate_StorCateId(6);
