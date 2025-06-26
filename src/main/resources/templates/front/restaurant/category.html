@@ -194,143 +194,151 @@
 					<!-- 餐廳主區塊 -->
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">
-							<img th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}" th:alt="${store.storName}"
-								class="restaurant-image">
+							<img
+								th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}"
+								th:alt="${store.storName}" class="restaurant-image">
 							<div class="restaurant-primary-info">
 								<h2 class="restaurant-name" th:text="${store.storName}">餐廳名稱</h2>
 								<span class="cuisine-tag cuisine-thai"
 									th:text="${store.storeCate.storCatName}">泰式料理</span>
 								<p class="restaurant-category" th:text=${store.storDesc}>湯品
 									• 炒飯 • 沙拉</p>
-							
-							<!-- 評價星星開始 -->
-							<div class="restaurant-rating"
-								th:with="
+
+								<!-- 評價星星開始 -->
+								<div class="restaurant-rating"
+									th:with="
 									        reviews=${store.reviews != null ? store.reviews : 0},
 									        rating=${store.starNum != null ? store.starNum : 0},
 									        avg=${reviews > 0 ? rating / reviews : 0},
 									        staravg=${#numbers.formatDecimal(avg, 1, 1)}">
 
-								<span class="rating-stars"> <i
-									th:each="i : ${#numbers.sequence(1, 5)}"
-									th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
+									<span class="rating-stars"> <i
+										th:each="i : ${#numbers.sequence(1, 5)}"
+										th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
 									                           (${i - 1 < avg and i > avg} ? 'fas fa-star-half-alt' : 'far fa-star')">
-								</i>
-								</span> <span
-									th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
-									0，共 0 則評價 </span>
+									</i>
+									</span> <span
+										th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
+										0，共 0 則評價 </span>
+								</div>
+								<!-- 評價星星結束 -->
+								<!-- 主頁按鈕列 -->
+								<div class="restaurant-actions"></div>
 							</div>
-							<!-- 評價星星結束 -->
-							<!-- 主頁按鈕列 -->
-							<div class="restaurant-actions"></div>
 						</div>
-					</div>
-					<div class="restaurant-contact-info">
-						<div class="info-item">
-							<i class="fas fa-map-marker-alt"></i><span
-								th:text="${store.storAddr}">地址</span>
+						<div class="restaurant-contact-info">
+							<div class="info-item">
+								<i class="fas fa-map-marker-alt"></i><span
+									th:text="${store.storAddr}">地址</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-phone"></i><span th:text="${store.storPhone}">電話</span>
+							</div>
+							<div class="info-item">
+								<i class="fas fa-clock"></i> <span
+									th:if="${store.storOffDay != null and weekMap != null}"
+									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（' + ${weekMap[store.storOffDay]} + '公休）'">
+								</span> <span th:unless="${store.storOffDay != null}"
+									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（公休日不固定）'">
+								</span>
+							</div>
+							<div class="info-item">
+								<i class="fa-solid fa-motorcycle"></i> <span
+									th:text="${store.storDeliver} == 0 ? '無外送服務' : '可外送'"></span>
+							</div>
+							<div class="info-item"
+								th:if="${store.storWeb != null and !store.storWeb.isEmpty()}">
+								<i class="fas fa-globe"></i> <a
+									th:href="${store.storWeb.startsWith('http') ? store.storWeb : 'http://' + store.storWeb}"
+									th:text="${store.storWeb}" class="website-link">網站連結</a>
+							</div>
 						</div>
-						<div class="info-item">
-							<i class="fas fa-phone"></i><span th:text="${store.storPhone}">電話</span>
-						</div>
-						<div class="info-item">
-							<i class="fas fa-clock"></i> 
-<span th:if="${store.storOffDay != null and weekMap != null}"
-      th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（' + ${weekMap[store.storOffDay]} + '公休）'">
-</span> <span th:unless="${store.storOffDay != null}"
-								th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（公休日不固定）'">
-							</span>
-						</div>
-						<div class="info-item">
-							<i class="fa-solid fa-motorcycle"></i> <span
-								th:text="${store.storDeliver} == 0 ? '無外送服務' : '可外送'"></span>
-						</div>
-						<div class="info-item"
-							th:if="${store.storWeb != null and !store.storWeb.isEmpty()}">
-							<i class="fas fa-globe"></i> <a
-								th:href="${store.storWeb.startsWith('http') ? store.storWeb : 'http://' + store.storWeb}"
-								th:text="${store.storWeb}" class="website-link">網站連結</a>
-						</div>
-					</div>
 
-					<div class="restaurant-details-tabs">
-						<div class="tabs-header">
-							<button class="tab-btn" data-tab="menu"
-								th:data-storeid="${store.storId}">菜單</button>
-							<button class="tab-btn" data-tab="info"
-								th:data-storeid="${store.storId}">店家資訊</button>
-							<button class="tab-btn" data-tab="coupon"
-								th:data-storeid="${store.storId}">優惠券</button>
-						</div>
-						<div class="tabs-content">
-							<div class="tab-content active"
-								th:id="'menu-content-' + ${store.storId}">
-								<div class="menu-items">
-									<div class="menu-item"
-										th:each="prod : ${storeProductMap[store.storId]}">
-										<img th:src="@{/images/restaurant/placeholder.svg}" alt=""
-											class="menu-item-image">
-										<div class="menu-item-info">
-											<h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
-											<p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
-											<span class="menu-item-price"
-												th:text="'NT$ ' + ${prod.prodPrice}">價格</span>
+						<div class="restaurant-details-tabs">
+							<div class="tabs-header">
+								<button class="tab-btn" data-tab="menu"
+									th:data-storeid="${store.storId}">菜單</button>
+								<button class="tab-btn" data-tab="info"
+									th:data-storeid="${store.storId}">店家資訊</button>
+								<button class="tab-btn" data-tab="coupon"
+									th:data-storeid="${store.storId}">優惠券</button>
+							</div>
+							<div class="tabs-content">
+								<div class="tab-content active"
+									th:id="'menu-content-' + ${store.storId}">
+									<div class="menu-items">
+										<div class="menu-item"
+											th:each="prod : ${storeProductMap[store.storId]}">
+											<img th:src="@{/images/restaurant/placeholder.svg}" alt=""
+												class="menu-item-image">
+											<div class="menu-item-info">
+												<h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
+												<p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
+												<span class="menu-item-price"
+													th:text="'NT$ ' + ${prod.prodPrice}">價格</span>
+											</div>
+
+											<button class="favorite-btn favorite-product-btn"
+												th:data-prodid="${prod.prodId}">
+												<i
+													th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prod.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
+													th:style="${favoriteProdIds != null and favoriteProdIds.contains(prod.prodId)} ? 'color:red' : ''"></i>
+												收藏
+											</button>
 										</div>
 
-										<button class="favorite-btn" th:data-prodid="${prod.prodId}">
-											<i class="far fa-heart"></i> 收藏
-										</button>
 									</div>
 
 								</div>
+								<!-- 店家資訊 Tab內容 -->
+								<div class="tab-content"
+									th:id="'info-content-' + ${store.storId}">
+									<div class="info-section">
+										<h3 class="info-title">店家位置</h3>
+										<p>
+											<strong th:text="${store.storName}">店家名稱</strong>
+										</p>
+										<p th:text="${store.storAddr}">店家地址</p>
 
-							</div>
-							<!-- 店家資訊 Tab內容 -->
-							<div class="tab-content"
-								th:id="'info-content-' + ${store.storId}">
-								<div class="info-section">
-									<h3 class="info-title">店家位置</h3>
-									<p>
-										<strong th:text="${store.storName}">店家名稱</strong>
-									</p>
-									<p th:text="${store.storAddr}">店家地址</p>
+										<div class="map-container" style="margin-top: 1em;">
+											<!-- 有座標時顯示 Google 地圖 -->
+											<iframe
+												th:if="${store.storLat != null and store.storLon != null}"
+												width="100%" height="300" frameborder="0" style="border: 0"
+												allowfullscreen loading="lazy"
+												referrerpolicy="no-referrer-when-downgrade"
+												th:src="'https://www.google.com/maps?q=' + ${store.storLat} + ',' + ${store.storLon} + '&hl=zh-TW&z=16&output=embed'">
+											</iframe>
 
-									<div class="map-container" style="margin-top: 1em;">
-										<!-- 有座標時顯示 Google 地圖 -->
-										<iframe
-											th:if="${store.storLat != null and store.storLon != null}"
-											width="100%" height="300" frameborder="0" style="border: 0"
-											allowfullscreen loading="lazy"
-											referrerpolicy="no-referrer-when-downgrade"
-											th:src="'https://www.google.com/maps?q=' + ${store.storLat} + ',' + ${store.storLon} + '&hl=zh-TW&z=16&output=embed'">
-										</iframe>
-
-										<!-- 沒有座標顯示預設圖 -->
-										<img
-											th:unless="${store.storLat != null and store.storLon != null}"
-											src="/images/map-placeholder.svg" alt="預設地圖"
-											style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;" />
-									</div>
-								</div>
-							</div>
-							<!-- ➕ 新增優惠券內容 -->
-							<div class="tab-content"
-								th:id="'coupon-content-' + ${store.storId}">
-								<div class="menu-items">
-									<div class="menu-item"
-										th:each="coupon : ${storeCouponMap[store.storId]}">
-
-
-										<div class="menu-item-info">
-											<h3 class="menu-item-name" th:text="${coupon.couType}">優惠券類型</h3>
-											<p class="menu-item-description" th:text="${coupon.couDesc}">優惠券說明</p>
-											<span class="menu-item-price"
-												th:text="'最低消費：NT$ ' + ${coupon.couMinOrd}">最低消費金額</span>
+											<!-- 沒有座標顯示預設圖 -->
+											<img
+												th:unless="${store.storLat != null and store.storLon != null}"
+												src="/images/map-placeholder.svg" alt="預設地圖"
+												style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;" />
 										</div>
+									</div>
+								</div>
+								<!-- ➕ 新增優惠券內容 -->
+								<div class="tab-content"
+									th:id="'coupon-content-' + ${store.storId}">
+									<div class="menu-items">
+										<div class="menu-item"
+											th:each="coupon : ${storeCouponMap[store.storId]}">
 
-										<button class="favorite-btn" th:data-couid="${coupon.couId}">
-											<i class="far fa-heart"></i> 收藏
-										</button>
+
+											<div class="menu-item-info">
+												<h3 class="menu-item-name" th:text="${coupon.couType}">優惠券類型</h3>
+												<p class="menu-item-description" th:text="${coupon.couDesc}">優惠券說明</p>
+												<span class="menu-item-price"
+													th:text="'最低消費：NT$ ' + ${coupon.couMinOrd}">最低消費金額</span>
+											</div>
+
+											<button class="favorite-btn favorite-coupon-btn"
+												th:data-couid="${coupon.couId}">
+												<i class="far fa-heart"></i> 收藏
+											</button>
+
+										</div>
 
 									</div>
 
@@ -339,8 +347,6 @@
 							</div>
 
 						</div>
-
-					</div>
 				</article>
 			</div>
 		</div>
@@ -354,50 +360,37 @@
 
 	<script>
   document.addEventListener('DOMContentLoaded', function () {
-  // 收藏按鈕功能
-  document.querySelectorAll('.favorite-btn').forEach(btn => {
-  btn.addEventListener('click', function () {
-    const prodId = this.dataset.prodid;
-    const icon = this.querySelector('i');
+  // 收藏商品功能
+  document.querySelectorAll('.favorite-product-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const prodId = this.dataset.prodid;
+        const icon = this.querySelector('i');
+        const isFavorited = icon.classList.contains('fas');
+        const url = isFavorited ? '/favorite/remove' : '/favorite/add';
 
-    const isFavorited = icon.classList.contains('fas');
-
-    const url = isFavorited ? '/favorite/remove' : '/favorite/add';
-
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ prodId })
-    })
-    .then(res => {
-      if (!res.ok) return res.json().then(err => { throw new Error(err.error); });
-      return res.json();
-    })
-    .then(data => {
-      if (isFavorited) {
-        // 取消收藏
-        icon.classList.remove('fas');
-        icon.classList.add('far');
-        icon.style.color = '';
-        showToast('已取消收藏');
-      } else {
-        // 加入收藏
-        icon.classList.remove('far');
-        icon.classList.add('fas');
-        icon.style.color = 'red';
-        showToast('已加入收藏');
-      }
-    })
-    .catch(err => {
-      if (err.message === "請先登入會員") {
-        showLoginPrompt();
-      } else {
-        alert("錯誤：" + err.message);
-      }
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prodId })
+        })
+        .then(res => {
+            if (!res.ok) return res.json().then(err => { throw new Error(err.error); });
+            return res.json();
+        })
+        .then(data => {
+            icon.classList.toggle('fas', !isFavorited);
+            icon.classList.toggle('far', isFavorited);
+            icon.style.color = isFavorited ? '' : 'red';
+            showToast(isFavorited ? '已取消收藏' : '已加入收藏');
+        })
+        .catch(err => {
+            if (err.message === "請先登入會員") {
+                showLoginPrompt();
+            } else {
+                alert("錯誤：" + err.message);
+            }
+        });
     });
-  });
 });
 
 	//🔍 搜尋輸入框按 Enter 時跳轉搜尋
