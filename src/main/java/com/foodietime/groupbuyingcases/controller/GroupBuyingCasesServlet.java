@@ -61,13 +61,13 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader-notifications";
     }
 	
-	@GetMapping("/leader-orders")
-    public String leaderorders(HttpSession session){
-		if(session.getAttribute("loggedInMember") == null) {
-			return "front/member/login";
-		}
-        return "front/gb/gbleader/leader-orders";
-    }
+//	@GetMapping("/leader-orders")
+//    public String leaderorders(HttpSession session){
+//		if(session.getAttribute("loggedInMember") == null) {
+//			return "front/member/login";
+//		}
+//        return "front/gb/gbleader/leader-orders";
+//    }
 	
 	@GetMapping("/leader-product")
     public String leaderproduct(HttpSession session){
@@ -83,6 +83,13 @@ public class GroupBuyingCasesServlet {
 			return "front/member/login";
 		}
         return "front/gb/gbleader/leader-searchresult";
+        
+    }
+	@GetMapping("/leader-gborder-detail")
+    public String leadergborderdetail(){
+		
+		
+        return "front/gb/gbleader/leader-gborder-detail";
         
     }
 	

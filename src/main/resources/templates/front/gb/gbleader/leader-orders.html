@@ -226,11 +226,17 @@
             <!-- 側邊欄 -->
             <div class="col-lg-3 mb-4">
                 <div class="profile-sidebar p-3">
-                    <div class="text-center mb-4">
-                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="用戶頭像" class="profile-avatar mb-3">
-                        <h5>林小美</h5>
-                        <p class="text-muted mb-0">團長</p>
-                    </div>
+                    <!-- 主要內容：動態顯示團長（從 Session 取） -->
+					<div class="text-center mb-4">
+					  <!-- 如果有頭像 URL，可改這裡 -->
+					  <!--  <img th:if="${session.loggedInMember.photoUrl != null}"
+					       th:src="@{${session.loggedInMember.photoUrl}}"
+					       alt="用戶頭像"
+					       class="profile-avatar mb-3"/>  -->
+					  <!-- 動態顯示團長名稱 -->
+					  <h5 th:text="${session.loggedInMember.memNickname}">團長姓名</h5>
+					  <p class="text-muted mb-0">團長</p>
+					</div>
                     
                     <nav class="nav flex-column">
                         <!-- 未登入狀態：顯示登入頁面 -->
@@ -298,40 +304,51 @@
                     </div>
                     
                     
-                    <table class="table table-bordered" width="100%" cellspacing="0">
-  <thead>
-    <tr>
-      <th>訂單編號</th>
-      <th>商品名稱</th>
-      <th>訂購數量</th>
-      <th>總金額</th>
-      <th>付款狀態</th>
-      <th>出貨狀態</th>
-      <th>操作</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- 這裡開始迴圈，每筆訂單對應一個 tr -->
-    <tr th:each="o : ${orders}">
-      <td th:text="${o.gbOrId}">訂單編號</td>
-      <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
-      <td th:text="${o.gbOrQuantity}">數量</td>
-      <td th:text="${o.gbOrTotal}">總金額</td>
-      <td th:text="${o.gbOrPaymentStatus}">付款狀態</td>
-      <td th:text="${o.gbOrShippingStatus}">出貨狀態</td>
-      <td>
-        <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-outline-secondary">
-          查看
-        </a>
-      </td>
-    </tr>
-    <!-- 如果 orders 是空清單，顯示「無訂單」 -->
-    <tr th:if="${#lists.isEmpty(orders)}">
-      <td colspan="7" class="text-center">目前沒有任何訂單</td>
-    </tr>
-  </tbody>
-</table>
-
+                    <!-- 訂單列表 -->
+					<div class="card mb-4">
+					  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+					    <h6 class="m-0 font-weight-bold">訂單列表</h6>
+					  </div>
+					  <div>
+					  <div class="card-body">
+					    <div class="table-responsive">
+					      <table class="table table-bordered" width="100%" cellspacing="0">
+					        <thead>
+					          <tr>
+					            <th>訂單編號</th>
+					            <th>商品名稱</th>
+					            <th>訂購數量</th>
+					            <th>總金額</th>
+					            <th>付款狀態</th>
+					   			<th>出貨狀態</th>
+					            <th>操作</th>
+					          </tr>
+					        </thead>
+					        <!-- 這裡開始迴圈，每筆訂單對應一個 tr -->
+					        <tbody>
+						    <tr th:each="o : ${orders}">
+						      <td th:text="${o.gbOrId}">訂單編號</td>
+						      <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
+						      <td th:text="${o.quantity}">數量</td>
+						      <td th:text="${o.amount}">總金額</td>
+						      <td th:text="${o.paymentStatus == 0} ? '未付款' : '已付款'">付款狀態</td>
+						      <td th:text="${o.shippingStatus == 0} ? '未出貨' : '已出貨'">出貨狀態</td>
+						      <td>
+						        <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-primary">
+						          查看詳情
+						        </a>
+						      </td>
+						    </tr>
+						    <!-- 如果 orders 是空清單，顯示「無訂單」 -->
+						    <tr th:if="${#lists.isEmpty(orders)}">
+						      <td colspan="7" class="text-center">目前沒有任何訂單</td>
+						    </tr>
+						  </tbody>
+					      </table>
+					    </div>
+					  </div>
+					</div>
+                    </div>
 
                     
                     <!-- 分頁 -->
