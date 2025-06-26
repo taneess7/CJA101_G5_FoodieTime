@@ -47,20 +47,18 @@ public class CouponController {
 
 	//店家優惠券編輯頁面
 	@GetMapping("/editCoupon")
-	public String showEditPage(@RequestParam(required = false) Integer couId, Model model) {
-//		public String showEditPage(@RequestParam(required = false) Integer couId, HttpSession session, Model model) {	
-		// 從 session 取得登入商家 ID
-//		StoreVO storeVO = (StoreVO) session.getAttribute("loggedInStore");
-//		if(storeVO == null) {
-//			return "redirect:/login"; //未登入，回到登入頁
-//		}
-//		Integer storId = storeVO.getStorId();
-//		session.setAttribute("loggedInStore", storId);
+	public String showEditPage(@RequestParam(required = false) Integer couId, HttpSession session, Model model) {
 
-		Integer currentStorId = 5;
+		// 1. 從 session 取得登入商家 ID
+		StoreVO loggedInStore  = (StoreVO) session.getAttribute("loggedInMember");
+		if (loggedInStore == null) {
+			return "redirect:/front/member/login";
+		}
+		Integer storId = loggedInStore.getStorId();
+
 
 		// 只撈該商家擁有的優惠券作為下拉選單
-		List<CouponVO> coupons = couSvc.getCouponsByStorId(currentStorId);
+		List<CouponVO> coupons = couSvc.getCouponsByStorId(storId);
 		model.addAttribute("coupons", coupons); // 下拉選單 th:each="cou : ${coupons}" 用
 
 		// 有選coupon,就撈該couId做表單
@@ -77,7 +75,7 @@ public class CouponController {
 			
 			
 			StoreVO storeVO = new StoreVO(); // 從資料庫店家撈資料
-			storeVO.setStorId(currentStorId); // 設定 store 裡的 id
+			storeVO.setStorId(storId); // 設定 store 裡的 id
 			couponVO.setStore(storeVO); // 設定關聯商家
 		} else {
 			couponVO = couSvc.findById(couId); // 修改表單
