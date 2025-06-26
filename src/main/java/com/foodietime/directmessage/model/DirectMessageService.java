@@ -69,21 +69,27 @@ public class DirectMessageService {
 	        return messageRepo.findByMember_MemIdOrderByMessTimeAsc(memId)
 	            .stream()
 	            .map(vo -> {
+	                int ordinal = vo.getMessDirection().ordinal();
+	                System.out.println("💬 dmId=" + vo.getDmId() + ", messDirection=" + ordinal + " (" + vo.getMessDirection() + ")");
+
 	                DirectMessageDTO dto = new DirectMessageDTO();
 	                dto.setDmId(vo.getDmId());
 	                dto.setMemId(vo.getMember().getMemId());
 	                dto.setMemName(vo.getMember().getMemName());
 	                dto.setMessContent(vo.getMessContent());
 	                dto.setMessTime(vo.getMessTime());
-	                dto.setMessDirection(vo.getMessDirection().ordinal());
-	                dto.setReplyContent("");  // 你看要不要給 reply
-	                dto.setFormattedTime(vo.getMessTime().format(formatter));  // 這一行
+	                dto.setMessDirection(ordinal); // 寫入 DTO
+	                dto.setReplyContent("");
+	                dto.setFormattedTime(vo.getMessTime().format(formatter));
 	                return dto;
 	            })
+
 	            .collect(Collectors.toList());
 	    }
 
-	    public void replyAdd(DirectMessageVO replyMsg) {
+	    public void replyAdd(DirectMessageVO replyMsg,DirectMessageVO replyTo) {
+	    	replyMsg.setMessTime(LocalDateTime.now()); // 保證回覆在留言之後
+	    	replyMsg.setReplyTo(replyTo); // ✅ 指定回覆對象
 	        messageRepo.save(replyMsg); // 新增
 	    }
 	    
@@ -99,10 +105,14 @@ public class DirectMessageService {
 	        List<DirectMessageVO> memberMessages = messageRepo.findAll().stream()
 	                .filter(msg -> msg.getMessDirection() == DirectMessageVO.MessageDirection.MEMBER_TO_ADMIN)
 	                .toList();
-
-	        List<DirectMessageVO> allReplies = messageRepo.findAll().stream()
+	        
+	        // 所有回覆（用 replyTo 對應）
+	        List<DirectMessageVO> replies = messageRepo.findAll().stream()
 	                .filter(msg -> msg.getMessDirection() == DirectMessageVO.MessageDirection.ADMIN_TO_MEMBER)
+	                .filter(msg -> msg.getReplyTo() != null)
 	                .toList();
+
+	      
 
 	        return memberMessages.stream().map(vo -> {
 	            DirectMessageDTO dto = new DirectMessageDTO();
@@ -113,24 +123,23 @@ public class DirectMessageService {
 	            dto.setMessTime(vo.getMessTime());
 	            dto.setFormattedTime(vo.getMessTime().format(formatter));
 	            dto.setMessDirection(vo.getMessDirection().ordinal());
-
-	            // 查最新回覆時間
-	            allReplies.stream()
-	                .filter(reply -> reply.getMember().getMemId().equals(vo.getMember().getMemId()))
-	                .filter(reply -> reply.getMessTime().isAfter(vo.getMessTime()))
-	                .max((r1, r2) -> r1.getMessTime().compareTo(r2.getMessTime()))
-	                .ifPresent(latestReply -> {
-	                    dto.setReplyContent(latestReply.getMessContent());
-	                    dto.setReplyAdminName(latestReply.getSmgr() != null ? latestReply.getSmgr().getSmgrAccount() : "未指派");
-	                    dto.setReplyStatus("已回覆");
-	                });
-
-	            // 如果沒有回覆
-	            if (dto.getReplyStatus() == null) {
-	                dto.setReplyStatus("待處理");
+	            
+	            // 用 replyTo 找回覆
+	            DirectMessageVO reply = replies.stream()
+	                    .filter(r -> r.getReplyTo().getDmId().equals(vo.getDmId()))
+	                    .findFirst()
+	                    .orElse(null);
+	            
+	            if (reply != null) {
+	                dto.setReplyContent(reply.getMessContent());
+	                dto.setReplyAdminName(reply.getSmgr() != null ? reply.getSmgr().getSmgrAccount() : "未指派");
+	                dto.setReplyStatus("已回覆");
+	            } else {
 	                dto.setReplyContent("");
 	                dto.setReplyAdminName("");
+	                dto.setReplyStatus("待處理");
 	            }
+
 
 	            return dto;
 	        }).toList();
@@ -153,6 +162,15 @@ public class DirectMessageService {
 	                .min((r1, r2) -> r1.getMessTime().compareTo(r2.getMessTime()))
 	                .orElse(null);
 	    }
+	    
+	    public DirectMessageVO getReplyByReplyToId(Integer replyToDmId) {
+	        return messageRepo.findAll().stream()
+	            .filter(reply -> reply.getReplyTo() != null)
+	            .filter(reply -> reply.getReplyTo().getDmId().equals(replyToDmId))
+	            .findFirst()
+	            .orElse(null);
+	    }
+
 
 
 
