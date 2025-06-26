@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+body {
+	  margin: 0 auto 2rem auto;
+	  padding: 1rem;
+	  max-width: 100%;
+	  overflow-x: hidden;
+}
+
+.white-nowrap {
+  white-space: nowrap;
+}
+
+.center-table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.table-responsive {
+  overflow-x: auto;
+}
