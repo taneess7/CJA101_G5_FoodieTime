@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodietime.coupon.model.CouponRepository;
 import com.foodietime.product.model.ProductVO;
 
 
@@ -27,8 +28,8 @@ public class StoreService {
 	@Autowired
 	private StoreRepository repository; 
 	
-//	@Autowired
-//	private CouponRepository couRepository; 
+	@Autowired
+	private CouponRepository couRepository; 
 	
 
 
@@ -66,7 +67,7 @@ public class StoreService {
 //		repository.save(storeVO);
 //	}
 	
-	//登入 
+	//店家登入抓email 
 	public StoreVO findByStorEmail(String email) {
 		return repository.findByStorEmail(email);
 	}
