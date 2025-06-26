@@ -43,8 +43,12 @@ public class DirectMessageController {
         message.setMessDirection(DirectMessageVO.MessageDirection.MEMBER_TO_ADMIN);
         messageService.addMessage(message);
         
-        redirectAttributes.addFlashAttribute("successMessage", "✅ 感謝您的留言！");
-        return "redirect:/front/directmessage/history";
+        return "redirect:/front/directmessage/send_success";
+    }
+    
+    @GetMapping("/send_success")
+    public String showSuccessPage() {
+        return "front/directmessage/send_success"; // 對應 Thymeleaf 頁面
     }
 
     @GetMapping("/history")
