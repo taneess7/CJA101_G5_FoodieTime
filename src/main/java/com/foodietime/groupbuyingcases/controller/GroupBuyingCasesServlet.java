@@ -45,13 +45,13 @@ public class GroupBuyingCasesServlet {
 //        return "front/gb/gbleader/leader-groups";
 //    }
 		
-	@GetMapping("/leaderindex")
-	public String leaderindex(HttpSession session){
-		if(session.getAttribute("loggedInMember") == null) {
-			return "front/member/login";
-		}
-        return "front/gb/gbleader/leaderindex";
-    }
+//	@GetMapping("/leaderindex")
+//	public String leaderindex(HttpSession session){
+//		if(session.getAttribute("loggedInMember") == null) {
+//			return "front/member/login";
+//		}
+//        return "front/gb/gbleader/leaderindex";
+//    }
 	
 	@GetMapping("/leader-notifications")
     public String leadernotifications(HttpSession session){

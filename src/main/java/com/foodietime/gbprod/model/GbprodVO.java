@@ -99,5 +99,9 @@ public class GbprodVO implements Serializable {
         }
         return bytes;
     }
+    
+    public String getImgUrl(){
+    	return "/gb/gbproduct/image/" + gbProdId;
+    }
   
 }
