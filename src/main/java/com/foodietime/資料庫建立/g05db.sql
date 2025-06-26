@@ -931,8 +931,8 @@ create table DIRECT_MESSAGE (
                                 MESS_TIME datetime NOT NULL,
                                 MESS_DIRECTION tinyint NOT NULL,
                                 REPLY_TO_DM_ID INT,  -- 🆕 新增欄位：回覆哪一筆訊息
-                                constraint DIRECT_MESSAGE_DMID_PK primary key (DM_ID),
-                                CONSTRAINT FK_REPLY_TO_DM FOREIGN KEY (REPLY_TO_DM_ID) REFERENCES DIRECT_MESSAGE(DM_ID)
+                                constraint DIRECT_MESSAGE_DMID_PK primary key (DM_ID)
+                               
 
 );
 
@@ -1202,7 +1202,9 @@ ALTER TABLE DIRECT_MESSAGE
     ADD CONSTRAINT FK_DIRECT_MESSAGE_MEMBER
         FOREIGN KEY (MEM_ID) REFERENCES MEMBER (MEM_ID),
     ADD CONSTRAINT FK_DIRECT_MESSAGE_MANAGER
-        FOREIGN KEY (SMGR_ID) REFERENCES SERVERMANAGER(SMGR_ID);
+        FOREIGN KEY (SMGR_ID) REFERENCES SERVERMANAGER(SMGR_ID),
+	ADD CONSTRAINT FK_REPLY_TO_DM 
+		FOREIGN KEY (REPLY_TO_DM_ID) REFERENCES DIRECT_MESSAGE(DM_ID);
 
 
 ALTER TABLE SERVERMANAGERAUTH
