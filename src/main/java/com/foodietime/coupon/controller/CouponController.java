@@ -119,14 +119,14 @@ public class CouponController {
 				System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
 			}
 			// 若驗證失敗，要補上 store 進去（否則會是 null）
-			Integer currentStorId = 5;
+			
 	        if (couponVO.getStore() == null) {
 	            StoreVO storeVO = new StoreVO();
-	            storeVO.setStorId(currentStorId);
+	            storeVO.setStorId(storId);
 	            couponVO.setStore(storeVO);
 	        }
 	        //取得該店家所有coupons
-			List<CouponVO> coupons = couSvc.getCouponsByStorId(currentStorId);
+			List<CouponVO> coupons = couSvc.getCouponsByStorId(storId);
 			model.addAttribute("coupons", coupons);
 			
 			//顯示驗證錯誤訊息:
@@ -158,10 +158,11 @@ public class CouponController {
 		
 	}
 	//========================================================================================//
+	//查詢店家所有優惠券
 	@GetMapping("/listStoreCoupons")
 	public String listStoreCoupons(HttpSession session, Model model) {
 	    // 1. 取得 session 中登入的商家
-	    StoreVO storeVO = (StoreVO) session.getAttribute("loggedInMember");
+	    StoreVO storeVO = (StoreVO) session.getAttribute("loggedInStore");
 	    if (storeVO == null) {
 	        return "redirect:/front/member/login"; // 尚未登入，導回登入頁
 	    }
