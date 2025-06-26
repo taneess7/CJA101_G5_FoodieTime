@@ -1,5 +1,6 @@
 package com.foodietime.memcoupon.model;
 
+import com.foodietime.coupon.model.CouponVO;
 import com.foodietime.member.model.MemberVO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,7 @@ public interface MemCouponRepository extends JpaRepository<MemCouponVO, Integer>
 
     @Query("SELECT m FROM MemCouponVO m JOIN FETCH m.coupon c LEFT JOIN FETCH c.store s WHERE m.member = :member")
     List<MemCouponVO> findByMemberIdWithDetails(@Param("member") MemberVO member);
+
+    MemCouponVO findByMemberAndCoupon(MemberVO member, CouponVO coupon);
 }
 

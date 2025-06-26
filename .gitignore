@@ -40,3 +40,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/project_overview.md

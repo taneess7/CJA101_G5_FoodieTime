@@ -1,17 +1,20 @@
 package com.foodietime.memcoupon.controller;
 
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.memcoupon.dto.CouponClaimRequest;
 import com.foodietime.memcoupon.model.MemCouponService;
 import com.foodietime.memcoupon.model.MemCouponVO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/member")
@@ -57,6 +60,33 @@ public class MemCouponController {
         // ============================ 步驟 4: 回傳視圖名稱 ============================
         // Spring Boot 會尋找位於 `src/main/resources/templates/front-end/member/member-coupons.html` 的模板
         return "front/memcoupon/member-coupons";
+    }
+
+    /**
+     * 處理會員領取優惠券的 POST 請求。
+     * @param request 包含要領取的優惠券 ID 的 DTO
+     * @param session 從 HttpSession 中獲取當前登入的會員資訊
+     * @return 返回 JSON 格式的成功/失敗訊息
+     */
+    @PostMapping("/coupons/claim")
+    @ResponseBody // 表示此方法直接返回響應體，而不是視圖名稱
+    public ResponseEntity<Map<String, Object>> claimCoupon(@RequestBody CouponClaimRequest request, HttpSession session) {
+        // ==================== 1. 獲取當前登入會員 ====================
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO == null) {
+            // 返回未授權錯誤碼
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "請先登入。"));
+        }
+
+        // ==================== 2. 調用 Service 處理領取邏輯 ====================
+        String result = memCouponService.claimCoupon(memberVO, request.getCouponId());
+
+        // ==================== 3. 根據 Service 返回的結果構建響應 ====================
+        if ("SUCCESS".equals(result)) {
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } else {
+            return ResponseEntity.ok(Collections.singletonMap("message", result)); // 將 Service 返回的錯誤訊息傳遞給前端
+        }
     }
 }
 

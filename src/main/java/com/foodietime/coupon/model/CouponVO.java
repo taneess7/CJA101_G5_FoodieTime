@@ -89,11 +89,11 @@ public class CouponVO implements Serializable {
 
 
     //OneToMany
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "coupon")
     private List<MemCouponVO> memCoupon;
 
-    @OneToMany(mappedBy = "coupon")
-    private List<OrdersVO> orders;
+//    @OneToMany(mappedBy = "coupon")
+//    private List<OrdersVO> orders;
 
 
     // 取得or設置
