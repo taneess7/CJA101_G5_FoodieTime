@@ -3,6 +3,8 @@ package com.foodietime.product.controller;
 import com.foodietime.coupon.model.CouponService;
 import com.foodietime.coupon.model.CouponVO;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.memfavlist.model.FavoriteListService;
+import com.foodietime.memfavlist.model.FavoriteListVO;
 import com.foodietime.product.model.ProductCategoryService;
 import com.foodietime.product.model.ProductCategoryServiceImpl;
 import com.foodietime.product.model.ProductCategoryVO;
@@ -22,6 +24,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/category")
@@ -33,6 +37,8 @@ public class ProductCategoryController {
 	private ProductService productService;
 	@Autowired
 	private CouponService couponService;
+	@Autowired
+	private FavoriteListService favoriteListService;
 	
     // 查全部
     @GetMapping("/food-categories")
@@ -59,8 +65,16 @@ public class ProductCategoryController {
 
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
         if (memberVO != null) {
-            model.addAttribute("member", memberVO); // 如果你前端需要顯示會員資訊
+            model.addAttribute("member", memberVO); 
+            
+         // 加上會員的商品收藏清單
+            List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
+            Set<Integer> favoriteProdIds = favorites.stream()
+                    .map(FavoriteListVO::getProdId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("favoriteProdIds", favoriteProdIds);
         }
+        
         // 1. 找出分類名稱
         ProductCategoryVO categoryVO = categoryService.findById(cateId);
         model.addAttribute("categoryName", categoryVO.getProdCate());

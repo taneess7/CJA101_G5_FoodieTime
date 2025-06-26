@@ -3,9 +3,7 @@ package com.foodietime.memfavlist.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-import lombok.Data;
 
-@Data
 public class FavoriteListId implements Serializable{
 	
 	private Integer memId;
@@ -15,9 +13,9 @@ public class FavoriteListId implements Serializable{
     }
 
     public FavoriteListId(Integer memId, Integer prodId) {
-        this.memId = memId;
-        this.prodId = prodId;
-    }
+		this.memId = memId;
+		this.prodId = prodId;
+	}
 
     @Override
     public boolean equals(Object o) {

@@ -36,7 +36,7 @@ public class FavoriteListController {
 	@PostMapping("/add")
 	@ResponseBody
 	public ResponseEntity<?> addFavorite(@RequestBody Map<String, Integer> payload, HttpSession session) {
-	    MemberVO member = (MemberVO) session.getAttribute("member");
+	    MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
 	    if (member == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "請先登入會員"));
 	    }
@@ -51,7 +51,25 @@ public class FavoriteListController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "加入失敗"));
 	    }
 	}
-//
+
+	@PostMapping("/remove")
+	@ResponseBody
+	public ResponseEntity<?> removeFavorite(@RequestBody Map<String, Integer> payload, HttpSession session) {
+	    MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+	    if (member == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "請先登入會員"));
+	    }
+
+	    Integer memId = member.getMemId();
+	    Integer prodId = payload.get("prodId");
+
+	    try {
+	        favoriteListService.deleteFavorite(memId, prodId);
+	        return ResponseEntity.ok(Map.of("status", "removed"));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "移除失敗"));
+	    }
+	}
 //	// 主頁
 //    @GetMapping("/select_page")
 //    public String index() {

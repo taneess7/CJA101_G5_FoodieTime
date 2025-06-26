@@ -100,6 +100,10 @@
 	cursor: pointer;
 	margin-top: 10px;
 }
+
+.favorite-btn i.fas.fa-heart {
+	color: red;
+}
 </style>
 <body>
 	<header class="app-header">
@@ -119,22 +123,24 @@
 			</div>
 			<nav class="main-nav">
 				<ul class="nav-list">
-					<li class="nav-item"><a href="/category/food-categories" class="nav-link">地圖</a></li>
+					<li class="nav-item"><a href="/category/food-categories"
+						class="nav-link">地圖</a></li>
 					<li class="nav-item"><a href="/gb/gbindex" class="nav-link">團購</a></li>
 					<li class="nav-item"><a href="/act" class="nav-link">優惠</a></li>
 					<li class="nav-item">
 						<div th:if="${session.loggedInMember == null}">
-						    <a th:href="@{/category/login}" class="btn btn-outline-secondary me-2">
-						        <i class="bi bi-person"></i> 登入
-						    </a>
-						    <a th:href="@{/register}" class="btn btn-outline-primary me-2">
-						        <i class="bi bi-person-plus"></i> 註冊
-						    </a>
+							<a th:href="@{/category/login}"
+								class="btn btn-outline-secondary me-2"> <i
+								class="bi bi-person"></i> 登入/註冊
+							</a>
+
 						</div>
 						<div th:if="${session.loggedInMember != null}">
-						    <span class="me-2" th:text="'Hi, ' + ${session.loggedInMember.memName}">Hi, 使用者</span>
-						    <a th:href="@{/member/profile}" class="btn btn-outline-success me-2">會員中心</a>
-						    <a th:href="@{/logout}" class="btn btn-outline-danger">登出</a>
+							<span class="me-2"
+								th:text="'Hi, ' + ${session.loggedInMember.memName}">Hi,
+								使用者</span> <a th:href="@{/member/profile}"
+								class="btn btn-outline-success me-2">會員中心</a> <a
+								th:href="@{/logout}" class="btn btn-outline-danger">登出</a>
 						</div>
 					</li>
 				</ul>
@@ -298,7 +304,7 @@
 
 										<div class="menu-item-info">
 											<h3 class="menu-item-name" th:text="${coupon.couType}">優惠券類型</h3>
-											<p class="menu-item-description" th:text="${coupon.couDes}">優惠券說明</p>
+											<p class="menu-item-description" th:text="${coupon.couDesc}">優惠券說明</p>
 											<span class="menu-item-price"
 												th:text="'最低消費：NT$ ' + ${coupon.couMinOrd}">最低消費金額</span>
 										</div>
@@ -331,30 +337,49 @@
   document.addEventListener('DOMContentLoaded', function () {
   // 收藏按鈕功能
   document.querySelectorAll('.favorite-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const prodId = this.dataset.prodid;
+  btn.addEventListener('click', function () {
+    const prodId = this.dataset.prodid;
+    const icon = this.querySelector('i');
 
-      fetch('/favorite/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ prodId })
-      })
-        .then(res => {
-          if (!res.ok) return res.json().then(err => { throw new Error(err.error); });
-          return res.json();
-        })
-        .then(data => alert("已加入收藏"))
-        .catch(err => {
-          if (err.message === "請先登入會員") {
-            showLoginPrompt();
-          } else {
-            alert("錯誤：" + err.message);
-          }
-        });
+    const isFavorited = icon.classList.contains('fas');
+
+    const url = isFavorited ? '/favorite/remove' : '/favorite/add';
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ prodId })
+    })
+    .then(res => {
+      if (!res.ok) return res.json().then(err => { throw new Error(err.error); });
+      return res.json();
+    })
+    .then(data => {
+      if (isFavorited) {
+        // 取消收藏
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        icon.style.color = '';
+        showToast('已取消收藏');
+      } else {
+        // 加入收藏
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        icon.style.color = 'red';
+        showToast('已加入收藏');
+      }
+    })
+    .catch(err => {
+      if (err.message === "請先登入會員") {
+        showLoginPrompt();
+      } else {
+        alert("錯誤：" + err.message);
+      }
     });
   });
+});
 
   // Tab 切換功能
   document.querySelectorAll('.restaurant-detail').forEach(function (restaurantCard) {
@@ -402,6 +427,14 @@
     function closeLoginPrompt() {
         document.getElementById('login-prompt-modal').style.display = 'none';
     }
+    function showToast(message) {
+    	  const toast = document.getElementById('toast-message');
+    	  toast.textContent = message;
+    	  toast.style.display = 'block';
+    	  setTimeout(() => {
+    	    toast.style.display = 'none';
+    	  }, 2000);
+    	}
 	</script>
 	<div id="login-prompt-modal"
 		style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
@@ -415,6 +448,16 @@
 				<button onclick="closeLoginPrompt()">取消</button>
 			</div>
 		</div>
+	</div>
+	<div id="toast-message"
+		style="position: fixed; 
+		bottom: 30px; left: 50%; 
+		transform: translateX(-50%); 
+		background-color: #444; color: #fff; 
+		padding: 10px 20px; border-radius: 8px; 
+		display: none; 
+		font-size: 16px; 
+		z-index: 9999;">
 	</div>
 </body>
 </html>
