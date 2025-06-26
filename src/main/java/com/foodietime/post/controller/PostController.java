@@ -58,7 +58,7 @@ public class PostController {
 			HttpSession session) {
 		PostVO postVO;
 		if (postId != null) {
-			postVO = postservice.getOnePost(postId); // 查詢原本的貼文
+			return "redirect:/post/update?postId=" + postId; // 如果有 postId，重定向到 update 頁面
 		} else {
 			postVO = new PostVO(); // 新增時給空物件
 		}
@@ -114,12 +114,27 @@ public class PostController {
 		return "redirect:/post/";
 	}
 
+	@GetMapping("/update")
+	public String updatePost(@RequestParam("postId") Integer postId, ModelMap model, HttpSession session) {
+		PostVO postVO = postservice.getOnePost(postId);
+		if (postVO == null) {
+			model.addAttribute("errorMessage", "找不到指定的貼文");
+			return "redirect:/post/";
+		}
+		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		model.addAttribute("categories", categories);
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		model.addAttribute("loginMember", loginMember);
+		model.addAttribute("postVO", postVO);
+		return "front/post/updatePost";
+	}
+	
 	@PostMapping("/updatePost")
 	public String update(@Valid PostVO postVO, BindingResult result, ModelMap model) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
 		if (result.hasErrors()) {
-			return "front/post/addPost";
+			return "front/post/updatePost";
 		}
 		/*************************** 2.開始新增資料 *****************************************/
 		// 假設你從 DB 撈出原本的資料來比較
@@ -139,7 +154,7 @@ public class PostController {
 		/*************************** 3.修改完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("success", "修改成功");
 		model.addAttribute("postVO", postVO);
-		return "redirect:/post/";
+		return "redirect:/post/one?postId=" + postVO.getPostId();
 	}
 
 	@PostMapping("/delete")
@@ -328,7 +343,7 @@ public class PostController {
 		postservice.updatePost(post.getPostId(), post.getMember().getMemId(), post.getPostCate().getPostCateId(),
 				post.getPostDate(), post.getPostStatus(), post.getEditDate(), post.getPostTitle(),
 				post.getPostContent(), post.getLikeCount(), post.getViews());
-		// 你可以記錄誰按過讚，避免重複（進階功能）
+		session.setAttribute("likeSuccess", "按讚成功！");
 		return "redirect:/post/one?postId=" + postId;
 	}
 
@@ -394,4 +409,6 @@ public class PostController {
 
 		return "front/post/listallpost";
 	}
+	
+	
 }

@@ -46,238 +46,228 @@
 		</div>
 	</header>
 
-	<!-- 麵包屑導航 -->
 	<section class="breadcrumb">
 		<div class="container">
 			<a th:href="@{/post/}" class="breadcrumb-link">討論區</a> <span
 				class="breadcrumb-separator">/</span> <span
 				class="breadcrumb-category"
 				th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">分類名稱</span>
-			<!--         <span class="breadcrumb-separator">/</span> -->
-			<!--         <span class="breadcrumb-current" th:text="${postVO.postTitle}">貼文標題</span> -->
 		</div>
 	</section>
 
-	<!-- 主要內容 -->
 	<main class="main-content">
 		<div class="container">
-			<div class="post-detail-card">
-				<div class="post-header">
-					<div class="post-category"
-						th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">分類</div>
-					<h1 class="post-title" th:text="${postVO.postTitle}">貼文標題</h1>
-					<div class="post-meta">
-						<span class="author-name"
-							th:text="${postVO.member != null ? postVO.member.memName : '匿名'}">作者</span>
-						<span class="post-time"
-							th:text="${#dates.format(postVO.postDate, 'yyyy-MM-dd HH:mm')}">發文時間</span>
-					</div>
-				</div>
-
-				<div class="post-content">
-					<p th:text="${postVO.postContent}">貼文內容</p>
-				</div>
-				<!-- 新增：功能按鈕 -->
-				<div class="post-actions" style="margin: 16px 0;">
-					<button class="btn btn-primary"
-						th:if="${loginMember != null and postVO.member.memId == loginMember.memId}"
-						th:onclick="'location.href=\'/post/addPost?postId=' + ${postVO.postId} + '\''
-        ">修改貼文</button>
-				</div>
-				<!-- 只有作者本人才能刪除 -->
-				<form
-					th:if="${loginMember != null and postVO.member.memId == loginMember.memId}"
-					th:action="@{/post/delete}" method="post" style="display: inline;">
-					<input type="hidden" name="postId" th:value="${postVO.postId}" />
-					<button type="submit" class="btn btn-danger"
-						onclick="return confirm('確定要刪除這篇貼文嗎？');">刪除貼文</button>
-				</form>
-				<!-- 其他人看到禁用按鈕 -->
-				<button
-					th:if="${loginMember == null or postVO.member.memId != loginMember.memId}"
-					class="btn btn-danger" disabled
-					style="opacity: 0.5; cursor: not-allowed;">僅限本人可刪除</button>
-				<th:block th:if="${loginMember != null}">
-					<!-- 檢舉按鈕 -->
-					<button class="btn btn-danger" onclick="openReportModal()"
-						type="button">檢舉貼文</button>
-
-					<!-- 檢舉 Modal -->
-					<div id="reportModal"
-						style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
-						<div
-							style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
-							<h3 class="text-lg font-bold mb-2">檢舉貼文</h3>
-							<form th:action="@{/reportpost/insert}" method="post">
-								<input type="hidden" name="post.postId"
-									th:value="${postVO.postId}" /> <input type="hidden"
-									name="member.memId" th:value="${loginMember.memId}" /> <input
-									type="hidden" name="repPostStatus" value="0" /> <input
-									type="hidden" name="action" value="insert" />
-								<!-- 檢舉原因 -->
-								<div class="mb-2">
-									<label class="block mb-1">檢舉原因</label>
-									<textarea name="repPostReason"
-										class="w-full border rounded px-2 py-1" rows="3"
-										maxlength="255" required></textarea>
-								</div>
-								<div class="flex justify-end space-x-2 mt-3">
-									<button type="button" class="btn btn-secondary"
-										onclick="closeReportModal()">取消</button>
-									<button type="submit" class="btn btn-danger">送出檢舉</button>
-								</div>
-							</form>
-							<button onclick="closeReportModal()"
-								style="position: absolute; top: 8px; right: 12px;">✕</button>
+			<div class="post-unified-card">
+				<div class="post-detail-card">
+					<div class="post-header">
+						<div class="post-category"
+							th:text="${postVO.postCate != null ? postVO.postCate.postCate : '未分類'}">
+							分類</div>
+						<h1 class="post-title" th:text="${postVO.postTitle}">貼文標題</h1>
+						<div class="post-meta">
+							<span class="author-name"
+								th:text="${postVO.member != null ? postVO.member.memName : '匿名'}">作者</span>
+							<span class="post-time"
+								th:text="${#dates.format(postVO.editDate, 'yyyy-MM-dd HH:mm')}">
+							</span>
 						</div>
 					</div>
-				</th:block>
-				<div th:if="${session.reportSuccess}" class="alert alert-success"
-					style="background: #d1fae5; color: #065f46; padding: 12px; margin: 16px 0; border-radius: 6px;">
+
+					<div class="post-content">
+						<p th:text="${postVO.postContent}">貼文內容</p>
+					</div>
+
+					<div class="post-actions">
+						<a th:href="@{/post/update(postId=${postVO.postId})}"
+							class="btn btn-primary"
+							th:if="${loginMember != null and postVO.member.memId == loginMember.memId}">
+							修改貼文 </a>
+
+						<form
+							th:if="${loginMember != null and postVO.member.memId == loginMember.memId}"
+							th:action="@{/post/delete}" method="post"
+							style="display: inline;">
+							<input type="hidden" name="postId" th:value="${postVO.postId}" />
+							<button type="submit" class="btn btn-danger"
+								onclick="return confirm('確定要刪除這篇貼文嗎？');">刪除貼文</button>
+						</form>
+
+						<button
+							th:if="${loginMember == null or postVO.member.memId != loginMember.memId}"
+							class="btn btn-danger" disabled>僅限本人可刪除</button>
+
+						<button class="btn btn-danger" th:if="${loginMember != null}"
+							onclick="openReportModal()" type="button">檢舉貼文</button>
+					</div>
+				</div>
+
+				<div th:if="${session.reportSuccess}" class="alert alert-success">
 					<span th:text="${session.reportSuccess}"></span>
 				</div>
-	</main>
-	<!-- 貼文互動 -->
-	<div class="post-interactions">
-		<div class="interaction-stats">
-			<span>👍 <span th:text="${postVO.likeCount}">0</span> 個讚
-			</span> <span>💬 <span th:text="${#lists.size(messageList)}">0</span>
-				則留言
-			</span> <span>👁️ <span th:text="${postVO.Views}">0</span> 次瀏覽
-			</span>
-		</div>
-	</div>
-	<!--     </div>div class="interaction-buttons"> -->
-	<!-- 讚/取消讚按鈕 -->
-<form th:action="@{/post/unlike}" method="post" style="display: inline;" th:if="${liked}">
-    <input type="hidden" name="postId" th:value="${postVO.postId}" />
-    <button class="interaction-btn active" type="submit">
-        <i class="material-icons-outlined" style="color: #1976d2;">thumb_up</i>
-        <span>已讚</span>
-    </button>
-</form>
-<form th:action="@{/post/like}" method="post" style="display: inline;" th:unless="${liked}">
-    <input type="hidden" name="postId" th:value="${postVO.postId}" />
-    <button class="interaction-btn" type="submit">
-        <i class="material-icons-outlined">thumb_up_off_alt</i>
-        <span>讚</span>
-    </button>
-</form>
-
-	<!-- 收藏/取消收藏按鈕 -->
-	<form th:action="@{/FavoritePost/delete}" method="post"
-		style="display: inline;" th:if="${bookmarked}">
-		<input type="hidden" name="postId" th:value="${postVO.postId}" />
-		<button class="interaction-btn active" type="submit">
-			<i class="material-icons-outlined" style="color: #f59e42;">bookmark</i>
-			<span>已收藏</span>
-		</button>
-	</form>
-	<form th:action="@{/FavoritePost/insert}" method="post"
-		style="display: inline;" th:unless="${bookmarked}">
-		<input type="hidden" name="postId" th:value="${postVO.postId}" />
-		<button class="interaction-btn" type="submit">
-			<i class="material-icons-outlined">bookmark_border</i> <span>收藏</span>
-		</button>
-	</form>
-	<!-- 分享按鈕 -->
-	<!--         <button class="interaction-btn" type="button" onclick="sharePost()"> -->
-	<!--             <i class="material-icons-outlined">share</i> <span>分享</span> -->
-	<!--         </button> -->
-
-
-	<!-- 留言區 -->
-	<section class="comments-section">
-		<div class="comments-header">
-			<h3 class="comments-title">
-				留言 <span class="comments-count"
-					th:text="${#lists.size(messageList)}">0</span>
-			</h3>
-			<button class="expand-btn" onclick="toggleComments()">
-				<i class="material-icons-outlined">expand_more</i> 還有 <span
-					th:text="${#lists.size(messageList)}">0</span> 則留言
-			</button>
-		</div>
-
-		<!-- 留言輸入區 -->
-		<form th:action="@{/message/insert}" th:object="${messageVO}"
-			method="post">
-			<input type="hidden" name="post.postId" th:value="${postVO.postId}" />
-			<input type="hidden" name="member.memId"
-				th:value="${loginMember.memId}" /> <input type="hidden"
-				name="action" value="insert" />
-			<div class="comment-input-header">
-				<div class="comment-avatar"
-					th:text="${loginMember.memName != null ? loginMember.memName.substring(0,1) : '?'}">?</div>
-				<span>留言...</span>
 			</div>
-			<label for="mesContent" class="block mb-1">留言內容</label>
-			<textarea id="mesContent" class="comment-textarea"
-				th:field="*{mesContent}" placeholder="分享你的想法..." rows="3" required></textarea>
-			<div th:if="${#fields.hasErrors('mesContent')}"
-				style="color: red; font-size: 0.9em;">
-				<span th:errors="*{mesContent}"></span>
-			</div>
-			<div class="comment-actions">
-				<!-- ... -->
-				<button class="submit-btn" type="submit">發表留言</button>
-			</div>
-		</form>
-
-		<!-- 留言列表 -->
-		<div class="comments-list">
-			<div class="comment-item" th:each="msg : ${messageList}">
-				<div class="comment-header">
-					<div class="comment-avatar"
-						th:text="${msg.member.memName != null ? msg.member.memName.substring(0,1) : '?'}">?</div>
-					<div class="comment-content">
-						<div class="comment-meta">
-							<span class="comment-author" th:text="${msg.member.memName}">留言者</span>
-							<span class="comment-time"
-								th:text="${#dates.format(msg.mesDate, 'yyyy-MM-dd HH:mm')}">留言時間</span>
+			<div id="reportModal"
+				style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
+				<div
+					style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
+					<h3 class="text-lg font-bold mb-2">檢舉貼文</h3>
+					<form th:action="@{/reportpost/insert}" method="post">
+						<input type="hidden" name="post.postId"
+							th:value="${postVO.postId}" /> <input type="hidden"
+							name="member.memId" th:value="${loginMember.memId}" /> <input
+							type="hidden" name="repPostStatus" value="0" /> <input
+							type="hidden" name="action" value="insert" />
+						<div class="mb-2">
+							<label class="block mb-1">檢舉原因</label>
+							<textarea name="repPostReason"
+								class="w-full border rounded px-2 py-1" rows="3" maxlength="255"
+								required></textarea>
 						</div>
-						<div class="comment-text" th:text="${msg.mesContent}">留言內容</div>
-						<div class="comment-actions">
-							<button class="comment-action">
-								<i class="material-icons-outlined">thumb_up</i> <span>讚</span>
-							</button>
-							<button class="comment-action" type="button"
-								th:onclick="'openReportMessageModal(' + ${msg.mesId} + ')'">
-								<i class="material-icons-outlined">block</i> <span>檢舉</span>
-							</button>
+						<div class="flex justify-end space-x-2 mt-3">
+							<button type="button" class="btn btn-secondary"
+								onclick="closeReportModal()">取消</button>
+							<button type="submit" class="btn btn-danger">送出檢舉</button>
 						</div>
+					</form>
+					<button onclick="closeReportModal()"
+						style="position: absolute; top: 8px; right: 12px;">✕</button>
+				</div>
+			</div>
+
+			<div class="post-interactions">
+				<div class="interaction-stats">
+					<div class="interaction-counts">
+						<span>👍 <span th:text="${postVO.likeCount}">0</span> 個讚
+						</span> <span>💬 <span th:text="${#lists.size(messageList)}">0</span>
+							則留言
+						</span> <span>👁️ <span th:text="${postVO.Views}">0</span> 次瀏覽
+						</span>
+					</div>
+					<div class="interaction-buttons-group">
+						<form th:action="@{/post/unlike}" method="post"
+							style="display: inline;" th:if="${liked}">
+							<input type="hidden" name="postId" th:value="${postVO.postId}" />
+							<button class="interaction-btn active" type="submit">
+								<i class="material-icons-outlined" style="color: #1976d2;">thumb_up</i>
+								<span>已讚</span>
+							</button>
+						</form>
+						<form th:action="@{/post/like}" method="post"
+							style="display: inline;" th:unless="${liked}">
+							<input type="hidden" name="postId" th:value="${postVO.postId}" />
+							<button class="interaction-btn" type="submit">
+								<i class="material-icons-outlined">thumb_up_off_alt</i> <span>讚</span>
+							</button>
+						</form>
+
+						<form th:action="@{/FavoritePost/delete}" method="post"
+							style="display: inline;" th:if="${bookmarked}">
+							<input type="hidden" name="postId" th:value="${postVO.postId}" />
+							<button class="interaction-btn active" type="submit">
+								<i class="material-icons-outlined" style="color: #f59e42;">bookmark</i>
+								<span>已收藏</span>
+							</button>
+						</form>
+						<form th:action="@{/FavoritePost/insert}" method="post"
+							style="display: inline;" th:unless="${bookmarked}">
+							<input type="hidden" name="postId" th:value="${postVO.postId}" />
+							<button class="interaction-btn" type="submit">
+								<i class="material-icons-outlined">bookmark_border</i> <span>收藏</span>
+							</button>
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- 檢舉留言 Modal -->
-		<div id="reportMessageModal"
-			style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
-			<div
-				style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
-				<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
-				<form th:action="@{/reportmessage/insert}" method="post">
-					<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input
-						type="hidden" name="member.memId" th:value="${loginMember.memId}" />
-					<input type="hidden" name="repMessageStatus" value="0" /> <input
-						type="hidden" name="action" value="insert" />
-					<div class="mb-2">
-						<label for="repMessageReason" class="block mb-1">檢舉原因</label>
-						<textarea id="repMesReason" name="repMesReason"
-							class="w-full border rounded px-2 py-1" rows="3" maxlength="255"
-							required></textarea>
-					</div>
-					<div class="flex justify-end space-x-2 mt-3">
-						<button type="button" class="btn btn-secondary"
-							onclick="closeReportMessageModal()">取消</button>
-						<button type="submit" class="btn btn-danger">送出檢舉</button>
-					</div>
-				</form>
-				<button onclick="closeReportMessageModal()"
-					style="position: absolute; top: 8px; right: 12px;">✕</button>
+		<section class="comments-section">
+			<div class="comments-header">
+				<h3 class="comments-title">
+					留言 <span class="comments-count"
+						th:text="${#lists.size(messageList)}">0</span>
+				</h3>
+				<button class="expand-btn" onclick="toggleComments()">
+					<i class="material-icons-outlined">expand_more</i> <span
+						class="comment-dynamic-text"> 還有 <span id="comment-count"
+						th:text="${#lists.size(messageList)}">0</span> 則留言
+					</span>
+				</button>
 			</div>
-		</div>
-	</section>
+
+			<form th:action="@{/message/insert}" th:object="${messageVO}"
+				method="post">
+				<input type="hidden" name="post.postId" th:value="${postVO.postId}" />
+				<input type="hidden" name="member.memId"
+					th:value="${loginMember.memId}" /> <input type="hidden"
+					name="action" value="insert" />
+				<div class="comment-input-header">
+					<div class="comment-avatar"
+						th:text="${loginMember.memName != null ? loginMember.memName.substring(0,1) : '?'}">?</div>
+					<span th:text="${loginMember != null ? loginMember.memName : '訪客'}"></span>
+				</div>
+				<label for="mesContent" class="block mb-1">留言內容</label>
+				<textarea id="mesContent" class="comment-textarea"
+					th:field="*{mesContent}" placeholder="分享你的想法..." rows="3" required></textarea>
+				<div th:if="${#fields.hasErrors('mesContent')}"
+					style="color: red; font-size: 0.9em;">
+					<span th:errors="*{mesContent}"></span>
+				</div>
+				<div class="comment-actions">
+					<button class="submit-btn" type="submit">發表留言</button>
+				</div>
+			</form>
+
+			<div class="comments-list">
+				<div class="comment-item" th:each="msg : ${messageList}">
+					<div class="comment-header">
+						<div class="comment-avatar"
+							th:text="${msg.member.memName != null ? msg.member.memName.substring(0,1) : '?'}">?</div>
+						<div class="comment-content">
+							<div class="comment-meta">
+								<span class="comment-author" th:text="${msg.member.memName}">留言者</span>
+								<span class="comment-time"
+									th:text="${#dates.format(msg.mesDate, 'yyyy-MM-dd HH:mm')}">留言時間</span>
+							</div>
+							<div class="comment-text" th:text="${msg.mesContent}">留言內容</div>
+							<div class="comment-actions">
+								<button class="comment-action">
+									<i class="material-icons-outlined">thumb_up</i> <span>讚</span>
+								</button>
+								<button class="comment-action" type="button"
+									th:onclick="'openReportMessageModal(' + ${msg.mesId} + ')'">
+									<i class="material-icons-outlined">block</i> <span>檢舉</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="reportMessageModal"
+				style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
+				<div
+					style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
+					<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
+					<form th:action="@{/reportmessage/insert}" method="post">
+						<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input
+							type="hidden" name="member.memId" th:value="${loginMember.memId}" />
+						<input type="hidden" name="repMessageStatus" value="0" /> <input
+							type="hidden" name="action" value="insert" />
+						<div class="mb-2">
+							<label for="repMessageReason" class="block mb-1">檢舉原因</label>
+							<textarea id="repMesReason" name="repMesReason"
+								class="w-full border rounded px-2 py-1" rows="3" maxlength="255"
+								required></textarea>
+						</div>
+						<div class="flex justify-end space-x-2 mt-3">
+							<button type="button" class="btn btn-secondary"
+								onclick="closeReportMessageModal()">取消</button>
+							<button type="submit" class="btn btn-danger">送出檢舉</button>
+						</div>
+					</form>
+					<button onclick="closeReportMessageModal()"
+						style="position: absolute; top: 8px; right: 12px;">✕</button>
+				</div>
+			</div>
+		</section>
+	</main>
 </body>
 <script th:src="@{/js/front/post/selectOnePost.js}"></script>
 

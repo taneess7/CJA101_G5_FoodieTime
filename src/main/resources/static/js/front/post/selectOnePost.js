@@ -19,23 +19,35 @@ function toggleBookmark(button) {
 		icon.textContent = 'bookmark_border';
 	}
 }
-
 // 留言展開/收起功能
 function toggleComments() {
-    const commentsList = document.querySelector('.comments-list');
-    const expandBtn = document.querySelector('.expand-btn');
-    const commentCountSpan = document.getElementById('comment-count');
-    const count = commentCountSpan ? commentCountSpan.textContent : '0';
+    const commentsList = document.querySelector('.comments-list'); // 留言列表容器
+    const expandBtn = document.querySelector('.expand-btn');       // 展開/收起按鈕
+    const icon = expandBtn.querySelector('i.material-icons-outlined'); // 獲取按鈕內部的圖標元素
+    const commentDynamicTextSpan = expandBtn.querySelector('.comment-dynamic-text'); // 獲取新的動態文字span
 
-    if (commentsList.style.display === 'none' || commentsList.style.display === '') {
-        commentsList.style.display = 'block';
-        expandBtn.innerHTML = '<i class="material-icons-outlined">expand_less</i>收起留言';
-    } else {
-        commentsList.style.display = 'none';
-        expandBtn.innerHTML = '<i class="material-icons-outlined">expand_more</i>還有 <span id="comment-count">' + count + '</span> 則留言';
+    // 總是從顯示總留言數的可靠來源（即留言標題旁的span）獲取最準確的留言數量
+    const totalCommentCountSpan = document.querySelector('.comments-title .comments-count');
+    const actualTotalCount = totalCommentCountSpan ? totalCommentCountSpan.textContent : '0'; // 修正錯字
+
+    // 切換 'is-visible' Class
+    commentsList.classList.toggle('is-visible');
+
+    // 判斷留言列表現在是否可見（透過檢查是否有 'is-visible' Class）
+    const isCommentsVisible = commentsList.classList.contains('is-visible');
+
+    // 根據顯示狀態更新圖標和按鈕文字
+    if (isCommentsVisible) { // 如果留言列表現在是顯示的
+        icon.textContent = 'expand_less';    // 將圖標更新為「收起」圖標
+        commentDynamicTextSpan.textContent = '收起留言'; // 設定動態文字內容為「收起留言」
+
+    } else { // 如果留言列表現在是隱藏的
+        icon.textContent = 'expand_more';    // 將圖標更新為「展開」圖標
+
+        // 設定動態文字內容為「還有 [留言數] 則留言」
+        commentDynamicTextSpan.innerHTML = '還有 <span id="comment-count">' + actualTotalCount + '</span> 則留言';
     }
 }
-
 // 留言輸入框功能
 document.addEventListener('DOMContentLoaded', function() {
 	const textarea = document.querySelector('.comment-textarea');
