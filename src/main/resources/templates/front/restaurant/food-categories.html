@@ -28,7 +28,7 @@
             <div class="search-container">
                 <div class="search-bar">
                     <i class="material-icons-outlined search-icon">search</i>
-                    <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+                    <input type="text" id="searchInput" placeholder="搜尋餐廳、料理或地址..." class="search-input">
                     
                 </div>
             </div>
@@ -37,7 +37,22 @@
                     <li class="nav-item"><a href="/category/food-categories" class="nav-link">地圖</a></li>
                     <li class="nav-item"><a href="/gb/gbindex" class="nav-link">團購</a></li>
                     <li class="nav-item"><a href="/act" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
+                    <li class="nav-item">
+						<div th:if="${session.loggedInMember == null}">
+							<a th:href="@{/category/login}"
+								class="btn btn-outline-secondary me-2"> <i
+								class="bi bi-person"></i> 登入/註冊
+							</a>
+
+						</div>
+						<div th:if="${session.loggedInMember != null}">
+							<span class="me-2"
+								th:text="'Hi, ' + ${session.loggedInMember.memName}">Hi,
+								使用者</span> <a th:href="@{/front/member/member_center}"
+								class="btn btn-outline-success me-2">會員中心</a> <a
+								th:href="@{/index}" class="btn btn-outline-danger">登出</a>
+						</div>
+					</li>
                 </ul>
                 <button class="menu-toggle" aria-label="開啟選單">
                     <i class="material-icons-outlined">menu</i>
@@ -50,7 +65,7 @@
         <nav class="category-nav">
             <div class="container">
                 <ul class="category-list food-category-list">
-                    <li><a class="category-item" href="/category/food-categories">所有美食</a></li>
+                 <!--  <li><a class="category-item" href="/category/food-categories">所有美食</a></li>  -->  
                     <li><a class="category-item" href="/category/1">中式料理</a></li>
                     <li><a class="category-item" href="/category/2">日式料理</a></li>
                     <li><a class="category-item" href="/category/3">韓式料理</a></li>
@@ -62,7 +77,7 @@
                 </ul>
             </div>
         </nav>
-
+		
         <div class="container">
             <div class="restaurant-grid food-grid">
                 <!-- 中式料理 -->
@@ -215,6 +230,16 @@
                 // 這裡可以添加過濾顯示對應分類的美食邏輯
             });
         });
+        
+        //關鍵字搜尋
+        document.getElementById("searchInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        const keyword = this.value.trim();
+        if (keyword !== "") {
+            window.location.href = `/category/search?keyword=${encodeURIComponent(keyword)}`;
+        }
+    }
+});
     </script>
 </body>
 </html>
