@@ -64,10 +64,12 @@ public class MemberVO implements Serializable {
 	
 	@Column(name = "mem_account", nullable = false, unique = true)
 	@NotBlank(message="帳號請勿空白")
+	@Pattern(regexp = "^[a-zA-Z0-9_]{6,20}$", message = "帳號格式錯誤：僅限英數字與底線，長度6~20字元")
 	private String memAccount;
 	
 	@Column(name = "mem_password", nullable = false)
 	@NotBlank(message="密碼請勿空白")
+	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,20}$", message = "密碼格式錯誤：需為6~20位英數混合")
 	private String memPassword;
 	
 	@Column(name = "mem_nickname", nullable = false)
@@ -94,14 +96,17 @@ public class MemberVO implements Serializable {
 	
 	@Column(name = "mem_city", nullable = false)
 	@NotBlank(message="縣市請勿空白")
+	@Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z0-9\\s]{2,20}$", message = "格式錯誤：僅允許中英數字與空白")
 	private String memCity;
 	
 	@Column(name = "mem_cityarea", nullable = false)
 	@NotBlank(message="鄉鎮市區請勿空白")
+	@Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z0-9\\s]{2,20}$", message = "格式錯誤：僅允許中英數字與空白")
 	private String memCityarea;
 	
 	@Column(name = "mem_address", nullable = false)
 	@NotBlank(message="居住街道請勿空白")
+	@Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z0-9\\s]{2,20}$", message = "格式錯誤：僅允許中英數字與空白")
 	private String memAddress;
 	
 	@Column(name = "mem_code", nullable = false)
