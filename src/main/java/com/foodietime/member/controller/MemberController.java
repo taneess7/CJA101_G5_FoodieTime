@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.foodietime.directmessage.model.DirectMessageService;
@@ -43,6 +44,9 @@ public class MemberController {
     
     @Autowired
     private DirectMessageService dmService;
+    
+    @Autowired
+    private StoreService storeService;
     
     
     @Autowired
@@ -76,7 +80,13 @@ public class MemberController {
             model.addAttribute("errorMessage", "請先完成帳號啟用，才能註冊店家！");
             return "front/member/login";
         }
-        model.addAttribute("store", new StoreVO());
+        
+        
+        // ✅ 把會員 email 帶入 store
+        StoreVO store = new StoreVO();
+        store.setStorEmail(member.getMemEmail());  // ★★ 這一行是關鍵
+
+        model.addAttribute("store", store);
         model.addAttribute("storeCateList", storeCateSvc.getAll	());
         System.out.println("準備為會員 ID " + member.getMemId() + " 建立店家資料");
         
@@ -88,12 +98,20 @@ public class MemberController {
     public String processStoreForm(@Valid @ModelAttribute("store") StoreVO store,
                                    BindingResult result,
                                    @RequestParam("photoFile") MultipartFile photoFile,
+                                   @RequestParam(value = "storOffDayList", required = false) List<String> storOffDayList,
                                    HttpSession session,
                                    Model model) throws IOException {
 
         if (result.hasErrors()) {
         	model.addAttribute("storeCateList", storeCateSvc.getAll());
             return "front/member/storeregister";
+        }
+        
+        // ✅ 將 List<String> 公休日轉換為以逗號分隔的字串，存入 StoreVO
+        if (storOffDayList != null && !storOffDayList.isEmpty()) {
+            store.setStorOffDay(String.join(",", storOffDayList));
+        } else {
+            store.setStorOffDay("");
         }
         
         // 設定預設值
@@ -115,10 +133,10 @@ public class MemberController {
             // 如果你之後有 FK，可以寫 store.setMember(member);
         }
 
-//        storeService.addStore(store); // ✅ 儲存 storeVO
+        storeService.addStore(store); // ✅ 儲存 storeVO
         
         session.removeAttribute("registeringStore"); // 記得清掉！
-        return "redirect:/front/member/member_center";
+        return "redirect:/store/sc";
     }
 
     @GetMapping("/register")
@@ -279,11 +297,16 @@ public class MemberController {
 
     
     @GetMapping("/login")
-    public String showLoginForm(HttpSession session,Model model) {
+    public String showLoginForm(HttpSession session,HttpServletResponse response,Model model) {
     	   // 如果已經登入，直接回會員中心
         if (session.getAttribute("loggedInMember") != null) {
             return "redirect:/front/member/member_center";
         }
+        
+     // ✅ 告訴瀏覽器不要快取登入頁
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
         return "front/member/login";
     }
 
@@ -314,7 +337,7 @@ public class MemberController {
         boolean loginAsStore = isStore != null;
         if (loginAsStore) {
             session.setAttribute("loginRole", "store");  // 設定身份為店家
-            return "redirect:/store/";         // 導向店家頁面
+            return "redirect:/store/sc";         // 導向店家頁面
         } else {
             session.setAttribute("loginRole", "member"); // 設定身份為一般會員
             return "redirect:/front/member/member_center";              // 導向會員頁面
@@ -442,6 +465,16 @@ public class MemberController {
 
         return "front/memcoupon/member-coupons"; // 對應 templates/front/memcoupon/member-coupons.html
     }
+    
+    @GetMapping("/check-session")
+    @ResponseBody
+    public ResponseEntity<String> checkSession(HttpSession session) {
+        if (session.getAttribute("loggedInMember") != null) {
+            return ResponseEntity.ok("OK");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("NOT_LOGGED_IN");
+    }
+
 
 
 }

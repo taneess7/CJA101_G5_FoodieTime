@@ -6,75 +6,94 @@
     <title>店家註冊</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-	
+
 <body class="bg-gradient-to-br from-red-100 to-orange-200 min-h-screen flex items-center justify-center">
     <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-3xl">
         <h2 class="text-3xl font-bold text-orange-700 text-center mb-6">店家註冊</h2>
 
-        <form th:action="@{/front/member/storeregister}" method="post" enctype="multipart/form-data" th:object="${store}"
-            class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form th:action="@{/front/member/storeregister}" method="post" enctype="multipart/form-data"
+            th:object="${store}" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- 店家名稱 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">店家名稱</label>
                 <input type="text" th:field="*{storName}" required class="w-full border rounded-lg px-3 py-2">
+                 <div th:if="${#fields.hasErrors('storName')}" class="text-red-500 text-sm mt-1">
+                	<p th:errors="*{storName}"></p>
+            	</div>
             </div>
-            
+
             <!-- 店家分類 -->
-			<div class="md:col-span-2">
-			    <label class="block text-sm font-semibold text-gray-700 mb-1">店家分類</label>
-			    <select th:field="*{storeCate.storCateId}" class="form-control">
-			    <option value="">-- 請選擇店家分類 --</option>
-			    <option th:each="cate : ${storeCateList}" 
-			            th:value="${cate.storCateId}" 
-			            th:text="${cate.storCatName}">
-			    </option>
-			</select>
-			</div>
-			
-            
+            <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">店家分類</label>
+                <select th:field="*{storeCate}" class="form-control w-full border rounded-lg px-3 py-2">
+                    <option value="">-- 請選擇店家分類 --</option>
+                    <option th:each="cate : ${storeCateList}" th:value="${cate.storCateId}"
+                        th:text="${cate.storCatName}">
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('storeCate')}" class="text-red-500 text-sm mt-1">
+                	<p th:errors="*{storeCate}"></p>
+            	</div>
+            </div>
 
             <!-- 店家電話 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">電話</label>
                 <input type="text" th:field="*{storPhone}" required class="w-full border rounded-lg px-3 py-2">
+                <div th:if="${#fields.hasErrors('storPhone')}" class="text-red-500 text-sm mt-1">
+                	<p th:errors="*{storPhone}"></p>
+            	</div>
             </div>
 
             <!-- 地址 -->
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">地址</label>
                 <input type="text" th:field="*{storAddr}" required class="w-full border rounded-lg px-3 py-2">
+                <div th:if="${#fields.hasErrors('storAddr')}" class="text-red-500 text-sm mt-1">
+                	<p th:errors="*{storAddr}"></p>
+            	</div>
             </div>
-            
-            <!-- 經度 -->
-			<div>
-			    <label class="block text-sm font-semibold text-gray-700 mb-1">經度</label>
-			    <input type="text" th:field="*{storLon}" class="w-full border rounded-lg px-3 py-2">
-			</div>
-			
-			<!-- 緯度 -->
-			<div>
-			    <label class="block text-sm font-semibold text-gray-700 mb-1">緯度</label>
-			    <input type="text" th:field="*{storLat}" class="w-full border rounded-lg px-3 py-2">
-			</div>
-			            
 
-            <!-- 開店時間 -->
+            <!-- 經緯度 -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">經度</label>
+                <input type="text" th:field="*{storLon}" id="storLon" class="w-full border rounded-lg px-3 py-2">
+                <div th:if="${#fields.hasErrors('storLon')}" class="text-red-500 text-sm mt-1">
+			        <p th:errors="*{storLon}"></p>
+			    </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">緯度</label>
+                <input type="text" th:field="*{storLat}" id="storLat" class="w-full border rounded-lg px-3 py-2">
+                <div th:if="${#fields.hasErrors('storLat')}" class="text-red-500 text-sm mt-1">
+			        <p th:errors="*{storLat}"></p>
+			    </div>
+            </div>
+
+            <!-- 營業時間 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">開店時間</label>
                 <input type="time" th:field="*{storOnTime}" required class="w-full border rounded-lg px-3 py-2">
+                <div th:if="${#fields.hasErrors('storOnTime')}" class="text-red-500 text-sm mt-1">
+                	<p th:errors="*{storOnTime}"></p>
+            	</div>
             </div>
-
-            <!-- 關店時間 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">關店時間</label>
                 <input type="time" th:field="*{storOffTime}" required class="w-full border rounded-lg px-3 py-2">
+                <div th:if="${#fields.hasErrors('storOffTime')}" class="text-red-500 text-sm mt-1">
+	                <p th:errors="*{storOffTime}"></p>
+	            </div>
             </div>
 
-            <!-- 店家描述 -->
+            <!-- 店家敘述 -->
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">店家敘述</label>
                 <textarea th:field="*{storDesc}" rows="3" class="w-full border rounded-lg px-3 py-2"></textarea>
+                <div th:if="${#fields.hasErrors('storDesc')}" class="text-red-500 text-sm mt-1">
+	                <p th:errors="*{storDesc}"></p>
+	            </div>
             </div>
 
             <!-- 訂位網址 -->
@@ -84,21 +103,19 @@
                     class="w-full border rounded-lg px-3 py-2">
             </div>
 
-            <!-- 公休日 -->
-            <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-1">每週公休日</label>
-                <select th:field="*{storOffDay}" class="w-full border rounded-lg px-3 py-2">
-                    <option value="" disabled selected>請選擇一日</option>
-                    <option value="0">星期日</option>
-                    <option value="1">星期一</option>
-                    <option value="2">星期二</option>
-                    <option value="3">星期三</option>
-                    <option value="4">星期四</option>
-                    <option value="5">星期五</option>
-                    <option value="6">星期六</option>
-                </select>
-            </div>
-
+            <!-- 多選公休日 -->
+			<div class="md:col-span-2">
+			    <label class="block text-sm font-semibold text-gray-700 mb-1">每週公休日</label>
+			    <select name="storOffDayList" multiple class="w-full border rounded-lg px-3 py-2 h-32">
+			        <option value="0">星期日</option>
+			        <option value="1">星期一</option>
+			        <option value="2">星期二</option>
+			        <option value="3">星期三</option>
+			        <option value="4">星期四</option>
+			        <option value="5">星期五</option>
+			        <option value="6">星期六</option>
+			    </select>
+			</div>
 
 
             <!-- 是否外送 -->
@@ -110,19 +127,22 @@
                 </select>
             </div>
 
-            <!-- 信箱 -->
+            <!-- 店家信箱（只讀） -->
             <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-1">店家 Email</label>
-                <input type="email" th:field="*{storEmail}" required class="w-full border rounded-lg px-3 py-2">
-            </div>
+			    <label class="block text-sm font-semibold text-gray-700 mb-1">店家 Email</label>
+			    <input type="email" th:field="*{storEmail}" readonly
+			           class="w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-600">
+			</div>
 
-            <!-- 上傳照片 -->
+            <!-- 上傳圖片 + 預覽 -->
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">上傳圖片</label>
-				<input type="file" name="photoFile" accept="image/*" class="w-full border rounded-lg px-3 py-2">
+                <input type="file" name="photoFile" accept="image/*" class="w-full border rounded-lg px-3 py-2"
+                    onchange="previewImage(event)">
+                <img id="preview" class="mt-3 max-h-48 rounded-lg shadow" style="display:none;">
             </div>
 
-            <!-- 提交按鈕 -->
+            <!-- 提交 -->
             <div class="md:col-span-2">
                 <button type="submit"
                     class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-orange-700 transition">
@@ -131,6 +151,36 @@
             </div>
         </form>
     </div>
+
+    <!-- JS for 預覽圖片 -->
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        
+     // 等待畫面載入完
+        window.addEventListener('DOMContentLoaded', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById("storLat").value = position.coords.latitude;
+                        document.getElementById("storLon").value = position.coords.longitude;
+                    },
+                    (error) => {
+                        console.warn("定位失敗", error.message);
+                    }
+                );
+            } else {
+                console.warn("這個瀏覽器不支援地理定位");
+            }
+        });
+    </script>
 </body>
 
 </html>

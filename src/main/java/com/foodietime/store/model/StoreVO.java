@@ -88,10 +88,12 @@ public class StoreVO implements Serializable {
 	private String storAddr; 
 	
 	// 6.地址經度
+	@NotNull(message = "經度不可為空")
 	@Column(name = "STOR_LONGITUDE")
 	private Double storLon; 
 	
 	// 7.地址緯度
+	@NotNull(message = "緯度不可為空")
 	@Column(name = "STOR_LATITUDE")
 	private Double storLat; 
 	
