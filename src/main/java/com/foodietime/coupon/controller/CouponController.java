@@ -153,7 +153,10 @@ public class CouponController {
 			couSvc.updateCoupon(couponVO); 
 			redirectAttr.addFlashAttribute("successMessage", "優惠券修改成功！");
 			// 修改成功後回到該筆資料的編輯頁面
-			return "redirect:/store/editCoupon?couId=" + couponVO.getCouId();
+			System.out.println("更新成功");
+            return "redirect:/store/editCoupon?couId=" + couponVO.getCouId();
+			
+			
 		}
 		
 	}
@@ -174,7 +177,7 @@ public class CouponController {
 
 	    // 3. 放進 model
 	    model.addAttribute("couponList", storeCoupons);
-
+	    model.addAttribute("storeVO", storeVO);
 	    return "front/store/coupon_listAll"; // 對應 Thymeleaf 頁面
 	}
 
