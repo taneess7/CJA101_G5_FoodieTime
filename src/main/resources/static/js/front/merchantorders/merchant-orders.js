@@ -1,14 +1,14 @@
 // 篩選訂單
 function filterOrders() {
     const status = document.getElementById('status-filter').value;
-    window.location.href = `/merchant/orders/manage?status=${status}`;
+    window.location.href = `/store/orders/manage?status=${status}`;
 }
 
 // 顯示拒絕訂單彈窗
 function showRejectModal(orderId) {
     const modal = document.getElementById('reject-order-modal');
     const form = document.getElementById('reject-order-form');
-    form.action = `/merchant/orders/reject/${orderId}`;
+    form.action = `/store/orders/reject/${orderId}`;
     modal.style.display = 'block';
 }
 

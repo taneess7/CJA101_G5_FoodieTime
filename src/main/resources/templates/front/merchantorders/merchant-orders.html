@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商家訂單管理 - FoodieTime 食刻</title>
     <meta name="description" content="FoodieTime 食刻商家訂單管理 - 輕鬆管理訂單、提高營運效率。">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/merchant-orders.css}">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/merchantorders/merchant-orders.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 </head>
 <body>
@@ -21,7 +21,7 @@
         <nav class="main-nav">
             <ul class="nav-list">
                 <li class="nav-item"><a th:href="@{/merchant/dashboard}" class="nav-link">儀表板</a></li>
-                <li class="nav-item"><a th:href="@{/merchant/orders/manage}" class="nav-link active">訂單管理</a></li>
+                <li class="nav-item"><a th:href="@{/store/orders/manage}" class="nav-link active">訂單管理</a></li>
                 <li class="nav-item"><a th:href="@{/merchant/menu}" class="nav-link">菜單管理</a></li>
                 <li class="nav-item"><a th:href="@{/merchant/profile}" class="nav-link">商家資料</a></li>
                 <li class="nav-item"><a th:href="@{/merchant/logout}" class="nav-link logout-btn">登出</a></li>
@@ -55,6 +55,10 @@
             <div class="stat-card">
                 <h3>已完成</h3>
                 <span class="stat-number" th:text="${statusCount.completed}">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>已取消</h3>
+                <span class="stat-number" th:text="${statusCount.cancelled}">0</span>
             </div>
         </div>
 
@@ -97,8 +101,8 @@
 
                 <div class="order-details">
                     <div class="customer-info">
-                        <p><strong>客戶：</strong><span th:text="${order.member.memberName}">張小明</span></p>
-                        <p><strong>電話：</strong><span th:text="${order.member.memberPhone}">0912345678</span></p>
+                        <p><strong>客戶：</strong><span th:text="${order.member.memName}">張小明</span></p>
+                        <p><strong>電話：</strong><span th:text="${order.member.memPhone}">0912345678</span></p>
                         <p th:if="${order.ordAddr}" class="delivery-address">
                             <strong>外送地址：</strong><span th:text="${order.ordAddr}">台北市大安區忠孝東路四段1號</span>
                         </p>
@@ -128,7 +132,7 @@
                 <div class="order-actions">
                     <!-- 待處理狀態：顯示接單和拒絕按鈕 -->
                     <div th:if="${order.orderStatus == 0}">
-                        <form th:action="@{/merchant/orders/accept/{orderId}(orderId=${order.ordId})}" method="post" style="display: inline;">
+                        <form th:action="@{/store/orders/accept/{orderId}(orderId=${order.ordId})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-success">
                                 <i class="material-icons-outlined">check</i>
                                 接受訂單
@@ -142,7 +146,7 @@
 
                     <!-- 已接單或準備中狀態：顯示完成按鈕 -->
                     <div th:if="${order.orderStatus == 1 or order.orderStatus == 2}">
-                        <form th:action="@{/merchant/orders/complete/{orderId}(orderId=${order.ordId})}" method="post" style="display: inline;">
+                        <form th:action="@{/store/orders/complete/{orderId}(orderId=${order.ordId})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-primary">
                                 <i class="material-icons-outlined">done</i>
                                 完成訂單
@@ -154,7 +158,7 @@
                     <div th:if="${order.orderStatus == 3}">
                         <span class="completed-text">✓ 訂單已完成</span>
                     </div>
-                    <div th:if="${order.orderStatus == 99}">
+                    <div th:if="${order.orderStatus == 4}">
                         <span class="cancelled-text">✗ 訂單已取消</span>
                         <p th:if="${order.cancelReason}" class="cancel-reason">
                             取消原因：<span th:text="${order.cancelReason}"></span>

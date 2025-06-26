@@ -91,7 +91,7 @@ public class MerchantOrdersController {
             // ================== 步驟2：驗證訂單歸屬權 ==================
             if (!ordersService.validateOrderBelongsToStore(orderId, currentStore.getMemId())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "您沒有權限操作此訂單！");
-                return "redirect:/merchant/orders/manage";
+                return "redirect:/store/orders/manage";
             }
 
             // ================== 步驟3：更新訂單狀態為已接單 ==================
@@ -106,7 +106,7 @@ public class MerchantOrdersController {
             redirectAttributes.addFlashAttribute("errorMessage", "接受訂單時發生錯誤，請稍後再試。");
         }
 
-        return "redirect:/merchant/orders/manage";
+        return "redirect:/store/orders/manage";
     }
 
     /**
@@ -139,7 +139,7 @@ public class MerchantOrdersController {
             // ================== 步驟2：驗證訂單歸屬權 ==================
             if (!ordersService.validateOrderBelongsToStore(orderId, currentStore.getMemId())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "您沒有權限操作此訂單！");
-                return "redirect:/merchant/orders/manage";
+                return "redirect:/store/orders/manage";
             }
 
             // ================== 步驟3：處理拒絕原因 ==================
@@ -149,7 +149,7 @@ public class MerchantOrdersController {
 
             if (finalCancelReason == null || finalCancelReason.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "請提供拒絕訂單的原因！");
-                return "redirect:/merchant/orders/manage";
+                return "redirect:/store/orders/manage";
             }
 
             // ================== 步驟4：取消訂單 ==================
@@ -164,7 +164,7 @@ public class MerchantOrdersController {
             redirectAttributes.addFlashAttribute("errorMessage", "拒絕訂單時發生錯誤，請稍後再試。");
         }
 
-        return "redirect:/merchant/orders/manage";
+        return "redirect:/store/orders/manage";
     }
 
     /**
@@ -191,7 +191,7 @@ public class MerchantOrdersController {
             // ================== 步驟2：驗證訂單歸屬權 ==================
             if (!ordersService.validateOrderBelongsToStore(orderId, currentStore.getMemId())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "您沒有權限操作此訂單！");
-                return "redirect:/merchant/orders/manage";
+                return "redirect:/store/orders/manage";
             }
 
             // ================== 步驟3：更新訂單狀態為已完成 ==================
@@ -206,7 +206,7 @@ public class MerchantOrdersController {
             redirectAttributes.addFlashAttribute("errorMessage", "完成訂單時發生錯誤，請稍後再試。");
         }
 
-        return "redirect:/merchant/orders/manage";
+        return "redirect:/store/orders/manage";
     }
 
     // ================== 輔助方法 ==================
@@ -233,7 +233,7 @@ public class MerchantOrdersController {
             case "accepted" -> orderStatus == 1;   // 已接單
             case "preparing" -> orderStatus == 2;  // 準備中
             case "completed" -> orderStatus == 3;  // 已完成
-            case "cancelled" -> orderStatus == 99; // 已取消
+            case "cancelled" -> orderStatus == 4; // 已取消
             default -> true;
         };
     }
@@ -249,7 +249,7 @@ public class MerchantOrdersController {
                 case 1 -> count.accepted++;
                 case 2 -> count.preparing++;
                 case 3 -> count.completed++;
-                case 99 -> count.cancelled++;
+                case 4 -> count.cancelled++;
             }
         }
         return count;
