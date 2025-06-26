@@ -7,7 +7,7 @@ body {
 	  overflow-x: hidden;
 }
 
-.white-nowrap {
+td.white-nowrap {
   white-space: nowrap;
 }
 

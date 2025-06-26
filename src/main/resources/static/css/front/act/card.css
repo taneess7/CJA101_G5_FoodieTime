@@ -34,8 +34,9 @@ body {
 }
 
 .button-wrapper {
-    width: 100%;
-    text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 
 
@@ -147,7 +148,17 @@ body {
 }
 
 
+/*讓按鈕保持大小一致*/
 
+.join-btn {
+  width: 80px;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
 /* .act-card { */
 /*  	width: 22%; */
 /*   	min-width: 220px; */

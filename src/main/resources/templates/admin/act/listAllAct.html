@@ -60,21 +60,21 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
 		 <div align="center"> <h2>所有活動資料 - listAllAct.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}">回查詢頁<label th:text="${success}"></label></a></h3></div>
+		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div>
 </nav>
 <div class="table-responsive">
   <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
   <thead >
-	<tr style="background-color:#CCCCFF">
+	<tr style="background-color:#f1e5d9">
 		<th>計數</th>
 		<th>活動編號</th>
 		<th>活動類型</th>
 		<th>活動名稱</th>
 		<th>活動內容</th>
 		<th>折扣類型</th>
-		<th>折扣值</th>
-		<th>活動開始時間</th>
-		<th>活動結束時間</th>
+		<th>折扣</th>
+		<th>開始時間</th>
+		<th>結束時間</th>
 		<th>活動狀態</th>
 		<th>活動圖片</th>
 		<th>適用店家</th>
@@ -88,7 +88,7 @@
 			<tr>
 				<td th:text="${stat.count}"></td>
 				<td th:text="${actVO.actId}"></td>
-				<td th:text="${actVO.actCate}"></td>
+				<td class="white-nowrap" th:text="${actVO.actCate}"></td>
 				<td th:text="${actVO.actName}"></td>
 				<td th:text="${actVO.actContent}"></td>
 				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '金額'}"></td>
