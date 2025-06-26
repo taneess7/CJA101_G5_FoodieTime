@@ -154,86 +154,105 @@
 	<main>
 		<section class="page-header">
 			<div class="container">
-				<h1 class="page-title" th:text="${categoryName}">分類名稱</h1>
+				<h1 class="page-title"
+					th:text="${categoryName != null ? categoryName : '搜尋結果'}">分類名稱</h1>
 				<p class="page-description"
-					th:text="'探索道地的 ' + ${categoryName} + '，從傳統小吃到精緻料理'">分類描述</p>
+					th:text="'探索道地的 ' + (${categoryName != null ? categoryName : '美食'}) + '，從傳統小吃到精緻料理'">分類描述</p>
 			</div>
 		</section>
 
+		<!-- 🔍 只有在關鍵字搜尋時才顯示「所有相關料理」 -->
+		<section class="search-products"
+			th:if="${param.keyword != null and not #lists.isEmpty(productList)}">
+			<h2>相關料理</h2>
+			<div class="menu-items">
+				<div class="menu-item" th:each="prod : ${productList}">
+					<img th:src="@{/images/restaurant/placeholder.svg}" alt="商品圖片">
+					<div class="menu-item-info">
+						<h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
+						<p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
+						<span class="menu-item-price" th:text="'NT$ ' + ${prod.prodPrice}">價格</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ❗查無結果顯示 -->
+		<div class="container">
+			<div
+				th:if="${#lists.isEmpty(storeList) and #lists.isEmpty(productList)}"
+				style="text-align: center; padding: 2em;">
+				<h3>
+					沒有符合「<span th:text="${param.keyword}">關鍵字</span>」的結果
+				</h3>
+				<p>請嘗試其他關鍵字。</p>
+			</div>
+		</div>
 		<div class="container">
 			<div class="restaurant-list">
-				<article class="restaurant-detail"
-					th:each="store, iterStat : ${storeList}">
+				<article class="restaurant-detail" th:each="store : ${storeList}">
+					<!-- 餐廳主區塊 -->
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">
-							<!-- 有圖顯示圖 -->
-							<img th:if="${storeImageMap[store.storId] != null}"
-								th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}"
-								th:alt="${store.storName}" class="restaurant-image" />
-
-							<!-- 無圖顯示預設圖 -->
-							<img th:unless="${storeImageMap[store.storId] != null}"
-								th:src="@{/images/restaurant/placeholder.svg}" alt="預設圖片"
-								class="restaurant-image" />
+							<img th:src="'data:image/jpeg;base64,' + ${storeImageMap[store.storId]}" th:alt="${store.storName}"
+								class="restaurant-image">
 							<div class="restaurant-primary-info">
 								<h2 class="restaurant-name" th:text="${store.storName}">餐廳名稱</h2>
-								<span class="cuisine-tag cuisine-american"
-									th:text="${store.storeCate.storCatName}">美式料理</span>
+								<span class="cuisine-tag cuisine-thai"
+									th:text="${store.storeCate.storCatName}">泰式料理</span>
 								<p class="restaurant-category" th:text=${store.storDesc}>湯品
 									• 炒飯 • 沙拉</p>
-
-
-
-								<!-- 評價星星開始 -->
-								<div class="restaurant-rating"
-									th:with="
+							
+							<!-- 評價星星開始 -->
+							<div class="restaurant-rating"
+								th:with="
 									        reviews=${store.reviews != null ? store.reviews : 0},
 									        rating=${store.starNum != null ? store.starNum : 0},
 									        avg=${reviews > 0 ? rating / reviews : 0},
 									        staravg=${#numbers.formatDecimal(avg, 1, 1)}">
 
-									<span class="rating-stars"> <i
-										th:each="i : ${#numbers.sequence(1, 5)}"
-										th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
+								<span class="rating-stars"> <i
+									th:each="i : ${#numbers.sequence(1, 5)}"
+									th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
 									                           (${i - 1 < avg and i > avg} ? 'fas fa-star-half-alt' : 'far fa-star')">
-									</i>
-									</span> <span
-										th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
-										0，共 0 則評價 </span>
-								</div>
-								<!-- 評價星星結束 -->
-								<!-- 主頁按鈕列 -->
-								<div class="restaurant-actions"></div>
+								</i>
+								</span> <span
+									th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
+									0，共 0 則評價 </span>
 							</div>
-						</div>
-						<div class="restaurant-contact-info">
-							<div class="info-item">
-								<i class="fas fa-map-marker-alt"></i><span
-									th:text="${store.storAddr}">地址</span>
-							</div>
-							<div class="info-item">
-								<i class="fas fa-phone"></i><span th:text="${store.storPhone}">電話</span>
-							</div>
-							<div class="info-item">
-								<i class="fas fa-clock"></i> <span
-									th:if="${store.storOffDay != null}"
-									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（' + ${weekMap[store.storOffDay]} + '公休）'">
-								</span> <span th:unless="${store.storOffDay != null}"
-									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（公休日不固定）'">
-								</span>
-							</div>
-							<div class="info-item">
-								<i class="fa-solid fa-motorcycle"></i> <span
-									th:text="${store.storDeliver} == 0 ? '無外送服務' : '可外送'"></span>
-							</div>
-							<div class="info-item"
-								th:if="${store.storWeb != null and !store.storWeb.isEmpty()}">
-								<i class="fas fa-globe"></i> <a
-									th:href="${store.storWeb.startsWith('http') ? store.storWeb : 'http://' + store.storWeb}"
-									th:text="${store.storWeb}" class="website-link">網站連結</a>
-							</div>
+							<!-- 評價星星結束 -->
+							<!-- 主頁按鈕列 -->
+							<div class="restaurant-actions"></div>
 						</div>
 					</div>
+					<div class="restaurant-contact-info">
+						<div class="info-item">
+							<i class="fas fa-map-marker-alt"></i><span
+								th:text="${store.storAddr}">地址</span>
+						</div>
+						<div class="info-item">
+							<i class="fas fa-phone"></i><span th:text="${store.storPhone}">電話</span>
+						</div>
+						<div class="info-item">
+							<i class="fas fa-clock"></i> 
+<span th:if="${store.storOffDay != null and weekMap != null}"
+      th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（' + ${weekMap[store.storOffDay]} + '公休）'">
+</span> <span th:unless="${store.storOffDay != null}"
+								th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime} + '（公休日不固定）'">
+							</span>
+						</div>
+						<div class="info-item">
+							<i class="fa-solid fa-motorcycle"></i> <span
+								th:text="${store.storDeliver} == 0 ? '無外送服務' : '可外送'"></span>
+						</div>
+						<div class="info-item"
+							th:if="${store.storWeb != null and !store.storWeb.isEmpty()}">
+							<i class="fas fa-globe"></i> <a
+								th:href="${store.storWeb.startsWith('http') ? store.storWeb : 'http://' + store.storWeb}"
+								th:text="${store.storWeb}" class="website-link">網站連結</a>
+						</div>
+					</div>
+
 					<div class="restaurant-details-tabs">
 						<div class="tabs-header">
 							<button class="tab-btn" data-tab="menu"
@@ -247,8 +266,8 @@
 							<div class="tab-content active"
 								th:id="'menu-content-' + ${store.storId}">
 								<div class="menu-items">
-									<div class="menu-item" th:each="prod : ${productList}"
-										th:if="${prod.store.storId} == ${store.storId}">
+									<div class="menu-item"
+										th:each="prod : ${storeProductMap[store.storId]}">
 										<img th:src="@{/images/restaurant/placeholder.svg}" alt=""
 											class="menu-item-image">
 										<div class="menu-item-info">
@@ -381,6 +400,16 @@
   });
 });
 
+	//🔍 搜尋輸入框按 Enter 時跳轉搜尋
+  document.querySelector('.search-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      const keyword = e.target.value.trim();
+      if (keyword.length > 0) {
+        window.location.href = '/category?keyword=' + encodeURIComponent(keyword);
+      }
+    }
+  });
+  
   // Tab 切換功能
   document.querySelectorAll('.restaurant-detail').forEach(function (restaurantCard) {
     const tabBtns = restaurantCard.querySelectorAll('.tab-btn');
@@ -450,14 +479,7 @@
 		</div>
 	</div>
 	<div id="toast-message"
-		style="position: fixed; 
-		bottom: 30px; left: 50%; 
-		transform: translateX(-50%); 
-		background-color: #444; color: #fff; 
-		padding: 10px 20px; border-radius: 8px; 
-		display: none; 
-		font-size: 16px; 
-		z-index: 9999;">
+		style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: #444; color: #fff; padding: 10px 20px; border-radius: 8px; display: none; font-size: 16px; z-index: 9999;">
 	</div>
 </body>
 </html>
