@@ -337,6 +337,10 @@ public class MemberController {
         boolean loginAsStore = isStore != null;
         if (loginAsStore) {
             session.setAttribute("loginRole", "store");  // 設定身份為店家
+
+            StoreVO store = storeService.findByStorEmail(member.getMemEmail()); // 假設你有這個方法
+            session.setAttribute("loggedInStore", store); // ✅ 把 StoreVO 放入 Session
+            
             return "redirect:/store/sc";         // 導向店家頁面
         } else {
             session.setAttribute("loginRole", "member"); // 設定身份為一般會員
