@@ -226,11 +226,17 @@
             <!-- 側邊欄 -->
             <div class="col-lg-3 mb-4">
                 <div class="profile-sidebar p-3">
-                    <div class="text-center mb-4">
-                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="用戶頭像" class="profile-avatar mb-3">
-                        <h5>林小美</h5>
-                        <p class="text-muted mb-0">團長</p>
-                    </div>
+                    <!-- 主要內容：動態顯示團長（從 Session 取） -->
+					<div class="text-center mb-4">
+					  <!-- 如果有頭像 URL，可改這裡 -->
+					  <!--  <img th:if="${session.loggedInMember.photoUrl != null}"
+					       th:src="@{${session.loggedInMember.photoUrl}}"
+					       alt="用戶頭像"
+					       class="profile-avatar mb-3"/>  -->
+					  <!-- 動態顯示團長名稱 -->
+					  <h5 th:text="${session.loggedInMember.memNickname}">團長姓名</h5>
+					  <p class="text-muted mb-0">團長</p>
+					</div>
                     
                     <nav class="nav flex-column">
                         <!-- 未登入狀態：顯示登入頁面 -->
@@ -241,13 +247,13 @@
 						    <a class="nav-link" th:href="@{/login}">
 						        <i class="bi bi-box"></i> 團購管理
 						    </a>
-						    <a class="nav-link" th:href="@{/login}">
+						    <a class="nav-link active" th:href="@{/login}">
 						        <i class="bi bi-bag"></i> 訂單管理
 						    </a>
 						    <a class="nav-link" th:href="@{/login}">
 						        <i class="bi bi-credit-card"></i> 金流管理
 						    </a>
-						    <a class="nav-link active" th:href="@{/login}">
+						    <a class="nav-link" th:href="@{/login}">
 						        <i class="bi bi-geo-alt"></i> 收貨地址
 						    </a>
 						    <a class="nav-link" th:href="@{/login}">
@@ -263,13 +269,13 @@
 						    <a class="nav-link" th:href="@{/gb/leader-groups}">
 						        <i class="bi bi-box"></i> 團購管理
 						    </a>
-						    <a class="nav-link" th:href="@{/gb/leader-orders}">
+						    <a class="nav-link active" th:href="@{/gb/leader-orders}">
 						        <i class="bi bi-bag"></i> 訂單管理
 						    </a>
 						    <a class="nav-link" th:href="@{/gb/leader-cashflow}">
 						        <i class="bi bi-credit-card"></i> 金流管理
 						    </a>
-						    <a class="nav-link active" th:href="@{/gb/leader-address}">
+						    <a class="nav-link" th:href="@{/gb/leader-address}">
 						        <i class="bi bi-geo-alt"></i> 收貨地址
 						    </a>
 						    <a class="nav-link" th:href="@{/gb/leader-notifications}">
@@ -297,194 +303,51 @@
                         </div>
                     </div>
                     
-                    <!-- 團購案 1: 北海道白色戀人餅乾 -->
-                    <div class="group-card">
-                        <div class="d-flex justify-content-between mb-2">
-                            <div>
-                                <span class="group-status status-active">進行中</span>
-                                <span class="group-date ms-2">開團日期: 2023-06-01</span>
-                            </div>
-                            <div>
-                                <span>團購編號: #GRP123456</span>
-                            </div>
-                        </div>
-                        
-                        <!-- 訂單 1 -->
-                        <div class="order-card">
-                            <div class="d-flex justify-content-between mb-2">
-                                <div>
-                                    <span class="order-status">待付款</span>
-                                    <span class="order-date ms-2">2023-06-15</span>
-                                </div>
-                                <div>
-                                    <span>訂單編號: #123456789</span>
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-2">
-                                    <img src="https://via.placeholder.com/150" alt="商品圖片" class="order-product-img">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>【日本直送】北海道白色戀人餅乾禮盒 12片裝</h6>
-                                    <p class="text-muted mb-0">規格: 12片裝</p>
-                                    <p class="text-muted mb-0">數量: 1</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <p class="mb-0">NT$ 580</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <button class="btn btn-sm btn-outline-secondary">查看詳情</button>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span>共1件商品</span>
-                                    <span class="ms-3">總金額: <span class="fw-bold">NT$ 580</span></span>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-2">聯繫買家</button>
-                                    <button class="btn btn-sm btn-primary">確認收貨</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 訂單 2 -->
-                        <div class="order-card">
-                            <div class="d-flex justify-content-between mb-2">
-                                <div>
-                                    <span class="order-status">待發貨</span>
-                                    <span class="order-date ms-2">2023-06-16</span>
-                                </div>
-                                <div>
-                                    <span>訂單編號: #987654321</span>
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-2">
-                                    <img src="https://via.placeholder.com/150" alt="商品圖片" class="order-product-img">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>【日本直送】北海道白色戀人餅乾禮盒 12片裝</h6>
-                                    <p class="text-muted mb-0">規格: 12片裝</p>
-                                    <p class="text-muted mb-0">數量: 2</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <p class="mb-0">NT$ 1,160</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <button class="btn btn-sm btn-outline-secondary">查看詳情</button>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span>共2件商品</span>
-                                    <span class="ms-3">總金額: <span class="fw-bold">NT$ 1,160</span></span>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-2">聯繫買家</button>
-                                    <button class="btn btn-sm btn-primary">確認收貨</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 團購案 2: 韓國正官庄高麗蔘精 -->
-                    <div class="group-card">
-                        <div class="d-flex justify-content-between mb-2">
-                            <div>
-                                <span class="group-status status-pending">已成團</span>
-                                <span class="group-date ms-2">開團日期: 2023-06-02</span>
-                            </div>
-                            <div>
-                                <span>團購編號: #GRP654321</span>
-                            </div>
-                        </div>
-                        
-                        <!-- 訂單 1 -->
-                        <div class="order-card">
-                            <div class="d-flex justify-content-between mb-2">
-                                <div>
-                                    <span class="order-status">待發貨</span>
-                                    <span class="order-date ms-2">2023-06-17</span>
-                                </div>
-                                <div>
-                                    <span>訂單編號: #112233445</span>
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-2">
-                                    <img src="https://via.placeholder.com/150" alt="商品圖片" class="order-product-img">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>韓國正官庄高麗蔘精 30包/盒</h6>
-                                    <p class="text-muted mb-0">規格: 30包/盒</p>
-                                    <p class="text-muted mb-0">數量: 1</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <p class="mb-0">NT$ 1,200</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <button class="btn btn-sm btn-outline-secondary">查看詳情</button>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span>共1件商品</span>
-                                    <span class="ms-3">總金額: <span class="fw-bold">NT$ 1,200</span></span>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-2">聯繫買家</button>
-                                    <button class="btn btn-sm btn-primary">確認收貨</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 訂單 2 -->
-                        <div class="order-card">
-                            <div class="d-flex justify-content-between mb-2">
-                                <div>
-                                    <span class="order-status">待付款</span>
-                                    <span class="order-date ms-2">2023-06-18</span>
-                                </div>
-                                <div>
-                                    <span>訂單編號: #556677889</span>
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-2">
-                                    <img src="https://via.placeholder.com/150" alt="商品圖片" class="order-product-img">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>韓國正官庄高麗蔘精 30包/盒</h6>
-                                    <p class="text-muted mb-0">規格: 30包/盒</p>
-                                    <p class="text-muted mb-0">數量: 3</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <p class="mb-0">NT$ 3,600</p>
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <button class="btn btn-sm btn-outline-secondary">查看詳情</button>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span>共3件商品</span>
-                                    <span class="ms-3">總金額: <span class="fw-bold">NT$ 3,600</span></span>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-2">聯繫買家</button>
-                                    <button class="btn btn-sm btn-primary">確認收貨</button>
-                                </div>
-                            </div>
-                        </div>
+                    
+                    <!-- 訂單列表 -->
+					<div class="card mb-4">
+					  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+					    <h6 class="m-0 font-weight-bold">訂單列表</h6>
+					  </div>
+					  <div>
+					  <div class="card-body">
+					    <div class="table-responsive">
+					      <table class="table table-bordered" width="100%" cellspacing="0">
+					        <thead>
+					          <tr>
+					            <th>訂單編號</th>
+					            <th>商品名稱</th>
+					            <th>訂購數量</th>
+					            <th>總金額</th>
+					            <th>付款狀態</th>
+					   			<th>出貨狀態</th>
+					            <th>操作</th>
+					          </tr>
+					        </thead>
+					        <!-- 這裡開始迴圈，每筆訂單對應一個 tr -->
+					        <tbody>
+						    <tr th:each="o : ${orders}">
+						      <td th:text="${o.gbOrId}">訂單編號</td>
+						      <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
+						      <td th:text="${o.quantity}">數量</td>
+						      <td th:text="${o.amount}">總金額</td>
+						      <td th:text="${o.paymentStatus == 0} ? '未付款' : '已付款'">付款狀態</td>
+						      <td th:text="${o.shippingStatus == 0} ? '未出貨' : '已出貨'">出貨狀態</td>
+						      <td>
+						        <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-primary">
+						          查看詳情
+						        </a>
+						      </td>
+						    </tr>
+						    <!-- 如果 orders 是空清單，顯示「無訂單」 -->
+						    <tr th:if="${#lists.isEmpty(orders)}">
+						      <td colspan="7" class="text-center">目前沒有任何訂單</td>
+						    </tr>
+						  </tbody>
+					      </table>
+					    </div>
+					  </div>
+					</div>
                     </div>
 
                     

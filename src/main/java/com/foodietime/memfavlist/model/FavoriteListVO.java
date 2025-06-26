@@ -5,8 +5,7 @@ import java.io.Serializable;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.product.model.ProductVO;
 
-import jakarta.annotation.sql.DataSourceDefinition;
-import jakarta.persistence.*;
+import jakarta.persistence.*; 
 import lombok.Data;
 
 @Entity
@@ -25,11 +24,11 @@ public class FavoriteListVO implements Serializable{
 	
 	// 連到 MEMBER 表
     @ManyToOne
-    @JoinColumn(name = "mem_id", referencedColumnName = "mem_id", insertable = true, updatable = false)
+    @JoinColumn(name = "mem_id", insertable = false, updatable = false)
     private MemberVO member;
 
     // 連到 PRODUCT 表
     @ManyToOne
-    @JoinColumn(name = "prod_id", referencedColumnName = "prod_id", insertable = true, updatable = false)
+    @JoinColumn(name = "prod_id", insertable = false, updatable = false)
     private ProductVO product;
 }

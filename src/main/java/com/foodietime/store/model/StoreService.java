@@ -66,10 +66,10 @@ public class StoreService {
 //		repository.save(storeVO);
 //	}
 	
-//	//登入 
-//	public StoreVO findByStorEmail(String email) {
-//		return repository.findByStorEmail(email);
-//	}
+	//登入 
+	public StoreVO findByStorEmail(String email) {
+		return repository.findByStorEmail(email);
+	}
 	
 	//查詢店家類別
 	 public List<StoreVO> findByCateId(Integer cateId) {
