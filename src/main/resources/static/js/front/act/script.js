@@ -15,6 +15,18 @@ function formatDateTime(dateString) {
 
 
 function fetchAllActs() {
+	//新增 h1 標題，只加一次
+		const title = document.createElement("h1");
+		title.textContent = "活動列表";
+		title.style.fontWeight = "bold";
+		title.style.fontSize = "32px";
+		title.style.marginBottom = "24px";
+
+		// 插入 h1 到 container 前面（前提是 container 外層要有父元素）
+		const parent = container.parentElement;
+		parent.insertBefore(title, container);
+
+		//  發出 fetch 請求
 	fetch(contextPath + 'api/allActs') //fetch發出請求，控制器、service、dao跑完 response回來
 	
 	.then(response => {
@@ -46,13 +58,16 @@ function fetchAllActs() {
 			    </div>
 
 			    <div class="card-right">
-			        <div>
-					    <div class="price" style="font-size: 24px; color:green;>${discountOffText}</div>
+					
+			        <div>					
+					    <div class="price" style="font-size: 24px; color:green;>${discountOffText}"</div>
 			            <div class="campaign-tag" >限時活動</div>
 						<div style="font-size: 24px; color: gray;">活動內容：${act.actContent}</div>
 			            <div style="font-size: 24px; color: gray;">有效期限：${formatDateTime(act.actEndTime)}</div>
 			        </div>
+					<div class="button-wrapper">
 			        <button>領取</button>
+					</div>
 			    </div>
 			`;
 					            container.appendChild(actCard);			
