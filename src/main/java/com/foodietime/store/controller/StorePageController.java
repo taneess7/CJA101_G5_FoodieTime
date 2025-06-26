@@ -66,33 +66,48 @@ public class StorePageController {
 /*-----------------------------------------------------------整合頁面-------------------------------------------------------*/
     
     //店家整合編輯
-    @GetMapping("/sc")
-    public String editStoreCoupon(Model model){
-    	StoreVO store = storeSvc.findById(1);
-        model.addAttribute("storeVO", store);
-        return "front/store/sc";
+   @GetMapping("/sc")
+   public String editStoreCoupon(HttpSession session,Model model){
+              // 取出登入會員
+            MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+            if (member == null) {
+                return "redirect:/front/member/login";
+            }
+            // 根據會員 Email 查出店家（你也可以用 memberId）
+            StoreVO store = storeSvc.findByStorEmail(member.getMemEmail());  // ⚠️ 你要有這個方法
+            if (store == null) {
+                model.addAttribute("error", "查無對應店家");
+                return "front/member/member_center";
+            }
+            model.addAttribute("storeVO", store);
+            return "front/store/sc";
+            
+        }
     	
-    }
-    
-    //取得店家登入資訊
-//    @GetMapping("/store_edit2")
-//    public String goStoreEdit(Model model, HttpSession session) {
-//    	StoreVO storeVO = (StoreVO) session.getAttribute("loggedInStore");
-//    	if (storeVO == null) {
-//    		return "redirect:/login";
-//    	}
-//    	Integer currentStorId = storeVO.getStorId();
-//    	}
-//    	
-    
+    	
+
 /*------------------------------------------------------------------------------------------------------*/
 	
-    // 主要頁面 store_edit2 - 簡單版店家頁面 - store_edit2 - 目前可自動撈資料
+    // 主要頁面 store_edit2 - 店家頁面 
 	@GetMapping("/store_edit2")
-	public String goStoreEdit(Model model) { // th:field="*{storName}" 一定要給model storeVO
-		StoreVO storeVO = new StoreVO(); // 從資料庫撈資料
-		Integer currentStorId = 5;
-		storeVO = storeSvc.findById(currentStorId); // 取出店家編號 ---- 這行控制進入網頁帶出的店家
+	public String goStoreEdit(HttpSession session, Model model) { // th:field="*{storName}" 一定要給model storeVO
+		 // 從 session 取得已登入店家
+		StoreVO loggedInStore  = (StoreVO) session.getAttribute("loggedInMember");
+		if (loggedInStore == null) {
+			return "redirect:/front/member/login";
+		}
+		
+		 // 用 storeId 從資料庫撈完整資料
+//		StoreVO storeVO = new StoreVO(); // 從資料庫撈資料
+//		Integer currentStorId = 5;
+//		storeVO = storeSvc.findById(currentStorId); // 取出店家編號 ---- 這行控制進入網頁帶出的店家
+		
+		
+		// 用 storeId 從資料庫撈完整資料
+		Integer storId = loggedInStore.getStorId();
+	    StoreVO storeVO = storeSvc.findById(storId);
+	    
+	    // 放進 model 以供 Thymeleaf 表單綁定使用
 		model.addAttribute("storeVO", storeVO); // 這一行必不可少！
 		model.addAttribute("storCatNameList", storeCateSvc.getAll());
 		// 顯示預覽圖//
@@ -184,7 +199,10 @@ public class StorePageController {
 		 System.out.println("進入成功頁");
 	        return "front/store/success"; 
 	    }
-
+	 
+	 
+//============================優惠券編輯===============================//
+	 //見CouponController
 //============================甜點飲料餐廳===============================//
 
 	@GetMapping("/desert2")
@@ -256,19 +274,5 @@ public class StorePageController {
 		return "front/restaurant/2/dessert-drinks2";
 	}
 
-//=========================  店家彙總維護頁，優惠券 ===========================================// 
-	@GetMapping("/cupon_edit")
-	public String showCouponEditForm(Model model) {
-		CouponVO couponVO = new CouponVO(); // 從資料庫撈資料
-		model.addAttribute("couponVO", couponVO); // 這一行必不可少！
-
-		CouponVO coupon = couponSvc.findById(1);
-		model.addAttribute("couponVO", couponVO);
-
-//    List<StoreCateVO> storCatNameList = storeCateSvc.getAll(); //放入所有類別
-//    model.addAttribute("storCatNameList", storCatNameList);
-
-		return "coupon_edit";
-	}
 
 }
