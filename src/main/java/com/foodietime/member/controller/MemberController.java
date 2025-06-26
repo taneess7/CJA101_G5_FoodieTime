@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodietime.directmessage.model.DirectMessageDTO;
 import com.foodietime.directmessage.model.DirectMessageService;
 import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.member.model.MemService;
@@ -445,8 +446,9 @@ public class MemberController {
             return "redirect:/front/member/login";
         }
 
-        List<DirectMessageVO> messages = dmService.getMessagesByMemberId(member.getMemId());
+        List<DirectMessageDTO> messages = dmService.getMessagesDtoByMemberId(member.getMemId());
         model.addAttribute("messages", messages);
+
 
         return "front/member/messages"; // 這頁就是 messages.html
     }
