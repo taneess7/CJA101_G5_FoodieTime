@@ -48,20 +48,26 @@ public class CouponController {
 	//店家優惠券編輯頁面
 	@GetMapping("/editCoupon")
 	public String showEditPage(@RequestParam(required = false) Integer couId, HttpSession session, Model model) {
+		
 
-		// 1. 從 session 取得登入商家 ID
-		StoreVO loggedInStore  = (StoreVO) session.getAttribute("loggedInMember");
-		if (loggedInStore == null) {
-			return "redirect:/front/member/login";
-		}
-		Integer storId = loggedInStore.getStorId();
+	    // 1. 取得 session 中的 loggedInStore，並檢查是否為 StoreVO
+	    Object obj = session.getAttribute("loggedInStore");
+
+	    if (!(obj instanceof StoreVO)) {
+	        System.out.println("⚠️ session 中的 loggedInStore 不是 StoreVO，而是：" + (obj == null ? "null" : obj.getClass().getSimpleName()));
+	        return "redirect:/front/member/login";  // 或導回登入頁
+	    }
+
+	    StoreVO loggedInStore = (StoreVO) obj;
+	    Integer storId = loggedInStore.getStorId();
+
 
 
 		// 只撈該商家擁有的優惠券作為下拉選單
 		List<CouponVO> coupons = couSvc.getCouponsByStorId(storId);
 		model.addAttribute("coupons", coupons); // 下拉選單 th:each="cou : ${coupons}" 用
 
-		// 有選coupon,就撈該couId做表單
+		// 判斷是新增還是編輯:  有選coupon,就撈該couId做表單
 		CouponVO couponVO = null;
 
 		if (couId == null || couId == 0) {
@@ -85,7 +91,8 @@ public class CouponController {
 		return "front/store/coupon_edit"; // Thymleleaf頁面
 	}
 
-	// 新增
+	//=======================================================================================
+	// 新增優惠券
 	@PostMapping("/coupon/save")
 	public String insert( // , HttpServletRequest request
 			@Valid 

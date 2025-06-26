@@ -92,7 +92,7 @@ public class StorePageController {
 	@GetMapping("/store_edit2")
 	public String goStoreEdit(HttpSession session, Model model) { // th:field="*{storName}" 一定要給model storeVO
 		 // 從 session 取得已登入店家
-		StoreVO loggedInStore  = (StoreVO) session.getAttribute("loggedInMember");
+		StoreVO loggedInStore  = (StoreVO) session.getAttribute("loggedInStore");
 		if (loggedInStore == null) {
 			return "redirect:/front/member/login";
 		}

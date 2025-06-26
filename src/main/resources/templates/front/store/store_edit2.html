@@ -136,10 +136,10 @@ main {
 }
 
 .section-title {
-	font-size: 36px;
-	font-weight: 700;
-	color: #333;
-	margin-bottom: 10px;
+	font-size: 2rem;
+  	text-align: center;
+ 	 margin-top: 1.5rem;
+  	color: #ff7f50;
 }
 
 .section-subtitle {
@@ -674,35 +674,39 @@ div.welcome {
   cursor: not-allowed;
 }
 
+/* .section-header { */
+/*   display: flex; */
+/*   align-items: baseline; /* 或 center，看你想要的對齊方式 */ */
+/*   gap: 20px; /* 控制兩者間距 */ */
+/* } */
+
 .section-header {
   display: flex;
-  align-items: baseline; /* 或 center，看你想要的對齊方式 */
-  gap: 20px; /* 控制兩者間距 */
+  align-items: center;
+  gap: 1rem;
 }
-
 
 </style>
 
 </head>
 <body>
 	<main>
-		<h2	th:utext="'<span style=\'color:green;\'>歡迎  ' + ${storeVO.storName} + '</span>'">預設名稱</h2>
+	
+		
 		<!-- 歡迎光臨區塊 -->
-		<div th:fragment="storeEditFragment">
+		
 			<div class="welcome">
 				
 <!-- 				店家圖片 -->
 <!-- 				<div id="storeimg"> -->
 <!-- 					<img th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="商家圖片"> -->
 <!-- 				</div> -->
-				<div class="section-header">
+				<h2	th:utext="'<span style=\'color:green;\'>歡迎  ' + ${storeVO.storName} + '</span>'">預設名稱</h2>
 				<h1 class="section-title">編輯店家資訊</h1><span class="section-subtitle">更新您的店家資訊，讓更多顧客找到您</span>
-				</div>
-				
 			</div>
-			
-<!-- 					
-					<div class="form-container">
+				
+	
+
 
 
 
@@ -758,12 +762,16 @@ div.welcome {
 							</div>
 							<br>
 							
-							<!-- 經緯度 -->
+							<!-- 只能看不能送出的經緯度 -->
 						<div class="latlng-row" >						
 							<input class="form-input" type="text" id="lat" name="latitude" th:value="${storeVO.storLon}" placeholder="緯度 Latitude" readonly>
 							<input class="form-input" type="text" id="lng" name="longitude" th:value="${storeVO.storLat}" placeholder="經度 Longitude" readonly>
 							<br>
 						</div>
+						
+						<!-- 實際送出經緯度 -->
+							<input type="hidden" th:field="*{storLon}" />
+							<input type="hidden" th:field="*{storLat}" />
 						
 							<!-- 店家電話 -->
 							<div class="form-group">
@@ -885,7 +893,7 @@ div.welcome {
 								<button type="submit" class="btn btn-primary">儲存變更</button>
 							</div>
 						</form>
-					</div>
+				
 	</main>
 
 	<footer class="app-footer">
