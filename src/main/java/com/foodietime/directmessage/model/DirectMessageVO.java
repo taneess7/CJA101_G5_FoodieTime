@@ -59,7 +59,9 @@ public class DirectMessageVO implements Serializable{
 	@Enumerated(EnumType.ORDINAL)
 	private MessageDirection messDirection;
 
-
+	@ManyToOne
+	@JoinColumn(name = "reply_to_dm_id") // 🔁 自我關聯
+	private DirectMessageVO replyTo;
 
 
 	public enum MessageDirection {
