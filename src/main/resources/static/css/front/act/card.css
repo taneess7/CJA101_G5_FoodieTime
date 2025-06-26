@@ -1,19 +1,13 @@
 @charset "UTF-8";
 
 body {
-
 	font-family: Arial, sans-serif;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: linear-gradient(
-		  to bottom,
-		  rgba(255, 140, 0, 0.4) 0%,
-		  rgba(255, 140, 0, 0.1) 50%,
-		  rgba(255, 140, 0, 0.4) 100%
-		);
+	background-color: rgba(255, 127, 80, 0.08); /* 珊瑚橘透明底色 */
+	padding: 50px 20px 20px;
 	flex-wrap: wrap;
-	padding: 50px 20px 20px; /* 增加上邊距 */
 }
 
 /* 調整 act-card 為左右排版 */
@@ -36,12 +30,18 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    
+}
+
+.button-wrapper {
+    width: 100%;
+    text-align: right;
 }
 
 
 /* 左側紅色欄 */
 .card-left {
-  background-color: rgba(255, 127, 80, 0.1); /* 珊瑚橘半透明背景 */
+  background-color: rgba(167, 116, 99); /* 珊瑚橘半透明背景 */
   width: 150px; /* 視你需要固定寬度 */
   display: flex;
   flex-direction: column;
@@ -54,13 +54,12 @@ body {
 
 /* 領取按鈕 */
 .card-right button {
-	font-size: 36px;  
-    align-self: flex-end;
+    font-size: 25px;        /* 原本是 36px，改小 */
+    padding: 4px 10px;      /* 上下 4px，左右 10px */
+    border-radius: 6px;     /* 圓角可依需求再小一點 */
     background-color: #d60000;
     color: white;
     border: none;
-    padding: 6px 14px;
-    border-radius: 8px;
     cursor: pointer;
 }
 
