@@ -63,7 +63,7 @@
             <div class="mb-3">
                 <label for="gbProdPhoto" class="form-label">商品圖片</label>
                 <input type="file" class="form-control" id="gbProdPhoto" name="gbProdPhotoFile" accept="image/*">
-                <img id="preview" th:src="@{${gbprodVO.gbProdPhotoUrl}}" style="max-width: 200px; margin-top: 10px; display: block;" />
+                <img id="preview" th:if="${gbprodVO.gbProdPhoto != null}" th:src="@{'/store/group-prod-photo/' + ${gbprodVO.gbProdId}}" style="max-width: 200px; margin-top: 10px; display: block;" />
                 <div th:if="${#fields.hasErrors('gbProdPhoto')}" class="text-danger" th:errors="*{gbProdPhoto}"></div>
             </div>
             <button type="submit" class="btn btn-primary">修改商品</button>

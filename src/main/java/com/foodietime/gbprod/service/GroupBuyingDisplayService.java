@@ -40,7 +40,7 @@ public class GroupBuyingDisplayService {
             throw new RuntimeException("找不到商品圖片");
         }
 
-        return product.getGbProdPhoto();
+        return product.getGbProdPhotoBytes();
     }
     /**
      * 獲取熱門團購商品列表

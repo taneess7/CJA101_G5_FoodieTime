@@ -23,6 +23,11 @@
     <div class="container">
         <h2 class="mb-4">新增團購商品</h2>
         <form th:action="@{/store/group-prod/add}" th:object="${gbprodVO}" method="post" enctype="multipart/form-data">
+          <div th:if="${#fields.hasErrors()}" class="alert alert-danger">
+            <ul>
+              <li th:each="err : ${#fields.errors()}" th:text="${err}"></li>
+            </ul>
+          </div>
 
             <div class="mb-3">
                 <label for="gbProdName" class="form-label">商品名稱</label>

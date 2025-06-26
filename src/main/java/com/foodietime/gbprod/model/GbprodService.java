@@ -24,11 +24,19 @@ public class GbprodService {
     }
 
     public void deleteById(Integer gbProdId) {
-    	gbprodRepository.deleteById(gbProdId);
+        gbprodRepository.deleteById(gbProdId);
     }
+
+    // 遠端加的功能：取得產品圖片
     public byte[] getProductPhoto(Integer gbProdId) {
         return gbprodRepository.findById(gbProdId)
-                   .map(GbprodVO::getGbProdPhoto)  // 這會呼叫你 VO 裡的 getter
+                   .map(GbprodVO::getGbProdPhoto)
                    .orElse(null);
     }
+
+    // 本地加的功能：查詢某店家的所有團購商品
+    public List<GbprodVO> findByStore(com.foodietime.store.model.StoreVO store) {
+        return gbprodRepository.findByStore(store);
+    }
+
 }
