@@ -3,15 +3,51 @@ package com.foodietime.grouporders.model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesRepository;
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.participants.model.ParticipantsRepository;
+import com.foodietime.participants.model.ParticipantsVO;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupOrdersService {
 
     @Autowired
     private GroupOrdersRepository groupOrdersRepository;
+    @Autowired
+    private GroupBuyingCasesRepository groupBuyingCasesRepository;
 
+
+    //取得當前會員（memId）擔任團長 (leader = 0) 的所有場次訂單
+    public List<GroupOrdersVO> getOrdersForLeader(Integer memId) {
+        // 1) 撈出此會員擔任團長的所有場次 GB ID
+        List<Integer> gbIds = groupBuyingCasesRepository
+            .findDistinctByParticipants_Member_MemIdAndParticipants_Leader(memId, (byte)0)
+            .stream()
+            .map(GroupBuyingCasesVO::getGbId)
+            .collect(Collectors.toList());
+
+        if (gbIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 2) 批次撈取這些場次的所有訂單
+        return groupOrdersRepository.findByGroupBuyingCase_GbIdIn(gbIds);
+    }
+    
+    //取得團長 (leader = 0) 開團的單筆訂單
+    public GroupOrdersVO getLeaderOrder(Integer memId, Integer orderId) {
+        return groupOrdersRepository
+            .findLeaderOrder(orderId, memId)
+            .orElseThrow(() -> 
+                new IllegalArgumentException("找不到此筆訂單或您無權查看")
+            );
+    }
+    
     // 查詢某會員的所有團購訂單
     public List<GroupOrdersVO> getOrdersByMemberId(Integer memId) {
         return groupOrdersRepository.findByGroupBuyingCase_Member_MemId(memId);
@@ -52,7 +88,12 @@ public class GroupOrdersService {
         return groupOrdersRepository.findById(gbOrId);
     }
 
- // 更新訂單狀態（包括訂單狀態、付款狀態和出貨狀態）
+    // 新增或修改團購訂單
+    public GroupOrdersVO save(GroupOrdersVO groupOrdersVO) {
+        return groupOrdersRepository.save(groupOrdersVO);
+    }
+    
+    // 更新訂單狀態（包括訂單狀態、付款狀態和出貨狀態）
     public GroupOrdersVO updateOrderField(Integer gbOrId, String field, Byte newStatus) {
         // 查找訂單
         Optional<GroupOrdersVO> orderOpt = groupOrdersRepository.findById(gbOrId);
@@ -80,4 +121,7 @@ public class GroupOrdersService {
             throw new RuntimeException("訂單不存在");
         }
     }
+    
+    
+    
 }

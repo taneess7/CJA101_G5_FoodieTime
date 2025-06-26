@@ -258,11 +258,17 @@
             <!-- 側邊欄 -->
             <div class="col-lg-3 mb-4">
                 <div class="profile-sidebar p-3">
-                    <div class="text-center mb-4">
-                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="用戶頭像" class="profile-avatar mb-3">
-                        <h5>林小美</h5>
-                        <p class="text-muted mb-0">團長</p>
-                    </div>
+                    <!-- 主要內容：動態顯示團長（從 Session 取） -->
+					<div class="text-center mb-4">
+					  <!-- 如果有頭像 URL，可改這裡 -->
+					  <!--  <img th:if="${session.loggedInMember.photoUrl != null}"
+					       th:src="@{${session.loggedInMember.photoUrl}}"
+					       alt="用戶頭像"
+					       class="profile-avatar mb-3"/>  -->
+					  <!-- 動態顯示團長名稱 -->
+					  <h5 th:text="${session.loggedInMember.memNickname}">團長姓名</h5>
+					  <p class="text-muted mb-0">團長</p>
+					</div>
                     
                     <nav class="nav flex-column">
                         <!-- 未登入狀態：顯示登入頁面 -->
@@ -279,10 +285,10 @@
 						    <a class="nav-link" th:href="@{/login}">
 						        <i class="bi bi-credit-card"></i> 金流管理
 						    </a>
-						    <a class="nav-link active" th:href="@{/login}">
+						    <a class="nav-link" th:href="@{/login}">
 						        <i class="bi bi-geo-alt"></i> 收貨地址
 						    </a>
-						    <a class="nav-link" th:href="@{/login}">
+						    <a class="nav-link active" th:href="@{/login}">
 						        <i class="bi bi-bell"></i> 通知管理
 						    </a>
 						</div>
@@ -301,10 +307,10 @@
 						    <a class="nav-link" th:href="@{/gb/leader-cashflow}">
 						        <i class="bi bi-credit-card"></i> 金流管理
 						    </a>
-						    <a class="nav-link active" th:href="@{/gb/leader-address}">
+						    <a class="nav-link" th:href="@{/gb/leader-address}">
 						        <i class="bi bi-geo-alt"></i> 收貨地址
 						    </a>
-						    <a class="nav-link" th:href="@{/gb/leader-notifications}">
+						    <a class="nav-link active" th:href="@{/gb/leader-notifications}">
 						        <i class="bi bi-bell"></i> 通知管理
 						    </a>
 						</div>

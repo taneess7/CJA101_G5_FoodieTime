@@ -61,13 +61,13 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader-notifications";
     }
 	
-	@GetMapping("/leader-orders")
-    public String leaderorders(HttpSession session){
-		if(session.getAttribute("loggedInMember") == null) {
-			return "front/member/login";
-		}
-        return "front/gb/gbleader/leader-orders";
-    }
+//	@GetMapping("/leader-orders")
+//    public String leaderorders(HttpSession session){
+//		if(session.getAttribute("loggedInMember") == null) {
+//			return "front/member/login";
+//		}
+//        return "front/gb/gbleader/leader-orders";
+//    }
 	
 	@GetMapping("/leader-product")
     public String leaderproduct(HttpSession session){
@@ -85,20 +85,27 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader-searchresult";
         
     }
-	
-	@GetMapping("/leader-gbdetail")
-    public String leadergbdetail(HttpSession session){
-		if(session.getAttribute("loggedInMember") == null) {
-			return "front/member/login";
-		}
-        return "front/gb/gbleader/leader-gbdetail";
+	@GetMapping("/leader-gborder-detail")
+    public String leadergborderdetail(){
+		
+		
+        return "front/gb/gbleader/leader-gborder-detail";
+        
     }
 	
-	@GetMapping("/leader-groups-edit")
-    public String leadergroupsedit(HttpSession session){
-		if(session.getAttribute("loggedInMember") == null) {
-			return "front/member/login";
-		}
-        return "front/gb/gbleader/leader-groups-edit";
-    }
+//	@GetMapping("/leader-gbdetail")
+//    public String leadergbdetail(HttpSession session){
+//		if(session.getAttribute("loggedInMember") == null) {
+//			return "front/member/login";
+//		}
+//        return "front/gb/gbleader/leader-gbdetail";
+//    }
+	
+//	@GetMapping("/leader-groups-edit")
+//    public String leadergroupsedit(HttpSession session){
+//		if(session.getAttribute("loggedInMember") == null) {
+//			return "front/member/login";
+//		}
+//        return "front/gb/gbleader/leader-groups-edit";
+//    }
 }

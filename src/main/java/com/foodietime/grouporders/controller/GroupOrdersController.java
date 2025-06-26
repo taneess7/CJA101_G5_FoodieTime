@@ -2,21 +2,70 @@ package com.foodietime.grouporders.controller;
 
 import com.foodietime.grouporders.model.GroupOrdersService;
 import com.foodietime.grouporders.model.GroupOrdersVO;
+import com.foodietime.member.model.MemberVO;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/grouporders")
+@RequestMapping("/gb")
 public class GroupOrdersController {
 
     @Autowired
     private GroupOrdersService groupOrdersService;
 
+    // 查詢團長開團的所有訂單
+    @GetMapping("/leader-orders")
+    public String leaderOrders(HttpSession session, Model model) {
+        // 檢查是否登入
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "front/member/login";
+        }
+
+        // 取得當前會員 ID
+        Integer memId = member.getMemId();
+
+        // 撈出該會員作為團長的所有訂單
+        List<GroupOrdersVO> orders = groupOrdersService.getOrdersForLeader(memId);
+        model.addAttribute("orders", orders);
+
+        return "front/gb/gbleader/leader-orders";
+    }
+    
+    /**
+     * 訂單詳情頁（只能看自己做為團長的訂單）
+     */
+    @GetMapping("/order/{orderId}/detail")
+    public String showLeaderOrderDetail(
+            @PathVariable Integer orderId,
+            HttpSession session,
+            Model model) {
+
+        // 1) 檢查是否登入
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "front/member/login";
+        }
+
+        // 2) 取得該筆訂單，若無則抛例外
+        Integer memId = member.getMemId();
+        GroupOrdersVO order = groupOrdersService.getLeaderOrder(memId, orderId);
+
+        // 3) 放入 Model，交給 Thymeleaf 渲染
+        model.addAttribute("order", order);
+        return "front/gb/gbleader/leader-gborder-detail";
+    }
+    
+    
     // 查詢某會員的所有團購訂單
     @GetMapping("/member/{memId}")
     public String getOrdersByMemberId(@PathVariable Integer memId, Model model) {
