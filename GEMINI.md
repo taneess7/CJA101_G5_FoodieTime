@@ -26,7 +26,7 @@
     - **資料庫互動:** Hibernate (JPA Provider)
 - **前端 (Frontend):**
     - **模板引擎:** Thymeleaf
-    - **樣式與腳本:** Bootstrap, CSS, JavaScript
+    - **樣式與腳本:** Bootstrap,Font Awesome, CSS, JavaScript
 - **資料庫 (Database):**
     - **類型:** MySQL 
 - **建置工具 (Build Tool):**
