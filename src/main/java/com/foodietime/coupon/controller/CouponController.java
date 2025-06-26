@@ -96,12 +96,24 @@ public class CouponController {
 	@PostMapping("/coupon/save")
 	public String insert( // , HttpServletRequest request
 			@Valid 
-			@ModelAttribute("coupon") CouponVO couponVO, BindingResult result, Model model,//@ModelAttribute("coupon") 給 th:object="${coupon}"用
+			@ModelAttribute("coupon") CouponVO couponVO, BindingResult result, HttpSession session, Model model,//@ModelAttribute("coupon") 給 th:object="${coupon}"用
 			RedirectAttributes redirectAttr) { //顯示新增成功訊息
 
 		System.out.println(">>> insert方法觸發");
 
-		// 如果驗證錯誤，補上 store 與優惠券下拉選單
+		// 從 session 中取出店家資訊
+	    Object obj = session.getAttribute("loggedInStore");
+
+	    if (!(obj instanceof StoreVO)) {
+	        System.out.println("⚠️ session 中的 loggedInStore 無效，導回登入頁");
+	        return "redirect:/front/member/login";
+	    }
+
+	    StoreVO loggedInStore = (StoreVO) obj;
+	    Integer storId = loggedInStore.getStorId();
+		
+		  
+		//如果驗證錯誤，補上 store 與優惠券下拉選單
 		if (result.hasErrors()) {
 			for (FieldError fe : result.getFieldErrors()) {
 				System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
