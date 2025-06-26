@@ -19,7 +19,7 @@
                 <div class="flex justify-between items-center mb-2">
                     <div class="text-blue-700 font-semibold text-base flex items-center">
                         <i class="fas fa-user mr-2"></i>
-                        <span th:text="${msg.messDirection == 0 ? '您' : '系統管理員'}"></span>
+                        <span th:text="${msg.senderName}"></span>
                     </div>
                     <div class="text-sm text-gray-500" th:text="${#temporals.format(msg.messTime, 'yyyy-MM-dd HH:mm')}">2025-06-19 12:00</div>
                 </div>
