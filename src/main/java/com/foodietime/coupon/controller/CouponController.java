@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import com.foodietime.act.model.ActVO;
 import com.foodietime.coupon.model.CouponService;
 import com.foodietime.coupon.model.CouponVO;
 
@@ -138,7 +138,26 @@ public class CouponController {
 		}
 		
 	}
-	
+	//========================================================================================//
+	@GetMapping("/listStoreCoupons")
+	public String listStoreCoupons(HttpSession session, Model model) {
+	    // 1. 取得 session 中登入的商家
+	    StoreVO storeVO = (StoreVO) session.getAttribute("loggedInMember");
+	    if (storeVO == null) {
+	        return "redirect:/front/member/login"; // 尚未登入，導回登入頁
+	    }
+
+	    Integer storId = storeVO.getStorId();
+
+	    // 2. 查詢該商家擁有的所有優惠券
+	    List<CouponVO> storeCoupons = couSvc.getCouponsByStorId(storId); 
+
+	    // 3. 放進 model
+	    model.addAttribute("couponList", storeCoupons);
+
+	    return "front/store/coupon_listAll"; // 對應 Thymeleaf 頁面
+	}
+
 	//========================================================================================//
 	// 空表單，初始化給預設值(not null)
 		@ModelAttribute("addCoupon")
