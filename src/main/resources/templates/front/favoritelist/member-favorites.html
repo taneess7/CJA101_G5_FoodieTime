@@ -1,126 +1,212 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的收藏 - FoodieTime 食刻</title>
-    <meta name="description" content="查看您收藏的餐廳和美食。FoodieTime 食刻讓您輕鬆管理喜愛的美食和餐廳，隨時查看並分享。">
-    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
-    <link rel="stylesheet" th:href="@{/css/front/restaurant/restaurant-categories.css}">
-    <link rel="stylesheet" th:href="@{/css/front/restaurant/food-categories.css}">
-    <link rel="stylesheet" th:href="@{/css/front/favoritelist/member-favorites.css}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的收藏 - FoodieTime 食刻</title>
+<meta name="description"
+	content="查看您收藏的餐廳和美食。FoodieTime 食刻讓您輕鬆管理喜愛的美食和餐廳，隨時查看並分享。">
+<link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/restaurant/restaurant-categories.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/restaurant/food-categories.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/favoritelist/member-favorites.css}">
 <!--     <link rel="stylesheet" href="css/responsive.css"> -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- PWA 支援 -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+	rel="stylesheet">
+<!-- PWA 支援 -->
 <!--     <link rel="manifest" href="manifest.json"> -->
-    <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+<meta name="theme-color" content="#FF5722">
+<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-container">
-            <div class="logo-container">
-                <a th:href="@{/category/index}" class="logo">
-                    <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                    <span class="logo-text">FoodieTime 食刻</span>
-                </a>
-            </div>
-            <div class="search-container">
-                <div class="search-bar">
+	<header class="app-header">
+		<div class="header-container">
+			<div class="logo-container">
+				<a th:href="@{/category/index}" class="logo"> <img
+					th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻"
+					class="logo-img"> <span class="logo-text">FoodieTime
+						食刻</span>
+				</a>
+			</div>
+			<div class="search-container">
+				<!--     <div class="search-bar">
                     <i class="material-icons-outlined search-icon">search</i>
                     <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-                </div>
-            </div>
-            <nav class="main-nav">
-                <ul class="nav-list">
-                    <li class="nav-item"><a href="#" class="nav-link">地圖</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">團購</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">優惠</a></li>
-                    <li class="nav-item"><a th:href="@{/category/login}" class="nav-link login-btn">登入/註冊</a></li>
-                </ul>
-                <button class="menu-toggle" aria-label="開啟選單">
-                    <i class="material-icons-outlined">menu</i>
-                </button>
-            </nav>
-        </div>
-    </header>
+                </div> -->
+			</div>
+			<nav class="main-nav">
+				<ul class="nav-list">
+					<li class="nav-item"><a href="/category/food-categories"
+						class="nav-link">地圖</a></li>
+					<li class="nav-item"><a href="/gb/gbindex" class="nav-link">團購</a></li>
+					<li class="nav-item"><a href="/act" class="nav-link">優惠</a></li>
+					<li class="nav-item">
+						<div th:if="${session.loggedInMember == null}">
+							<a th:href="@{/category/login}"
+								class="btn btn-outline-secondary me-2"> <i
+								class="bi bi-person"></i> 登入/註冊
+							</a>
 
-    <main class="main-content">
-        <div class="member-section">
-            <aside class="member-sidebar">
-                <div class="member-profile">
-                    <div class="member-avatar">
-                        <img th:src="@{/images/icons/avatar-placeholder.svg}" alt="會員頭像">
-                    </div>
-                    <div class="member-info">
-                        <h3 class="member-name"></h3>
-                        <p class="member-level"></p>
-                    </div>
-                </div>
-                <nav class="member-nav">
-                    <a th:href="@{/member}" class="member-nav-item">
-                        <i class="material-icons-outlined">person</i><span>會員資料</span>
-                    </a>
-                    <a th:href="@{/member/orders}" class="member-nav-item">
-                        <i class="material-icons-outlined">receipt_long</i><span>訂單記錄</span>
-                    </a>
-                    <a th:href="@{/member/coupons}" class="member-nav-item">
-                        <i class="material-icons-outlined">local_offer</i><span>優惠券</span>
-                    </a>
-                    <a th:href="@{/member/favorites}" class="member-nav-item active">
-                        <i class="material-icons-outlined">favorite</i><span>收藏餐廳</span>
-                    </a>        
-                </nav>
-            </aside>
+						</div>
+						<div th:if="${session.loggedInMember != null}">
+							<span class="me-2"
+								th:text="'Hi, ' + ${session.loggedInMember.memName}">Hi,
+								使用者</span> <a th:href="@{/front/member/member_center}"
+								class="btn btn-outline-success me-2">會員中心</a> <a
+								th:href="@{/index}" class="btn btn-outline-danger">登出</a>
+						</div>
+					</li>
+				</ul>
+				<button class="menu-toggle" aria-label="開啟選單">
+					<i class="material-icons-outlined">menu</i>
+				</button>
+			</nav>
+		</div>
+	</header>
 
-            <div class="member-content">
-                <div class="member-content-header">
-                    <h1 class="member-content-title">我的收藏餐廳</h1>
-                </div>
-                <div class="restaurants-container" id="restaurants-container">
-                    <div class="restaurant-card" th:each="fav : ${favoriteList}">
-                        <div class="restaurant-image-container">
-                            <img th:src="@{/images/restaurant/placeholder.svg}" alt="餐廳圖片" class="restaurant-image">
-                            <div class="restaurant-actions">
-                                <button class="action-btn favorite-btn active" aria-label="取消收藏">
-                                    <i class="material-icons-outlined">favorite</i>
-                                </button>
-                                <button class="action-btn share-btn" aria-label="分享">
-                                    <i class="material-icons-outlined">share</i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="restaurant-details">
-                            <h3 class="restaurant-name" th:text="${fav.product.store.storName}">店名</h3>
-                            <div class="restaurant-category">
-                                <span class="cuisine-tag" th:text="${fav.product.productCategory.prodCate}">分類</span>
-                            </div>
-                            <div class="restaurant-info">
-                                <div class="info-item">
-                                    <i class="material-icons-outlined">location_on</i>
-                                    <span th:text="${fav.product.store.storAddr}">地址</span>
-                                </div>
-                                <div class="info-item">
-                                    <i class="material-icons-outlined">access_time</i>
-                                    <span th:text="${fav.product.store.storOnTime} + ' - ' + ${fav.product.store.storOffTime}">營業時間</span>
-                                </div>
-                            </div>
-                            <div class="restaurant-actions-bottom">
-                                <button class="view-btn">查看餐廳</button>
-                                <button class="order-btn">立即訂餐</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+	<main class="main-content">
+		<div class="member-section">
+			<aside class="member-sidebar">
+				<div class="member-profile">
+					<div class="member-avatar">
+						<img th:src="@{/images/icons/avatar-placeholder.svg}" alt="會員頭像">
+					</div>
+					<div class="member-info">
+						<h3 class="member-name"></h3>
+						<p class="member-level"></p>
+					</div>
+				</div>
+				<nav class="member-nav">
+					<a th:href="@{/front/member/member_center}" class="member-nav-item"> <i
+						class="material-icons-outlined">person</i><span>會員資料</span>
+					</a> <a th:href="@{/cart/cart}" class="member-nav-item"> <i
+						class="material-icons-outlined">receipt_long</i><span>訂單記錄</span>
+					</a> <a th:href="@{/member/coupons}" class="member-nav-item"> <i
+						class="material-icons-outlined">local_offer</i><span>優惠券</span>
+					</a> <a th:href="@{/member/favorites}" class="member-nav-item active">
+						<i class="material-icons-outlined">favorite</i><span>收藏餐廳</span>
+					</a>
+				</nav>
+			</aside>
 
-    <footer class="app-footer">
-        <div class="container">
-            <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-        </div>
-    </footer>
+			<div class="member-content">
+				<div class="member-content-header">
+					<h1 class="member-content-title">我的收藏餐廳</h1>
+					<div class="category-filter">
+						<select id="categorySelect" onchange="filterFavorites()">
+							<option value="all">全部</option>
+							<option value="中式料理">中式料理</option>
+							<option value="日式料理">日式料理</option>
+							<option value="韓式料理">韓式料理</option>
+							<option value="泰式料理">泰式料理</option>
+							<option value="義式料理">義式料理</option>
+							<option value="美式料理">美式料理</option>
+							<option value="甜點飲料">甜點飲料</option>
+							<option value="素食料理">素食料理</option>
+						</select>
+					</div>
+				</div>
+				<div class="restaurants-container" id="restaurants-container">
+					<div class="restaurant-card" th:each="entry : ${groupedFavorites}"
+						th:attr="data-category=${entry.key.storeCate.storCatName}">
+						<div class="restaurant-details">
+							<h3 class="restaurant-name" th:text="${entry.key.storName}">店名</h3>
+							<div class="restaurant-category">
+								<span class="cuisine-tag"
+									th:text="${entry.key.storeCate.storCatName}">分類</span>
+							</div>
+
+
+							<!-- 商品區塊 -->
+							<div class="product-list" th:each="product : ${entry.value}">
+								<div class="product-block-row">
+									<div class="product-img-col">
+										<img class="product-image"
+											th:if="${productImageMap[product.prodId] != null}"
+											th:src="${productImageMap[product.prodId]}" alt="商品圖片" /> <img
+											class="product-image"
+											th:unless="${productImageMap[product.prodId] != null}"
+											th:src="@{/images/restaurant/placeholder.svg}" alt="預設圖片" />
+									</div>
+									<div class="product-info-col">
+										<p class="product-name" th:text="${product.prodName}">商品名稱</p>
+										<button class="action-btn favorite-btn active"
+											th:attr="data-prodid=${product.prodId}" aria-label="取消收藏">
+											<i class="material-icons-outlined">favorite</i>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="restaurant-info">
+								<div class="info-item">
+									<i class="material-icons-outlined">location_on</i> <span
+										th:text="${entry.key.storAddr}">地址</span>
+								</div>
+								<div class="info-item">
+									<i class="material-icons-outlined">access_time</i> <span
+										th:text="${entry.key.storOnTime + ' - ' + entry.key.storOffTime}">營業時間</span>
+								</div>
+							</div>
+							<div class="restaurant-actions-bottom">
+								<button class="view-btn">查看餐廳</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer class="app-footer">
+		<div class="container">
+			<p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+		</div>
+	</footer>
+
+	<script>
+function filterFavorites() {
+    const selected = document.getElementById("categorySelect").value;
+    const cards = document.querySelectorAll(".restaurant-card");
+
+    cards.forEach(card => {
+        const category = card.getAttribute("data-category");
+        if (selected === "all" || category === selected) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+//✅ 收藏取消功能
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const prodId = this.dataset.prodid;
+
+            fetch('/favorite/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prodId })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("移除失敗");
+                return res.json();
+            })
+            .then(data => {
+                alert("已取消收藏");
+                location.reload(); // 重新整理畫面
+            })
+            .catch(err => alert(err.message));
+        });
+    });
+});
+</script>
+
 </body>
 </html>
