@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.foodietime.grouporders.model.GroupOrdersService;
+import com.foodietime.grouporders.model.GroupOrdersVO;
 import com.foodietime.smg.model.SmgService;
 import com.foodietime.smg.model.SmgVO;
 import com.foodietime.smgfc.model.SmgfcService;
@@ -36,6 +38,8 @@ public class SmgController {
 	SmgfcService smgfcService;
 	@Autowired
 	SmgauthService smgauthService;
+	@Autowired
+	GroupOrdersService groupOrdersService;
 	@GetMapping("/login")
 	public String showLoginPage() {
 	    return "admin/smg/admin-login"; // 對應到你的 Thymeleaf 登入頁面
@@ -283,8 +287,12 @@ public class SmgController {
     	return "admin/smg/admin-groups-payments"; 
     }
     @GetMapping("/admin-groups-refunds")
-    public String admingroupsrefundss() {
-    	return "admin/smg/admin-groups-refunds"; 
+    public String admingroupsrefunds(Model model) {
+        // 查詢狀態4（退款）的訂單，這些是需要處理退款的訂單
+        Byte status = 4;
+        List<GroupOrdersVO> groupOrders = groupOrdersService.getOrdersByStatus(status);
+        model.addAttribute("groupOrders", groupOrders);
+        return "admin/smg/admin-groups-refunds"; 
     }
     @GetMapping("/admin-groups-monthly")
     public String admingroupsmonthly() {

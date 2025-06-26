@@ -89,8 +89,8 @@ public class GroupOrdersVO implements Serializable{
 	@Column(name = "ORDER_STATUS", nullable = false)
     @NotNull(message = "訂單狀態: 請指定訂單狀態")
     @Min(value = 0, message = "訂單狀態: 最小值為 0")
-    @Max(value = 3, message = "訂單狀態: 最大值為 3")
-    private Byte orderStatus;  // 訂單狀態 (0: 未接單, 1: 接單, 2: 完成, 3: 取消)
+    @Max(value = 3, message = "訂單狀態: 最大值為 4")
+    private Byte orderStatus;  // 訂單狀態 (0: 未接單, 1: 接單, 2: 完成, 3: 取消, 4: 退款)
 
 	
 	@Column(name = "PAYMENT_STATUS", nullable = false)
@@ -158,7 +158,9 @@ public class GroupOrdersVO implements Serializable{
     @Max(value = 5, message = "星等: 最多 5 顆星")
 	private Byte rating;  // 星等 (0:未評價, 1: 1 顆星, ... 5: 5 顆星)
 
-
+	@Column(name = "UPDATE_TIME", nullable = false, updatable = false)
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime updateTime;  // 參與時間
 	
 		
 	public GroupOrdersVO() {  //必需有一個不傳參數建構子

@@ -970,7 +970,7 @@
                         <a class="nav-link" href="/index">首頁</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/gb/gbindex#hot">熱門團購</a>
+                        <a class="nav-link" th:href="@{/gb/gbindex#hot}">熱門團購</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/gb/gbindex#new">最新上架</a>
@@ -1004,8 +1004,8 @@
 			            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
 			        </a>
 			        <ul class="dropdown-menu">
-			            <li><a class="dropdown-item" href="/member/profile">會員中心</a></li>
-			            <li><a class="dropdown-item" href="/logout">登出</a></li>
+			            <li><a class="dropdown-item" th:href="@{/front/member/member_center}">會員中心</a></li>
+			            <li><a class="dropdown-item" th:href="@{/front/member/logout}">登出</a></li>
 			        </ul>
 			    </div>
             </div>
@@ -1659,61 +1659,62 @@
                     return;
                 }
 
+                // 調試：檢查 loggedInMemberInfo
+                console.log('loggedInMemberInfo:', loggedInMemberInfo);
+                console.log('loggedInMemberInfo.memId:', loggedInMemberInfo.memId);
+                console.log('loggedInMemberInfo.memName:', loggedInMemberInfo.memName);
+                console.log('loggedInMemberInfo.memCity:', loggedInMemberInfo.memCity);
+                console.log('loggedInMemberInfo.memCityarea:', loggedInMemberInfo.memCityarea);
+                console.log('loggedInMemberInfo.memAddress:', loggedInMemberInfo.memAddress);
+                console.log('loggedInMemberInfo.memPhone:', loggedInMemberInfo.memPhone);
+
                 const quantity = parseInt(document.querySelector('.quantity-input').value, 10);
                 const amount = parseInt(document.querySelector('.total-amount').textContent, 10);
                 const productName = document.querySelector('.product-title').textContent.trim();
 
-                // 直接從後端傳來的會員資料取得資訊
-                const parName = loggedInMemberInfo.memName;
-                const parAddress = loggedInMemberInfo.memCity + loggedInMemberInfo.memCityarea + loggedInMemberInfo.memAddress;
-                const parPhone = loggedInMemberInfo.memPhone;
-
-                const confirmationMessage = `請確認您的訂單：\n\n` +
-                                      `商品：${productName}\n` +
-                                      `數量：${quantity} 件\n` +
-                                      `總計：NT$ ${amount}\n\n` +
-                                      `收件人：${parName}\n` +
-                                      `電話：${parPhone}\n` +
-                                      `地址：${parAddress}\n\n` +
-                                      `是否確認參團？`;
-
-                if (confirm(confirmationMessage)) {
-                    const payload = {
-                        gbId: gbId,
-                        quantity: quantity,
-                        amount: amount,
-                        parName: parName,
-                        parAddress: parAddress,
-                        parLongitude: 121.5654, // 範例：台北101經度
-                        parLatitude: 25.0339,   // 範例：台北101緯度
-                        parPhone: parPhone,
-                        deliveryMethod: 0, // 預設 0: 宅配
-                        payMethod: 1       // 預設 1: 現金
-                    };
-
-                    fetch('/gb/join', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(payload)
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.text();
-                        } else {
-                            return response.text().then(text => { throw new Error(text || '參團失敗') });
-                        }
-                    })
-                    .then(data => {
-                        alert(data); // 顯示後端回傳的 "參團成功"
-                        window.location.href = '/gb/gbindex'; // 成功後跳轉到團購首頁
-                    })
-                    .catch(error => {
-                        console.error('參團時發生錯誤:', error);
-                        alert('發生錯誤：' + error.message);
-                    });
+                // 檢查必要資料是否存在
+                if (!loggedInMemberInfo.memId) {
+                    alert('會員資料不完整，請重新登入');
+                    return;
                 }
+
+                // 直接從後端傳來的會員資料取得資訊，處理可能的空值
+                const parName = loggedInMemberInfo.memName || '未設定';
+                const parCity = loggedInMemberInfo.memCity || '';
+                const parCityarea = loggedInMemberInfo.memCityarea || '';
+                const parAddress = loggedInMemberInfo.memAddress || '';
+                const parPhone = loggedInMemberInfo.memPhone || '未設定';
+                
+                // 組合完整地址
+                const fullAddress = (parCity + parCityarea + parAddress).trim() || '未設定';
+
+                // 將訂單資訊存到 sessionStorage，然後跳轉到付款頁面
+                const orderInfo = {
+                    memberId: loggedInMemberInfo.memId,
+                    groupBuyingCaseId: gbId,
+                    quantity: quantity,
+                    unitPrice: Math.floor(amount / quantity),
+                    totalAmount: amount,
+                    productName: productName,
+                    recipientName: parName,
+                    recipientAddress: fullAddress,
+                    recipientPhone: parPhone,
+                    recipientLongitude: 121.5654,
+                    recipientLatitude: 25.0339,
+                    deliveryMethod: 0,
+                    payMethod: 2, // LINE Pay
+                    timestamp: Date.now() // 添加時間戳
+                };
+                
+                // 調試：檢查 orderInfo 物件
+                console.log('準備存儲的 orderInfo:', orderInfo);
+                console.log('orderInfo.memberId:', orderInfo.memberId);
+                console.log('orderInfo.recipientName:', orderInfo.recipientName);
+                console.log('orderInfo.recipientAddress:', orderInfo.recipientAddress);
+                console.log('orderInfo.recipientPhone:', orderInfo.recipientPhone);
+                
+                sessionStorage.setItem('groupBuyOrder', JSON.stringify(orderInfo));
+                window.location.href = `/gb/payment`;
             };
             
             window.showLoginModal = function() {

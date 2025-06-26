@@ -98,6 +98,13 @@
 		    <artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 		
+		<!-- JSON 處理 -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20231013</version>
+		</dependency>
+		
     </dependencies>
 
 
