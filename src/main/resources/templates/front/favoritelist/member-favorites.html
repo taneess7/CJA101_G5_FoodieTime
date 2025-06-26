@@ -59,7 +59,7 @@
 								th:text="'Hi, ' + ${session.loggedInMember.memName}">Hi,
 								使用者</span> <a th:href="@{/front/member/member_center}"
 								class="btn btn-outline-success me-2">會員中心</a> <a
-								th:href="@{/logout}" class="btn btn-outline-danger">登出</a>
+								th:href="@{/index}" class="btn btn-outline-danger">登出</a>
 						</div>
 					</li>
 				</ul>
@@ -83,9 +83,9 @@
 					</div>
 				</div>
 				<nav class="member-nav">
-					<a th:href="@{/member}" class="member-nav-item"> <i
+					<a th:href="@{/front/member/member_center}" class="member-nav-item"> <i
 						class="material-icons-outlined">person</i><span>會員資料</span>
-					</a> <a th:href="@{/member/orders}" class="member-nav-item"> <i
+					</a> <a th:href="@{/cart/cart}" class="member-nav-item"> <i
 						class="material-icons-outlined">receipt_long</i><span>訂單記錄</span>
 					</a> <a th:href="@{/member/coupons}" class="member-nav-item"> <i
 						class="material-icons-outlined">local_offer</i><span>優惠券</span>
