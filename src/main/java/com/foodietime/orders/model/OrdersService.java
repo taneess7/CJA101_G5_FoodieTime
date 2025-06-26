@@ -253,4 +253,26 @@ public class OrdersService {
         // ================== 步驟5：保存更新後的訂單 ==================
         return ordersRepo.save(order); // 使用 ordersRepo
     }
+
+    /**
+     * 驗證訂單是否屬於指定商家。
+     *
+     * @param orderId 參數用途：要驗證的訂單ID。
+     *                資料來源：控制器傳入的訂單ID。
+     * @param storeId 參數用途：要驗證的商家ID。
+     *                資料來源：當前登入商家的ID。
+     * @return boolean 參數用途：如果訂單屬於該商家返回true，否則返回false。
+     */
+    public boolean validateOrderBelongsToStore(Integer orderId, Integer storeId) {
+        // ================== 步驟1：查詢訂單 ==================
+        Optional<OrdersVO> orderOpt = ordersRepo.findById(orderId);
+
+        if (orderOpt.isEmpty()) {
+            return false;
+        }
+
+        // ================== 步驟2：比對商家ID ==================
+        OrdersVO order = orderOpt.get();
+        return order.getStore().getStorId().equals(storeId);
+    }
 }

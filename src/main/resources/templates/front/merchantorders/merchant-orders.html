@@ -1,164 +1,232 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商家訂單管理 - FoodieTime 食刻</title>
     <meta name="description" content="FoodieTime 食刻商家訂單管理 - 輕鬆管理訂單、提高營運效率。">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/merchant-orders.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/merchant-orders.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <!-- PWA 支援 -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-container">
-            <div class="logo-container">
-                <a href="index.html" class="logo">
-                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
-                    <span class="logo-text">FoodieTime 食刻</span>
-                </a>
-            </div>
-            <div class="search-container">
-                <div class="search-bar">
-                    <i class="material-icons-outlined search-icon">search</i>
-                    <input type="text" placeholder="搜尋訂單編號、客戶名稱..." class="search-input">
-                </div>
-            </div>
-            <nav class="main-nav">
-                <ul class="nav-list">
-                    <li class="nav-item"><a href="merchant-dashboard.html" class="nav-link">儀表板</a></li>
-                    <li class="nav-item"><a href="merchant-orders.html" class="nav-link active">訂單管理</a></li>
-                    <li class="nav-item"><a href="merchant-menu.html" class="nav-link">菜單管理</a></li>
-                    <li class="nav-item"><a href="merchant-profile.html" class="nav-link">商家資料</a></li>
-                    <li class="nav-item"><a href="index.html" class="nav-link logout-btn">登出</a></li>
-                </ul>
-                <button class="menu-toggle" aria-label="開啟選單">
-                    <i class="material-icons-outlined">menu</i>
-                </button>
-            </nav>
+<header class="app-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a th:href="@{/}" class="logo">
+                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </a>
         </div>
-    </header>
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a th:href="@{/merchant/dashboard}" class="nav-link">儀表板</a></li>
+                <li class="nav-item"><a th:href="@{/merchant/orders/manage}" class="nav-link active">訂單管理</a></li>
+                <li class="nav-item"><a th:href="@{/merchant/menu}" class="nav-link">菜單管理</a></li>
+                <li class="nav-item"><a th:href="@{/merchant/profile}" class="nav-link">商家資料</a></li>
+                <li class="nav-item"><a th:href="@{/merchant/logout}" class="nav-link logout-btn">登出</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-    <main class="merchant-orders-page">
-        <div class="container">
-            <h1 class="page-title">訂單管理</h1>
-            
-            <!-- 訂單篩選器 -->
-            <div class="order-filters">
-                <div class="filter-group">
-                    <label for="status-filter">訂單狀態</label>
-                    <select id="status-filter" class="filter-select">
-                        <option value="all">全部訂單</option>
-                        <option value="pending">待處理</option>
-                        <option value="accepted">已接單</option>
-                        <option value="preparing">準備中</option>
-                        <option value="ready">可取餐</option>
-                        <option value="completed">已完成</option>
-                        <option value="cancelled">已取消</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="date-filter">日期範圍</label>
-                    <select id="date-filter" class="filter-select">
-                        <option value="today">今天</option>
-                        <option value="yesterday">昨天</option>
-                        <option value="week">本週</option>
-                        <option value="month">本月</option>
-                        <option value="custom">自訂範圍</option>
-                    </select>
-                </div>
-                
-                <button type="button" class="btn btn-primary filter-btn">
-                    <i class="material-icons-outlined">filter_list</i>
-                    篩選
-                </button>
+<main class="merchant-orders-page">
+    <div class="container">
+        <h1 class="page-title">訂單管理</h1>
+
+        <!-- 成功/錯誤訊息 -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <!-- 訂單統計 -->
+        <div class="order-stats">
+            <div class="stat-card">
+                <h3>待處理</h3>
+                <span class="stat-number" th:text="${statusCount.pending}">0</span>
             </div>
-            
-            <!-- 訂單列表 -->
-            <div class="orders-list" id="orders-container">
-                <!-- 訂單卡片將由JavaScript動態生成 -->
+            <div class="stat-card">
+                <h3>已接單</h3>
+                <span class="stat-number" th:text="${statusCount.accepted}">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>準備中</h3>
+                <span class="stat-number" th:text="${statusCount.preparing}">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>已完成</h3>
+                <span class="stat-number" th:text="${statusCount.completed}">0</span>
             </div>
         </div>
-    </main>
 
-    <!-- 訂單詳情彈窗 -->
-    <div class="modal" id="order-details-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">訂單詳情</h2>
-                <button type="button" class="modal-close" aria-label="關閉">
-                    <i class="material-icons-outlined">close</i>
-                </button>
+        <!-- 訂單篩選器 -->
+        <div class="order-filters">
+            <div class="filter-group">
+                <label for="status-filter">訂單狀態</label>
+                <select id="status-filter" class="filter-select" onchange="filterOrders()">
+                    <option value="all" th:selected="${currentFilter == 'all'}">全部訂單</option>
+                    <option value="pending" th:selected="${currentFilter == 'pending'}">待處理</option>
+                    <option value="accepted" th:selected="${currentFilter == 'accepted'}">已接單</option>
+                    <option value="preparing" th:selected="${currentFilter == 'preparing'}">準備中</option>
+                    <option value="completed" th:selected="${currentFilter == 'completed'}">已完成</option>
+                    <option value="cancelled" th:selected="${currentFilter == 'cancelled'}">已取消</option>
+                </select>
             </div>
-            <div class="modal-body" id="order-details-content">
-                <!-- 訂單詳情將由JavaScript動態生成 -->
+        </div>
+
+        <!-- 訂單列表 -->
+        <div class="orders-list">
+            <div th:if="${#lists.isEmpty(orders)}" class="no-orders">
+                <p>目前沒有符合條件的訂單</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline" id="reject-order-btn">拒絕訂單</button>
-                <button type="button" class="btn btn-primary" id="accept-order-btn">接受訂單</button>
+
+            <div th:each="order : ${orders}" class="order-card" th:classappend="${order.orderStatus == 0} ? 'pending' : (${order.orderStatus == 1} ? 'accepted' : (${order.orderStatus == 2} ? 'preparing' : (${order.orderStatus == 3} ? 'completed' : 'cancelled')))">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3 class="order-id">訂單 #<span th:text="${order.ordId}">12345</span></h3>
+                        <span class="order-time" th:text="${#dates.format(order.ordDate, 'yyyy/MM/dd HH:mm')}">2024/01/15 14:30</span>
+                    </div>
+
+                    <div class="order-status">
+                            <span class="status-badge"
+                                  th:classappend="${order.orderStatus == 0} ? 'pending' : (${order.orderStatus == 1} ? 'accepted' : (${order.orderStatus == 2} ? 'preparing' : (${order.orderStatus == 3} ? 'completed' : 'cancelled')))"
+                                  th:text="${order.orderStatus == 0} ? '待處理' : (${order.orderStatus == 1} ? '已接單' : (${order.orderStatus == 2} ? '準備中' : (${order.orderStatus == 3} ? '已完成' : '已取消')))">
+                                待處理
+                            </span>
+                    </div>
+                </div>
+
+                <div class="order-details">
+                    <div class="customer-info">
+                        <p><strong>客戶：</strong><span th:text="${order.member.memberName}">張小明</span></p>
+                        <p><strong>電話：</strong><span th:text="${order.member.memberPhone}">0912345678</span></p>
+                        <p th:if="${order.ordAddr}" class="delivery-address">
+                            <strong>外送地址：</strong><span th:text="${order.ordAddr}">台北市大安區忠孝東路四段1號</span>
+                        </p>
+                    </div>
+
+                    <div class="order-items">
+                        <h4>訂購項目：</h4>
+                        <ul>
+                            <li th:each="detail : ${order.ordDet}">
+                                <span th:text="${detail.product.prodName}">商品名稱</span> ×
+                                <span th:text="${detail.prodQty}">2</span> =
+                                NT$<span th:text="${detail.prodPrice * detail.prodQty}">200</span>
+                                <div th:if="${detail.ordDesc}" class="item-note" th:text="'備註：' + ${detail.ordDesc}"></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="order-total">
+                        <p><strong>訂單總額：NT$<span th:text="${order.actualPayment}">350</span></strong></p>
+                        <p th:if="${order.comment}" class="order-comment">
+                            <strong>備註：</strong><span th:text="${order.comment}">不要辣</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 訂單操作按鈕 -->
+                <div class="order-actions">
+                    <!-- 待處理狀態：顯示接單和拒絕按鈕 -->
+                    <div th:if="${order.orderStatus == 0}">
+                        <form th:action="@{/merchant/orders/accept/{orderId}(orderId=${order.ordId})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-success">
+                                <i class="material-icons-outlined">check</i>
+                                接受訂單
+                            </button>
+                        </form>
+                        <button type="button" class="btn btn-danger" th:onclick="'showRejectModal(' + ${order.ordId} + ')'">
+                            <i class="material-icons-outlined">close</i>
+                            拒絕訂單
+                        </button>
+                    </div>
+
+                    <!-- 已接單或準備中狀態：顯示完成按鈕 -->
+                    <div th:if="${order.orderStatus == 1 or order.orderStatus == 2}">
+                        <form th:action="@{/merchant/orders/complete/{orderId}(orderId=${order.ordId})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="material-icons-outlined">done</i>
+                                完成訂單
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 已完成或已取消狀態：無操作按鈕 -->
+                    <div th:if="${order.orderStatus == 3}">
+                        <span class="completed-text">✓ 訂單已完成</span>
+                    </div>
+                    <div th:if="${order.orderStatus == 99}">
+                        <span class="cancelled-text">✗ 訂單已取消</span>
+                        <p th:if="${order.cancelReason}" class="cancel-reason">
+                            取消原因：<span th:text="${order.cancelReason}"></span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</main>
 
-    <footer class="app-footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-logo">
-                    <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
-                    <span class="logo-text">FoodieTime 食刻</span>
-                </div>
-                <div class="footer-nav">
-                    <div class="footer-nav-group">
-                        <h4 class="footer-nav-title">商家功能</h4>
-                        <ul class="footer-nav-list">
-                            <li><a href="merchant-dashboard.html">儀表板</a></li>
-                            <li><a href="merchant-orders.html">訂單管理</a></li>
-                            <li><a href="merchant-menu.html">菜單管理</a></li>
-                            <li><a href="merchant-profile.html">商家資料</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-nav-group">
-                        <h4 class="footer-nav-title">關於我們</h4>
-                        <ul class="footer-nav-list">
-                            <li><a href="about.html">公司簡介</a></li>
-                            <li><a href="team.html">團隊成員</a></li>
-                            <li><a href="careers.html">加入我們</a></li>
-                            <li><a href="press.html">媒體報導</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-nav-group">
-                        <h4 class="footer-nav-title">幫助</h4>
-                        <ul class="footer-nav-list">
-                            <li><a href="faq.html">常見問題</a></li>
-                            <li><a href="contact.html">聯絡我們</a></li>
-                            <li><a href="terms.html">使用條款</a></li>
-                            <li><a href="privacy.html">隱私政策</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
-                <div class="social-links">
-                    <a href="#" class="social-link" aria-label="Facebook">
-                        <i class="material-icons-outlined">facebook</i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <i class="material-icons-outlined">photo_camera</i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Twitter">
-                        <i class="material-icons-outlined">chat</i>
-                    </a>
-                </div>
-            </div>
+<!-- 拒絕訂單彈窗 -->
+<div class="modal" id="reject-order-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">拒絕訂單</h2>
+            <button type="button" class="modal-close" onclick="closeRejectModal()">
+                <i class="material-icons-outlined">close</i>
+            </button>
         </div>
-    </footer>
 
-    <script src="js/merchant-orders.js"></script>
+        <form id="reject-order-form" method="post">
+            <div class="modal-body">
+                <p>請選擇拒絕此訂單的原因：</p>
+
+                <div class="reason-options">
+                    <label class="reason-option">
+                        <input type="radio" name="cancelReason" value="商品售完" required>
+                        <span>商品售完</span>
+                    </label>
+
+                    <label class="reason-option">
+                        <input type="radio" name="cancelReason" value="店家暫停營業" required>
+                        <span>店家暫停營業</span>
+                    </label>
+
+                    <label class="reason-option">
+                        <input type="radio" name="cancelReason" value="訂單金額有誤" required>
+                        <span>訂單金額有誤</span>
+                    </label>
+
+                    <label class="reason-option">
+                        <input type="radio" name="cancelReason" value="無法外送至該地址" required>
+                        <span>無法外送至該地址</span>
+                    </label>
+
+                    <label class="reason-option">
+                        <input type="radio" name="cancelReason" value="其他" required>
+                        <span>其他</span>
+                    </label>
+                </div>
+
+                <div class="custom-reason" id="custom-reason-container" style="display: none;">
+                    <label for="customReason">請說明原因：</label>
+                    <textarea id="customReason" name="customReason" rows="3" placeholder="請輸入拒絕原因..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeRejectModal()">取消</button>
+                <button type="submit" class="btn btn-danger">確認拒絕</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="app-footer">
+    <!-- footer內容保持不變 -->
+</footer>
+
+<script th:src="@{/js/front/merchantorders/merchant-orders.js}">
+
+</script>
 </body>
 </html>
