@@ -310,15 +310,10 @@ button {
 
 /* ========== 餐廳卡片 ========== */
 .restaurant-card {
-  background-color: var(--bg-light);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-1);
-  overflow: hidden;
-  border: 1px solid var(--neutral-200);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-  animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
-  display: flex;
-  flex-direction: column;
+    height: auto !important;
+    min-height: 300px; /* 視情況調整 */
+    display: flex;
+    flex-direction: column;
 }
 
 .restaurant-card:hover {
@@ -327,16 +322,16 @@ button {
 }
 
 .restaurant-image-container {
-  position: relative;
-  height: 180px;
+    height: 200px;
   overflow: hidden;
+  border-bottom: 1px solid var(--neutral-200);
 }
 
 .restaurant-image {
   width: 100%;
-  height: 100%;
+  height: 200px; /* 或 180px，自行調整 */
   object-fit: cover;
-  transition: transform var(--transition-normal);
+  display: block;
 }
 
 .restaurant-card:hover .restaurant-image {
@@ -385,10 +380,50 @@ button {
 }
 
 .restaurant-details {
-  padding: var(--space-3);
-  flex: 1;
+    padding: 16px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.restaurant-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+
+.cuisine-tag {
+    background-color: #ffeadb;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.product-block,
+.restaurant-info {
+  margin-top: 8px;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.product-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.restaurant-info .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
 }
 
 .restaurant-name {
@@ -776,7 +811,12 @@ button {
   }
 
   .restaurant-card {
-    border-radius: var(--radius-md);
+     width: 100%;
+    max-width: 600px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    overflow: visible;  /* 重要：不要限制內容顯示 */
   }
 
   .restaurant-actions-bottom {
@@ -831,7 +871,13 @@ button {
   }
 
   .restaurant-card {
-    border-color: #000;
+    display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  overflow: hidden; /* 可選，防止內容溢出 */
+  height: auto;
   }
 
   input,
@@ -858,4 +904,53 @@ button {
 
 .modal-container::-webkit-scrollbar-thumb:hover {
   background: var(--neutral-400);
+}
+
+.category-filter {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.category-filter select {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+.product-block-row {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.product-img-col {
+  flex: 0 0 80px;
+}
+
+.product-img-col img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-info-col {
+  flex: 1;
+  padding-left: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e74c3c;
+  font-size: 24px;
 }

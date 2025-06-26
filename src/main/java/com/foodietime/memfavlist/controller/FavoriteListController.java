@@ -3,6 +3,8 @@ package com.foodietime.memfavlist.controller;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.memfavlist.model.FavoriteListService;
 import com.foodietime.memfavlist.model.FavoriteListVO;
+import com.foodietime.product.model.ProductVO;
+import com.foodietime.store.model.StoreVO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -13,7 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +33,39 @@ public class FavoriteListController {
 	public FavoriteListController(FavoriteListService favoriteListService) {
 		this.favoriteListService = favoriteListService;
 	}
+	
 	@GetMapping("/member-favorites")
-	public String index() {
-		return "/front/favoritelist/member-favorites";
-  }
+	public String showMemberFavorites(HttpSession session, Model model) {
+	    MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+	    if (member == null) {
+	        return "redirect:/category/login";
+	    }
+
+	    List<FavoriteListVO> favoriteList = favoriteListService.getFavoritesByMemId(member.getMemId());
+	    
+	    // 將商品依店家分組
+	    Map<StoreVO, List<ProductVO>> groupedFavorites = new LinkedHashMap<>();
+	    for (FavoriteListVO fav : favoriteList) {
+	        StoreVO store = fav.getProduct().getStore();
+	        groupedFavorites.computeIfAbsent(store, k -> new ArrayList<>()).add(fav.getProduct());
+	    }
+
+	    // 圖片對應表
+	    Map<Integer, String> productImageMap = new HashMap<>();
+	    for (FavoriteListVO fav : favoriteList) {
+	        byte[] photo = fav.getProduct().getProdPhoto();
+	        if (photo != null && photo.length > 0) {
+	            String base64 = Base64.getEncoder().encodeToString(photo);
+	            productImageMap.put(fav.getProduct().getProdId(), "data:image/jpeg;base64," + base64);
+	        } else {
+	            productImageMap.put(fav.getProduct().getProdId(), "/images/restaurant/placeholder.svg");
+	        }
+	    }
+
+	    model.addAttribute("groupedFavorites", groupedFavorites);
+	    model.addAttribute("productImageMap", productImageMap);
+	    return "/front/favoritelist/member-favorites";
+	}
 	
 	// 收藏餐廳 API，從 JS 發送 prodId，session 取 memId
 	@PostMapping("/add")

@@ -8,6 +8,7 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteListVO, Fa
 
 	// 查詢某會員所有收藏
     List<FavoriteListVO> findAllByMemId(Integer memId);
+    
 //	//根據複合主鍵查詢
 //	FavoriteListVO findByMemIdAndProdId(Integer memId, Integer prodId);
 //
