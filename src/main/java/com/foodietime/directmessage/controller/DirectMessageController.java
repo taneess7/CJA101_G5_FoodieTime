@@ -1,6 +1,5 @@
 package com.foodietime.directmessage.controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.foodietime.directmessage.model.DirectMessageDTO;
 import com.foodietime.directmessage.model.DirectMessageService;
 import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.member.model.MemberVO;
@@ -51,13 +49,4 @@ public class DirectMessageController {
         return "front/directmessage/send_success"; // 對應 Thymeleaf 頁面
     }
 
-    @GetMapping("/history")
-    public String viewHistory(HttpSession session, Model model) {
-        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-        if (member == null) return "redirect:front/member/login";
-        
-        List<DirectMessageDTO> messages = messageService.getMessagesDtoByMemberId(member.getMemId());
-        model.addAttribute("messages", messages);
-        return "front/directmessage/history"; // ⬅️ templates/front/directmessage/history.html
-    }
 }
