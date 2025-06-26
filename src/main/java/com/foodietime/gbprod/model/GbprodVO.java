@@ -104,4 +104,13 @@ public class GbprodVO implements Serializable {
     	return "/gb/gbproduct/image/" + gbProdId;
     }
   
+    @Override
+    public String toString() {
+        return "GbprodVO{" +
+                "gbProdId=" + gbProdId +
+                ", gbProdName='" + gbProdName + '\'' +
+                ", gbprodcgVO=" + (gbprodcgVO != null ? gbprodcgVO.getGbCateId() : null) +
+                // 其它欄位可視需要加
+                '}';
+    }
 }

@@ -869,12 +869,15 @@ select:disabled {
 <!-- 上傳商品 -->
     <section class="content-panel" id="tab-product">
       <h1 class="section-title">上傳商品</h1>
+      <div class="form-group">
+        <label for="productType">商品類型</label>
+        <select class="form-input" id="productType">
+          <option value="normal">一般商品</option>
+          <option value="group">團購商品</option>
+        </select>
+      </div>
       <form id="productForm">
-        <!-- <div class="form-group">
-          <label>商品名稱</label>
-          <input type="text" class="form-input" name="productName" placeholder="輸入商品名稱" required />
-        </div> -->
-        <div class="form-group">
+        <div class="form-group" id="normalProductUpload">
           <label>商品圖片</label>
           <div class="image-upload-section" id="productImageUpload">
             <i class="material-icons-outlined upload-icon">cloud_upload</i>
@@ -883,17 +886,27 @@ select:disabled {
             <img id="productImagePreview" class="image-preview" alt="預覽圖片">
           </div>
         </div>
-        <button type="submit" class="btn">儲存商品</button>
+        <button type="submit" class="btn" id="saveNormalProduct">儲存商品</button>
       </form>
+      <button type="button" class="btn" id="addGroupProductBtn" style="display:none;margin-top:20px;">新增團購商品</button>
+      <iframe id="groupProdAddFrame" src="/store/group-prod-add" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
 
 
 <!-- 查看商品 -->
     <section class="content-panel" id="tab-product-view">
       <h2>已上傳商品</h2>
-      <div class="product-list" id="productList">
-        <!-- 商品將由 JS 動態插入 -->
+      <div class="form-group">
+        <label for="productViewType">商品類型</label>
+        <select class="form-input" id="productViewType">
+          <option value="normal">一般商品</option>
+          <option value="group">團購商品</option>
+        </select>
       </div>
+      <div id="normalProductList" class="product-list">
+        <!-- 一般商品將由 JS 動態插入 -->
+      </div>
+      <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
     
 <!-- 查看優惠券 -->    
@@ -988,6 +1001,34 @@ select:disabled {
       products[index].name = nameInput.value;
       alert('商品已儲存！');
     }
+
+    document.getElementById('productType').addEventListener('change', function() {
+      if (this.value === 'group') {
+        document.getElementById('normalProductUpload').style.display = 'none';
+        document.getElementById('saveNormalProduct').style.display = 'none';
+        document.getElementById('addGroupProductBtn').style.display = 'none';
+        document.getElementById('groupProdAddFrame').style.display = 'block';
+      } else {
+        document.getElementById('normalProductUpload').style.display = '';
+        document.getElementById('saveNormalProduct').style.display = '';
+        document.getElementById('addGroupProductBtn').style.display = 'none';
+        document.getElementById('groupProdAddFrame').style.display = 'none';
+      }
+    });
+
+    // 商品查詢分頁切換
+    document.getElementById('productViewType').addEventListener('change', function() {
+      if (this.value === 'group') {
+        document.getElementById('normalProductList').style.display = 'none';
+        document.getElementById('groupProductListFrame').style.display = 'block';
+      } else {
+        document.getElementById('normalProductList').style.display = '';
+        document.getElementById('groupProductListFrame').style.display = 'none';
+      }
+    });
+    // 預設顯示一般商品
+    document.getElementById('normalProductList').style.display = '';
+    document.getElementById('groupProductListFrame').style.display = 'none';
   </script>
   
   

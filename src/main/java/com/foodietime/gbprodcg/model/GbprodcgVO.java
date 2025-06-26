@@ -33,4 +33,12 @@ public class GbprodcgVO implements Serializable {
     // 一對多關聯：一個分類對多個商品
     @OneToMany(mappedBy = "gbprodcgVO", cascade = CascadeType.ALL)
     private List<GbprodVO> gbprods = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "GbprodcgVO{" +
+                "gbCateId=" + gbCateId +
+                ", gbCateName='" + gbCateName + '\'' +
+                '}';
+    }
 }
