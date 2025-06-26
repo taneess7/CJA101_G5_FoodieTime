@@ -16,11 +16,7 @@
     <img src="https://cdn-icons-png.flaticon.com/512/414/414927.png" alt="cloud"
         class="absolute bottom-10 right-10 w-20 opacity-20">
 
-    <!-- Toast 提示 -->
-    <div id="toast"
-        class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg text-center hidden z-50">
-        ✅ 感謝您的留言！
-    </div>
+
 
     <div
         class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-xl transition-transform duration-300 transform hover:scale-[1.01]">
@@ -31,7 +27,7 @@
 
         <h2 class="text-4xl font-extrabold text-center text-orange-700 mb-8 tracking-wide">聯絡我們</h2>
 
-        <form th:action="@{/front/directmessage/send}" th:object="${message}" method="post" class="space-y-6" onsubmit="return showToast()">
+        <form th:action="@{/front/directmessage/send}" th:object="${message}" method="post" class="space-y-6">
             
             <div>
                 <label class="block mb-1 font-semibold text-gray-700">留言內容</label>
@@ -49,17 +45,7 @@
         </form>
     </div>
 
-    <script>
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.remove('hidden');
-
-            // 表單會立即送出，Toast 會顯示但頁面很快會 redirect，實務上通常改成 onSuccess 回傳後才 showToast
-            // 這邊如果要保留，建議移除 onsubmit，改成 server 端 redirect with flash attribute 告知成功，再顯示 toast
-            // 現階段暫時直接 return true 確保表單能正常送出
-            return true;
-        }
-    </script>
+    
 
 </body>
 
