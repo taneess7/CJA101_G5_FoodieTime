@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>付款失敗 - 團購樂</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .failed-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .failed-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: white;
+            font-size: 2.5rem;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .failed-title {
+            color: #dc3545;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .failed-message {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .error-details {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            border: 1px solid #ffebee;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .error-details h5 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .suggestions {
+            color: #495057;
+            font-size: 0.95rem;
+        }
+        
+        .suggestions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .suggestions li {
+            margin-bottom: 5px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid #6c757d;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #007bff;
+            color: #007bff;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="failed-container">
+        <div class="failed-icon">
+            <i class="bi bi-x-lg"></i>
+        </div>
+        
+        <h1 class="failed-title">付款失敗</h1>
+        <p class="failed-message">
+            很抱歉，您的付款未能成功完成。請檢查您的付款資訊或稍後再試。
+        </p>
+        
+        <div class="error-details">
+            <h5><i class="bi bi-exclamation-triangle me-2"></i>錯誤詳情</h5>
+            <div class="error-message" id="errorMessage">
+                付款處理過程中發生錯誤
+            </div>
+            
+            <div class="suggestions">
+                <strong>建議解決方案：</strong>
+                <ul>
+                    <li>確認您的 LINE Pay 帳戶餘額充足</li>
+                    <li>檢查網路連線是否穩定</li>
+                    <li>確認付款資訊是否正確</li>
+                    <li>稍後重新嘗試付款</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="#" class="btn btn-danger" onclick="retryPayment()">
+                <i class="bi bi-arrow-clockwise me-2"></i>
+                重新付款
+            </a>
+            <a href="#" class="btn btn-outline-primary" onclick="goBackToProduct()">
+                <i class="bi bi-arrow-left me-2"></i>
+                返回商品頁面
+            </a>
+            <a href="/gb/gbindex" class="btn btn-outline-secondary">
+                <i class="bi bi-house me-2"></i>
+                返回首頁
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 從 URL 參數獲取錯誤訊息
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            
+            if (error) {
+                document.getElementById('errorMessage').textContent = decodeURIComponent(error);
+            }
+        });
+        
+        function retryPayment() {
+            // 檢查是否有待處理的訂單
+            const orderData = sessionStorage.getItem('pendingOrder');
+            if (orderData) {
+                window.location.href = '/gb/payment';
+            } else {
+                alert('找不到待處理的訂單，請重新選擇商品');
+                window.location.href = '/gb/gbindex';
+            }
+        }
+        
+        function goBackToProduct() {
+            // 從 sessionStorage 獲取商品 ID
+            const orderData = sessionStorage.getItem('pendingOrder');
+            if (orderData) {
+                const orderInfo = JSON.parse(orderData);
+                if (orderInfo.gbId) {
+                    window.location.href = `/gb/detail/${orderInfo.gbId}`;
+                    return;
+                }
+            }
+            
+            // 如果沒有訂單資訊，返回首頁
+            window.location.href = '/gb/gbindex';
+        }
+    </script>
+</body>
+</html> 

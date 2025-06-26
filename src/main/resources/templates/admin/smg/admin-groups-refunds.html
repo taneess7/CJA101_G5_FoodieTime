@@ -341,11 +341,11 @@
                                             <th>
                                                 <input type="checkbox" class="form-check-input" id="selectAll">
                                             </th>
-                                            <th>退款編號</th>
-                                            <th>團購資訊</th>
+                                            <th>團購訂單編號</th>
+                                            <th>團購標題</th>
                                             <th>申請會員</th>
                                             <th>申請金額</th>
-                                            <th>退款狀態</th>
+                                            <th>退款金額</th>
                                             <th>退款原因</th>
                                             <th>申請時間</th>
                                             <th>處理時間</th>
@@ -354,26 +354,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr th:each="order : ${groupOrders}">
                                             <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R001"></td>
-                                            <td class="fw-bold">R001</td>
+                                            <td class="fw-bold" th:text="${order.gbOrId}">R001</td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
                                                     <div>
-                                                        <div class="fw-bold">日本進口美妝團購</div>
-                                                        <small class="text-muted">G001 王美麗小姐</small>
+                                                        <div class="fw-bold" th:text="${order.groupBuyingCase.gbTitle}">日本進口美妝團購</div>
+                                                        <small class="text-muted" th:text="${order.groupBuyingCase.member.memName}">G001 王美麗小姐</small>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div>王小明</div>
-                                                <small class="text-muted">M001 wang@example.com</small>
+                                                <div th:text="${order.parName}">王小明</div>                                        
                                             </td>
-                                            <td class="fw-bold">NT$ 897</td>
-                                            <td class="fw-bold text-warning">NT$ 897</td>
+                                            <td class="fw-bold" th:text="'NT$ ' + ${order.amount}">NT$ 897</td>
+                                            <td class="fw-bold text-warning" th:text="'NT$ ' + ${order.amount}">NT$ 897</td>
                                             <td><span class="badge bg-info">商品瑕疵</span></td>
-                                            <td>2024-01-16 10:30</td>
+                                            <td th:text="${#temporals.format(order.updateTime, 'yyyy-MM-dd HH:mm')}">2024-01-16 10:30</td>
                                             <td class="text-muted">-</td>
                                             <td><span class="badge bg-warning">待處理</span></td>
                                             <td>
@@ -388,108 +387,7 @@
                                                 </button>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R002"></td>
-                                            <td class="fw-bold">R002</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">韓國美妝保養團購</div>
-                                                        <small class="text-muted">G002 李美華女士</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>李大華</div>
-                                                <small class="text-muted">M002 lee@example.com</small>
-                                            </td>
-                                            <td class="fw-bold">NT$ 599</td>
-                                            <td class="fw-bold text-warning">NT$ 300</td>
-                                            <td><span class="badge bg-secondary">客戶要求</span></td>
-                                            <td>2024-01-15 14:20</td>
-                                            <td>2024-01-16 09:15</td>
-                                            <td><span class="badge bg-info">處理中</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R002')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-success me-1" onclick="approveRefund('R002')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="rejectRefund('R002')">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R003"></td>
-                                            <td class="fw-bold">R003</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">3C電子團購</div>
-                                                        <small class="text-muted">G003 數位科技小舖</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>張小華</div>
-                                                <small class="text-muted">M003 zhang@example.com</small>
-                                            </td>
-                                            <td class="fw-bold">NT$ 2,598</td>
-                                            <td class="fw-bold text-success">NT$ 2,598</td>
-                                            <td><span class="badge bg-warning">配送問題</span></td>
-                                            <td>2024-01-14 11:45</td>
-                                            <td>2024-01-15 16:30</td>
-                                            <td><span class="badge bg-success">已完成</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R003')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info me-1" onclick="printRefund('R003')">
-                                                    <i class="fas fa-print"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-secondary" onclick="resendRefund('R003')">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input refund-checkbox" data-refund-id="R004"></td>
-                                            <td class="fw-bold">R004</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">服飾配件團購</div>
-                                                        <small class="text-muted">G004 時尚精品店</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>陳小明</div>
-                                                <small class="text-muted">M004 chen@example.com</small>
-                                            </td>
-                                            <td class="fw-bold">NT$ 1,995</td>
-                                            <td class="fw-bold text-danger">NT$ 1,995</td>
-                                            <td><span class="badge bg-danger">廠家取消</span></td>
-                                            <td>2024-01-13 16:20</td>
-                                            <td>2024-01-14 10:45</td>
-                                            <td><span class="badge bg-danger">失敗</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R004')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="retryRefund('R004')">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info" onclick="contactMember('R004')">
-                                                    <i class="fas fa-phone"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>

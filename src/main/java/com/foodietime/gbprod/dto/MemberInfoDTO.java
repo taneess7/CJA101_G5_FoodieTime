@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class MemberInfoDTO {
+    private Integer memId;
     private String memName;
     private String memPhone;
     private String memCity;
@@ -14,6 +15,7 @@ public class MemberInfoDTO {
     private String memAddress;
 
     public MemberInfoDTO(MemberVO member) {
+        this.memId = member.getMemId();
         this.memName = member.getMemName();
         this.memPhone = member.getMemPhone();
         this.memCity = member.getMemCity();

@@ -52,7 +52,12 @@ public class GroupOrdersService {
         return groupOrdersRepository.findById(gbOrId);
     }
 
- // 更新訂單狀態（包括訂單狀態、付款狀態和出貨狀態）
+    // 新增或修改團購訂單
+    public GroupOrdersVO save(GroupOrdersVO groupOrdersVO) {
+        return groupOrdersRepository.save(groupOrdersVO);
+    }
+
+    // 更新訂單狀態（包括訂單狀態、付款狀態和出貨狀態）
     public GroupOrdersVO updateOrderField(Integer gbOrId, String field, Byte newStatus) {
         // 查找訂單
         Optional<GroupOrdersVO> orderOpt = groupOrdersRepository.findById(gbOrId);

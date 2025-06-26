@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE Pay 付款 - FoodieTime</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .payment-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        
+        .payment-header {
+            background: linear-gradient(45deg, #00C851, #007E33);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .payment-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .payment-body {
+            padding: 40px;
+        }
+        
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .total-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00C851;
+            text-align: center;
+            padding: 20px 0;
+            border-top: 2px solid #00C851;
+            margin-top: 20px;
+        }
+        
+        .linepay-button {
+            background: linear-gradient(45deg, #00C851, #007E33);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 15px 40px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,200,81,0.3);
+        }
+        
+        .linepay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,200,81,0.4);
+            background: linear-gradient(45deg, #007E33, #00C851);
+        }
+        
+        .linepay-button:disabled {
+            background: #6c757d;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner-border {
+            color: #00C851;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .back-button {
+            background: #6c757d;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 10px 25px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .recipient-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .recipient-info h4 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .recipient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 16px;
+        }
+        
+        .recipient-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recipient-item span:first-child {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .recipient-item span:last-child {
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .edit-info-button {
+            background: linear-gradient(45deg, #00C851, #007E33);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,200,81,0.3);
+        }
+        
+        .edit-info-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,200,81,0.4);
+            background: linear-gradient(45deg, #007E33, #00C851);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h2><i class="fab fa-line"></i> LINE Pay 付款</h2>
+                <p class="mb-0">安全、快速的線上付款</p>
+            </div>
+            
+            <div class="security-notice" id="securityNotice" style="display: none;">
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>安全提醒：</strong> 此頁面僅供正常購物流程使用，請勿直接訪問。如有問題，將自動重定向到團購首頁。
+                </div>
+            </div>
+            
+            <div class="payment-body">
+                <div class="order-summary">
+                    <h4 class="mb-3"><i class="fas fa-shopping-cart"></i> 訂單摘要</h4>
+                    <div class="order-item">
+                        <span>商品名稱：</span>
+                        <span id="productName">載入中...</span>
+                    </div>
+                    <div class="order-item">
+                        <span>購買數量：</span>
+                        <span id="quantity">載入中...</span>
+                    </div>
+                    <div class="order-item">
+                        <span>單價：</span>
+                        <span id="unitPrice">載入中...</span>
+                    </div>
+                    <div class="total-amount">
+                        總金額：<span id="totalAmount">載入中...</span>
+                    </div>
+                </div>
+                
+                <div class="recipient-info">
+                    <h4 class="mb-3"><i class="fas fa-user"></i> 收件人資料</h4>
+                    <div class="recipient-item">
+                        <span>收件人：</span>
+                        <span id="recipientName">載入中...</span>
+                    </div>
+                    <div class="recipient-item">
+                        <span>聯絡電話：</span>
+                        <span id="recipientPhone">載入中...</span>
+                    </div>
+                    <div class="recipient-item">
+                        <span>收件地址：</span>
+                        <span id="recipientAddress">載入中...</span>
+                    </div>
+                    <div class="text-center mt-3">
+                        <p class="text-muted mb-2" style="font-size: 14px;">
+                            <i class="fas fa-info-circle"></i> 如果資料不正確，請先修改會員資料
+                        </p>
+                        <button class="edit-info-button" onclick="editMemberInfo()">
+                            <i class="fas fa-edit"></i> 修改資料
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">處理中...</span>
+                    </div>
+                    <p class="mt-2">正在處理付款請求...</p>
+                </div>
+                
+                <button class="linepay-button" id="linepayButton" onclick="processPayment()">
+                    <i class="fab fa-line"></i> 使用 LINE Pay 付款
+                </button>
+                
+                <div class="text-center">
+                    <button class="back-button" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i> 返回商品頁面
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 從 sessionStorage 取得訂單資訊
+        let orderInfo = null;
+        
+        window.onload = function() {
+            try {
+                const orderData = sessionStorage.getItem('groupBuyOrder');
+                if (!orderData) {
+                    showSecurityNotice('找不到訂單資訊，請重新選擇商品');
+                    return;
+                }
+                
+                orderInfo = JSON.parse(orderData);
+                
+                // 檢查訂單資料的完整性
+                if (!validateOrderInfo(orderInfo)) {
+                    showSecurityNotice('訂單資訊不完整或已過期，請重新選擇商品');
+                    clearOrderData();
+                    return;
+                }
+                
+                // 檢查訂單是否過期（超過30分鐘）
+                if (isOrderExpired(orderInfo)) {
+                    showSecurityNotice('訂單已過期，請重新選擇商品');
+                    clearOrderData();
+                    return;
+                }
+                
+                displayOrderInfo();
+                
+            } catch (error) {
+                console.error('解析訂單資訊時發生錯誤:', error);
+                showSecurityNotice('訂單資訊格式錯誤，請重新選擇商品');
+                clearOrderData();
+            }
+        };
+        
+        function validateOrderInfo(orderInfo) {
+            console.log('開始驗證訂單資訊:', orderInfo);
+            
+            // 檢查必要欄位是否存在
+            const requiredFields = [
+                'memberId', 'groupBuyingCaseId', 'quantity', 'totalAmount', 
+                'productName'
+            ];
+            
+            for (const field of requiredFields) {
+                if (!orderInfo[field]) {
+                    console.error(`缺少必要欄位: ${field}, 值:`, orderInfo[field]);
+                    return false;
+                }
+            }
+            
+            // 檢查數值欄位的有效性
+            if (orderInfo.quantity <= 0 || orderInfo.totalAmount <= 0) {
+                console.error('數量或金額無效:', { quantity: orderInfo.quantity, totalAmount: orderInfo.totalAmount });
+                return false;
+            }
+            
+            // 檢查收件人資料（允許預設值）
+            const recipientFields = ['recipientName', 'recipientPhone', 'recipientAddress'];
+            for (const field of recipientFields) {
+                if (!orderInfo[field] || orderInfo[field] === '未設定') {
+                    console.warn(`收件人資料 ${field} 使用預設值:`, orderInfo[field]);
+                }
+            }
+            
+            console.log('訂單資訊驗證通過');
+            return true;
+        }
+        
+        function isOrderExpired(orderInfo) {
+            // 檢查訂單是否超過30分鐘
+            const orderTimestamp = orderInfo.timestamp || 0;
+            const currentTime = Date.now();
+            const thirtyMinutes = 30 * 60 * 1000; // 30分鐘的毫秒數
+            
+            return (currentTime - orderTimestamp) > thirtyMinutes;
+        }
+        
+        function clearOrderData() {
+            // 清除 sessionStorage 中的訂單資料
+            sessionStorage.removeItem('groupBuyOrder');
+            // 禁用付款按鈕
+            document.getElementById('linepayButton').disabled = true;
+            // 隱藏收件人資料區域
+            document.querySelector('.recipient-info').style.display = 'none';
+        }
+        
+        function displayOrderInfo() {
+            if (!orderInfo) return;
+            
+            document.getElementById('productName').textContent = orderInfo.productName || '未知商品';
+            document.getElementById('quantity').textContent = orderInfo.quantity + ' 件';
+            document.getElementById('unitPrice').textContent = 'NT$ ' + orderInfo.unitPrice.toLocaleString();
+            document.getElementById('totalAmount').textContent = 'NT$ ' + orderInfo.totalAmount.toLocaleString();
+            
+            // 顯示收件人資料
+            document.getElementById('recipientName').textContent = orderInfo.recipientName || '未設定';
+            document.getElementById('recipientPhone').textContent = orderInfo.recipientPhone || '未設定';
+            document.getElementById('recipientAddress').textContent = orderInfo.recipientAddress || '未設定';
+        }
+        
+        function processPayment() {
+            if (!orderInfo) {
+                showError('訂單資訊不完整');
+                return;
+            }
+            
+            // 顯示載入狀態
+            document.getElementById('linepayButton').disabled = true;
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // 建立 LINE Pay 請求資料
+            const linepayRequest = createLinePayRequest();
+            
+            // 發送付款請求
+            fetch('/gb/api/linepay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(linepayRequest)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('LINE Pay 回應:', data);
+                
+                if (data.status === 'success' && data.data) {
+                    // 付款請求成功，跳轉到 LINE Pay 付款頁面
+                    window.location.href = data.data;
+                } else {
+                    // 付款請求失敗
+                    showError(data.message || '付款請求失敗，請稍後再試');
+                    document.getElementById('linepayButton').disabled = false;
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('付款請求發生錯誤:', error);
+                showError('網路連線錯誤，請檢查網路連線後重試');
+                document.getElementById('linepayButton').disabled = false;
+                document.getElementById('loadingSpinner').style.display = 'none';
+            });
+        }
+        
+        function createLinePayRequest() {
+            // 調試：檢查 orderInfo 物件
+            console.log('開始建立 LINE Pay 請求，orderInfo 物件:', orderInfo);
+            console.log('orderInfo.memberId:', orderInfo.memberId);
+            console.log('orderInfo.groupBuyingCaseId:', orderInfo.groupBuyingCaseId);
+            console.log('orderInfo.recipientName:', orderInfo.recipientName);
+            console.log('orderInfo.recipientPhone:', orderInfo.recipientPhone);
+            console.log('orderInfo.recipientAddress:', orderInfo.recipientAddress);
+            
+            // 檢查必要欄位是否存在
+            if (!orderInfo.memberId) {
+                throw new Error('缺少 memberId');
+            }
+            if (!orderInfo.groupBuyingCaseId) {
+                throw new Error('缺少 groupBuyingCaseId');
+            }
+            if (!orderInfo.quantity) {
+                throw new Error('缺少 quantity');
+            }
+            if (!orderInfo.totalAmount) {
+                throw new Error('缺少 totalAmount');
+            }
+            
+            // 收件人資料檢查（允許預設值）
+            const recipientName = orderInfo.recipientName || '未設定';
+            const recipientPhone = orderInfo.recipientPhone || '未設定';
+            const recipientAddress = orderInfo.recipientAddress || '未設定';
+            
+            console.log('處理後的收件人資料:', {
+                recipientName,
+                recipientPhone,
+                recipientAddress
+            });
+            
+            // 產生唯一的訂單編號
+            const orderId = 'GB' + Date.now() + Math.random().toString(36).substr(2, 9);
+            
+            // LINE Pay 請求格式
+            const linepayBody = {
+                "amount": orderInfo.totalAmount,
+                "currency": "TWD",
+                "orderId": orderId,
+                "packages": [
+                    {
+                        "id": "package-1",
+                        "amount": orderInfo.totalAmount,
+                        "products": [
+                            {
+                                "name": orderInfo.productName,
+                                "quantity": orderInfo.quantity,
+                                "price": orderInfo.unitPrice
+                            }
+                        ]
+                    }
+                ],
+                "redirectUrls": {
+                    "confirmUrl": window.location.origin + "/gb/api/confirmpayment/" + orderId,
+                    "cancelUrl": window.location.origin + "/gb/payment-failed?error=付款已取消"
+                }
+            };
+            
+            // 訂單資訊（用於後端處理）
+            const linepayOrder = {
+                orderId: orderId,
+                memberId: orderInfo.memberId,
+                groupBuyingCaseId: orderInfo.groupBuyingCaseId,
+                quantity: orderInfo.quantity,
+                totalAmount: orderInfo.totalAmount,
+                recipientName: recipientName,
+                recipientPhone: recipientPhone,
+                recipientAddress: recipientAddress
+            };
+            
+            console.log('發送的 linepayRequest:', { linepayBody, linepayOrder });
+            
+            return {
+                linepayBody: linepayBody,
+                linepayOrder: linepayOrder
+            };
+        }
+        
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // 3秒後自動重定向到團購首頁
+            setTimeout(() => {
+                window.location.href = '/gb/gbindex';
+            }, 3000);
+        }
+        
+        function goBack() {
+            // 清除 sessionStorage 中的訂單資訊
+            sessionStorage.removeItem('groupBuyOrder');
+            // 返回商品頁面
+            window.history.back();
+        }
+        
+        function editMemberInfo() {
+            // 跳轉到會員中心編輯資料頁面
+            window.location.href = '/front/member/edit_profile';
+        }
+        
+        function showSecurityNotice(message) {
+            // 顯示安全提示
+            document.getElementById('securityNotice').style.display = 'block';
+            showError(message);
+        }
+    </script>
+</body>
+</html> 
