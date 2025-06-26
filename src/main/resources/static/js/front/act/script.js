@@ -21,6 +21,7 @@ function fetchAllActs() {
 		title.style.fontWeight = "bold";
 		title.style.fontSize = "32px";
 		title.style.marginBottom = "24px";
+		title.style.color = "gray";
 
 		// 插入 h1 到 container 前面（前提是 container 外層要有父元素）
 		const parent = container.parentElement;
@@ -39,7 +40,10 @@ function fetchAllActs() {
 	.then(data => {
 		console.log(data); //前端F12 console可看到array結果
 		console.log("收到的活動資料：", data);
-		data.forEach(act => { //前端渲染，產生一個div，加上class，加上內文，加上圖片
+		data.forEach(act => { //前端渲染，產生一個div，加上class，加上內文，加上圖片，按鈕設定
+			
+			
+			
 			const discountOffText = act.actDiscount === 0
 			    ? `${act.actDiscValue}折`
 			    : `折 ${act.actDiscValue} 元`;
@@ -52,7 +56,7 @@ function fetchAllActs() {
 						<div class="img-wrapper">
 			        		<img src="${contextPath}api/actpic/${act.actId}" alt="活動圖" style="width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
 					    </div>   
-							 <div>${act.actName}</div>
+							 <div style="color: white;">${act.actName}</div>
 						
 					</div>
 			    </div>
@@ -61,16 +65,50 @@ function fetchAllActs() {
 					
 			        <div>					
 					    <div class="price" style="font-size: 24px; color:green;>${discountOffText}"</div>
-			            <div class="campaign-tag" >限時活動</div>
+			            <div class="campaign-tag" >限時活動</div>						
+						<span class="join-message" style="margin-top: 8px; color: #4CAF50; font-size: 18px;">
+						</span>
 						<div style="font-size: 24px; color: gray;">活動內容：${act.actContent}</div>
 			            <div style="font-size: 24px; color: gray;">有效期限：${formatDateTime(act.actEndTime)}</div>
 			        </div>
+					
+					<!--按鈕區塊-->
 					<div class="button-wrapper">
-			        <button>領取</button>
+						<button class="join-btn"
+						  style="background-color: red; color: white; width: 120px;padding: 10px 20px;
+						         font-size: 15px; border: none; border-radius: 12px; cursor: pointer;">
+						  參加
+						</button>
+						
 					</div>
 			    </div>
 			`;
-					            container.appendChild(actCard);			
+					            container.appendChild(actCard);		
+								/**設定按鈕 -> 可參加活動*/
+								// 取得元素
+								const joinButton = actCard.querySelector(".join-btn");
+								const joinMessage = actCard.querySelector(".join-message");
+
+								// 建立狀態 flag：是否已參加
+								let hasJoined = false;
+
+								// 綁定點擊事件（toggle 狀態）
+								joinButton.addEventListener("click", function () {
+								  hasJoined = !hasJoined; // 切換布林值
+
+								  if (hasJoined) {
+								    // ✅ 參加狀態
+								    joinButton.style.backgroundColor = "#4CAF50";
+								    joinButton.textContent = "已參加";
+								    joinMessage.textContent = "您已成功參加活動！";
+								  } else {
+								    // ❎ 取消參加狀態
+								    joinButton.style.backgroundColor = "red";
+								    joinButton.textContent = "參加";
+								    joinMessage.textContent = ""; // 清空提示
+								  }
+								});
+												
 		});
 	})
 	

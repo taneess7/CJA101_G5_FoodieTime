@@ -19,7 +19,7 @@
 <script	src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>              <!-- ●●js  for jquery datatables 用 -->
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.jqueryui.min.css" /> <!-- ●●css for jquery datatables 用 -->
-
+<link rel="stylesheet" href="/css/admin/act/act-list.css">
 <!-- ●● jquery datatables 設定 -->
 <script>
 	$(document).ready(function() {
@@ -53,46 +53,28 @@
 		});
 	});
 </script>
-<style type="text/css">
-body {
-	  margin: 0 auto 2rem auto;
-	  padding: 1rem;
-	  max-width: 100%;
-	  overflow-x: hidden;
-}
-
-.white-nowrap {
-  white-space: nowrap;
-}
-
-.center-table {
-  margin-left: auto;
-  margin-right: auto;
-}
 
 
 
-</style>
-</head>
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
 		 <div align="center"> <h2>所有活動資料 - listAllAct.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}">回查詢頁<label th:text="${success}"></label></a></h3></div>
+		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div>
 </nav>
 <div class="table-responsive">
   <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
   <thead >
-	<tr style="background-color:#CCCCFF">
+	<tr style="background-color:#f1e5d9">
 		<th>計數</th>
 		<th>活動編號</th>
 		<th>活動類型</th>
 		<th>活動名稱</th>
 		<th>活動內容</th>
 		<th>折扣類型</th>
-		<th>折扣值</th>
-		<th>活動開始時間</th>
-		<th>活動結束時間</th>
+		<th>折扣</th>
+		<th>開始時間</th>
+		<th>結束時間</th>
 		<th>活動狀態</th>
 		<th>活動圖片</th>
 		<th>適用店家</th>
@@ -106,16 +88,16 @@ body {
 			<tr>
 				<td th:text="${stat.count}"></td>
 				<td th:text="${actVO.actId}"></td>
-				<td th:text="${actVO.actCate}"></td>
+				<td class="white-nowrap" th:text="${actVO.actCate}"></td>
 				<td th:text="${actVO.actName}"></td>
 				<td th:text="${actVO.actContent}"></td>
-				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '固定金額'}"></td>
+				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '金額'}"></td>
 				<td th:text="${actVO.actDiscValue}"></td>
 				<td th:text="${#dates.format(actVO.actStartTime,'yyyy-MM-dd HH:mm:ss')}"></td>
 				<td th:text="${#dates.format(actVO.actEndTime,'yyyy-MM-dd HH:mm:ss')}"></td>
 				<td th:text="${actVO.actStatus == 0 ? '下架' : '上架'}"></td>
-				<td><img th:src="@{/act/DBGifReader} + '?actId=' + ${actVO.actId}" width="100px"></td>
-				<td th:text="${actVO.isGlobal == 0 ? '部分店家適用' : '全店適用'}"></td>
+				<td><img style="border: 2px dotted blue; background-color: white;" th:src="@{/act/DBGifReader} + '?actId=' + ${actVO.actId}" width="100px"></td>
+				<td th:text="${actVO.isGlobal == 0 ? '部分' : '全店'}"></td>
 				<td th:text="${#dates.format(actVO.actLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
 <!-- 				<td th:text="${actVO.deptVO.deptno} + '-[' + ${actVO.deptVO.dname} + ']'"></td> -->
 			<td>
