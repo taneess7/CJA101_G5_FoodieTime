@@ -115,7 +115,8 @@ public class AdminMessageController {
         // 不用再判斷 hasReplyForMember（因為用最新 service 方法來顯示即可）
         
         // ⭐ 查最新回覆內容
-        DirectMessageVO latestReply = dmService.findFirstReplyAfterMessage(entity);
+        DirectMessageVO latestReply = dmService.getReplyByReplyToId(entity.getDmId());
+
 
         if (latestReply != null) {
             dto.setReplyContent(latestReply.getMessContent());
@@ -153,7 +154,8 @@ public class AdminMessageController {
         replyMsg.setSmgr(loggedInAdmin); // 塞管理員
 
         // Update DB	
-        dmService.replyAdd(replyMsg);
+        dmService.replyAdd(replyMsg, originalMsg); // ✅ 傳入被回覆的訊息
+
 
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
