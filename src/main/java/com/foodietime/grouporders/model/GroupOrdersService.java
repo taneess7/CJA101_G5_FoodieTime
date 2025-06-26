@@ -92,11 +92,7 @@ public class GroupOrdersService {
     public GroupOrdersVO save(GroupOrdersVO groupOrdersVO) {
         return groupOrdersRepository.save(groupOrdersVO);
     }
-<<<<<<< wilson
 
-=======
-    
->>>>>>> master
     // 更新訂單狀態（包括訂單狀態、付款狀態和出貨狀態）
     public GroupOrdersVO updateOrderField(Integer gbOrId, String field, Byte newStatus) {
         // 查找訂單
