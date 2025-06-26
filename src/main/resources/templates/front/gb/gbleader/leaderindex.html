@@ -273,12 +273,12 @@
 	      <form th:action="@{/gb/search}" method="get" class="input-group mb-3">
 			  <!-- <input type="hidden" name="gbId" th:value="${gbId}" /> -->
 
-			<!--  <input type="text"
+			  <input type="text"
 			         name="gbProdName"
 		             class="form-control form-control-lg"
 		             placeholder="搜尋商品..."
 		             th:value="${gbProdName}"/>
-		     -->        
+		           
 			  <button type="submit" class="btn btn-primary btn-lg">
 			    <i class="bi bi-search"></i> 搜尋
 			  </button>
@@ -292,32 +292,51 @@
     <div class="container">
     <!-- 熱門團購 -->
     <h2 class="section-title">團購商品</h2>
-    <div class="row">
+    <div class="row" >
         <!-- 動態顯示商品卡片 -->
-        <div th:each="products : ${storesWithPromotion}" class="col-lg-3 col-md-4 col-sm-6">
-            <div class="product-card">
+        <div th:each="product : ${storesWithPromotion}" class="col-lg-3 col-md-4 col-sm-6">
+            <!-- 圖片 -->
+		    <div class="product-image">
+		      <img
+		        th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}"
+		        th:alt="${product.gbProdName}"
+		        loading="lazy"
+		        class="img-fluid" />
+		    </div>	
                 <!-- 顯示商品名稱 -->
                 <div class="product-info">
-                    <h5 class="product-title" th:text="${products.gbProdName}">商品名稱</h5>
-                    <div>
+                    <h5 class="product-title" th:text="${product.gbProdName}">商品名稱</h5>
                         <!-- 顯示促銷價格-->
                         <div >
-						    <span th:text="${products.gbpromotionList[0].gbProdSales}">銷售數量</span>
-						</div>
-                         
+						    <span th:text="${product.gbpromotionList[0].gbProdSales}">銷售數量</span>
                         <!-- 顯示商家優惠價 -->
-                        <span class="product-original-price" th:text="${products.gbpromotionList[0].gbProdSpe}">商家優惠價</span>
-
-                    </div>  
+                        	<span class="product-original-price" th:text="${product.gbpromotionList[0].gbProdSpe}">商家優惠價</span>
+						</div> 
 
                     <!-- 按鈕：立即開團 -->
                     <button class="btn btn-primary join-btn">立即開團</button>
                 </div>
             </div>
+         </div>
+	 
+
+        <!-- 分頁 -->
+        <div class="pagination-container">
+            <nav aria-label="商品分頁">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一頁</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">下一頁</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
-</div>
-
 
 
 <!-- 登入彈窗 -->

@@ -26,5 +26,9 @@ public class GbprodService {
     public void deleteById(Integer gbProdId) {
     	gbprodRepository.deleteById(gbProdId);
     }
-
+    public byte[] getProductPhoto(Integer gbProdId) {
+        return gbprodRepository.findById(gbProdId)
+                   .map(GbprodVO::getGbProdPhoto)  // 這會呼叫你 VO 裡的 getter
+                   .orElse(null);
+    }
 }
