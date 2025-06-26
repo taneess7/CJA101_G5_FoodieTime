@@ -60,6 +60,9 @@ public class OrdersVO implements Serializable{
 	@EqualsAndHashCode.Exclude
 	@JoinColumn(name = "COU_ID",referencedColumnName = "COU_ID")
 	private CouponVO coupon;           // 優惠券編號
+//
+//	@Column(name= "COU_ID")
+//	private Integer coupon;
 
 	@Column(name="CANCEL_REASON")
 	private String cancelReason;     // 取消原因
@@ -82,7 +85,8 @@ public class OrdersVO implements Serializable{
 	@Column(name="ORD_ADDR")
 	private String ordAddr;          // 外送地址
 
-	@OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "orders",cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+			orphanRemoval = true)
 	private Set<OrdDetVO> ordDet;
 
 	// ==================== 2. 手動實作 equals 和 hashCode ====================

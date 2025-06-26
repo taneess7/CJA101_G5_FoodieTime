@@ -1,234 +1,288 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title th:text="${categoryName + ' - FoodieTime 食刻'}">分類名稱</title>
-<meta name="description"
-	th:content="'探索各種' + ${categoryName} + '，尋找您喜愛的美食。'">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${categoryName + ' - FoodieTime 食刻'}">分類名稱</title>
+    <meta name="description"
+          th:content="'探索各種' + ${categoryName} + '，尋找您喜愛的美食。'">
 
-<link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
-<link rel="stylesheet"
-	th:href="@{/css/front/restaurant/restaurant-categories.css}">
-<link rel="stylesheet"
-	th:href="@{/css/front/restaurant/food-categories.css}">
-<link rel="stylesheet"
-	th:href="@{/css/front/restaurant/chinese-cuisine.css}">
-<!--     <link rel="stylesheet" href="css/responsive.css"> -->
-<link rel="stylesheet"
-	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-	rel="stylesheet">
-<!-- PWA 支援 -->
-<!--     <link rel="manifest" href="manifest.json"> -->
-<meta name="theme-color" content="#FF5722">
-<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/front/restaurant/restaurant-categories.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/front/restaurant/food-categories.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/front/restaurant/chinese-cuisine.css}">
+    <!--     <link rel="stylesheet" href="css/responsive.css"> -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet">
+    <!-- PWA 支援 -->
+    <!--     <link rel="manifest" href="manifest.json"> -->
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
-	<header class="app-header">
-		<div class="header-container">
-			<div class="logo-container">
-				<a th:href="@{/category/index}" class="logo"> <img
-					th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻"
-					class="logo-img"> <span class="logo-text">FoodieTime
+<header class="app-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a th:href="@{/category/index}" class="logo"> <img
+                    th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻"
+                    class="logo-img"> <span class="logo-text">FoodieTime
 						食刻</span>
-				</a>
-			</div>
-			<div class="search-container">
-				<div class="search-bar">
-					<i class="material-icons-outlined search-icon">search</i> <input
-						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-					<i class="material-icons-outlined mic-icon">mic</i> <i
-						class="material-icons-outlined camera-icon">photo_camera</i>
-				</div>
-			</div>
-			<nav class="main-nav">
-				<ul class="nav-list">
-					<li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
-					<li class="nav-item"><a href="group-order.html"
-						class="nav-link">團購</a></li>
-					<li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
-					<li class="nav-item"><a th:href="@{/category/login}"
-						class="nav-link login-btn">登入/註冊</a></li>
-				</ul>
-				<button class="menu-toggle" aria-label="開啟選單">
-					<i class="material-icons-outlined">menu</i>
-				</button>
-			</nav>
-		</div>
-	</header>
+            </a>
+        </div>
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="material-icons-outlined search-icon">search</i> <input
+                    type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+                <i class="material-icons-outlined mic-icon">mic</i> <i
+                    class="material-icons-outlined camera-icon">photo_camera</i>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="map.html" class="nav-link">地圖</a></li>
+                <li class="nav-item"><a href="group-order.html"
+                                        class="nav-link">團購</a></li>
+                <li class="nav-item"><a href="deals.html" class="nav-link">優惠</a></li>
+                <li class="nav-item"><a th:href="@{/category/login}"
+                                        class="nav-link login-btn">登入/註冊</a></li>
+            </ul>
+            <button class="menu-toggle" aria-label="開啟選單">
+                <i class="material-icons-outlined">menu</i>
+            </button>
+        </nav>
+    </div>
+</header>
 
-	<main>
-		<!-- 頁面標題 -->
-		<section class="page-header">
-			<div class="container">
-<!-- 				<h1 class="page-title" th:text="${categoryName}">分類名稱</h1> -->
-<!-- 				<p class="page-description" -->
-<!--     th:text="'探索台灣最道地的 ' + ${categoryName} + '，從傳統小吃到精緻料理，滿足您的味蕾'"></p> -->
-				<div class="breadcrumbs">
-					<a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a>
-					&gt; <span>中式料理</span>
-				</div>
-			</div>
-		</section>
+<main>
+    <!-- 頁面標題 -->
+    <section class="page-header">
+        <div class="container">
+            <!-- 				<h1 class="page-title" th:text="${categoryName}">分類名稱</h1> -->
+            <!-- 				<p class="page-description" -->
+            <!--     th:text="'探索台灣最道地的 ' + ${categoryName} + '，從傳統小吃到精緻料理，滿足您的味蕾'"></p> -->
+            <div class="breadcrumbs">
+                <a href="index.html">首頁</a> &gt; <a href="food-categories.html">美食分類</a>
+                &gt; <span>中式料理</span>
+            </div>
+        </div>
+    </section>
 
-		<!-- 中式料理分類導航 -->
-		<nav class="category-nav">
-			<div class="container">
-				<ul class="category-list chinese-category-list">
-					<li class="category-item active">所有中式料理</li>
-					<li class="category-item">麵食</li>
-					<li class="category-item">點心</li>
-					<li class="category-item">湯品</li>
-					<li class="category-item">小吃</li>
-					<li class="category-item">火鍋</li>
-					<li class="category-item">粵菜</li>
-					<li class="category-item">川菜</li>
-				</ul>
-			</div>
-		</nav>
+    <!-- 中式料理分類導航 -->
+    <nav class="category-nav">
+        <div class="container">
+            <ul class="category-list chinese-category-list">
+                <li class="category-item active">所有中式料理</li>
+                <li class="category-item">麵食</li>
+                <li class="category-item">點心</li>
+                <li class="category-item">湯品</li>
+                <li class="category-item">小吃</li>
+                <li class="category-item">火鍋</li>
+                <li class="category-item">粵菜</li>
+                <li class="category-item">川菜</li>
+            </ul>
+        </div>
+    </nav>
 
-		<div class="container">
-			<!-- 中式料理店家列表 -->
-			<div class="restaurant-list">
-				<article class="restaurant-detail" th:each="store : ${storeList}">
-					<div class="restaurant-header">
-						<div class="restaurant-main-info">
-							<img th:src="@{/images/restaurant/placeholder.svg}" alt="店家圖片"
-								class="restaurant-image">
-							<div class="restaurant-primary-info">
-								<h2 class="restaurant-name" th:text="${store.storName}">店名</h2>
-								<span class="cuisine-tag cuisine-chinese"
-									th:text="${store.storeCate.storCatName}">分類名稱</span>
-								<p class="restaurant-category">（這邊可以顯示靜態分類 or 評語）</p>
-								<div class="restaurant-rating">
+    <div class="container">
+        <!-- 中式料理店家列表 -->
+        <div class="restaurant-list">
+            <article class="restaurant-detail" th:each="store : ${storeList}">
+                <div class="restaurant-header">
+                    <div class="restaurant-main-info">
+                        <img th:src="@{/images/restaurant/placeholder.svg}" alt="店家圖片"
+                             class="restaurant-image">
+                        <div class="restaurant-primary-info">
+                            <h2 class="restaurant-name" th:text="${store.storName}">店名</h2>
+                            <span class="cuisine-tag cuisine-chinese"
+                                  th:text="${store.storeCate.storCatName}">分類名稱</span>
+                            <p class="restaurant-category">（這邊可以顯示靜態分類 or 評語）</p>
+                            <div class="restaurant-rating">
 									<span class="rating-stars"> <i class="fas fa-star"
-										th:each="i : ${#numbers.sequence(1, store.starNum != null ? store.starNum : 0)}"></i>
+                                                                   th:each="i : ${#numbers.sequence(1, store.starNum != null ? store.starNum : 0)}"></i>
 									</span> <span
-										th:text="${store.starNum != null ? store.starNum + ' 分 (' + store.reviews + ' 則評價)' : '尚無評價'}">4.5
+                                    th:text="${store.starNum != null ? store.starNum + ' 分 (' + store.reviews + ' 則評價)' : '尚無評價'}">4.5
 										(238則評價)</span>
-								</div>
-								<div class="restaurant-actions">
-									<button class="action-btn favorite-btn">
-										<i class="far fa-heart"></i> 收藏
-									</button>
-									<button class="action-btn share-btn">
-										<i class="fas fa-share-alt"></i> 分享
-									</button>
-									<button class="action-btn directions-btn">
-										<i class="fas fa-directions"></i> 導航
-									</button>
-								</div>
-							</div>
-						</div>
-						<div class="restaurant-contact-info">
-							<div class="info-item">
-								<i class="fas fa-map-marker-alt"></i> <span
-									th:text="${store.storAddr}">地址</span>
-							</div>
-							<div class="info-item">
-								<i class="fas fa-phone"></i> <span th:text="${store.storPhone}">電話</span>
-							</div>
-							<div class="info-item">
-								<i class="fas fa-clock"></i> <span
-									th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime}">營業時間</span>
-							</div>
-							<div class="info-item" th:if="${store.storWeb != null}">
-								<i class="fas fa-globe"></i> <a th:href="${store.storWeb}"
-									class="website-link" th:text="${store.storWeb}">網址</a>
-							</div>
-						</div>
-					</div>
+                            </div>
+                            <div class="restaurant-actions">
+                                <button class="action-btn favorite-btn">
+                                    <i class="far fa-heart"></i> 收藏
+                                </button>
+                                <button class="action-btn share-btn">
+                                    <i class="fas fa-share-alt"></i> 分享
+                                </button>
+                                <button class="action-btn directions-btn">
+                                    <i class="fas fa-directions"></i> 導航
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="restaurant-contact-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i> <span
+                                th:text="${store.storAddr}">地址</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i> <span th:text="${store.storPhone}">電話</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i> <span
+                                th:text="'營業時間: ' + ${store.storOnTime} + ' - ' + ${store.storOffTime}">營業時間</span>
+                        </div>
+                        <div class="info-item" th:if="${store.storWeb != null}">
+                            <i class="fas fa-globe"></i> <a th:href="${store.storWeb}"
+                                                            class="website-link" th:text="${store.storWeb}">網址</a>
+                        </div>
+                    </div>
+                </div>
 
-					<!-- 可以選擇是否顯示下方標籤區 -->
-					<div class="restaurant-details-tabs">
-						<div class="tabs-header">
-							<button class="tab-btn active" data-tab="menu">菜單</button>
-							<button class="tab-btn" data-tab="reviews">評價</button>
-							<button class="tab-btn" data-tab="photos">照片</button>
-							<button class="tab-btn" data-tab="info">店家資訊</button>
-						</div>
-						<div class="tabs-content">
-							<!-- 你可以依實際資料開發這幾個區塊 -->
-							<div class="tab-content active" id="menu-content">
-								<p>此區待串接菜單資料</p>
-							</div>
-							<div class="tab-content" id="reviews-content">
-								<p>此區待串接評論資料</p>
-							</div>
-							<div class="tab-content" id="photos-content">
-								<p>此區待串接照片</p>
-							</div>
-							<div class="tab-content" id="info-content">
-								<p>此區待串接額外店家資訊</p>
-							</div>
-						</div>
-					</div>
-				</article>
-			</div>
-		</div>
-	
-	</main>
+                <!-- 可以選擇是否顯示下方標籤區 -->
+                <div class="restaurant-details-tabs">
+                    <div class="tabs-header">
+                        <button class="tab-btn active" data-tab="menu">菜單</button>
+                        <button class="tab-btn" data-tab="reviews">評價</button>
+                        <button class="tab-btn" data-tab="photos">照片</button>
+                        <button class="tab-btn" data-tab="info">店家資訊</button>
+                    </div>
+                    <div class="tabs-content">
+                        <!-- 你可以依實際資料開發這幾個區塊 -->
+                        <div class="tab-content active" id="menu-content">
+                            <p>此區待串接菜單資料</p>
+                        </div>
+                        <div class="tab-content" id="reviews-content">
+                            <p>此區待串接評論資料</p>
+                        </div>
+                        <div class="tab-content" id="photos-content">
+                            <p>此區待串接照片</p>
+                        </div>
+                        <div class="tab-content" id="info-content">
+                            <p>此區待串接額外店家資訊</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
 
-	<footer class="app-footer">
-		<div class="container">
-			<p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-		</div>
-	</footer>
+</main>
 
-	<script>
-        // 分類切換功能
-        document.querySelectorAll('.category-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelector('.category-item.active').classList.remove('active');
-                this.classList.add('active');
-                // 這裡可以添加過濾顯示對應分類的美食邏輯
-            });
+<footer class="app-footer">
+    <div class="container">
+        <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    // 分類切換功能
+    document.querySelectorAll('.category-item').forEach(item => {
+        item.addEventListener('click', function () {
+            document.querySelector('.category-item.active').classList.remove('active');
+            this.classList.add('active');
+            // 這裡可以添加過濾顯示對應分類的美食邏輯
         });
+    });
 
-        // 標籤切換功能
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // 找到當前活動的標籤按鈕和內容
-                const parent = this.closest('.restaurant-details-tabs');
-                parent.querySelector('.tab-btn.active').classList.remove('active');
-                this.classList.add('active');
-                
-                // 切換內容
-                const tabId = this.getAttribute('data-tab');
-                parent.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
+    // 標籤切換功能
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            // 找到當前活動的標籤按鈕和內容
+            const parent = this.closest('.restaurant-details-tabs');
+            parent.querySelector('.tab-btn.active').classList.remove('active');
+            this.classList.add('active');
+
+            // 切換內容
+            const tabId = this.getAttribute('data-tab');
+            parent.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            parent.querySelector(`#${tabId}-content`).classList.add('active');
+        });
+    });
+
+    // 菜單分類切換
+    document.querySelectorAll('.menu-category').forEach(category => {
+        category.addEventListener('click', function () {
+            const parent = this.closest('.menu-categories');
+            parent.querySelector('.menu-category.active').classList.remove('active');
+            this.classList.add('active');
+            // 這裡可以添加過濾顯示對應菜單分類的邏輯
+        });
+    });
+
+    // // 收藏按鈕功能
+    // document.querySelectorAll('.favorite-btn').forEach(btn => {
+    //     btn.addEventListener('click', function() {
+    //         const icon = this.querySelector('i');
+    //         if (icon.classList.contains('far')) {
+    //             icon.classList.remove('far');
+    //             icon.classList.add('fas');
+    //             this.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
+    //         } else {
+    //             icon.classList.remove('fas');
+    //             icon.classList.add('far');
+    //             this.innerHTML = '<i class="far fa-heart"></i> 收藏';
+    //         }
+    //     });
+    // });
+    /**============================================================================== */
+    /**============================================================================== */
+
+    // 領取優惠券按鈕功能
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const couponId = this.dataset.couponId; // 獲取優惠券 ID
+            const button = this; // 儲存按鈕的引用，以便後續修改其狀態
+
+            // 發送 POST 請求到後端
+            fetch('/member/coupons/claim', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 如果有 CSRF 保護，需要加入 token
+                },
+                body: JSON.stringify({couponId: couponId})
+            })
+                .then(response => {
+                    // 檢查 HTTP 響應狀態碼
+                    if (response.status === 401) {
+                        alert('請先登入才能領取優惠券！');
+                        window.location.href = '/login'; // 導向登入頁
+                        throw new Error('User not logged in');
+                    }
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || '領取失敗');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('優惠券領取成功！');
+                        // 成功領取後，可以禁用按鈕或改變其文字
+                        button.disabled = true;
+                        button.innerHTML = '<i class="fas fa-check-circle"></i> 已領取';
+                        button.classList.add('claimed'); // 添加一個樣式來表示已領取
+                    } else {
+                        alert(data.message || '領取失敗，請稍後再試。');
+                    }
+                })
+                .catch(error => {
+                    console.error('領取優惠券時發生錯誤:', error);
+                    if (error.message !== 'User not logged in') {
+                        alert('領取優惠券時發生錯誤，請檢查網路或稍後再試。');
+                    }
                 });
-                parent.querySelector(`#${tabId}-content`).classList.add('active');
-            });
         });
 
-        // 菜單分類切換
-        document.querySelectorAll('.menu-category').forEach(category => {
-            category.addEventListener('click', function() {
-                const parent = this.closest('.menu-categories');
-                parent.querySelector('.menu-category.active').classList.remove('active');
-                this.classList.add('active');
-                // 這裡可以添加過濾顯示對應菜單分類的邏輯
-            });
-        });
+        /**============================================================================== */
 
-        // 收藏按鈕功能
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('far')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                    this.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
-                } else {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                    this.innerHTML = '<i class="far fa-heart"></i> 收藏';
-                }
-            });
-        });
-    </script>
+    });
+</script>
 </body>
 </html>

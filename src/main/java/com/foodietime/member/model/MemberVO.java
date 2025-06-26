@@ -197,7 +197,7 @@ public class MemberVO implements Serializable {
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	    private List<GroupBuyingCasesVO> groupBuyingCases;
 	    
-	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	    @OneToMany(mappedBy = "member")
 	    private List<OrdersVO> orders;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
