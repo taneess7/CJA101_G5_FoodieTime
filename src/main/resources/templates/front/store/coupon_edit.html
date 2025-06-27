@@ -11,7 +11,15 @@
 
 </head>
 <body>
+
+		
+   		<div class="floating-btn">
+  			<form th:action="@{/store/listStoreCoupons}" method="get" class=listAllCoupons >
+    			<button class="top-right-btn" type="submit">查看優惠券</button>
+  			</form>
+		</div>
 	<main>
+		
 		<h1 class="section-title">編輯優惠券</h1>
 		<p class="section-subtitle">填寫優惠券資訊以吸引顧客使用</p>
 
@@ -27,10 +35,10 @@
 		<ul th:if="${errorMessages}" style="color: red;">
   			<li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
 		</ul>
-	
+		
 				
 		<!-- 下拉選單: 只顯示此店家的優惠券 -->
-		<form th:action="@{/store/editCoupon}" method="get">
+		<form th:action="@{/store/editCoupon}" method="get" class="couponForm">
 			<label>選擇優惠券 (空值表示新增)</label> <select name="couId">
 				<option value="0">---新增優惠券---</option>
 				<option th:each="cou : ${coupons}" th:value="${cou.couId}"
@@ -38,10 +46,12 @@
 			</select>
 			<button type="submit">進入表單</button>
 		</form>
+		
+		
 		<br>
 		<!-- 若 coupon 有值才顯示表單 -->
 		<th:block th:if="${coupon != null}">
-			<form th:action="@{/store/coupon/save}" th:object="${coupon}" method="post" id="couponForm" >
+			<form th:action="@{/store/coupon/save}" th:object="${coupon}" method="post" class="couponForm" id="couponFormSection">
 				
 				<!-- 修改特定coupon需要couId -->
 				<input type="hidden" th:field="*{couId}" />
@@ -104,6 +114,7 @@
 			</form>
 	</main>
 <script>
+  
 document.addEventListener('DOMContentLoaded', () => {
   const message = document.getElementById('successMessage');
   const form = document.getElementById('couponForm');
@@ -154,6 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  
+
 });
 </script>
 
