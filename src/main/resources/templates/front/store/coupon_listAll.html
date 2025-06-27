@@ -36,7 +36,8 @@
       color: #444;
     }
 
-    .coupon-footer {
+    .coupon-header {
+      margin-left: 1.5rem;
       margin-top: 0.8rem;
       font-size: 0.9rem;
       font-weight: bold;
@@ -47,21 +48,60 @@
       font-size: 0.8rem;
       color: #888;
     }
+    
+   .section-subtitle {
+  font-size: 1rem;               /* 或 16px，大小適中 */
+  font-weight: 400;              /* 標準字重，不是粗體 */
+  color: #555;                   /* 顏色偏灰，不是純黑 */
+  font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;  /* 微軟正黑體 or Segoe UI */
+  margin-bottom: 1rem;           /* 底部留白 */
+  margin-top: 1rem;
+  display: block;                /* 讓 span 像段落一樣獨立一行 */
+}
+
+.btn-delete {
+  background-color: #d60000;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+div:has(> button.btn) {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
   </style>
+  
+  <link rel="stylesheet" href="/css/front/coupon/cou.css">
 </head>
 <body>
-  <main>
-    <h1 class="section-title">我持有的優惠券</h1>
-    <p class="section-subtitle">以下是您目前店家建立的優惠券清單：</p>
 
-    <div class="coupon-grid">
+
+<!-- 		<!-- 顯示新增成功訊息（置中） --> 
+<!-- 		<div th:if="${successMessage}" -->
+<!-- 		     id="successMessage" -->
+<!-- 		     class="success-message" -->
+<!-- 		     style="color: green; font-weight: bold;"> -->
+<!-- 		  <p th:text="${successMessage}"></p> -->
+<!-- 		</div> -->
+  <main>
+   
+      <div class="coupon-header">編號<span th:text="${storeVO.storId}"></span></div>
+        <div>
+        	<span class="section-subtitle">以下是您目前建立的優惠券清單：</span>
+		</div>
+    <div class="coupon-grid" id="couponGrid" >
       <div class="coupon-card" th:each="cou : ${couponList}">
         <div class="coupon-title" th:text="${cou.couName}">開幕大放送</div>
         <div class="coupon-detail">
           類型：<span th:text="${cou.couType}">折價券</span>
         </div>
         <div class="coupon-detail">
-          說明：<span th:text="${cou.couDes}">滿千折百</span>
+          說明：<span th:text="${cou.couDesc}">滿千折百</span>
         </div>
         <div class="coupon-detail">
           最低消費：NT$<span th:text="${cou.couMinOrd}">0</span>
@@ -73,11 +113,75 @@
           使用期限：<span th:text="${#dates.format(cou.couStartDate, 'yyyy-MM-dd HH:mm')}"></span> - 
           <span th:text="${#dates.format(cou.couEndDate, 'yyyy-MM-dd HH:mm')}"></span>
         </div>
-        <div class="coupon-footer">
-          店家編號：<span th:text="${cou.store.storId}"></span>
-        </div>
+        
+          
+<!-- 		 <td> -->
+<!-- 		  <form th:action="@{/coupon/delete}" method="post" onsubmit="return confirm('確定要刪除這張優惠券嗎？')"> -->
+<!-- 		    <input type="hidden" name="couId" th:value="${coupon.couId}" /> -->
+<!-- 		    <button type="submit" class="btn-delete">刪除</button> -->
+<!-- 		  </form> -->
+<!-- 		</td> -->
+      
       </div>
     </div>
+   
   </main>
+  		  <form class=backToCoupon action="/store/editCoupon" method="get">
+       		 <button type="submit">返回優惠券編輯頁</button>
+   		 </form>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const message = document.getElementById('successMessage');
+  const form = document.getElementById('couponForm');
+  const startInput = document.getElementById('couStartDate');
+  const endInput = document.getElementById('couEndDate');
+
+  // ✅ 1. 成功訊息淡出
+  if (message) {
+    setTimeout(() => {
+      message.classList.add('fade-out');
+    }, 1000);
+
+    setTimeout(() => {
+      message.remove();
+    }, 2000);
+  }
+
+  // ✅ 2. 設定現在時間為 startInput 最小值
+  function getNowDatetimeLocal() {
+    const now = new Date();
+    now.setSeconds(0, 0); // 移除秒與毫秒
+    const offset = now.getTimezoneOffset();
+    const localISOTime = new Date(now.getTime() - offset * 60000)
+      .toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+    return localISOTime;
+  }
+
+  if (startInput) {
+    startInput.min = getNowDatetimeLocal();
+  }
+
+  // ✅ 3. 啟用日期變動時，更新截止日的 min 限制
+  if (startInput && endInput) {
+    startInput.addEventListener('change', () => {
+      endInput.min = startInput.value;
+    });
+  }
+
+  // ✅ 4. 截止日不可早於啟用日（前端阻擋）
+  if (form && startInput && endInput) {
+    form.addEventListener('submit', function (e) {
+      const start = new Date(startInput.value);
+      const end = new Date(endInput.value);
+      if (start && end && end < start) {
+        e.preventDefault();
+        alert("⚠️ 截止期限不能早於啟用期限！");
+        endInput.focus();
+      }
+    });
+  }
+});
+</script>  
+
 </body>
 </html>
