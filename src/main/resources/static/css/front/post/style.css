@@ -2,380 +2,576 @@
 
 /* 變數定義 */
 :root {
-    /* 主色調 */
-    --primary-color: #FF5722; /* 溫暖橘紅 */
-    --primary-light: #FFCCBC;
-    --primary-dark: #E64A19;
-    
-    /* 輔色 */
-    --accent-green: #4CAF50; /* 清新綠 */
-    --accent-blue: #2196F3; /* 優雅藍 */
-    
-    /* 中性色 */
-    --neutral-50: #FAFAFA;
-    --neutral-100: #F5F5F5;
-    --neutral-200: #EEEEEE;
-    --neutral-300: #E0E0E0;
-    --neutral-400: #BDBDBD;
-    --neutral-500: #9E9E9E;
-    --neutral-600: #757575;
-    --neutral-700: #616161;
-    --neutral-800: #424242;
-    --neutral-900: #212121;
-    
-    /* 功能色 */
-    --success: #4CAF50;
-    --warning: #FFC107;
-    --error: #F44336;
-    --info: #2196F3;
-    
-    /* 文字色 */
-    --text-primary: rgba(0, 0, 0, 0.87);
-    --text-secondary: rgba(0, 0, 0, 0.6);
-    --text-disabled: rgba(0, 0, 0, 0.38);
-    --text-white: #FFFFFF;
-    --text-white-secondary: rgba(255, 255, 255, 0.7);
-    
-    /* 背景色 */
-    --bg-light: #FFFFFF;
-    --bg-gray: #F5F5F5;
-    --bg-dark: #212121;
-    
-    /* 陰影 */
-    --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
-    --shadow-3: 0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
-    --shadow-4: 0 15px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
-    
-    /* 間距 - 基於8px網格系統 */
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 16px;
-    --space-4: 24px;
-    --space-5: 32px;
-    --space-6: 40px;
-    --space-7: 48px;
-    --space-8: 56px;
-    --space-9: 64px;
-    --space-10: 72px;
-    
-    /* 圓角 */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
-    --radius-full: 9999px;
-    
-    /* 過渡效果 */
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.25s ease;
-    --transition-slow: 0.35s ease;
-    
-    /* Z-index層級 */
-    --z-header: 100;
-    --z-modal: 200;
-    --z-dropdown: 150;
-    --z-tooltip: 160;
-    --z-loading: 300;
+	/* 主色調 - 參考圖片中的溫暖米色和橘色 */
+	--primary-color: #FF8C42;
+	/* 較圖片中的橘色稍亮 */
+	--primary-light: #FFDAB9;
+	--primary-dark: #E66700;
+	/* 輔色 */
+	--accent-green: #6BBF87;
+	/* 調整為更柔和的綠色 */
+	--accent-blue: #7FB3D5;
+	/* 調整為更柔和的藍色 */
+	/* 中性色 - 參考圖片中的米白和淺灰 */
+	--neutral-50: #FDFDFD;
+	/* 接近米白 */
+	--neutral-100: #F8F8F8;
+	--neutral-200: #EDEDED;
+	--neutral-300: #E0E0E0;
+	--neutral-400: #BDBDBD;
+	--neutral-500: #9E9E9E;
+	--neutral-600: #757575;
+	--neutral-700: #616161;
+	--neutral-800: #424242;
+	--neutral-900: #212121;
+	/* 功能色 */
+	--success: #6BBF87;
+	--warning: #FFD700;
+	--error: #E74C3C;
+	--info: #7FB3D5;
+	/* 文字色 */
+	--text-primary: #333333;
+	/* 更深的灰，提高可讀性 */
+	--text-secondary: #666666;
+	--text-disabled: #999999;
+	--text-white: #FFFFFF;
+	--text-white-secondary: rgba(255, 255, 255, 0.8);
+	/* 背景色 */
+	--bg-light: #FFFFFF;
+	--bg-gray: #FBFBFB;
+	/* 調整為更淺的米灰色 */
+	--bg-dark: #333333;
+	/* 陰影 - 參考圖片中的柔和陰影 */
+	--shadow-1: 0 2px 4px rgba(0, 0, 0, 0.08);
+	--shadow-2: 0 4px 8px rgba(0, 0, 0, 0.1);
+	--shadow-3: 0 8px 16px rgba(0, 0, 0, 0.12);
+	--shadow-4: 0 12px 24px rgba(0, 0, 0, 0.15);
+	/* 間距 - 基於8px網格系統 */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 16px;
+	--space-4: 24px;
+	--space-5: 32px;
+	--space-6: 40px;
+	--space-7: 48px;
+	--space-8: 56px;
+	--space-9: 64px;
+	--space-10: 72px;
+	/* 圓角 - 參考圖片中的明顯圓角 */
+	--radius-sm: 6px;
+	--radius-md: 10px;
+	--radius-lg: 18px;
+	--radius-xl: 26px;
+	--radius-full: 9999px;
+	/* 過渡效果 */
+	--transition-fast: 0.2s ease-out;
+	--transition-normal: 0.3s ease-out;
+	--transition-slow: 0.4s ease-out;
+	/* Z-index層級 */
+	--z-header: 100;
+	--z-modal: 200;
+	--z-dropdown: 150;
+	--z-tooltip: 160;
+	--z-loading: 300;
 }
 
 /* 重置與基礎樣式 */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 html {
-    font-size: 16px;
-    scroll-behavior: smooth;
+	font-size: 16px;
+	scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    line-height: 1.5;
-    color: var(--text-primary);
-    background-color: var(--bg-light);
-    overflow-x: hidden;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+	font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont,
+		'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+		'Helvetica Neue', sans-serif;
+	line-height: 1.6;
+	/* 稍微增加行高，提升閱讀性 */
+	color: var(--text-primary);
+	background-color: var(--bg-gray);
+	/* 整體背景色調整 */
+	overflow-x: hidden;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 main {
-    flex: 1;
+	flex: 1;
+	margin-top: 64px;
+	/* 確保內容不會被固定頂部導航遮擋 */
 }
 
 a {
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: color var(--transition-fast);
+	color: var(--primary-color);
+	text-decoration: none;
+	transition: color var(--transition-fast);
 }
 
 a:hover {
-    color: var(--primary-dark);
+	color: var(--primary-dark);
 }
 
 img {
-    max-width: 100%;
-    height: auto;
-    display: block;
+	max-width: 100%;
+	height: auto;
+	display: block;
 }
 
 ul, ol {
-    list-style: none;
+	list-style: none;
 }
 
 button, input, select, textarea {
-    font-family: inherit;
-    font-size: inherit;
-    color: inherit;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
 }
 
 button {
-    cursor: pointer;
-    border: none;
-    background: none;
+	cursor: pointer;
+	border: none;
+	background: none;
 }
 
 /* 容器 */
 .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-3);
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 var(--space-3);
 }
 
 /* 頁首 */
 .app-header {
-    background-color: var(--bg-light);
-    box-shadow: var(--shadow-1);
-    position: sticky;
-    top: 0;
-    z-index: var(--z-header);
-    width: 100%;
+	background-color: var(--bg-light);
+	box-shadow: var(--shadow-1);
+	position: sticky;
+	top: 0;
+	z-index: var(--z-header);
+	width: 100%;
 }
 
 .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    padding: 0 var(--space-3);
-    max-width: 1200px;
-    margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 64px;
+	padding: 0 var(--space-3);
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 .logo-container {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    color: var(--text-primary);
+	display: flex;
+	align-items: center;
+	color: var(--text-primary);
 }
 
 .logo-img {
-    height: 32px;
-    width: auto;
-    margin-right: var(--space-2);
+	height: 32px;
+	width: auto;
+	margin-right: var(--space-2);
+	border-radius: var(--radius-sm);
+	/* 增加圓角 */
 }
 
 .logo-text {
-    font-size: 1.25rem;
-    font-weight: 700;
+	font-size: 1.25rem;
+	font-weight: 700;
 }
 
 .search-container {
-    flex: 1;
-    max-width: 500px;
-    margin: 0 var(--space-4);
+	flex: 1;
+	max-width: 500px;
+	margin: 0 var(--space-4);
 }
 
 .search-bar {
-    display: flex;
-    align-items: center;
-    background-color: var(--neutral-100);
-    border-radius: var(--radius-full);
-    padding: var(--space-1) var(--space-3);
-    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+	display: flex;
+	align-items: center;
+	background-color: var(--neutral-100);
+	border-radius: var(--radius-full);
+	padding: var(--space-1) var(--space-3);
+	transition: background-color var(--transition-fast), box-shadow
+		var(--transition-fast);
+	border: 1px solid var(--neutral-200);
+	/* 增加淺邊框 */
 }
 
 .search-bar:focus-within {
-    background-color: var(--bg-light);
-    box-shadow: var(--shadow-1);
+	background-color: var(--bg-light);
+	box-shadow: var(--shadow-1);
+	border-color: var(--primary-light);
 }
 
 .search-icon, .mic-icon, .camera-icon {
-    color: var(--neutral-600);
-    margin: 0 var(--space-1);
+	color: var(--neutral-500);
+	/* 調整圖標顏色 */
+	margin: 0 var(--space-1);
 }
 
 .search-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: var(--space-2);
-    outline: none;
+	flex: 1;
+	border: none;
+	background: transparent;
+	padding: var(--space-2);
+	outline: none;
 }
 
 .main-nav {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .nav-list {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .nav-item {
-    margin-left: var(--space-3);
+	margin-left: var(--space-3);
 }
 
 .nav-link {
-    color: var(--text-primary);
-    font-weight: 500;
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    transition: background-color var(--transition-fast);
+	color: var(--text-primary);
+	font-weight: 500;
+	padding: var(--space-1) var(--space-3);
+	/* 調整 padding */
+	border-radius: var(--radius-md);
+	/* 增加圓角 */
+	transition: background-color var(--transition-fast), color
+		var(--transition-fast);
 }
 
 .nav-link:hover {
-    background-color: var(--neutral-100);
-    color: var(--primary-color);
+	background-color: var(--primary-light);
+	/* 懸停背景色 */
+	color: var(--primary-dark);
+	/* 懸停文字色 */
 }
 
 .login-btn {
-    background-color: var(--primary-color);
-    color: var(--text-white);
-    padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-full);
-    transition: background-color var(--transition-fast);
+	background-color: var(--primary-color);
+	color: var(--text-white);
+	padding: var(--space-1) var(--space-3);
+	border-radius: var(--radius-full);
+	transition: background-color var(--transition-fast);
+	box-shadow: var(--shadow-1);
+	/* 增加陰影 */
 }
 
 .login-btn:hover {
-    background-color: var(--primary-dark);
-    color: var(--text-white);
+	background-color: var(--primary-dark);
+	color: var(--text-white);
+	box-shadow: var(--shadow-2);
+	/* 懸停時陰影加深 */
 }
 
 .menu-toggle {
-    display: none;
-    color: var(--text-primary);
-    padding: var(--space-1);
-    border-radius: var(--radius-full);
+	display: none;
+	color: var(--text-primary);
+	padding: var(--space-1);
+	border-radius: var(--radius-full);
 }
+
 body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "Microsoft JhengHei", "PingFang TC", "Hiragino Sans GB", "Source Han Sans TC", "Source Han Sans CN", sans-serif;
-            padding-top: 0px;
-            /* 為 header 留空間 */
-        }
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji",
+		"Microsoft JhengHei", "PingFang TC", "Hiragino Sans GB",
+		"Source Han Sans TC", "Source Han Sans CN", sans-serif;
+	padding-top: 0px;
+	/* 為 header 留空間 */
+}
 
-        /* Main content - 加上頂部間距以避免被header遮擋 */
-        main {
-            margin-top: 70px;
-        }
+/* Main content - 加上頂部間距以避免被header遮擋 */
+main {
+	margin-top: 70px;
+}
 
-        /* 響應式設計 */
-        @media (max-width: 768px) {
-            .search-container {
-                display: none;
-            }
+/* 響應式設計 */
+@media ( max-width : 768px) {
+	.search-container {
+		display: none;
+	}
+	.nav-list {
+		display: none;
+	}
+	.menu-toggle {
+		display: block;
+	}
+}
 
-            .nav-list {
-                display: none;
-            }
+.forum-thread-row {
+	transition: background-color 0.15s ease-in-out;
+	border-radius: var(--radius-md);
+	/* 增加圓角 */
+	margin-bottom: var(--space-2);
+	/* 增加間距 */
+	background-color: var(--bg-light);
+	/* 內容區塊背景色 */
+	box-shadow: var(--shadow-1);
+	/* 增加柔和陰影 */
+}
 
-            .menu-toggle {
-                display: block;
-            }
-        }
+.forum-thread-row:nth-child(odd) {
+	background-color: var(--bg-light);
+	/* 保持一致的背景色 */
+}
 
-        .forum-thread-row {
-            transition: background-color 0.15s ease-in-out;
-        }
+.forum-thread-row:hover {
+	background-color: var(--neutral-50) !important;
+	/* 懸停時的淺色背景 */
+	box-shadow: var(--shadow-2) !important;
+	/* 懸停時陰影加深 */
+}
 
-        .forum-thread-row:nth-child(odd) {
-            background-color: #fffbeb;
-        }
+.badge {
+	display: inline-flex;
+	align-items: center;
+	border-radius: var(--radius-sm);
+	/* 調整圓角 */
+	font-size: 0.75rem;
+	font-weight: 500;
+	padding: 0.125rem 0.5rem;
+}
 
-        .forum-thread-row:hover {
-            background-color: #f9fafb !important;
-        }
+.badge-orange {
+	background-color: var(--primary-color);
+	/* 使用變數 */
+	color: var(--text-white);
+}
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 0.125rem 0.5rem;
-        }
+.badge-green {
+	background-color: var(--accent-green);
+	/* 使用變數 */
+	color: white;
+}
 
-        .badge-orange {
-            background-color: #f97316;
-            color: white;
-        }
+.badge-blue {
+	background-color: var(--accent-blue);
+	/* 使用變數 */
+	color: white;
+}
 
-        .badge-green {
-            background-color: #059669;
-            color: white;
-        }
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius-md);
+	/* 調整圓角 */
+	font-size: 0.875rem;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	transition: all 0.15s ease-in-out;
+	cursor: pointer;
+	border: none;
+	text-decoration: none;
+	box-shadow: var(--shadow-1);
+	/* 增加陰影 */
+}
 
-        .badge-blue {
-            background-color: #2563eb;
-            color: white;
-        }
+.btn-primary {
+	background-color: var(--primary-color);
+	/* 使用變數 */
+	color: var(--text-white);
+}
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            transition: all 0.15s ease-in-out;
-            cursor: pointer;
-            border: none;
-            text-decoration: none;
-        }
+.btn-primary:hover {
+	background-color: var(--primary-dark);
+	/* 使用變數 */
+	box-shadow: var(--shadow-2);
+	/* 懸停時陰影加深 */
+}
 
-        .btn-primary {
-            background-color: #f97316;
-            color: white;
-        }
+.btn-ghost {
+	background-color: transparent;
+	color: var(--neutral-600);
+	/* 調整顏色 */
+	box-shadow: none;
+	/* 移除陰影 */
+}
 
-        .btn-primary:hover {
-            background-color: #ea580c;
-        }
+.btn-ghost:hover {
+	background-color: var(--neutral-100);
+	/* 懸停背景色 */
+	color: var(--primary-color);
+	/* 懸停文字色 */
+	box-shadow: none;
+}
 
-        .btn-ghost {
-            background-color: transparent;
-            color: #6b7280;
-        }
+.btn-secondary {
+	background-color: var(--accent-green);
+	/* 使用變數 */
+	color: white;
+}
 
-        .btn-ghost:hover {
-            background-color: #f3f4f6;
-            color: #f97316;
-        }
+.btn-secondary:hover {
+	background-color: darken(var(--accent-green), 10%);
+	/* 懸停變深 */
+}
 
-        .btn-secondary {
-            background-color: #059669;
-            color: white;
-        }
+/* 下拉選單樣式 */
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background-image:
+		url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right 0.75rem center;
+	background-size: 1em;
+}
 
-        .btn-secondary:hover {
-            background-color: #047857;
-        }
+/* 下拉選單懸停效果 */
+select:hover {
+	border-color: var(--primary-light);
+	box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+}
 
-        .select-dropdown {
-            background-color: #ea580c;
-            border: 1px solid #f97316;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-        }
+/* 選項樣式 */
+select option {
+	padding: 0.5rem;
+	background-color: white;
+	color: var(--text-primary);
+}
+
+select option:hover {
+	background-color: var(--primary-light) !important;
+	color: var(--primary-dark) !important;
+}
+
+/* 針對頁面頂部和底部的分頁導航容器 */
+.bg-white.border-b.border-gray-200, .bg-white.border-t.border-gray-200.mt-4
+	{
+	background-color: var(--bg-light);
+	border-color: var(--neutral-200);
+	box-shadow: var(--shadow-1);
+	border-radius: var(--radius-md);
+	/* 增加圓角 */
+	margin-bottom: var(--space-3);
+	/* 增加下方間距 */
+	margin-top: var(--space-3);
+	/* 增加上方間距 */
+	padding: var(--space-2) var(--space-3);
+	/* 調整內邊距 */
+}
+
+/* 搜尋貼文的輸入框樣式 */
+.icon-input .form-control {
+	border: 1px solid var(--neutral-300);
+	border-radius: var(--radius-md);
+	/* 圓角 */
+	padding: var(--space-2) var(--space-3);
+	outline: none;
+	transition: border-color var(--transition-fast), box-shadow
+		var(--transition-fast);
+}
+
+.icon-input .form-control:focus {
+	border-color: var(--primary-color);
+	box-shadow: var(--shadow-1);
+}
+
+/* 搜尋貼文的容器調整 */
+.icon-input.flex.items-center.space-x-2 {
+	margin-left: 1rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 0;
+}
+
+a.btn.px-3.py-1.text-sm {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: var(--radius-md) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    background-color: white !important;
+    color: var(--primary-color) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    box-shadow: var(--shadow-1) !important;
+    transition: all var(--transition-fast) !important;
+    text-decoration: none !important;
+}
+
+/* 懸停狀態 */
+a.btn.px-3.py-1.text-sm:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-dark) !important;
+    box-shadow: var(--shadow-2) !important;
+}
+
+/* 新增的樣式 */
+.flex.items-center.justify-between.px-4.py-2 {
+	background-color: var(--bg-light);
+	border-radius: var(--radius-md);
+	margin: var(--space-3) 0;
+	padding: var(--space-2) var(--space-3);
+	box-shadow: var(--shadow-1);
+}
+
+.icon-input {
+	flex-grow: 1;
+	margin-right: var(--space-3);
+}
+
+.max-w-7xl.mx-auto {
+	background: linear-gradient(135deg, var(--warm-cream) 0%,
+		rgba(255, 255, 255, 0.8) 100%);
+	padding: var(--space-6);
+	border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+	position: relative;
+	border-radius: var(--radius-xl);
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+	margin-bottom: var(--space-6);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+/* 基礎按鈕樣式 - 正常狀態 */
+.btn.px-3.py-1.text-sm {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5rem 1rem;
+	border-radius: var(--radius-md); /* 中等圓角 */
+	font-size: 0.875rem;
+	font-weight: 500;
+	background-color: var(--neutral-100); /* 淺灰背景 */
+	color: var(--warm-brown); /* 溫暖棕色文字 */
+	border: 1px solid var(--neutral-300); /* 細邊框 */
+	transition: all var(--transition-fast); /* 平滑過渡 */
+	cursor: pointer;
+}
+
+/* 活動狀態 (加上 active 或 btn-primary class) */
+.btn.px-3.py-1.text-sm.active, .btn.px-3.py-1.text-sm.btn-primary {
+	background-color: var(--primary-color); /* 主色調橙色 */
+	color: var(--text-white); /* 白色文字 */
+	border-color: var(--primary-dark); /* 深色邊框 */
+	box-shadow: 0 2px 4px rgba(255, 87, 34, 0.2); /* 輕微陰影 */
+}
+
+.favorite-btn {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border: 1px solid var(--primary-dark) !important;
+}
+
+.favorite-btn:hover {
+    background-color: var(--primary-dark) !important;
+    color: white !important;
+}
