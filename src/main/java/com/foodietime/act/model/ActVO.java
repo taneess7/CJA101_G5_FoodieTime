@@ -139,6 +139,9 @@ public class ActVO implements Serializable {
 	@OneToMany(mappedBy = "act", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 	
+	@OneToMany(mappedBy = "act", cascade = CascadeType.ALL)
+	private List<ActParticipationVO> actParticipation;
+	
 	// 取得or設置
 	public ActVO() {
 		super();

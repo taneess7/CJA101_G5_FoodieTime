@@ -13,6 +13,7 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.foodietime.accrec.model.AccrecVO;
+import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActVO;
 import com.foodietime.coupon.model.CouponVO;
 import com.foodietime.gbprod.model.GbprodVO;
@@ -192,6 +193,9 @@ public class StoreVO implements Serializable {
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
+	
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	private List<ActParticipationVO> actParticipation;
 
 	// 取得or設置 
 	// ==================== 2. 手動實作 equals 和 hashCode ====================
