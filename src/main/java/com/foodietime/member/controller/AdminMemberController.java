@@ -120,7 +120,7 @@ import com.foodietime.member.model.MemService;
 	            return dto;
 	        }).collect(Collectors.toList());
 	        
-	        model.addAttribute("dbVersion", "20250623");  //更改DB時更改版本時間以清除localstorage
+	        model.addAttribute("dbVersion", "20250626");  //更改DB時更改版本時間以清除localstorage
 	        model.addAttribute("members", dtoList);
 	        return "admin/smg/admin-members-permissions";
 	    }
