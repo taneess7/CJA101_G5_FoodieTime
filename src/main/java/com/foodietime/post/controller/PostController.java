@@ -62,8 +62,8 @@ public class PostController {
 		} else {
 			postVO = new PostVO(); // 新增時給空物件
 		}
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
-		model.addAttribute("categories", categories);
+		List<PostCategoryVO> category = postCategoryservice.getAll();
+		model.addAttribute("category", category);
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("postVO", postVO);
@@ -84,8 +84,8 @@ public class PostController {
 
 		// 2. 驗證失敗時，帶回表單與資料
 		if (result.hasErrors()) {
-			List<PostCategoryVO> categories = postCategoryservice.getAll();
-			model.addAttribute("categories", categories);
+			List<PostCategoryVO> category = postCategoryservice.getAll();
+			model.addAttribute("category", category);
 			model.addAttribute("postVO", postVO);
 			return "front/post/addPost";
 		}
@@ -121,8 +121,8 @@ public class PostController {
 			model.addAttribute("errorMessage", "找不到指定的貼文");
 			return "redirect:/post/";
 		}
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
-		model.addAttribute("categories", categories);
+		List<PostCategoryVO> category = postCategoryservice.getAll();
+		model.addAttribute("category", category);
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("postVO", postVO);
@@ -302,12 +302,12 @@ public class PostController {
 
 		/*************************** 2.開始查詢資料 *****************************************/
 
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		List<PostCategoryVO> category = postCategoryservice.getAll();
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 //		model.addAttribute("postListData", list);
 		model.addAttribute("threads", list);
-		model.addAttribute("categories", categories);
+		model.addAttribute("category", category);
 		model.addAttribute("currentCategory", null); // 全部分類
 	    model.addAttribute("currentSort", sort);
 
@@ -371,10 +371,10 @@ public class PostController {
 		default:
 			list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate()));
 		}
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		List<PostCategoryVO> category = postCategoryservice.getAll();
 
 		model.addAttribute("threads", list);
-		model.addAttribute("categories", categories);
+		model.addAttribute("category", category);
 		model.addAttribute("currentSort", sort);
 		model.addAttribute("currentKeyword", title);
 		model.addAttribute("searchResults", true);
@@ -392,14 +392,14 @@ public class PostController {
 			@RequestParam(value = "sort", defaultValue = "date") String sort, ModelMap model, HttpSession session) {
 
 		List<PostVO> list = postRepository.findByCategoryAndSort(categoryId, sort);
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		List<PostCategoryVO> category = postCategoryservice.getAll();
 
 		// 找到當前分類名稱
-		String currentCategoryName = categories.stream().filter(cat -> cat.getPostCateId().equals(categoryId))
+		String currentCategoryName = category.stream().filter(cat -> cat.getPostCateId().equals(categoryId))
 				.map(PostCategoryVO::getPostCate).findFirst().orElse("未知分類");
 
 		model.addAttribute("threads", list);
-		model.addAttribute("categories", categories);
+		model.addAttribute("category", category);
 		model.addAttribute("currentSort", sort);
 		model.addAttribute("currentCategory", categoryId);
 		model.addAttribute("currentCategoryName", currentCategoryName);

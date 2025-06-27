@@ -258,7 +258,7 @@ body {
 	min-height: calc(100vh - 200px);
 }
 
-.post-detail-card.comments-section {
+.post-detail-card {
 	background: rgba(255, 255, 255, 0.9);
 	backdrop-filter: blur(20px);
 	border-radius: var(--radius-xl);
@@ -427,7 +427,7 @@ body {
 }
 
   /* 貼文互動區域 */
-.post-interactions .interaction-stats {
+.post-interactions {
     background: none; /* 移除背景 */
     backdrop-filter: none; /* 移除濾鏡 */
     border-radius: 0; /* 移除圓角 */
@@ -769,37 +769,69 @@ body {
 }
 
 #reportModal>div, #reportMessageModal>div {
-	background: rgba(255, 255, 255, 0.95);
-	backdrop-filter: blur(20px);
-	max-width: 450px;
-	margin: 10vh auto;
-	padding: var(--space-6);
-	border-radius: var(--radius-xl);
-	position: relative;
-	box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.3);
+	background: white;
+    max-width: 500px;
+    margin: 10vh auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    position: relative;
 }
 
 #reportModal h3, #reportMessageModal h3 {
-	font-size: 1.4rem;
-	font-weight: 700;
-	margin-bottom: var(--space-4);
-	color: var(--text-primary);
+	color: #C39B7B;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
 }
 
 #reportModal textarea, #reportMessageModal textarea {
 	width: 100%;
-	border: 2px solid rgba(139, 115, 85, 0.2);
-	border-radius: var(--radius-lg);
-	padding: var(--space-3);
-	background: rgba(255, 255, 255, 0.8);
-	transition: border-color var(--transition-normal);
+    min-height: 120px;
+    padding: 1rem;
+    border: 1px solid #E0D5C9;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
 #reportModal textarea:focus, #reportMessageModal textarea:focus {
 	border-color: var(--warm-orange);
 	outline: none;
 	box-shadow: 0 0 0 4px rgba(255, 112, 67, 0.1);
+}
+#reportMessageModal .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+#reportMessageModal .modal-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#reportMessageModal .modal-btn-cancel {
+    background: #F5F1E8;
+    color: #8B7355;
+    border: 1px solid #E0D5C9;
+}
+
+#reportMessageModal .modal-btn-submit {
+    background: #C39B7B;
+    color: white;
+    border: none;
+}
+
+#reportMessageModal .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #8B7355;
 }
 
 /* 響應式設計 */

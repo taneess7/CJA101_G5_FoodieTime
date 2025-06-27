@@ -89,3 +89,12 @@ function openReportMessageModal(mesId) {
 function closeReportMessageModal() {
     document.getElementById('reportMessageModal').style.display = 'none';
 }
+// 點擊背景關閉模態框
+document.getElementById('reportMessageModal').addEventListener('click', function(e) {
+    if (e.target === this) closeReportMessageModal();
+});
+
+// ESC 鍵關閉
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeReportMessageModal();
+});

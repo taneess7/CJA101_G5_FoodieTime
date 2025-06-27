@@ -63,7 +63,7 @@
 						class="w-full border rounded px-3 py-2"
 						th:field="*{postCate.postCateId}" required>
 						<option value="" disabled selected>請選擇分類</option>
-						<option th:each="cat : ${categories}" th:value="${cat.postCateId}"
+						<option th:each="cat : ${category}" th:value="${cat.postCateId}"
 							th:text="${cat.postCate}"></option>
 					</select>
 				</div>
