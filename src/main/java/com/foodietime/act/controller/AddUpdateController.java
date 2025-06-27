@@ -29,11 +29,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.foodietime.act.model.ActService;
 import com.foodietime.act.model.ActVO;
+import com.foodietime.product.model.ProductService;
+import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 import com.foodietime.storeCate.model.StoreCateService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -49,6 +52,8 @@ public class AddUpdateController {
 	@Autowired
 	StoreCateService storeCateSvc;
 	
+	@Autowired
+	ProductService prodSvc;
 	
 	//新增
 	@GetMapping("/addAct")
@@ -287,5 +292,26 @@ public class AddUpdateController {
 			model.addAttribute("actListData", list); //for listAllAct.html
 			return "admin/act/listAllAct";
 		}
+
+//===================================================================================================//
 	
+	//店家參加活動商品列表
+	@GetMapping("actProducts")
+	public String showActProds(Model model, HttpSession session) {
+		List<ProductVO> allProds = prodSvc.getAllProducts(); //所有商品
+		StoreVO store = (StoreVO) session.getAttribute("loggedInStore"); //判斷是否登入店家
+		
+		//比對一個全站活動
+		ActVO globalAct = actSvc.getCurrentGlobalAct();
+		
+		//把每個商品價格放進Map
+		Map<ProductVO, Integer> displayPriceMap = new LinkedHashMap<>();
+		for (ProductVO prod : allProds) {
+			int finalprice = actSvc.calDisplayPrice(prod, globalAct, store);
+			displayPriceMap.put(prod, finalprice);
+		}
+		
+		model.addAttribute("priceMap", displayPriceMap);
+		return "front/store_prod";
+	}
 }

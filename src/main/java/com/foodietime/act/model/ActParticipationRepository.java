@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.foodietime.store.model.StoreVO;
 
 public interface ActParticipationRepository extends JpaRepository<ActParticipationVO, Integer>{
-     boolean existsByStoreAndAct(StoreVO store, ActVO act); //查詢是否存在這筆參加紀錄
+     boolean existsByStoreAndAct(StoreVO store, ActVO act); //查詢是否存在這筆參加紀錄 true; false;
      
      Optional<ActParticipationVO> findByStoreAndAct(StoreVO store, ActVO act);
      
