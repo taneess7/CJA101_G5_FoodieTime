@@ -213,8 +213,8 @@ public class ProductCategoryController {
         return "/front/restaurant/category";
     }
     
-    //餐廳首頁的模糊搜尋
- // 餐廳首頁的模糊搜尋（強化版）
+    
+    // 餐廳首頁的模糊搜尋
     @GetMapping("/search")
     public String searchByKeyword(@RequestParam String keyword,
                                   Model model,
@@ -289,12 +289,55 @@ public class ProductCategoryController {
         return "front/restaurant/category";
     }
     
+    
+    //會員收藏清單(查看餐廳)
+    @GetMapping("/store/{storeId}")
+    public String viewStoreDetail(@PathVariable Integer storeId, Model model) {
+        StoreVO store = storeService.getOneStore(storeId);
+        List<ProductVO> productList = storeService.getProdsByStoreId(storeId);
+        List<CouponVO> couponList = storeService.getCouponsByStore(storeId);
+
+        // ✅ 包裝 storeList
+        List<StoreVO> storeList = List.of(store);
+        model.addAttribute("storeList", storeList);
+
+        // ✅ 商品 Map
+        Map<Integer, List<ProductVO>> storeProductMap = new HashMap<>();
+        storeProductMap.put(storeId, productList);
+        model.addAttribute("storeProductMap", storeProductMap);
+
+        // ✅ 優惠券 Map
+        Map<Integer, List<CouponVO>> storeCouponMap = new HashMap<>();
+        storeCouponMap.put(storeId, couponList);
+        model.addAttribute("storeCouponMap", storeCouponMap);
+
+        // ✅ 圖片 Map
+        Map<Integer, String> storeImageMap = new HashMap<>();
+        byte[] imageBytes = store.getStorPhoto();
+        if (imageBytes != null && imageBytes.length > 0) {
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+            storeImageMap.put(storeId, base64);
+        }
+        model.addAttribute("storeImageMap", storeImageMap);
+
+        // ✅ weekMap
+        Map<String, String> weekMap = Map.of(
+                "0", "週日", "1", "週一", "2", "週二", "3", "週三",
+                "4", "週四", "5", "週五", "6", "週六"
+        );
+        model.addAttribute("weekMap", weekMap);
+
+        return "front/restaurant/category";
+    }
+    
+    
     //中式料理
     @GetMapping("/chinese-cuisine")
     public String listChinese() {
         
-        return "/front/restaurant/chinese-cuisine";
+        return "front/restaurant/chinese-cuisine";
     }
+    
     //日式料理
     @GetMapping("/japanese-cuisine")
     public String listJapanese() {
@@ -391,3 +434,4 @@ public class ProductCategoryController {
 //    }
 
 }
+

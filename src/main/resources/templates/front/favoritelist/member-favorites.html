@@ -83,8 +83,8 @@
 					</div>
 				</div>
 				<nav class="member-nav">
-					<a th:href="@{/front/member/member_center}" class="member-nav-item"> <i
-						class="material-icons-outlined">person</i><span>會員資料</span>
+					<a th:href="@{/front/member/member_center}" class="member-nav-item">
+						<i class="material-icons-outlined">person</i><span>會員資料</span>
 					</a> <a th:href="@{/cart/cart}" class="member-nav-item"> <i
 						class="material-icons-outlined">receipt_long</i><span>訂單記錄</span>
 					</a> <a th:href="@{/member/coupons}" class="member-nav-item"> <i
@@ -154,7 +154,10 @@
 								</div>
 							</div>
 							<div class="restaurant-actions-bottom">
-								<button class="view-btn">查看餐廳</button>
+								<div class="restaurant-actions-bottom">
+									<a th:href="@{'/category/store/' + ${entry.key.storId}}"
+										class="view-btn">查看餐廳</a>
+								</div>
 							</div>
 						</div>
 					</div>
