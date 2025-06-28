@@ -323,6 +323,7 @@
                                 </div>
                             </div>
                             <!-- ➕ 新增優惠券內容 (更動後版) -->
+                            <div class="tab-content" th:id="'coupon-content-' + ${store.storId}">
                             <div class="menu-item" th:each="coupon : ${storeCouponMap[store.storId]}">
 
                                 <!-- 優惠券文字資訊 (這部分不變) -->
@@ -352,6 +353,7 @@
         </span>
                                 </button>
 
+                            </div>
                             </div>
                             <!-- ==================== /優惠券項目區塊 ==================== -->
 
