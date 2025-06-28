@@ -27,10 +27,10 @@ public class GbprodService {
         gbprodRepository.deleteById(gbProdId);
     }
 
-    // 遠端加的功能：取得產品圖片
+//     遠端加的功能：取得產品圖片
     public byte[] getProductPhoto(Integer gbProdId) {
         return gbprodRepository.findById(gbProdId)
-                   .map(GbprodVO::getGbProdPhoto)
+                   .map(GbprodVO::getGbProdPhotoBytes)
                    .orElse(null);
     }
 
