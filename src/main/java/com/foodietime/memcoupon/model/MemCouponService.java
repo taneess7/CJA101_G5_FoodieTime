@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -149,5 +151,31 @@ public class MemCouponService {
         }
     }
 
+    /**
+     * 根據會員ID，查詢該會員所有已領取的優惠券 ID。
+     * 這個方法專門為前端渲染檢查狀態而設計，效能較高。
+     *
+     * @param memberId 會員的 ID
+     * @return 一個包含所有已領取 Coupon ID 的 Set 集合。如果會員未領取任何優惠券，則返回空集合。
+     */
+    public Set<Integer> getClaimedCouponIdsByMemberId(Integer memberId) {
+        // ==================== 1. 查找會員實體 ====================
+        // 這裡直接使用 findById，因為如果會員不存在，本來就沒有優惠券
+        MemberVO member = memberRepo.findById(memberId).orElse(null);
+        if (member == null) {
+            // 如果找不到會員，直接返回一個空的 Set
+            return Collections.emptySet();
+        }
 
+        // ==================== 2. 查詢關聯的優惠券紀錄 ====================
+        // 重複使用您已有的 findByMemberIdWithDetails 方法來獲取所有相關紀錄
+        List<MemCouponVO> allCoupons = memCouponRepo.findByMemberIdWithDetails(member);
+
+        // ==================== 3. 提取並返回 Coupon ID 集合 ====================
+        // 使用 Java Stream API，從 List<MemCouponVO> 中提取出每一個 Coupon 的 ID，
+        // 並收集成一個 Set<Integer>。使用 Set 可以自動去重，且查詢效率高。
+        return allCoupons.stream()
+                .map(memCoupon -> memCoupon.getCoupon().getCouId())
+                .collect(Collectors.toSet());
+    }
 }

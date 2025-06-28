@@ -1,5 +1,6 @@
 package com.foodietime.orders.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
 import com.foodietime.member.model.MemberRepository;
@@ -8,10 +9,14 @@ import com.foodietime.memcoupon.model.MemCouponRepository;
 import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orddet.model.OrdDetRepository;
 import com.foodietime.orddet.model.OrdDetVO;
+import com.foodietime.orders.dto.OrderNotificationDTO;
+import com.foodietime.orders.websocket.OrderNotificationWebSocket;
 import com.foodietime.product.model.ProductVO; // 確保 ProductVO 可以被引用
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
 import jakarta.transaction.Transactional; // 使用 Jakarta EE 的 @Transactional 確保交易原子性
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +29,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrdersService {
+    // ★★★ 新增 Logger 和 ObjectMapper ★★★
+    private static final Logger log = LoggerFactory.getLogger(OrdersService.class);
+
+    @Autowired
+    private ObjectMapper objectMapper; // Spring Boot 會自動配置此 Bean，用於序列化
 
     // 依據使用者要求，修改參數名稱
     private final OrdersRepository ordersRepo;
@@ -142,6 +152,34 @@ public class OrdersService {
 
         List<Integer> checkedOutShopIds = checkoutItems.stream().map(CartVO::getShopId).collect(Collectors.toList());
         cartService.deleteCartItems(checkedOutShopIds);
+
+        // ★★★★★★★★★★★★★★★★★★★★★★ 新增區塊開始 ★★★★★★★★★★★★★★★★★★★★★★
+        // ============================== 步驟7：觸發 WebSocket 即時推播通知 ==============================
+        try {
+            // 7.1 獲取需要通知的商家 ID
+            Integer storeId = savedOrder.getStore().getStorId();
+
+            // 7.2 將訂單實體(VO)轉換為專門用於通知的資料傳輸物件(DTO)
+            OrderNotificationDTO notificationDTO = new OrderNotificationDTO(
+                    savedOrder.getOrdId(),
+                    savedOrder.getMember().getMemName(),
+                    savedOrder.getOrdDate(),
+                    savedOrder.getActualPayment(),
+                    "待處理" // 直接給予初始狀態文字
+            );
+
+            // 7.3 將 DTO 物件序列化為 JSON 字串
+            String orderJson = objectMapper.writeValueAsString(notificationDTO);
+
+            // 7.4 呼叫 WebSocket 端點的靜態方法，向指定商家推送新訂單訊息
+            OrderNotificationWebSocket.sendNotificationToStore(storeId, orderJson);
+            log.info("新訂單 #{} 已成功觸發 WebSocket 推播至商家 #{}", savedOrder.getOrdId(), storeId);
+
+        } catch (Exception e) {
+            // 重要：推播失敗不應影響主訂單流程，僅記錄錯誤日誌
+            log.error("為訂單 #{} 觸發 WebSocket 推播時發生錯誤", savedOrder.getOrdId(), e);
+        }
+        // ★★★★★★★★★★★★★★★★★★★★★ 新增區塊結束 ★★★★★★★★★★★★★★★★★★★★★★
 
         return savedOrder;
     }

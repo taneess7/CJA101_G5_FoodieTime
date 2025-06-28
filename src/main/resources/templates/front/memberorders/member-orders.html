@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員優惠卷 - FoodieTime 食刻</title>
+    <meta name="description" content="FoodieTime 食刻購物車 - 輕鬆結帳、安全支付，享受美食無負擔。">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <!-- PWA 支援 -->
+    <link rel="manifest" th:href="@{/manifest.json}">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+</head>
+<body>
+<!-- 導覽列（與購物車頁面完全一致） -->
+<header class="app-header">
+    <div class="header-container">
+        <!-- Logo 區域 -->
+        <div class="logo-container">
+            <a th:href="@{/index}" class="logo">
+                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </a>
+        </div>
+
+        <!-- 搜尋區域 -->
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="search-icon material-icons-outlined">search</i>
+                <input type="text" class="search-input" placeholder="搜尋餐廳、料理或地址...">
+                <button class="mic-icon" aria-label="語音搜尋">
+                    <i class="material-icons-outlined">mic</i>
+                </button>
+                <button class="camera-icon" aria-label="拍照搜尋">
+                    <i class="material-icons-outlined">photo_camera</i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 導覽選單 -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a th:href="@{/map}" class="nav-link">地圖</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/group-order.html}" class="nav-link">團購</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/deals.html}" class="nav-link">優惠</a>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn"><a th:href="@{/login}">登入/註冊</a></button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+<!-- 主要內容 -->
+<main class="main-content">
+    <div class="content-container">
+        <!-- 會員區塊 -->
+        <div class="member-section">
+            <!-- 會員側邊欄 -->
+            <aside class="member-sidebar">
+                <div class="member-profile">
+                    <div class="member-avatar">
+                        <img src="img/avatar.svg" alt="會員頭像">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">王小明</h3>
+                        <p class="member-level">白金會員</p>
+                    </div>
+                </div>
+
+                <nav class="member-nav">
+                    <a href="member.html" class="member-nav-item">
+                        <i class="material-icons-outlined">person</i>
+                        <span>會員資料</span>
+                    </a>
+                    <a href="member-orders.html" class="member-nav-item">
+                        <i class="material-icons-outlined">receipt_long</i>
+                        <span>訂單記錄</span>
+                    </a>
+                    <a href="member-coupons.html" class="member-nav-item active">
+                        <i class="material-icons-outlined">local_offer</i>
+                        <span>優惠券</span>
+                    </a>
+                    <a href="member-favorites.html" class="member-nav-item">
+                        <i class="material-icons-outlined">favorite</i>
+                        <span>收藏餐廳</span>
+                    </a>
+                    <a href="member-points.html" class="member-nav-item">
+                        <i class="material-icons-outlined">stars</i>
+                        <span>點數紀錄</span>
+                    </a>
+                    <a href="#" class="member-nav-item logout">
+                        <i class="material-icons-outlined">logout</i>
+                        <span>登出</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- ==================== 會員內容: 訂單記錄 (最終修正版) ==================== -->
+            <div class="member-content">
+                <!-- 內容標頭 -->
+                <div class="member-content-header">
+                    <h1 class="member-content-title">我的訂單記錄</h1>
+                    <!-- 訂單切換分頁 -->
+                    <div class="order-tabs">
+                        <button class="tab-btn active" onclick="showTab('current')">進行中訂單</button>
+                        <button class="tab-btn" onclick="showTab('history')">歷史訂單</button>
+                    </div>
+                </div>
+
+                <!-- ===== 進行中訂單區塊 ===== -->
+                <div id="current-orders-section" class="order-section active">
+
+                    <!-- Thymeleaf: 檢查 '進行中訂單' 列表是否為空 -->
+                    <div th:if="${#lists.isEmpty(currentOrders)}" class="empty-state">
+                        <i class="material-icons-outlined">inbox</i>
+                        <p>目前沒有進行中的訂單</p>
+                        <a th:href="@{/category/1}" class="btn btn-primary">立即前往點餐</a>
+                    </div>
+
+                    <!-- Thymeleaf: 迭代 '進行中訂單' 列表 -->
+                    <div class="orders-container" th:if="${not #lists.isEmpty(currentOrders)}">
+                        <div class="order-card" th:each="order : ${currentOrders}">
+                            <!-- 訂單卡片頭部 -->
+                            <div class="order-card-header">
+                                <div class="store-info">
+                                    <i class="material-icons-outlined">storefront</i>
+                                    <h3 th:text="${order.store.storName}">餐廳名稱</h3>
+                                </div>
+                                <!-- Thymeleaf: 訂單狀態標籤 -->
+                                <span class="order-status" th:switch="${order.orderStatus}"
+                                      th:classappend="${order.orderStatus == 0 ? 'status-pending' : (order.orderStatus == 1 ? 'status-accepted' : 'status-preparing')}">
+                        <span th:case="0">待處理</span>
+                        <span th:case="1">已接單</span>
+                        <span th:case="2">準備中</span>
+                    </span>
+                            </div>
+
+                            <!-- 訂單卡片主體 -->
+                            <div class="order-card-body">
+                                <div class="order-meta">
+                                    <!-- [最終修正] 使用 T(java.lang.String) 完整類別路徑來格式化訂單編號 -->
+                                    <span class="order-id" th:text="'訂單編號: FT' + ${T(java.lang.String).format('%08d', order.ordId)}"></span>
+                                    <span class="order-date" th:text="'下單時間: ' + ${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                </div>
+                                <ul class="order-item-list">
+                                    <!-- Thymeleaf: 迭代訂單明細 -->
+                                    <li th:each="detail : ${order.ordDet}" class="order-item">
+                                        <span class="item-name" th:text="${detail.product.prodName}">商品名稱</span>
+                                        <span class="item-qty" th:text="'x ' + ${detail.prodQty}">x 1</span>
+                                        <span class="item-price" th:text="'$' + ${detail.prodPrice}">$100</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- 訂單卡片底部 -->
+                            <div class="order-card-footer">
+                                <div class="order-total">
+                                    實付金額: <strong th:text="'$ ' + ${#numbers.formatInteger(order.actualPayment, 0, 'COMMA')}">$ 250</strong>
+                                </div>
+                                <div class="order-actions">
+                                    <button class="btn btn-secondary btn-sm">聯繫店家</button>
+                                    <button class="btn btn-primary btn-sm">追蹤訂單</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 歷史訂單區塊 ===== -->
+                <div id="history-orders-section" class="order-section">
+
+                    <!-- Thymeleaf: 檢查 '歷史訂單' 列表是否為空 -->
+                    <div th:if="${#lists.isEmpty(historicalOrders)}" class="empty-state">
+                        <i class="material-icons-outlined">history</i>
+                        <p>沒有任何歷史訂單記錄</p>
+                    </div>
+
+                    <!-- Thymeleaf: 迭代 '歷史訂單' 列表 -->
+                    <div class="orders-container" th:if="${not #lists.isEmpty(historicalOrders)}">
+                        <div class="order-card" th:each="order : ${historicalOrders}">
+                            <!-- 訂單卡片頭部 -->
+                            <div class="order-card-header">
+                                <div class="store-info">
+                                    <i class="material-icons-outlined">storefront</i>
+                                    <h3 th:text="${order.store.storName}">餐廳名稱</h3>
+                                </div>
+                                <!-- Thymeleaf: 訂單狀態標籤 -->
+                                <span class="order-status"
+                                      th:classappend="${order.orderStatus == 3 ? 'status-completed' : 'status-cancelled'}"
+                                      th:switch="${order.orderStatus}">
+                        <span th:case="3">已完成</span>
+                        <span th:case="4">已取消</span>
+                    </span>
+                            </div>
+
+                            <!-- 訂單卡片主體 -->
+                            <div class="order-card-body">
+                                <div class="order-meta">
+                                    <!-- [最終修正] 使用 T(java.lang.String) 完整類別路徑來格式化訂單編號 -->
+                                    <span class="order-id" th:text="'訂單編號: FT' + ${T(java.lang.String).format('%08d', order.ordId)}"></span>
+                                    <span class="order-date" th:text="'下單時間: ' + ${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                </div>
+                                <ul class="order-item-list">
+                                    <li th:each="detail : ${order.ordDet}" class="order-item">
+                                        <span class="item-name" th:text="${detail.product.prodName}">商品名稱</span>
+                                        <span class="item-qty" th:text="'x ' + ${detail.prodQty}">x 1</span>
+                                        <span class="item-price" th:text="'$' + ${detail.prodPrice}">$100</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- 訂單卡片底部 -->
+                            <div class="order-card-footer">
+                                <div class="order-total">
+                                    實付金額: <strong th:text="'$ ' + ${#numbers.formatInteger(order.actualPayment, 0, 'COMMA')}">$ 250</strong>
+                                </div>
+                                <div class="order-actions">
+                                    <!-- Thymeleaf: 根據訂單狀態顯示不同按鈕 -->
+                                    <button class="btn btn-secondary btn-sm">再次訂購</button>
+                                    <button th:if="${order.orderStatus == 3 and order.rating == null}" class="btn btn-primary btn-sm">評價訂單</button>
+                                    <button th:if="${order.orderStatus == 3 and order.rating != null}" class="btn btn-disabled btn-sm" disabled>已評價</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="app-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">功能</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="map.html">地圖搜尋</a></li>
+                        <li><a href="group-order.html">團購功能</a></li>
+                        <li><a href="deals.html">比價優惠</a></li>
+                        <li><a href="collections.html">收藏管理</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">關於我們</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="about.html">公司簡介</a></li>
+                        <li><a href="team.html">團隊成員</a></li>
+                        <li><a href="careers.html">加入我們</a></li>
+                        <li><a href="press.html">媒體報導</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">幫助</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="faq.html">常見問題</a></li>
+                        <li><a href="contact.html">聯絡我們</a></li>
+                        <li><a href="terms.html">使用條款</a></li>
+                        <li><a href="privacy.html">隱私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- JavaScript -->
+<script src="js/main.js"></script>
+<script>
+    function showTab(tabName) {
+        // 隱藏所有訂單區塊
+        document.querySelectorAll('.order-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        // 顯示選擇的區塊
+        document.getElementById(tabName + '-orders-section').classList.add('active');
+
+        // 更新按鈕的 active 狀態
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
+    }
+</script>
+</body>
+</html>
