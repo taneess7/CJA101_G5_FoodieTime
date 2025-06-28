@@ -11,20 +11,12 @@
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             background-color: #f8f9fa;
         }
-
+        
         .navbar-brand {
             font-weight: bold;
             color: #ff6b6b;
         }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 8px;
-        }
-
+        
         .search-section {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');
             background-size: cover;
@@ -32,23 +24,23 @@
             padding: 60px 0;
             margin-bottom: 30px;
         }
-
+        
         .search-container {
             max-width: 700px;
             margin: 0 auto;
         }
-
+        
         .search-title {
             color: white;
             margin-bottom: 20px;
             font-weight: bold;
         }
-
+        
         .search-subtitle {
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 30px;
         }
-
+        
         .filter-bar {
             background-color: white;
             border-radius: 10px;
@@ -56,7 +48,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
-
+        
         .product-card {
             background-color: white;
             border-radius: 10px;
@@ -66,22 +58,28 @@
             margin-bottom: 25px;
             height: 100%;
         }
-
+        
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
-
+        
         .product-image {
             height: 200px;
             background-size: cover;
             background-position: center;
         }
-
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
         .product-info {
             padding: 15px;
         }
-
+        
         .product-title {
             font-weight: bold;
             margin-bottom: 10px;
@@ -91,20 +89,20 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
         }
-
+        
         .product-price {
             color: #ff6b6b;
             font-weight: bold;
             font-size: 1.2rem;
         }
-
+        
         .product-original-price {
             text-decoration: line-through;
             color: #adb5bd;
             font-size: 0.9rem;
             margin-left: 5px;
         }
-
+        
         .product-discount {
             background-color: #ff6b6b;
             color: white;
@@ -113,38 +111,38 @@
             font-size: 0.8rem;
             margin-left: 5px;
         }
-
+        
         .progress {
             height: 8px;
             margin: 10px 0;
         }
-
+        
         .progress-info {
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
             color: #6c757d;
         }
-
+        
         .time-left {
             color: #ff6b6b;
             font-weight: 500;
             font-size: 0.9rem;
             margin-top: 10px;
         }
-
+        
         .join-btn {
             margin-top: 15px;
             width: 100%;
         }
-
+        
         .section-title {
             margin: 30px 0 20px 0;
             font-weight: bold;
             position: relative;
             padding-bottom: 10px;
         }
-
+        
         .section-title::after {
             content: '';
             position: absolute;
@@ -154,47 +152,58 @@
             height: 3px;
             background-color: #ff6b6b;
         }
-
+        
         .badge-container {
             position: absolute;
             top: 10px;
             right: 10px;
         }
-
+        
         .footer {
             background-color: #343a40;
             color: white;
             padding: 40px 0 20px;
             margin-top: 50px;
         }
-
+        
         .footer-title {
             font-weight: bold;
             margin-bottom: 20px;
         }
-
+        
         .footer-links {
             list-style: none;
             padding: 0;
         }
-
+        
         .footer-links li {
             margin-bottom: 10px;
         }
-
+        
         .footer-links a {
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
         }
-
+        
         .footer-links a:hover {
             color: white;
         }
-
+        
         .social-icons a {
             color: white;
             font-size: 1.5rem;
             margin-right: 15px;
+        }
+        
+        .pagination-container {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .results-info {
+            margin-bottom: 20px;
+            color: #6c757d;
         }
     </style>
 </head>
@@ -270,18 +279,11 @@
 	      </p>
 	
 	      <!-- 1. 用 form 包起來，action 指到 searchCases 的 Mapping -->
-	      <form th:action="@{/gb/search}" method="get" class="input-group mb-3">
-			  <!-- <input type="hidden" name="gbId" th:value="${gbId}" /> -->
-
-			  <input type="text"
-			         name="gbProdName"
-		             class="form-control form-control-lg"
-		             placeholder="搜尋商品..."
-		             th:value="${gbProdName}"/>
-		           
-			  <button type="submit" class="btn btn-primary btn-lg">
-			    <i class="bi bi-search"></i> 搜尋
-			  </button>
+	      <form th:action="@{/gb/leaderindex}" method="get" class="input-group mb-3">
+			    <input type="text" name="keyword" class="form-control form-control-lg" placeholder="輸入商品名稱、商品編號或店家編號查詢" th:value="${keyword}">
+			    <button type="submit" class="btn btn-primary btn-lg">
+			        <i class="bi bi-search"></i> 搜尋
+			    </button>
 			</form>
 	    </div>
 	  </div>
@@ -294,7 +296,8 @@
     <h2 class="section-title">團購商品</h2>
     <div class="row" >
         <!-- 動態顯示商品卡片 -->
-        <div th:each="product : ${storesWithPromotion}" class="col-lg-3 col-md-4 col-sm-6">
+        <div th:each="product : ${storesWithPromotion}" class="col-lg-3 col-md-4 col-sm-6 product-item">
+        <div class="product-card">
             <!-- 圖片 -->
 		    <div class="product-image">
 		      <img
@@ -308,17 +311,31 @@
                     <h5 class="product-title" th:text="${product.gbProdName}">商品名稱</h5>
                         <!-- 顯示促銷價格-->
                         <div >
-						    <span th:text="${product.gbpromotionList[0].gbProdSales}">銷售數量</span>
+						    <span class="product-price" th:text="'$' + ${product.gbpromotionList[0].gbProdSales != null ? product.gbpromotionList[0].gbProdSales : '0'}">$299</span>
                         <!-- 顯示商家優惠價 -->
-                        	<span class="product-original-price" th:text="${product.gbpromotionList[0].gbProdSpe}">商家優惠價</span>
-						</div> 
+                        	<span class="product-original-price" th:text="'$' + ${product.gbpromotionList[0].gbProdSpe}">商家優惠價</span>
+						</div>
+
+                        <!-- 
+						<div>
+						    <span class="product-price" th:text="'$' + ${product.gbpromotionList[0].gbProdSpe != null ? product.gbpromotionList[0].gbProdSpe : '0'}">$299</span>
+						    <span class="product-original-price" th:if="${product.gbpromotionList[0].gbProdSpe != null}" 
+						          th:text="'$' + ${#numbers.formatInteger(product.gbpromotionList[0].gbProdSpe * 1.5, 0)}">$499</span>
+						    <span class="product-discount" th:if="${product.gbpromotionList[0].gbProdSpe != null}">33%</span>
+						</div>
+                        -->
+
+
 
                     <!-- 按鈕：立即開團 -->
-                    <button class="btn btn-primary join-btn">立即開團</button>
+                    <a class="btn btn-primary join-btn"
+					   th:href="@{/gb/leader-product/{id}(id=${product.gbProdId})}">
+					  立即開團
+					</a>
                 </div>
             </div>
          </div>
-	 
+	 </div>
 
         <!-- 分頁 -->
         <div class="pagination-container">
@@ -477,5 +494,73 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 分頁設定
+    const ITEMS_PER_PAGE = 8;
+    let currentPage = 1;
+    let allItems = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 取得所有商品卡片
+        const container = document.querySelector('.row');
+        allItems = Array.from(container.querySelectorAll('.product-item'));
+
+        if (allItems.length > ITEMS_PER_PAGE) {
+            showPage(1);
+            updatePagination();
+        } else {
+            document.querySelector('.pagination-container').style.display = 'none';
+        }
+    });
+
+    function showPage(page) {
+        currentPage = page;
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+
+        allItems.forEach((item, idx) => {
+            if (idx >= startIndex && idx < endIndex) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';
+
+        // 上一頁
+        const prevLi = document.createElement('li');
+        prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+        prevLi.innerHTML = `<a class="page-link" href="#" tabindex="-1" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
+        paginationContainer.appendChild(prevLi);
+
+        // 頁碼
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = i === currentPage ? 'page-item active' : 'page-item';
+            li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
+            paginationContainer.appendChild(li);
+        }
+
+        // 下一頁
+        const nextLi = document.createElement('li');
+        nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+        nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
+        paginationContainer.appendChild(nextLi);
+    }
+
+    window.changePage = function(page) {
+        const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+        if (page < 1 || page > totalPages) return;
+        showPage(page);
+        updatePagination();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
 </body>
 </html>

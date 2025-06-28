@@ -11,15 +11,20 @@ import java.util.List;
 @Repository
 public interface GbprodRepository extends JpaRepository<GbprodVO, Integer> {
 
-    // 來自遠端的查詢方法
-    @Query("""
-          SELECT p 
-          FROM GbprodVO p
-          JOIN p.groupOrdersList go
-          WHERE p.gbProdStatus = 1
-          """)
-    List<GbprodVO> findStoresWithOrdersByStatus();
 
-    // 本地新增的查詢方法
-    List<GbprodVO> findByStore(StoreVO store);
-}
+	
+	@Query("""
+		      SELECT p 
+		      FROM GbprodVO p
+		      WHERE p.gbProdStatus = 1
+		      """)
+		List<GbprodVO> findStoresWithOrdersByStatus();
+
+	@Query("""
+	        SELECT p FROM GbprodVO p
+	        WHERE LOWER(p.gbProdName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+	           OR CAST(p.gbProdId AS string) = :keyword
+	           OR CAST(p.store.storId AS string) = :keyword
+	    """)
+	    List<GbprodVO> searchByNameOrProdIdOrStoreId(@Param("keyword") String keyword);}
+

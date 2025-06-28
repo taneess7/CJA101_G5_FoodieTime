@@ -22,4 +22,7 @@ public class GbleaderService {
         return gbprodRepository.findStoresWithOrdersByStatus();
     }
 
+    public List<GbprodVO> searchProducts(String keyword) {
+        return gbprodRepository.searchByNameOrProdIdOrStoreId(keyword);
+    }
 }

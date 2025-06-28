@@ -41,29 +41,40 @@ public class GroupBuyingCasesController {
 //	}
 
 	// 查詢某會員開設且是團主的團購案
-	@GetMapping("/leader-groups")
-	public String findByLeader(HttpSession session, Model model) {
-	    // 1. 檢查是否已登入
-	    MemberVO loggedInMember = (MemberVO) session.getAttribute("loggedInMember");
-	    if (loggedInMember == null) {
-	        // 未登入 → 重導到登入頁面
-	        return "redirect:/front/member/login";
-	    }
+    @GetMapping("/leader-groups")
+    public String findByLeader(
+            @RequestParam(value = "status", required = false) Byte status,
+            HttpSession session, 
+            Model model) {
+        // 1. 檢查是否已登入
+        MemberVO loggedInMember = (MemberVO) session.getAttribute("loggedInMember");
+        if (loggedInMember == null) {
+            // 未登入 → 重導到登入頁面
+            return "redirect:/front/member/login";
+        }
 
-	    // 2. 查詢該會員開設且為團主的團購案
-	    Integer memId = loggedInMember.getMemId();
-	    List<GroupBuyingCasesVO> groupBuyingCases =
-	        groupBuyingCasesService.findByMember_MemIdAndLeader(memId, (byte) 0);
+        // 2. 查詢該會員開設且為團主的團購案
+        Integer memId = loggedInMember.getMemId();
+        List<GroupBuyingCasesVO> groupBuyingCases;
 
-	    // 3. 放入 Model
-	    if (groupBuyingCases.isEmpty()) {
-	        model.addAttribute("error", "找不到該會員開設且為團主的團購案");
-	    }
-	    model.addAttribute("groupBuyingCases", groupBuyingCases);
+        if (status != null) {
+            // 根據狀態篩選
+            groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeaderAndGbStatus(memId, (byte) 0, status);
+            model.addAttribute("selectedStatus", status);
+        } else {
+            // 查詢全部
+            groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeader(memId, (byte) 0);
+        }
 
-	    // 4. 回傳列表頁面
-	    return "front/gb/gbleader/leader-groups";
-	}
+        // 3. 放入 Model
+        if (groupBuyingCases.isEmpty()) {
+            model.addAttribute("error", "找不到該會員開設且為團主的團購案");
+        }
+        model.addAttribute("groupBuyingCases", groupBuyingCases);
+
+        // 4. 回傳列表頁面
+        return "front/gb/gbleader/leader-groups";
+    }
 
 	// 查詢某會員(團主)的某一團購詳細
 	 @GetMapping("/leader-gbdetail/{gbId}")
@@ -154,7 +165,7 @@ public class GroupBuyingCasesController {
 //        return "redirect:/gb/leader-groups";
 //    }
 //
-	 @PostMapping("/update/{gbId}")
+	 @PostMapping("/case/update/{gbId}")
 	 public String updateGroupBuyingCase(
 	         @PathVariable Integer gbId,
 	         @ModelAttribute GroupBuyingCasesVO vo,
@@ -182,6 +193,7 @@ public class GroupBuyingCasesController {
 	     existing.setGbEndTime(vo.getGbEndTime());
 	     existing.setGbStatus(vo.getGbStatus());
 	     existing.setGbMinProductQuantity(vo.getGbMinProductQuantity());
+	     existing.setCancelReason(vo.getCancelReason());
 	     // …如果還有其他欄位可編輯，再一一設定…
 
 	     // 4. 存回資料庫
