@@ -54,8 +54,9 @@ function fetchAllActs() {
 			    <div class="card-left">
 					<div class="img-container">
 						<div class="img-wrapper">
-			        		<img src="${contextPath}api/actpic/${act.actId}" alt="活動圖" style="width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
-					    </div>   
+			        		<img src="${contextPath}api/actpic/${act.actId}" alt="活動圖" style="width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;"
+							 onerror="this.onerror=null; this.src='/images/act/default.png';">
+							</div>   
 							 <div style="color: white;">${act.actName}</div>
 						
 					</div>
