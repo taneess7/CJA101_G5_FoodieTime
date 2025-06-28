@@ -135,10 +135,11 @@ public class ActVO implements Serializable {
 
 	
 	// OneToMany
-	
+	@JsonIgnore 
 	@OneToMany(mappedBy = "act", cascade = CascadeType.ALL)
     private List<OrdersVO> orders;
 	
+	@JsonIgnore  // 加這行！
 	@OneToMany(mappedBy = "act", cascade = CascadeType.ALL)
 	private List<ActParticipationVO> actParticipation;
 	
