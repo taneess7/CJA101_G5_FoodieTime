@@ -112,9 +112,9 @@
           <option value="group">團購商品</option>
         </select>
       </div>
-      <div id="normalProductList" class="product-list">
-        <!-- 一般商品將由 JS 動態插入 -->
-      </div>
+     
+      <iframe id="normalProductList" class="product-list prod-img"  th:src="@{/store/listAllProds}" style="width:100%;height:900px;border:none;" ></iframe>
+      
       <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
 

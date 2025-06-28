@@ -823,3 +823,10 @@ select:disabled {
   border-radius: 20px; /* 如果要更小圓弧也可以 */
 }
 
+.product-list {
+  width: 100%;
+  max-width: 1200px; /* 或不加 max-width，看版型需求 */
+  margin: 0 auto;
+}
+
+

@@ -57,24 +57,24 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>所有商品資料</h2>
-		 <h3><a class="navbar-brand" th:href="@{/store/prod/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div>
+		 <div align="center"> <h2>一般商品列表</h2>
+<!-- 		 <h3><a class="navbar-brand" th:href="@{/store/prod/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div> -->
 </nav>
 <div class="table-responsive">
   <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
   <thead >
 	<tr style="background-color:#f1e5d9">
-		<th>計數</th>
+		<th>商品ID</th><!-- 原本的計數 -->
 <!-- 		<th>商品編號</th> -->
 <!-- 		<th>店家編號</th> -->
-		<th>商品類別</th>
+		<th>類別</th>
 		<th>商品名稱</th>
-		<th>商品敘述</th>
-		<th>商品價格</th>
+		<th>商品描述</th>
+		<th>價格</th>
 		<th>商品圖片</th>
-		<th>上架/下架</th>
+		<th>狀態</th>
 		<th>最後更新時間</th>
-		<th>修改</th>
+		<th>操作</th>
 <!-- 		<th>被檢舉次數</th> -->
 	</tr>
   </thead>
@@ -88,7 +88,7 @@
 				<td th:text="${prodVO.prodName}"></td>
 				<td class="prod-desc-ellipsis"  th:text="${prodVO.prodDesc}"></td>
 				<td th:text="${prodVO.prodPrice}"></td>
-				<td><img style="border: 2px dotted blue; background-color: white;" th:src="@{/store/DBGifReader} + '?prodId=' + ${prodVO.prodId}" width="50px"></td>
+				<td><img class="prod-img" style="border: 2px dotted blue;width:50px; height:50px; background-color: white;" th:src="@{/store/DBGifReader} + '?prodId=' + ${prodVO.prodId}" width="50px"></td>
 				<td th:text="${prodVO.prodStatus} ? '上架' : '下架'"></td>
 				<td th:text="${#dates.format(prodVO.prodLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
 

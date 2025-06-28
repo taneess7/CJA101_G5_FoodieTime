@@ -317,7 +317,7 @@ public class StorePageController {
 		
 		//2.取得店家的商品
 		List<ProductVO> list = prodSvc.findByStoreId(storId); //用storeId找商品，進入畫面才會有資料
-	    System.out.println("店家id:"+ storId +"清單筆數：" + list.size());
+	    //System.out.println("店家id:"+ storId +"清單筆數：" + list.size());
 	    model.addAttribute("prodListData", list); //提供給html
 	    return "front/store/prod/listAllProds";
 	}

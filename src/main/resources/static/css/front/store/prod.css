@@ -35,3 +35,13 @@ h3{
 h2{
 	margin: 0;
 }
+
+.prod-img {
+  width: 80px;             /* 固定寬度 */
+  height: 80px;            /* 固定高度 */
+  object-fit: cover;       /* 保持比例裁切填滿 */
+  border: 2px dotted blue; /* 可選樣式 */
+  background-color: white; /* 背景底色 */
+  display: block;
+  margin: 0 auto;          /* 置中顯示 */
+}
