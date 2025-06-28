@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foodietime.smg.model.SmgVO;
+import com.foodietime.store.model.StoreVO;
 
 @Service
 public class GbpromotionService {
@@ -22,6 +23,10 @@ public class GbpromotionService {
     }
 
     public GbpromotionVO save(GbpromotionVO gbpromotionVO) {
+        if (gbpromotionVO.getGbProdSpe() != null) {
+            int sales = (int) Math.round(gbpromotionVO.getGbProdSpe() * 1.2);
+            gbpromotionVO.setGbProdSales(sales);
+        }
         return gbpromotionRepository.save(gbpromotionVO);
     }
 
@@ -29,4 +34,7 @@ public class GbpromotionService {
     	gbpromotionRepository.deleteById(gbPromoId);
     }
     
+    public List<GbpromotionVO> findAllByStore(StoreVO store) {
+        return gbpromotionRepository.findByGbprod_Store(store);
+    }
 }
