@@ -840,6 +840,7 @@ select:disabled {
       <button class="tab-btn" data-tab="coupon-view">查看優惠券</button>
       <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
       <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
+
       <a href="@{/}" 
        class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
         <i class="material-icons-outlined">index</i>
@@ -913,10 +914,7 @@ select:disabled {
       <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
     
-<!-- 查看優惠券 -->    
-    <section class="content-panel" id="tab-coupon-view">
-    
-     </section>
+
 <!-- 查看活動 -->    
 	<section class="content-panel" id="tab-activity-view">
       <iframe th:src="@{/act}" height="1000"></iframe>
@@ -934,9 +932,9 @@ select:disabled {
 
 
 
-
     
   </main>
+  
 
   <script>
     document.querySelectorAll('.tab-btn').forEach(btn => {

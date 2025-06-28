@@ -20,6 +20,7 @@ import com.foodietime.post.model.PostVO;
 import com.foodietime.postcategory.model.PostCategoryService;
 import com.foodietime.postcategory.model.PostCategoryVO;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -87,7 +88,7 @@ public class FavoritePostController {
 	}
 
 	@RequestMapping("/my")
-	public String myFavoritePosts(ModelMap model, HttpSession session) {
+	public String myFavoritePosts(ModelMap model, HttpSession session,HttpServletRequest request) {
 		// ====== 測試用：手動指定登入會員 ======
 		// 你可以改這個 ID 來測試不同會員
 		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
@@ -102,9 +103,11 @@ public class FavoritePostController {
 		model.addAttribute("threads", favoritePosts);
 
 		// 補這一行：查詢所有分類
-	    List<PostCategoryVO> categories = postCategoryService.getAll();
-	    model.addAttribute("categories", categories);
+	    List<PostCategoryVO> category = postCategoryService.getAll();
+	    model.addAttribute("category", category);
 	    model.addAttribute("currentCategory", null); // 收藏時不屬於任何分類
+	    model.addAttribute("isFavoritePage", true);
+	    model.addAttribute("currentPath", request.getRequestURI()); // 傳遞當前路徑
 		return "front/post/listallpost";
 	}
 }

@@ -3,6 +3,7 @@ package com.foodietime.product.controller;
 import com.foodietime.coupon.model.CouponService;
 import com.foodietime.coupon.model.CouponVO;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.memcoupon.model.MemCouponService;
 import com.foodietime.memfavlist.model.FavoriteListService;
 import com.foodietime.memfavlist.model.FavoriteListVO;
 import com.foodietime.product.model.ProductCategoryService;
@@ -19,13 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -42,7 +37,9 @@ public class ProductCategoryController {
 	private FavoriteListService favoriteListService;
 	@Autowired
 	private StoreService storeService;
-	
+    @Autowired
+    private MemCouponService memCouponService;
+
     // 查全部
     @GetMapping("/food-categories")
     public String listAll() {      
@@ -68,7 +65,7 @@ public class ProductCategoryController {
 
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
         if (memberVO != null) {
-            model.addAttribute("member", memberVO); 
+            model.addAttribute("member", memberVO);
             
          // 加上會員的商品收藏清單
             List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
@@ -77,7 +74,18 @@ public class ProductCategoryController {
                     .collect(Collectors.toSet());
             model.addAttribute("favoriteProdIds", favoriteProdIds);
         }
-        
+        // ======================================== 優惠券 =============================================
+        Set<Integer> claimedCouponIds;
+        if (memberVO != null) {
+            // 調用 MemCouponService 中新增的方法
+            claimedCouponIds = memCouponService.getClaimedCouponIdsByMemberId(memberVO.getMemId());
+        } else {
+            // 未登入，給一個空集合
+            claimedCouponIds = Collections.emptySet();
+        }
+        // 將已領取的優惠券 ID 集合傳遞給前端
+        model.addAttribute("claimedCouponIds", claimedCouponIds);
+        // ===========================================================================================
         // 1. 找出分類名稱
         ProductCategoryVO categoryVO = categoryService.findById(cateId);
         model.addAttribute("categoryName", categoryVO.getProdCate());
@@ -213,8 +221,8 @@ public class ProductCategoryController {
         return "/front/restaurant/category";
     }
     
-    //餐廳首頁的模糊搜尋
- // 餐廳首頁的模糊搜尋（強化版）
+    
+    // 餐廳首頁的模糊搜尋
     @GetMapping("/search")
     public String searchByKeyword(@RequestParam String keyword,
                                   Model model,
@@ -289,12 +297,55 @@ public class ProductCategoryController {
         return "front/restaurant/category";
     }
     
+    
+    //會員收藏清單(查看餐廳)
+    @GetMapping("/store/{storeId}")
+    public String viewStoreDetail(@PathVariable Integer storeId, Model model) {
+        StoreVO store = storeService.getOneStore(storeId);
+        List<ProductVO> productList = storeService.getProdsByStoreId(storeId);
+        List<CouponVO> couponList = storeService.getCouponsByStore(storeId);
+
+        // ✅ 包裝 storeList
+        List<StoreVO> storeList = List.of(store);
+        model.addAttribute("storeList", storeList);
+
+        // ✅ 商品 Map
+        Map<Integer, List<ProductVO>> storeProductMap = new HashMap<>();
+        storeProductMap.put(storeId, productList);
+        model.addAttribute("storeProductMap", storeProductMap);
+
+        // ✅ 優惠券 Map
+        Map<Integer, List<CouponVO>> storeCouponMap = new HashMap<>();
+        storeCouponMap.put(storeId, couponList);
+        model.addAttribute("storeCouponMap", storeCouponMap);
+
+        // ✅ 圖片 Map
+        Map<Integer, String> storeImageMap = new HashMap<>();
+        byte[] imageBytes = store.getStorPhoto();
+        if (imageBytes != null && imageBytes.length > 0) {
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+            storeImageMap.put(storeId, base64);
+        }
+        model.addAttribute("storeImageMap", storeImageMap);
+
+        // ✅ weekMap
+        Map<String, String> weekMap = Map.of(
+                "0", "週日", "1", "週一", "2", "週二", "3", "週三",
+                "4", "週四", "5", "週五", "6", "週六"
+        );
+        model.addAttribute("weekMap", weekMap);
+
+        return "front/restaurant/category";
+    }
+    
+    
     //中式料理
     @GetMapping("/chinese-cuisine")
     public String listChinese() {
         
-        return "/front/restaurant/chinese-cuisine";
+        return "front/restaurant/chinese-cuisine";
     }
+    
     //日式料理
     @GetMapping("/japanese-cuisine")
     public String listJapanese() {
@@ -391,3 +442,4 @@ public class ProductCategoryController {
 //    }
 
 }
+

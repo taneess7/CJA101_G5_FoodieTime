@@ -58,12 +58,12 @@ public class PostController {
 			HttpSession session) {
 		PostVO postVO;
 		if (postId != null) {
-			postVO = postservice.getOnePost(postId); // 查詢原本的貼文
+			return "redirect:/post/update?postId=" + postId; // 如果有 postId，重定向到 update 頁面
 		} else {
 			postVO = new PostVO(); // 新增時給空物件
 		}
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
-		model.addAttribute("categories", categories);
+		List<PostCategoryVO> category = postCategoryservice.getAll();
+		model.addAttribute("category", category);
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("postVO", postVO);
@@ -84,8 +84,8 @@ public class PostController {
 
 		// 2. 驗證失敗時，帶回表單與資料
 		if (result.hasErrors()) {
-			List<PostCategoryVO> categories = postCategoryservice.getAll();
-			model.addAttribute("categories", categories);
+			List<PostCategoryVO> category = postCategoryservice.getAll();
+			model.addAttribute("category", category);
 			model.addAttribute("postVO", postVO);
 			return "front/post/addPost";
 		}
@@ -114,12 +114,27 @@ public class PostController {
 		return "redirect:/post/";
 	}
 
+	@GetMapping("/update")
+	public String updatePost(@RequestParam("postId") Integer postId, ModelMap model, HttpSession session) {
+		PostVO postVO = postservice.getOnePost(postId);
+		if (postVO == null) {
+			model.addAttribute("errorMessage", "找不到指定的貼文");
+			return "redirect:/post/";
+		}
+		List<PostCategoryVO> category = postCategoryservice.getAll();
+		model.addAttribute("category", category);
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		model.addAttribute("loginMember", loginMember);
+		model.addAttribute("postVO", postVO);
+		return "front/post/updatePost";
+	}
+	
 	@PostMapping("/updatePost")
 	public String update(@Valid PostVO postVO, BindingResult result, ModelMap model) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
 		if (result.hasErrors()) {
-			return "front/post/addPost";
+			return "front/post/updatePost";
 		}
 		/*************************** 2.開始新增資料 *****************************************/
 		// 假設你從 DB 撈出原本的資料來比較
@@ -139,7 +154,7 @@ public class PostController {
 		/*************************** 3.修改完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("success", "修改成功");
 		model.addAttribute("postVO", postVO);
-		return "redirect:/post/";
+		return "redirect:/post/one?postId=" + postVO.getPostId();
 	}
 
 	@PostMapping("/delete")
@@ -287,12 +302,12 @@ public class PostController {
 
 		/*************************** 2.開始查詢資料 *****************************************/
 
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		List<PostCategoryVO> category = postCategoryservice.getAll();
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 //		model.addAttribute("postListData", list);
 		model.addAttribute("threads", list);
-		model.addAttribute("categories", categories);
+		model.addAttribute("category", category);
 		model.addAttribute("currentCategory", null); // 全部分類
 	    model.addAttribute("currentSort", sort);
 
@@ -328,7 +343,7 @@ public class PostController {
 		postservice.updatePost(post.getPostId(), post.getMember().getMemId(), post.getPostCate().getPostCateId(),
 				post.getPostDate(), post.getPostStatus(), post.getEditDate(), post.getPostTitle(),
 				post.getPostContent(), post.getLikeCount(), post.getViews());
-		// 你可以記錄誰按過讚，避免重複（進階功能）
+		session.setAttribute("likeSuccess", "按讚成功！");
 		return "redirect:/post/one?postId=" + postId;
 	}
 
@@ -356,10 +371,10 @@ public class PostController {
 		default:
 			list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate()));
 		}
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		List<PostCategoryVO> category = postCategoryservice.getAll();
 
 		model.addAttribute("threads", list);
-		model.addAttribute("categories", categories);
+		model.addAttribute("category", category);
 		model.addAttribute("currentSort", sort);
 		model.addAttribute("currentKeyword", title);
 		model.addAttribute("searchResults", true);
@@ -377,14 +392,14 @@ public class PostController {
 			@RequestParam(value = "sort", defaultValue = "date") String sort, ModelMap model, HttpSession session) {
 
 		List<PostVO> list = postRepository.findByCategoryAndSort(categoryId, sort);
-		List<PostCategoryVO> categories = postCategoryservice.getAll();
+		List<PostCategoryVO> category = postCategoryservice.getAll();
 
 		// 找到當前分類名稱
-		String currentCategoryName = categories.stream().filter(cat -> cat.getPostCateId().equals(categoryId))
+		String currentCategoryName = category.stream().filter(cat -> cat.getPostCateId().equals(categoryId))
 				.map(PostCategoryVO::getPostCate).findFirst().orElse("未知分類");
 
 		model.addAttribute("threads", list);
-		model.addAttribute("categories", categories);
+		model.addAttribute("category", category);
 		model.addAttribute("currentSort", sort);
 		model.addAttribute("currentCategory", categoryId);
 		model.addAttribute("currentCategoryName", currentCategoryName);
@@ -394,4 +409,6 @@ public class PostController {
 
 		return "front/post/listallpost";
 	}
+	
+	
 }

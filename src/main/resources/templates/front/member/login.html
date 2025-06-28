@@ -63,19 +63,18 @@
         </form>
     </div>
     <!-- login.html 頁面中 -->
-		<script th:if="${session.loggedInMember != null}">
-		    window.location.href = '/front/member/member_center';
-		</script>
+		<script th:inline="javascript">
+		/*<![CDATA[*/
+		    let hasError = /*[[${error != null}]]*/ false;
+		    let isLoggedIn = /*[[${session.loggedInMember != null}]]*/ false;
 		
-		<script>
-    // 若登入成功後導回 login.html（例如使用上一頁），自動跳轉
-		    fetch('/front/member/check-session')
-		        .then(response => {
-		            if (response.status === 200) {
-		                window.location.href = '/front/member/member_center';
-		            }
-		        });
+		    // 僅在登入成功且沒有錯誤訊息時才自動跳轉
+		    if (isLoggedIn && !hasError) {
+		        window.location.href = '/front/member/member_center';
+		    }
+		/*]]>*/
 		</script>
+
 		
     
     

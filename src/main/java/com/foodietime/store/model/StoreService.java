@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.foodietime.coupon.model.CouponRepository;
+import com.foodietime.coupon.model.CouponVO;
+import com.foodietime.product.model.ProductRepository;
 import com.foodietime.product.model.ProductVO;
 
 
@@ -31,7 +33,8 @@ public class StoreService {
 	@Autowired
 	private CouponRepository couRepository; 
 	
-
+	@Autowired
+    private ProductRepository productRepo;
 
 	
 	public void addStore(StoreVO storeVO) {
@@ -63,6 +66,10 @@ public class StoreService {
 	//餐廳首頁模糊搜尋(丰)
 	public List<StoreVO> searchStores(String keyword) {
 	    return repository.findByStorNameContainingIgnoreCaseOrStorAddrContainingIgnoreCase(keyword, keyword);
+	}
+	//會員收藏清單(查看餐廳)(丰)
+	public List<CouponVO> getCouponsByStore(Integer storId) {
+	    return couRepository.findByStore_StorId(storId); // Store 是 CouponVO 裡的 @ManyToOne 欄位
 	}
 //	//註冊 storeSvc.register(storeVO) + 防止重複註冊
 //	public void register(StoreVO storeVO) {

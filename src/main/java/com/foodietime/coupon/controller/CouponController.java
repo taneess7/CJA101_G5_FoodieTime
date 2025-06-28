@@ -96,25 +96,37 @@ public class CouponController {
 	@PostMapping("/coupon/save")
 	public String insert( // , HttpServletRequest request
 			@Valid 
-			@ModelAttribute("coupon") CouponVO couponVO, BindingResult result, Model model,//@ModelAttribute("coupon") 給 th:object="${coupon}"用
+			@ModelAttribute("coupon") CouponVO couponVO, BindingResult result, HttpSession session, Model model,//@ModelAttribute("coupon") 給 th:object="${coupon}"用
 			RedirectAttributes redirectAttr) { //顯示新增成功訊息
 
 		System.out.println(">>> insert方法觸發");
 
-		// 如果驗證錯誤，補上 store 與優惠券下拉選單
+		// 從 session 中取出店家資訊
+	    Object obj = session.getAttribute("loggedInStore");
+
+	    if (!(obj instanceof StoreVO)) {
+	        System.out.println("⚠️ session 中的 loggedInStore 無效，導回登入頁");
+	        return "redirect:/front/member/login";
+	    }
+
+	    StoreVO loggedInStore = (StoreVO) obj;
+	    Integer storId = loggedInStore.getStorId();
+		
+		  
+		//如果驗證錯誤，補上 store 與優惠券下拉選單
 		if (result.hasErrors()) {
 			for (FieldError fe : result.getFieldErrors()) {
 				System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
 			}
 			// 若驗證失敗，要補上 store 進去（否則會是 null）
-			Integer currentStorId = 5;
+			
 	        if (couponVO.getStore() == null) {
 	            StoreVO storeVO = new StoreVO();
-	            storeVO.setStorId(currentStorId);
+	            storeVO.setStorId(storId);
 	            couponVO.setStore(storeVO);
 	        }
 	        //取得該店家所有coupons
-			List<CouponVO> coupons = couSvc.getCouponsByStorId(currentStorId);
+			List<CouponVO> coupons = couSvc.getCouponsByStorId(storId);
 			model.addAttribute("coupons", coupons);
 			
 			//顯示驗證錯誤訊息:
@@ -141,15 +153,19 @@ public class CouponController {
 			couSvc.updateCoupon(couponVO); 
 			redirectAttr.addFlashAttribute("successMessage", "優惠券修改成功！");
 			// 修改成功後回到該筆資料的編輯頁面
-			return "redirect:/store/editCoupon?couId=" + couponVO.getCouId();
+			System.out.println("更新成功");
+            return "redirect:/store/editCoupon?couId=" + couponVO.getCouId();
+			
+			
 		}
 		
 	}
 	//========================================================================================//
+	//查詢店家所有優惠券
 	@GetMapping("/listStoreCoupons")
 	public String listStoreCoupons(HttpSession session, Model model) {
 	    // 1. 取得 session 中登入的商家
-	    StoreVO storeVO = (StoreVO) session.getAttribute("loggedInMember");
+	    StoreVO storeVO = (StoreVO) session.getAttribute("loggedInStore");
 	    if (storeVO == null) {
 	        return "redirect:/front/member/login"; // 尚未登入，導回登入頁
 	    }
@@ -161,7 +177,7 @@ public class CouponController {
 
 	    // 3. 放進 model
 	    model.addAttribute("couponList", storeCoupons);
-
+	    model.addAttribute("storeVO", storeVO);
 	    return "front/store/coupon_listAll"; // 對應 Thymeleaf 頁面
 	}
 

@@ -135,7 +135,7 @@ public class MemberController {
         }
 
         storeService.addStore(store); // ✅ 儲存 storeVO
-        
+        session.setAttribute("loggedInStore", store); // ✅ 新增這行：補上 store session
         session.removeAttribute("registeringStore"); // 記得清掉！
         return "redirect:/store/sc";
     }
@@ -335,11 +335,16 @@ public class MemberController {
         session.setAttribute("loggedInMember", member);
 
         // ✅ 是否以店家身份登入
-        boolean loginAsStore = isStore != null;
+        boolean loginAsStore = "on".equals(isStore);
         if (loginAsStore) {
-            session.setAttribute("loginRole", "store");  // 設定身份為店家
-
-            StoreVO store = storeService.findByStorEmail(member.getMemEmail()); // 假設你有這個方法
+            
+        	StoreVO store = storeService.findByStorEmail(member.getMemEmail()); // 假設你有這個方法
+        	 // ✅ 檢查該會員是否有註冊店家，否則提示錯誤
+            if (store == null) {
+                model.addAttribute("error", "您尚未註冊店家，請先完成店家註冊流程");
+                return "front/member/login";
+            }
+        	session.setAttribute("loginRole", "store");  // 設定身份為店家    
             session.setAttribute("loggedInStore", store); // ✅ 把 StoreVO 放入 Session
             
             return "redirect:/store/sc";         // 導向店家頁面
@@ -462,15 +467,6 @@ public class MemberController {
         return "redirect:/index";
     }
     
-    @GetMapping("/memcoupon/member-coupons")
-    public String showMemberCoupons(HttpSession session, Model model) {
-        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-        if (member == null) {
-            return "redirect:/front/member/login";
-        }
-
-        return "front/memcoupon/member-coupons"; // 對應 templates/front/memcoupon/member-coupons.html
-    }
     
     @GetMapping("/check-session")
     @ResponseBody
@@ -480,7 +476,7 @@ public class MemberController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("NOT_LOGGED_IN");
     }
-
+    
 
 
 }
