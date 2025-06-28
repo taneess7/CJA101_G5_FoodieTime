@@ -296,7 +296,7 @@ public class AddUpdateController {
 //===================================================================================================//
 	
 	//店家參加活動商品列表
-	@GetMapping("actProducts")
+	@GetMapping("/actProducts")
 	public String showActProds(Model model, HttpSession session) {
 		List<ProductVO> allProds = prodSvc.getAllProducts(); //所有商品
 		StoreVO store = (StoreVO) session.getAttribute("loggedInStore"); //判斷是否登入店家
@@ -307,11 +307,11 @@ public class AddUpdateController {
 		//把每個商品價格放進Map
 		Map<ProductVO, Integer> displayPriceMap = new LinkedHashMap<>();
 		for (ProductVO prod : allProds) {
-			int finalprice = actSvc.calDisplayPrice(prod, globalAct, store);
-			displayPriceMap.put(prod, finalprice);
+			int finalprice = actSvc.calDisplayPrice(prod, globalAct, store);// 計算顯示價格
+			displayPriceMap.put(prod, finalprice); //th:text="${entry.key.ProductVO 內部資料}" , ${entry.value}經過計算後的顯示價格
 		}
 		
-		model.addAttribute("priceMap", displayPriceMap);
-		return "front/store_prod";
+		model.addAttribute("priceMap", displayPriceMap); //html <tr th:each="entry : ${priceMap}">
+		return "front/store/store_prod";
 	}
 }

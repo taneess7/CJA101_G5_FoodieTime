@@ -138,7 +138,7 @@ public class ActService {
 	} //讓 calculateDisplayPrice()選擇符合條件的活動
 	
 	
-	//回傳第1個全站活動
+	//回傳一個全站活動
 	public ActVO getCurrentGlobalAct() {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		return repository.findAll().stream()
