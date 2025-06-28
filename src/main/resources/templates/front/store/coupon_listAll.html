@@ -15,8 +15,9 @@
     }
 
     .coupon-card {
-      background: #fff9e5;
-      border: 1px solid #ffcc00;
+      max-width: 500px;
+      background: #E1EFF6;
+      border: 10px solid white;
       border-radius: 10px;
       padding: 1.2rem;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
@@ -27,14 +28,19 @@
       font-weight: bold;
       font-size: 1.2rem;
       margin-bottom: 0.5rem;
-      color: #d35400;
+      color: #01B901;
     }
 
-    .coupon-detail {
-      margin: 0.2rem 0;
-      font-size: 0.95rem;
-      color: #444;
-    }
+    
+    .coupon-detail span,
+	.coupon-date span {
+	  display: inline-block;
+	  word-break: break-word;
+	  overflow-wrap: break-word;
+	  max-width: 100%;
+	}
+	  
+
 
     .coupon-header {
       margin-left: 1.5rem;
@@ -74,6 +80,13 @@ div:has(> button.btn) {
   box-shadow: none !important;
   padding: 0 !important;
 }
+
+.coupon-expired {
+  margin-top: 0.5rem;
+  color: red;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
   </style>
   
   <link rel="stylesheet" href="/css/front/coupon/cou.css">
@@ -90,7 +103,7 @@ div:has(> button.btn) {
 <!-- 		</div> -->
   <main>
    
-      <div class="coupon-header">編號<span th:text="${storeVO.storId}"></span></div>
+      <div class="coupon-header">店家編號<span th:text="${storeVO.storId}"></span></div>
         <div>
         	<span class="section-subtitle">以下是您目前建立的優惠券清單：</span>
 		</div>
@@ -98,21 +111,30 @@ div:has(> button.btn) {
       <div class="coupon-card" th:each="cou : ${couponList}">
         <div class="coupon-title" th:text="${cou.couName}">開幕大放送</div>
         <div class="coupon-detail">
-          類型：<span th:text="${cou.couType}">折價券</span>
+          <strong>類型：</strong><span th:text="${cou.couType}">折價券</span>
         </div>
+  
         <div class="coupon-detail">
-          說明：<span th:text="${cou.couDesc}">滿千折百</span>
+          <strong>說明：</strong><span th:text="${cou.couDesc}">滿千折百</span>
         </div>
+         
         <div class="coupon-detail">
-          最低消費：NT$<span th:text="${cou.couMinOrd}">0</span>
+          <strong>最低消費：</strong>NT$<span th:text="${cou.couMinOrd}">0</span>
         </div>
+          
         <div class="coupon-detail">
-          折扣額度：<span th:text="${cou.couDiscount}">100</span>
+          <strong>折扣額度：</strong><span th:text="${cou.couDiscount}">100</span>
         </div>
+          
         <div class="coupon-date">
-          使用期限：<span th:text="${#dates.format(cou.couStartDate, 'yyyy-MM-dd HH:mm')}"></span> - 
+          <strong>使用期限：</strong><span th:text="${#dates.format(cou.couStartDate, 'yyyy-MM-dd HH:mm')}"></span> - 
           <span th:text="${#dates.format(cou.couEndDate, 'yyyy-MM-dd HH:mm')}"></span>
         </div>
+        
+        <div class="coupon-expired" 
+    		 th:if="${cou.couEndDate.before(T(java.util.Date).from(T(java.time.Instant).now()))}">
+  			 此優惠已過期
+		</div>
         
           
 <!-- 		 <td> -->

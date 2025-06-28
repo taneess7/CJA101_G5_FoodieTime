@@ -175,7 +175,10 @@ public class CouponController {
 	    // 2. 查詢該商家擁有的所有優惠券
 	    List<CouponVO> storeCoupons = couSvc.getCouponsByStorId(storId); 
 
-	    // 3. 放進 model
+	    // 3. 將優惠券照 couId 降冪排序（新 → 舊）
+	    storeCoupons.sort((c1, c2) -> c2.getCouId().compareTo(c1.getCouId()));
+	    
+	    // 4. 放進 model供前端顯示
 	    model.addAttribute("couponList", storeCoupons);
 	    model.addAttribute("storeVO", storeVO);
 	    return "front/store/coupon_listAll"; // 對應 Thymeleaf 頁面
