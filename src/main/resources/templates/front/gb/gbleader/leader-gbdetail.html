@@ -340,7 +340,19 @@ body {
 						  </span>
 						</p>
 
+						<p><strong>最低成團數量：</strong>
+                           <span th:text="${group.gbMinProductQuantity}">10</span>
+                        </p>
 
+                        <p><strong>累計購買數量：</strong>
+                           <span th:text="${group.cumulativePurchaseQuantity}">8</span>
+                        </p>
+
+                        <!-- 取消原因（僅在團購狀態為已取消時顯示） -->
+                        <p th:if="${group.gbStatus == 5}"><strong>取消原因：</strong>
+                           <span th:text="${group.cancelReason != null ? group.cancelReason : '無'}">團購人數不足</span>
+                        </p>
+                        
 					    <p><strong>團購說明：</strong>
 					       <span th:text="${group.gbDescription}">
 					         本團為限時優惠，精選新鮮海鮮，組合超值，歡迎參加！
@@ -385,18 +397,7 @@ body {
 
 
 
-					<!-- 分頁 -->
-					<nav aria-label="Page navigation" class="mt-4">
-						<ul class="pagination justify-content-center">
-							<li class="page-item disabled"><a class="page-link" href="#"
-								tabindex="-1" aria-disabled="true">上一頁</a></li>
-							<li class="page-item active"><a class="page-link" href="#">1</a></li>
-							<li class="page-item"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link" href="#">下一頁</a>
-							</li>
-						</ul>
-					</nav>
+					
 				</div>
 			</div>
 

@@ -117,8 +117,7 @@ public class GroupBuyingCasesVO implements Serializable{
 	private Integer gbMinProductQuantity;  // 最低成團商品數量
 
 
-	@Column(name = "CANCEL_REASON", nullable = false, length = 65)
-
+	@Column(name = "CANCEL_REASON", length = 65)
 	@Size(max = 65, message = "取消原因: 最多 65 個字元")
 	private String cancelReason;  // 取消原因
 

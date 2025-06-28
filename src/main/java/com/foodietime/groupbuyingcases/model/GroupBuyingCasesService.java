@@ -22,6 +22,11 @@ public class GroupBuyingCasesService {
         return groupBuyingCasesRepository.findByMember_MemIdAndLeader(memberId, leader);
     }
     
+    // 查詢某會員開設且是團主的團購案，並根據狀態篩選
+    public List<GroupBuyingCasesVO> findByMember_MemIdAndLeaderAndGbStatus(Integer memberId, Byte leader, Byte gbStatus) {
+        return groupBuyingCasesRepository.findByMember_MemIdAndLeaderAndGbStatus(memberId, leader, gbStatus);
+    }
+    
     /**
      * 查單筆：同時符合 gbId、member.memId、以及參與者表的 leader 欄位
      * 只有當前會員是該團購的團主 (leader = 0) 時，才會回傳
