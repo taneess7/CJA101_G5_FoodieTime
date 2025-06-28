@@ -467,15 +467,6 @@ public class MemberController {
         return "redirect:/index";
     }
     
-    @GetMapping("/memcoupon/member-coupons")
-    public String showMemberCoupons(HttpSession session, Model model) {
-        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-        if (member == null) {
-            return "redirect:/front/member/login";
-        }
-
-        return "front/memcoupon/member-coupons"; // 對應 templates/front/memcoupon/member-coupons.html
-    }
     
     @GetMapping("/check-session")
     @ResponseBody
