@@ -55,7 +55,7 @@ public class AddUpdateController {
 	@Autowired
 	ProductService prodSvc;
 	
-	//新增
+	//進入新增活動後台畫面
 	@GetMapping("/addAct")
 	public String addAct(Model model) {
 		ActVO actVO = new ActVO();
@@ -78,7 +78,7 @@ public class AddUpdateController {
 	    });
 	}
 	
-	//新增
+	//新增功能
 	@PostMapping("/insert")
 	public String insert(
 			@Valid ActVO actVO, BindingResult result, ModelMap model,
@@ -149,7 +149,7 @@ public class AddUpdateController {
 	   }
 	
 	
-	//點選修改按鈕，進入修改畫面listOneAct.html
+	//點選修改按鈕，進入後台修改畫面listOneAct.html
 	@PostMapping("getOne_For_Update")
 	public String getOne_For_Update(@RequestParam("actId") String actId, ModelMap model) {
 		/***接收參數，進入進入修改畫面listOneAct.html，查詢actId資料***/

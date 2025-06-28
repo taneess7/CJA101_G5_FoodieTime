@@ -1,0 +1,123 @@
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>所有商品資料</title>
+
+<head th:insert="~{/admin/act/included-fragment}"></head>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>                                    <!-- ●●js  for jquery datatables 用 -->
+<script	src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>              <!-- ●●js  for jquery datatables 用 -->
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.jqueryui.min.css" /> <!-- ●●css for jquery datatables 用 -->
+<link rel="stylesheet" href="/css/admin/act/act-list.css">
+<!-- ●● jquery datatables 設定 -->
+<script>
+	$(document).ready(function() {
+		$('#example').DataTable({
+			"lengthMenu": [3 ,5, 10, 20, 50, 100],
+			"pageLength": 5, 
+			"searching": true,  //搜尋功能, 預設是開啟
+		    "paging": true,     //分頁功能, 預設是開啟
+		    "ordering": true,   //排序功能, 預設是開啟
+		    "language": {
+		        "processing": "處理中...",
+		        "loadingRecords": "載入中...",
+		        "lengthMenu": "顯示 _MENU_ 筆結果",
+		        "zeroRecords": "沒有符合的結果",
+		        "info": "顯示第 _START_ 至 _END_ 筆結果，共<font color=red> _TOTAL_ </font>筆",
+		        "infoEmpty": "顯示第 0 至 0 筆結果，共 0 筆",
+		        "infoFiltered": "(從 _MAX_ 筆結果中過濾)",
+		        "infoPostFix": "",
+		        "search": "搜尋:",
+		        "paginate": {
+		            "first": "第一頁",
+		            "previous": "上一頁",
+		            "next": "下一頁",
+		            "last": "最後一頁"
+		        },
+		        "aria": {
+		            "sortAscending":  ": 升冪排列",
+		            "sortDescending": ": 降冪排列"
+		        }
+		    }
+		});
+	});
+</script>
+
+
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
+		 <div align="center"> <h2>所有商品資料</h2>
+		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div>
+</nav>
+<div class="table-responsive">
+  <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
+  <thead >
+	<tr style="background-color:#f1e5d9">
+		<th>計數</th>
+		<th>商品編號</th>
+		<th>店家編號</th>
+		<th>商品類別編號</th>
+		<th>商品名稱</th>
+		<th>商品敘述</th>
+		<th>商品價格</th>
+		<th>上架時間</th>
+		<th>商品上架/下架</th>
+		<th>商品圖片</th>
+		<th>最後更新時間</th>
+		<th>商品被檢舉次數</th>
+		<th>操作</th>
+	</tr>
+  </thead>
+	
+  <tbody>  <!-- 跑 th:each 迴圈，但又不會讓畫面上真的多出一層 <div> 或 <span> -->
+		<th:block th:each="prodVO, stat : ${prodListData}">
+			<tr>
+				<td th:text="${stat.count}"></td>
+				<td th:text="${prodVO.prodId}"></td>
+				<td class="white-nowrap" th:text="${prodVO.actCate}"></td>
+				<td th:text="${prodVO.actName}"></td>
+				<td th:text="${prodVO.actContent}"></td>
+				<td th:text="${prodVO.actDiscount == 0 ? '百分比' : '金額'}"></td>
+				<td th:text="${prodVO.actDiscValue}"></td>
+				<td th:text="${#dates.format(actVO.actStartTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+				<td th:text="${#dates.format(actVO.actEndTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+				<td th:text="${prodVO.actStatus == 0 ? '下架' : '上架'}"></td>
+				<td><img style="border: 2px dotted blue; background-color: white;" th:src="@{/act/DBGifReader} + '?actId=' + ${actVO.actId}" width="100px"></td>
+				<td th:text="${prodVO.isGlobal == 0 ? '部分' : '全店'}"></td>
+				<td th:text="${#dates.format(actVO.actLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
+<!-- 				<td th:text="${actVO.deptVO.deptno} + '-[' + ${actVO.deptVO.dname} + ']'"></td> -->
+			<td>
+			  <form method="post" th:action="@{/store/prod/getOne_For_Update}" style="margin-bottom: 0px;">
+			     <input type="submit" value="修改">
+			     <input type="hidden" name="prodId" th:value="${prodVO.prodId}">
+			  </form>
+			
+			</td>
+<!-- 			<td> -->
+<!-- 			  <form method="post" th:action="@{/act/delete}" style="margin-bottom: 0px;"> -->
+<!-- 			     <input type="submit" value="刪除"> -->
+<!-- 			     <input type="hidden" name="actId" th:value="${actVO.actId}"> -->
+<!-- 			  </form> -->
+			
+<!-- 			</td> -->
+			</tr>
+		</th:block>
+  </tbody>
+</table>
+</div>
+
+</body>
+</html>
