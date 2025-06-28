@@ -46,8 +46,7 @@
 	<section class="breadcrumb">
 		<div class="container">
 			<a th:href="@{/post/}" class="breadcrumb-link">討論區</a> <span
-				class="breadcrumb-separator">/</span> <span
-				class="breadcrumb-current">新增貼文</span>
+				class="breadcrumb-separator">/</span> <span class="breadcrumb-current">新增貼文</span>
 		</div>
 	</section>
 
@@ -71,7 +70,7 @@
 				<div class="mb-4">
 					<label class="block mb-1 font-medium text-gray-700">標題</label> <input
 						type="text" class="w-full border rounded px-3 py-2"
-						th:field="*{postTitle}" maxlength="100" required>
+						th:field="*{postTitle}" maxlength="45" required>
 					<div class="character-count text-right text-sm text-gray-500 mt-1">
 						<span id="titleCount">0</span>/45 字元
 					</div>
@@ -83,12 +82,32 @@
 						th:field="*{postContent}" rows="8" maxlength="2000" required></textarea>
 				</div>
 				<!-- 送出按鈕 -->
-				<div class="flex justify-end">
+				<div class="flex justify-end space-x-4">
+					<!-- 按鈕 1: 儲存草稿 -->
+					<button type="submit" name="action" value="draft"
+						class="btn btn-secondary bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">儲存草稿</button>
+					<!-- 按鈕 2: 發佈貼文 -->
 					<button type="submit" name="action" value="publish"
-						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">送出貼文</button>
+						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">發佈貼文</button>
 				</div>
 			</form>
 		</div>
 	</main>
+	<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.querySelector('input[name="postTitle"]');
+        const titleCountSpan = document.getElementById('titleCount');
+
+        function updateTitleCount() {
+            titleCountSpan.textContent = titleInput.value.length;
+        }
+
+        // Initial count on page load
+        updateTitleCount();
+
+        // Update count on input
+        titleInput.addEventListener('input', updateTitleCount);
+    });
+</script>
 </body>
 </html>

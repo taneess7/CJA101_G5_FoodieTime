@@ -107,6 +107,7 @@ public class FavoritePostController {
 	    model.addAttribute("category", category);
 	    model.addAttribute("currentCategory", null); // 收藏時不屬於任何分類
 	    model.addAttribute("isFavoritePage", true);
+	    model.addAttribute("isMyPostsPage", false);
 	    model.addAttribute("currentPath", request.getRequestURI()); // 傳遞當前路徑
 		return "front/post/listallpost";
 	}

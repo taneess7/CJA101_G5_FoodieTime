@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +31,8 @@ public class PostCategoryVO implements Serializable {
 	private Integer postCateId;
 
 	@Column(name = "POST_CATE")
-	@NotNull(message = "分類名稱請勿空白")
+	@NotNull(message = "分類名稱不可為空")
+	@Size(min = 2, max = 20, message = "分類名稱長度必須介於 2 到 20 個字之間")
 	private String postCate;
 
 // ========== 對應多方 POSTVO==========
