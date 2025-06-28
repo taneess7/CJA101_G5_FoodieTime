@@ -26,7 +26,8 @@
         </a>
         <nav class="main-nav">
             <a th:href="@{/index}" class="clay clay-button clay-convex">回首頁</a>
-            <a th:href="@{/front/member/member_center}" class="clay clay-button clay-convex">會員</a>    
+            <a th:href="@{/front/member/member_center}" class="clay clay-button clay-convex">會員</a> 
+             <a th:href="@{/front/member/logout}" class="clay clay-button clay-convex">登出</a>       
         </nav>
     </div>
 </header>
@@ -40,15 +41,10 @@
       <button class="tab-btn" data-tab="product">上傳商品</button>
       <button class="tab-btn" data-tab="product-view">查看商品</button>   
       <button class="tab-btn" data-tab="act-product-view">活動商品</button>           
-      <button class="tab-btn" data-tab="coupon-view">查看優惠券</button>
       <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
       <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
 
-      <a href="@{/}" 
-       class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
-        <i class="material-icons-outlined">index</i>
-        <span>回首頁</span>
-    	  </a>
+   
       <a href="@{/front/member/logout}" 
        class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
         <i class="material-icons-outlined">logout</i>
