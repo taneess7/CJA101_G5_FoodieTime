@@ -61,8 +61,7 @@
 				<!-- 隱藏的貼文ID -->
 				<input type="hidden" th:field="*{postId}"> <input
 					type="hidden" th:field="*{member.memId}"> <input
-					type="hidden" th:field="*{postDate}"> <input type="hidden"
-					th:field="*{postStatus}"> <input type="hidden"
+					type="hidden" th:field="*{postDate}">  <input type="hidden"
 					th:field="*{likeCount}"> <input type="hidden"
 					th:field="*{views}">
 				<!-- 分類 -->
@@ -79,7 +78,7 @@
 				<div class="mb-4">
 					<label class="block mb-1 font-medium text-gray-700">標題</label> <input
 						type="text" class="w-full border rounded px-3 py-2"
-						th:field="*{postTitle}" maxlength="100" required>
+						th:field="*{postTitle}" maxlength="45" required>
 					<div class="character-count text-right text-sm text-gray-500 mt-1">
 						<span id="titleCount">0</span>/45 字元
 					</div>
@@ -91,9 +90,13 @@
 						th:field="*{postContent}" rows="8" maxlength="2000" required></textarea>
 				</div>
 				<!-- 送出按鈕 -->
-				<div class="flex justify-end">
-					<button type="submit" name="action" value="update"
-						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">修改貼文</button>
+				<div class="flex justify-end space-x-4">
+					<!-- 按鈕 1: 儲存草稿 -->
+					<button type="submit" name="action" value="draft"
+						class="btn btn-secondary bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">儲存草稿</button>
+					<!-- 按鈕 2: 發佈貼文 -->
+					<button type="submit" name="action" value="publish"
+						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">發佈貼文</button>
 				</div>
 			</form>
 		</div>

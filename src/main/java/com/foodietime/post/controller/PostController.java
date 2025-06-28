@@ -108,10 +108,15 @@ public class PostController {
 				postVO.getPostStatus(), postVO.getEditDate(), postVO.getPostTitle(), postVO.getPostContent(),
 				postVO.getLikeCount(), postVO.getViews());
 		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
-		List<PostVO> list = postservice.getAll();
-		model.addAttribute("postListData", list);
-		model.addAttribute("success", "新增成功");
-		return "redirect:/post/";
+		if ("draft".equals(action)) {
+			// 如果是儲存草稿，導向到我的貼文頁面
+			model.addAttribute("success", "草稿儲存成功！");
+			return "redirect:/post/myPosts";
+		} else {
+			// 如果是發佈，導向到討論區首頁
+			model.addAttribute("success", "貼文發佈成功！");
+			return "redirect:/post/";
+		}
 	}
 
 	@GetMapping("/update")
@@ -128,23 +133,37 @@ public class PostController {
 		model.addAttribute("postVO", postVO);
 		return "front/post/updatePost";
 	}
-	
+
 	@PostMapping("/updatePost")
-	public String update(@Valid PostVO postVO, BindingResult result, ModelMap model) {
+	public String update(@Valid PostVO postVO, BindingResult result, ModelMap model,
+			@RequestParam("action") String action) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
 		if (result.hasErrors()) {
+			// 驗證失敗時，要重新把分類列表加回 model
+			List<PostCategoryVO> category = postCategoryservice.getAll();
+			model.addAttribute("category", category);
 			return "front/post/updatePost";
 		}
 		/*************************** 2.開始新增資料 *****************************************/
 		// 假設你從 DB 撈出原本的資料來比較
 		PostVO originalPost = postservice.getOnePost(postVO.getPostId());
 
-		if (!originalPost.getPostTitle().equals(postVO.getPostTitle())
-				|| !originalPost.getPostContent().equals(postVO.getPostContent())) {
+		// 根據使用者點擊的按鈕，設定貼文狀態
+				if ("publish".equals(action)) {
+					postVO.setPostStatus((byte) 0); // 已發佈
+				} else if ("draft".equals(action)) {
+					postVO.setPostStatus((byte) 1); // 未發佈(草稿)
+				}
+				// 如果標題、內容或發佈狀態有變更，就更新編輯時間
+				boolean contentChanged = !originalPost.getPostTitle().equals(postVO.getPostTitle())
+						|| !originalPost.getPostContent().equals(postVO.getPostContent());
+				boolean statusChanged = originalPost.getPostStatus() != postVO.getPostStatus();
+
+				if (contentChanged || statusChanged) {
 			postVO.setEditDate(new Timestamp(System.currentTimeMillis()));
 		} else {
-			postVO.setEditDate(originalPost.getEditDate());
+			postVO.setEditDate(originalPost.getEditDate()); // 保持原編輯時間
 		}
 
 		postservice.updatePost(postVO.getPostId(), postVO.getMember().getMemId(), postVO.getPostCate().getPostCateId(),
@@ -152,9 +171,13 @@ public class PostController {
 				postVO.getPostContent(), postVO.getLikeCount(), postVO.getViews());
 
 		/*************************** 3.修改完成,準備轉交(Send the Success view) **************/
-		model.addAttribute("success", "修改成功");
-		model.addAttribute("postVO", postVO);
-		return "redirect:/post/one?postId=" + postVO.getPostId();
+		if ("draft".equals(action)) {
+			model.addAttribute("success", "草稿更新成功！");
+			return "redirect:/post/myPosts";
+		} else {
+			model.addAttribute("success", "貼文發佈成功！");
+			return "redirect:/post/one?postId=" + postVO.getPostId();
+		}
 	}
 
 	@PostMapping("/delete")
@@ -273,32 +296,32 @@ public class PostController {
 			ModelMap model, HttpSession session) {
 
 		/***************************** 1.接收請求參數 (無參數) *********************************/
-		 List<PostVO> list = postservice.getAll();
-		    
-		    // 取得所有留言
-		    List<MessageVO> allMessages = messageService.getAll();
+		List<PostVO> list = postservice.getAll();
 
-		    // 分組計算每篇貼文的留言數
-		    Map<Integer, Long> postIdToMsgCount = allMessages.stream()
-		        .collect(Collectors.groupingBy(m -> m.getPost().getPostId(), Collectors.counting()));
-		    // 排序
-		    switch (sort) {
-		        case "like_Count":
-		            list.sort((a, b) -> b.getLikeCount().compareTo(a.getLikeCount()));
-		            break;
-		        case "views":
-		            list.sort((a, b) -> b.getViews().compareTo(a.getViews()));
-		            break;
-		        case "messagecount":
-		            list.sort((a, b) -> {
-		                long aCount = postIdToMsgCount.getOrDefault(a.getPostId(), 0L);
-		                long bCount = postIdToMsgCount.getOrDefault(b.getPostId(), 0L);
-		                return Long.compare(bCount, aCount);
-		            });
-		            break;
-		        default:
-		            list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate())); // 最新貼文
-		    }
+		// 取得所有留言
+		List<MessageVO> allMessages = messageService.getAll();
+
+		// 分組計算每篇貼文的留言數
+		Map<Integer, Long> postIdToMsgCount = allMessages.stream()
+				.collect(Collectors.groupingBy(m -> m.getPost().getPostId(), Collectors.counting()));
+		// 排序
+		switch (sort) {
+		case "like_Count":
+			list.sort((a, b) -> b.getLikeCount().compareTo(a.getLikeCount()));
+			break;
+		case "views":
+			list.sort((a, b) -> b.getViews().compareTo(a.getViews()));
+			break;
+		case "messagecount":
+			list.sort((a, b) -> {
+				long aCount = postIdToMsgCount.getOrDefault(a.getPostId(), 0L);
+				long bCount = postIdToMsgCount.getOrDefault(b.getPostId(), 0L);
+				return Long.compare(bCount, aCount);
+			});
+			break;
+		default:
+			list.sort((a, b) -> b.getEditDate().compareTo(a.getEditDate())); // 最新貼文
+		}
 
 		/*************************** 2.開始查詢資料 *****************************************/
 
@@ -309,7 +332,7 @@ public class PostController {
 		model.addAttribute("threads", list);
 		model.addAttribute("category", category);
 		model.addAttribute("currentCategory", null); // 全部分類
-	    model.addAttribute("currentSort", sort);
+		model.addAttribute("currentSort", sort);
 
 		// 判斷是否登入
 		boolean loggedIn = session.getAttribute("loginMember") != null;
@@ -348,7 +371,6 @@ public class PostController {
 	}
 
 	// ================ 新增：瀏覽數排序 ================
-	
 
 	// ================ 新增：關鍵字搜尋 ================
 	@GetMapping("/search")
@@ -359,7 +381,7 @@ public class PostController {
 			return "redirect:/post/";
 		}
 
-		List<PostVO> list = postRepository.findByPostTitleContainingAndPostStatus(title.trim(), 0);
+		List<PostVO> list = postRepository.findByPostTitleContainingAndPostStatus(title.trim(), (byte) 0);
 		// 你可以再依 sort 排序
 		switch (sort) {
 		case "like_Count":
@@ -409,6 +431,36 @@ public class PostController {
 
 		return "front/post/listallpost";
 	}
-	
-	
+
+	@GetMapping("/myPosts")
+	public String myPosts(ModelMap model, HttpSession session) {
+		// 1. 檢查登入狀態
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			// 為了方便測試，如果未登入，先用假會員ID
+			loginMember = memservice.getById(1);
+			session.setAttribute("loginMember", loginMember);
+			// 在正式環境中，應該重導向到登入頁面
+			// return "redirect:/login";
+		}
+
+		// 2. 根據會員ID查詢其所有貼文（包含草稿）
+		// 這需要你在 PostRepository 中新增一個方法: findByMemberMemIdOrderByEditDateDesc
+		List<PostVO> myPosts = postRepository.findByMemberMemIdOrderByEditDateDesc(loginMember.getMemId());
+		model.addAttribute("threads", myPosts);
+
+		// 3. 準備畫面需要的其他資料
+		List<PostCategoryVO> category = postCategoryservice.getAll();
+		model.addAttribute("category", category);
+
+		// 傳遞頁面狀態，讓 Thymeleaf 可以高亮 "我的貼文" 按鈕
+		model.addAttribute("isMyPostsPage", true);
+		model.addAttribute("isFavoritePage", false);
+
+		model.addAttribute("currentCategory", null);
+		model.addAttribute("currentSort", "editDate"); // 預設排序
+
+		return "front/post/listallpost";
+	}
+
 }
