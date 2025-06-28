@@ -7,29 +7,827 @@
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-
+    <!-- PWA 支援 -->
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+ 
+ 
+  <style>
+     
+    body {
+	font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+	background-color: #f1e5d9;
+	color: #333;
+	line-height: 1.6;
+	 margin: 0;
+}
+    
+    html, body {
+  		height: 100vh;
+  		margin: 0;
+ 		overflow: hidden; /* ✅ 禁止整頁出現捲軸 */
+	}
+    .dashboard {
+      display: flex;
+      padding: 40px;
+      gap: 20px;
+      height: 100vh; /* ✅ 滿版高度，配合 overflow 控制 */
+    }
+    .sidebar {
+      width: 150px;
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      margin: 10px;
+    }
+    .sidebar button {
+      border: 1px dashed #ff5722;
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: none;
+      
+      text-align: center;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sidebar button:hover,
+    .sidebar button.active {
+      background-color: #fff5f3;
+      color: #ff5722;
+      font-weight: bold;
+    }
+    .content-panel {
+      flex: 1;
+      background: #f0f0f0;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: none;
+      max-width: none;
+      overflow-y: auto; /* ✅ 僅內層可滾動 */
+    }
+    .content-panel iframe {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .content-panel.active {
+      display: block;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+	  overflow: hidden;
+  	  height: 89vh;
+
+    }
+    .form-group {
+      margin-bottom: 30px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+    }
+    .image-upload-section {
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      background: #f8f9fa;
+    }
+   
+    .btn {
+      padding: 14px 28px;
+      font-size: 16px;
+      border-radius: 12px;
+      background: #FF5722;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .product-list {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .image-preview {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-top: 20px;
+    display: none;
+    border-radius: 8px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-card {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+  }
+
+  .product-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .product-card .info {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .product-card .delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .preview-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
 
 
-    <link rel="stylesheet" th:href="@{/css/front/store/store_edit2.css}">
-    <link rel="stylesheet" th:href="@{/css/front/store/sc.css}">
-    <link rel="stylesheet" th:href="@{/css/common/index.css}">
+
+.app-header {
+	background: white;
+	border-bottom: 1px solid #e9ecef;
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0 40px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 80px;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: #FF5722;
+	font-weight: bold;
+	font-size: 28px;
+}
+
+.logo-img {
+	width: 50px;
+	height: 50px;
+	margin-right: 15px;
+	background: linear-gradient(45deg, #FF5722, #FF8A65);
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.logo-img::before {
+	content: '🍜';
+	font-size: 24px;
+}
+
+.main-nav {
+	display: flex;
+	align-items: center;
+}
+
+.nav-list {
+	display: flex;
+	list-style: none;
+	gap: 40px;
+	margin-right: 30px;
+}
+
+.nav-link {
+	text-decoration: none;
+	color: #666;
+	font-weight: 500;
+	font-size: 18px;
+	padding: 10px 20px;
+	border-radius: 25px;
+	transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+	color: #FF5722;
+	background-color: #fff5f3;
+}
+
+.login-btn {
+	background: #FF5722;
+	color: white !important;
+	font-weight: 600;
+}
+
+.login-btn:hover {
+	background: #e64a19;
+	transform: translateY(-1px);
+}
+
+main {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0px 30px;
+}
+
+.breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 40px;
+	font-size: 16px;
+	color: #666;
+}
+
+.breadcrumb a {
+	color: #FF5722;
+	text-decoration: none;
+}
+
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
+
+.edit-store-section {
+	display: grid;
+	gap: 40px;
+}
+
+.section-title {
+	font-size: 36px;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.section-subtitle {
+	color: #666;
+	font-size: 18px;
+	margin-bottom: 40px;
+}
+
+.form-container {
+	background: white;
+	border-radius: 16px;
+	padding: 40px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+	border: 1px solid #e9ecef;
+}
+
+.edit-store-form {
+	display: grid;
+	gap: 30px;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.form-label {
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 12px;
+	font-size: 16px;
+}
+
+.form-label .required {
+	color: #FF5722;
+	margin-left: 4px;
+}
+
+.input-group {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.input-group i {
+	position: absolute;
+	left: 16px;
+	color: #999;
+	z-index: 1;
+	font-size: 20px;
+}
+
+.form-input {
+	width: 100%;
+	padding: 16px 16px 16px 45px;
+	border: 2px solid #e9ecef;
+	border-radius: 12px;
+	font-size: 16px;
+	background: white;
+	transition: all 0.3s ease;
+	font-family: inherit;
+	
+}
+
+.form-input:focus {
+	outline: none;
+	border-color: #FF5722;
+	box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+}
+
+.form-input::placeholder {
+	color: #adb5bd;
+}
+
+textarea.form-input {
+	resize: vertical;
+	min-height: 120px;
+	line-height: 1.5;
+}
+
+select.form-input {
+	cursor: pointer;
+}
+
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 30px;
+}
+
+.image-upload-section {
+	border: 2px dashed #e9ecef;
+	border-radius: 12px;
+	padding: 40px;
+	text-align: center;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	background: #f8f9fa;
+}
+
+.image-upload-section:hover {
+	border-color: #FF5722;
+	background: #fff5f3;
+}
+
+.image-upload-section.dragover {
+	border-color: #FF5722;
+	background: rgba(255, 87, 34, 0.1);
+}
+
+.upload-icon {
+	font-size: 48px;
+	color: #adb5bd;
+	margin-bottom: 20px;
+}
+
+.upload-text {
+	font-size: 18px;
+	color: #666;
+	margin-bottom: 8px;
+}
+
+.upload-hint {
+	font-size: 14px;
+	color: #adb5bd;
+}
+
+.image-preview {
+	display: none;
+	max-width: 100%;
+	max-height: 200px;
+	border-radius: 8px;
+	margin-top: 20px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hours-section {
+	background: #f8f9fa;
+	border-radius: 12px;
+	padding: 24px;
+}
+
+.hours-title {
+	font-size: 18px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.hours-grid {
+	display: grid;
+	gap: 16px;
+}
+
+.hours-row {
+	display: grid;
+	grid-template-columns: 80px 1fr 1fr 100px;
+	gap: 16px;
+	align-items: center;
+}
+
+.day-label {
+	font-weight: 500;
+	color: #333;
+	font-size: 16px;
+}
+
+.time-input {
+	padding: 12px 16px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	font-size: 14px;
+	transition: border-color 0.3s ease;
+}
+
+.time-input:focus {
+	outline: none;
+	border-color: #FF5722;
+}
+
+.closed-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	color: #666;
+}
+
+.closed-checkbox input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+}
+
+.form-actions {
+	display: flex;
+	gap: 20px;
+	justify-content: flex-start;
+	margin-top: 40px;
+	padding-top: 30px;
+	border-top: 1px solid #e9ecef;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 16px 32px;
+	border: none;
+	border-radius: 12px;
+	font-size: 16px;
+	font-weight: 600;
+	text-decoration: none;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	min-width: 160px;
+	justify-content: center;
+}
+
+.btn-primary {
+	background: #FF5722;
+	color: white;
+}
+
+.btn-primary:hover {
+	background: #e64a19;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+}
+
+.btn-secondary {
+	background: white;
+	color: #666;
+	border: 2px solid #e9ecef;
+}
+
+.btn-secondary:hover {
+	background: #f8f9fa;
+	border-color: #adb5bd;
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.info-card {
+	background: white;
+	border-radius: 16px;
+	padding: 30px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+	border: 1px solid #e9ecef;
+}
+
+.info-card h3 {
+	font-size: 20px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 15px;
+}
+
+.info-card p {
+	color: #666;
+	line-height: 1.6;
+	margin-bottom: 12px;
+}
+
+.info-card ul {
+	list-style: none;
+	color: #666;
+}
+
+.info-card ul li {
+	margin-bottom: 8px;
+	padding-left: 20px;
+	position: relative;
+}
+
+.info-card ul li::before {
+	content: '•';
+	color: #FF5722;
+	font-weight: bold;
+	position: absolute;
+	left: 0;
+}
+
+.success-message {
+	background: linear-gradient(45deg, #4CAF50, #66BB6A);
+	color: white;
+	padding: 20px 30px;
+	border-radius: 12px;
+	margin-bottom: 30px;
+	text-align: center;
+	font-weight: 500;
+	display: none;
+	animation: slideIn 0.3s ease;
+	box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+@keyframes slideIn {from { opacity:0;
+	transform: translateY(-20px);
+}
+
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+}
+.loading .btn-primary {
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+.loading .btn-primary::after {
+	content: '';
+	width: 16px;
+	height: 16px;
+	margin-left: 10px;
+	border: 2px solid transparent;
+	border-top: 2px solid currentColor;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+.app-footer {
+	background: white;
+	border-top: 1px solid #e9ecef;
+	padding: 40px 0;
+	margin-top: 80px;
+	border-radius: 25px;
+}
+
+.footer-container {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0 40px;
+	text-align: center;
+}
+
+.footer-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.footer-copyright {
+	color: #666;
+	font-size: 16px;
+}
+
+.address-row {
+	display: flex;
+	gap: 12px; /* 欄位之間的間距 */
+	margin-bottom: 20px;
+}
+
+.address-row .form-input {
+	flex: 1;
+	min-width: 0; /* 避免超出容器 */
+}
+
+/* 加在 style.css 或頁面 <style> 中 */
+.info-card-floating {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	width: 260px;
+	padding: 16px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	font-size: 14px;
+	color: #333;
+}
+
+.info-card-floating h3 {
+	font-size: 16px;
+	margin-top: 0;
+	margin-bottom: 10px;
+	color: #2c3e50;
+}
+
+.info-card-floating p {
+	margin: 4px 0;
+}
+
+.business-hours-row {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.business-hours-row .form-input {
+	flex: 1;
+	min-width: 0;
+}
+
+.business-hours-row select[multiple] {
+	height: 100px;
+	padding: 8px;
+	font-size: 14px;
+	border-radius: 8px;
+	border: 1px solid var(--neutral-300);
+}
+
+.address-row, .business-hours-row {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.address-row .form-input, .business-hours-row .form-input {
+	flex: 1;
+	min-width: 0;
+}
+
+.form-group input[type="checkbox"] {
+	margin-right: 6px;
+	margin-left: 12px;
+}
+
+.latlng-row {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+}
+
+.latlng-row label {
+	margin-right: 6px;
+	white-space: nowrap;
+}
+
+.latlng-row .form-input {
+	flex: 1;
+	min-width: 0;
+}
+
+.business-hours {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 20px;
+	flex-wrap: nowrap;
+}
+
+.dayoff-checkboxes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 8px;
+}
+
+.dayoff-checkboxes label {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.dayoff-controls {
+	margin-bottom: 8px;
+}
+
+.dayoff-checkboxes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.dayoff-checkboxes label {
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+}
+
+input[readonly] {
+	background-color: #f0f0f0;
+	color: #555;
+	cursor: not-allowed;
+}
+
+div.welcome{
+	
+	padding: 10px 0px 10px 50px;
+
+}
+
+select:disabled {
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+}
+
+#storeimg img{
+    max-width: 200px;     /* 圖片最大寬度 */
+    max-height: 200px;    /* 圖片最大高度 */
+    width: auto;          /* 自動寬 */
+    height: auto;         /* 自動高 */
+    object-fit: contain;  /* 保持比例顯示 */
+    display: block;
+    }
+</style>
+
 
 </head>
 <body>
 <body>
-<header  style=" padding: 5px;">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-        <a th:href="@{/}" class="logo" style="font-weight: 800;  font-size: 24px; color: #9DB17C;text-decoration: none;">
-            FoodieTime<span style="color: var(--accent-color-1);">食刻</span>
-        </a>
-        <nav class="main-nav">
-            <a th:href="@{/index}" class="clay clay-button clay-convex">回首頁</a>
-            <a th:href="@{/front/member/member_center}" class="clay clay-button clay-convex">會員</a>    
-        </nav>
-    </div>
-</header>
 	
   <main class="dashboard" >
     <aside class="sidebar">
@@ -38,8 +836,7 @@
       <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
       <button class="tab-btn" data-tab="activity-view">查看活動</button>
       <button class="tab-btn" data-tab="product">上傳商品</button>
-      <button class="tab-btn" data-tab="product-view">查看商品</button>   
-      <button class="tab-btn" data-tab="act-product-view">活動商品</button>           
+      <button class="tab-btn" data-tab="product-view">查看商品</button>
       <button class="tab-btn" data-tab="coupon-view">查看優惠券</button>
       <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
       <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
@@ -55,6 +852,7 @@
         <span>登出</span>
      </a>
 
+                
              
     </aside>
 	
@@ -62,14 +860,8 @@
 <!-- 店家資料維護頁 -->
     <section class="content-panel active" id="tab-store">
       <iframe th:src="@{/store/store_edit2}" height="1400"></iframe>
+<!--           <div th:replace="store_edit :: storeEditFragment"></div> -->
     </section>
-
-<!-- <section class="content-panel active" id="tab-store"> -->
-<!--   <!-- 假設條件是 storeVO 不為 null -->
-<!--   <div th:if="${storeVO != null}"> -->
-<!--     <div th:insert="~{/front/store/store_edit2 :: storeEdit2Fragment}"></div> -->
-<!--   </div> -->
-<!-- </section> -->
 
 
 
@@ -120,11 +912,6 @@
         <!-- 一般商品將由 JS 動態插入 -->
       </div>
       <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
-    </section>
-
-<!-- 查看參加活動的商品 -->
-    <section class="content-panel" id="tab-act-product-view">
-       <iframe th:src="@{/act/actProducts}" height="1000"></iframe>
     </section>
     
 

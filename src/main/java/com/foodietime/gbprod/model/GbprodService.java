@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.foodietime.store.model.StoreVO;
+
 @Service
 public class GbprodService {
 
@@ -34,8 +36,7 @@ public class GbprodService {
                    .orElse(null);
     }
 
-    // 本地加的功能：查詢某店家的所有團購商品
-    public List<GbprodVO> findByStore(com.foodietime.store.model.StoreVO store) {
+    public List<GbprodVO> findByStore(StoreVO store) {
         return gbprodRepository.findByStore(store);
     }
 

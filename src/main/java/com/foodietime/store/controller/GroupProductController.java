@@ -1,4 +1,4 @@
-package com.foodietime.store.controller;
+	package com.foodietime.store.controller;
 
 import com.foodietime.gbprod.model.GbprodVO;
 import com.foodietime.gbprod.model.GbprodService;
@@ -106,7 +106,7 @@ public class GroupProductController {
         if (member == null) {
             return "redirect:/front/member/login";
         }
-        StoreVO store = storeService.findById(member.getMemId());
+        StoreVO store = storeService.findByStorEmail(member.getMemEmail());
         List<GbprodVO> groupProducts = gbprodService.findByStore(store);
         model.addAttribute("groupProducts", groupProducts);
         return "front/store/group-prod-list";
