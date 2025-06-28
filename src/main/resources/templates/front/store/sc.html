@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +8,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
+
     <meta name="theme-color" content="#FF5722">
+
 
     <link rel="stylesheet" th:href="@{/css/front/store/store_edit2.css}">
     <link rel="stylesheet" th:href="@{/css/front/store/sc.css}">
@@ -38,6 +40,21 @@
       <button class="tab-btn" data-tab="product">上傳商品</button>
       <button class="tab-btn" data-tab="product-view">查看商品</button>   
       <button class="tab-btn" data-tab="act-product-view">活動商品</button>           
+      <button class="tab-btn" data-tab="coupon-view">查看優惠券</button>
+      <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
+      <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
+
+      <a href="@{/}" 
+       class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
+        <i class="material-icons-outlined">index</i>
+        <span>回首頁</span>
+    	  </a>
+      <a href="@{/front/member/logout}" 
+       class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
+        <i class="material-icons-outlined">logout</i>
+        <span>登出</span>
+     </a>
+
              
     </aside>
 	
@@ -65,12 +82,15 @@
 <!-- 上傳商品 -->
     <section class="content-panel" id="tab-product">
       <h1 class="section-title">上傳商品</h1>
+      <div class="form-group">
+        <label for="productType">商品類型</label>
+        <select class="form-input" id="productType">
+          <option value="normal">一般商品</option>
+          <option value="group">團購商品</option>
+        </select>
+      </div>
       <form id="productForm">
-        <!-- <div class="form-group">
-          <label>商品名稱</label>
-          <input type="text" class="form-input" name="productName" placeholder="輸入商品名稱" required />
-        </div> -->
-        <div class="form-group">
+        <div class="form-group" id="normalProductUpload">
           <label>商品圖片</label>
           <div class="image-upload-section" id="productImageUpload">
             <i class="material-icons-outlined upload-icon">cloud_upload</i>
@@ -79,17 +99,27 @@
             <img id="productImagePreview" class="image-preview" alt="預覽圖片">
           </div>
         </div>
-        <button type="submit" class="btn">儲存商品</button>
+        <button type="submit" class="btn" id="saveNormalProduct">儲存商品</button>
       </form>
+      <button type="button" class="btn" id="addGroupProductBtn" style="display:none;margin-top:20px;">新增團購商品</button>
+      <iframe id="groupProdAddFrame" src="/store/group-prod-add" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
 
 
 <!-- 查看商品 -->
     <section class="content-panel" id="tab-product-view">
       <h2>已上傳商品</h2>
-      <div class="product-list" id="productList">
-        <!-- 商品將由 JS 動態插入 -->
+      <div class="form-group">
+        <label for="productViewType">商品類型</label>
+        <select class="form-input" id="productViewType">
+          <option value="normal">一般商品</option>
+          <option value="group">團購商品</option>
+        </select>
       </div>
+      <div id="normalProductList" class="product-list">
+        <!-- 一般商品將由 JS 動態插入 -->
+      </div>
+      <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
 
 <!-- 查看參加活動的商品 -->
@@ -102,6 +132,16 @@
 	<section class="content-panel" id="tab-activity-view">
       <iframe th:src="@{/act}" height="1000"></iframe>
     </section>
+
+<!-- 新增團購促銷頁 -->
+    <section class="content-panel" id="tab-group-promotion-add">
+      <iframe th:src="@{/store/group-promotion-add}" style="width:100%;height:900px;border:none;"></iframe>
+    </section>
+
+<!-- 查看團購促銷 -->
+<section class="content-panel" id="tab-group-promotion-list">
+  <iframe th:src="@{/store/group-promotion-list}" style="width:100%;height:900px;border:none;"></iframe>
+</section>
 
 
 
@@ -186,6 +226,34 @@
       products[index].name = nameInput.value;
       alert('商品已儲存！');
     }
+
+    document.getElementById('productType').addEventListener('change', function() {
+      if (this.value === 'group') {
+        document.getElementById('normalProductUpload').style.display = 'none';
+        document.getElementById('saveNormalProduct').style.display = 'none';
+        document.getElementById('addGroupProductBtn').style.display = 'none';
+        document.getElementById('groupProdAddFrame').style.display = 'block';
+      } else {
+        document.getElementById('normalProductUpload').style.display = '';
+        document.getElementById('saveNormalProduct').style.display = '';
+        document.getElementById('addGroupProductBtn').style.display = 'none';
+        document.getElementById('groupProdAddFrame').style.display = 'none';
+      }
+    });
+
+    // 商品查詢分頁切換
+    document.getElementById('productViewType').addEventListener('change', function() {
+      if (this.value === 'group') {
+        document.getElementById('normalProductList').style.display = 'none';
+        document.getElementById('groupProductListFrame').style.display = 'block';
+      } else {
+        document.getElementById('normalProductList').style.display = '';
+        document.getElementById('groupProductListFrame').style.display = 'none';
+      }
+    });
+    // 預設顯示一般商品
+    document.getElementById('normalProductList').style.display = '';
+    document.getElementById('groupProductListFrame').style.display = 'none';
   </script>
   
   

@@ -108,7 +108,7 @@
 			<div id="reportModal"
 				style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
 				<div
-					style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
+					style="background: #fff; max-width: 500px; margin: 15vh auto; padding: 24px; border-radius: 8px; position: relative;">
 					<h3 class="text-lg font-bold mb-2">檢舉貼文</h3>
 					<form th:action="@{/reportpost/insert}" method="post">
 						<input type="hidden" name="post.postId"
@@ -243,7 +243,7 @@
 			<div id="reportMessageModal"
 				style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
 				<div
-					style="background: #fff; max-width: 400px; margin: 10vh auto; padding: 24px; border-radius: 8px; position: relative;">
+					style="background: #fff; max-width: 500px; margin: 15vh auto; padding: 24px; border-radius: 8px; position: relative;">
 					<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
 					<form th:action="@{/reportmessage/insert}" method="post">
 						<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input

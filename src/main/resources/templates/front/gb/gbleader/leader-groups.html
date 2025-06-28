@@ -341,36 +341,18 @@ body {
 					<h3 class="mb-4">團購管理</h3>
 					<p>在這裡，您可以查看和管理所有的團購案。您可以設置團購的進度、目標人數，並控制團購的狀態。</p>
 					
-					<!-- 參與團購統計 -->
-                    <div class="profile-stats">
-                        <div class="row">
-                            <div class="col-md-3 col-6 stat-item">
-                                <div class="stat-number">30</div>
-                                <div class="stat-label">已開設團購</div>
-                            </div>
-                            <div class="col-md-3 col-6 stat-item">
-                                <div class="stat-number">5</div>
-                                <div class="stat-label">待岀貨</div>
-                            </div>
-                            <div class="col-md-3 col-6 stat-item">
-                                <div class="stat-number">10</div>
-                                <div class="stat-label">待收貨</div>
-                            </div>
-                        </div>
-                    </div>
-                    
 					<!-- 團購篩選 -->
 					
 
 					<div class="mb-4">
 						<label for="editCaseStatus" class="form-label">團購狀態篩選</label>
-						<select class="form-select" id="editCaseStatus">
-							
-							<option value="recruiting">招募中</option>
-							<option value="group opened">已開團</option>
-							<option value="closed">已截止</option>
-							<option value="cancelled">已取消</option>
-						</select>
+						<select class="form-select" id="editCaseStatus" onchange="filterByStatus(this.value)">
+                            <option value="">全部狀態</option>
+                            <option value="1" th:selected="${selectedStatus != null and selectedStatus == 1}">招募中</option>
+                            <option value="3" th:selected="${selectedStatus != null and selectedStatus == 3}">已開團</option>
+                            <option value="4" th:selected="${selectedStatus != null and selectedStatus == 4}">已截止</option>
+                            <option value="5" th:selected="${selectedStatus != null and selectedStatus == 5}">已取消</option>
+                        </select>
 					</div>
 
 
@@ -444,11 +426,7 @@ body {
 							<!-- 分頁導航 -->
 							<div
 								class="d-flex justify-content-between align-items-center mt-3">
-								<div class="pagination-info">
-									<span>顯示第 <span id="startRecord">1</span> 到 <span
-										id="endRecord">5</span> 筆，共 <span id="totalRecords">0</span> 筆
-									</span>
-								</div>
+								
 								<nav aria-label="分頁導航">
 									<ul class="pagination mb-0" id="pagination">
 										<li class="page-item" id="prevPage"><a class="page-link"
@@ -642,8 +620,108 @@ body {
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+	<script>
+		// 分頁設定
+		const ITEMS_PER_PAGE = 5;
+		let currentPage = 1;
+		let allItems = [];
 
+		document.addEventListener('DOMContentLoaded', function() {
+			initializePagination();
+		});
 
+		function initializePagination() {
+			const container = document.querySelector('tbody');
+			// 選擇所有有資料的 tr（排除空狀態的 tr）
+			allItems = Array.from(container.querySelectorAll('tr')).filter(tr => 
+				!tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
+			);
+
+			if (allItems.length > ITEMS_PER_PAGE) {
+				showPage(1);
+				updatePagination();
+			} else {
+				// 隱藏所有分頁區塊
+				document.querySelectorAll('.pagination').forEach(p => p.style.display = 'none');
+			}
+		}
+
+		function showPage(page) {
+			currentPage = page;
+			const startIndex = (page - 1) * ITEMS_PER_PAGE;
+			const endIndex = startIndex + ITEMS_PER_PAGE;
+
+			allItems.forEach((item, idx) => {
+				if (idx >= startIndex && idx < endIndex) {
+					item.style.display = '';
+				} else {
+					item.style.display = 'none';
+				}
+			});
+
+			// 更新分頁資訊
+			updatePaginationInfo(startIndex, endIndex);
+		}
+
+		function updatePaginationInfo(startIndex, endIndex) {
+			const totalRecords = allItems.length;
+			const startRecord = startIndex + 1;
+			const endRecord = Math.min(endIndex, totalRecords);
+
+			document.getElementById('startRecord').textContent = startRecord;
+			document.getElementById('endRecord').textContent = endRecord;
+			document.getElementById('totalRecords').textContent = totalRecords;
+		}
+
+		function updatePagination() {
+			const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+			// 更新兩個分頁區塊
+			const paginationContainers = document.querySelectorAll('.pagination');
+			
+			paginationContainers.forEach(container => {
+				container.innerHTML = '';
+
+				// 上一頁
+				const prevLi = document.createElement('li');
+				prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+				prevLi.innerHTML = `<a class="page-link" href="#" tabindex="-1" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
+				container.appendChild(prevLi);
+
+				// 頁碼
+				for (let i = 1; i <= totalPages; i++) {
+					const li = document.createElement('li');
+					li.className = i === currentPage ? 'page-item active' : 'page-item';
+					li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
+					container.appendChild(li);
+				}
+
+				// 下一頁
+				const nextLi = document.createElement('li');
+				nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+				nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
+				container.appendChild(nextLi);
+			});
+		}
+
+		window.changePage = function(page) {
+			const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+			if (page < 1 || page > totalPages) return;
+			showPage(page);
+			updatePagination();
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		}
+		
+		// 狀態篩選函數
+        window.filterByStatus = function(status) {
+            const currentUrl = new URL(window.location);
+            if (status) {
+                currentUrl.searchParams.set('status', status);
+            } else {
+                currentUrl.searchParams.delete('status');
+            }
+            window.location.href = currentUrl.toString();
+        }
+	</script>
 
 </body>
 </html>

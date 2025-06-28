@@ -40,7 +40,7 @@ public class GbprodVO implements Serializable {
     @OneToMany(mappedBy = "gbProd", cascade = CascadeType.ALL)
     private List<GroupBuyingCasesVO> groupbuyingcasesList = new ArrayList<>();
     
-    @NotNull(message = "商家不能為空")
+    
     @ManyToOne
     @JoinColumn(name = "STOR_ID")
     private StoreVO store;
@@ -89,10 +89,8 @@ public class GbprodVO implements Serializable {
     @Column(name = "GB_PROD_REPORT_COUNT")
     private Byte gbProdReportCount;
      
-    public byte[] getGbProdPhoto() {
-        if (gbProdPhoto == null) {
-            return null;
-        }
+    public byte[] getGbProdPhotoBytes() {
+        if (gbProdPhoto == null) return null;
         byte[] bytes = new byte[gbProdPhoto.length];
         for (int i = 0; i < gbProdPhoto.length; i++) {
             bytes[i] = gbProdPhoto[i];
@@ -104,4 +102,13 @@ public class GbprodVO implements Serializable {
     	return "/gb/gbproduct/image/" + gbProdId;
     }
   
+    @Override
+    public String toString() {
+        return "GbprodVO{" +
+                "gbProdId=" + gbProdId +
+                ", gbProdName='" + gbProdName + '\'' +
+                ", gbprodcgVO=" + (gbprodcgVO != null ? gbprodcgVO.getGbCateId() : null) +
+                // 其它欄位可視需要加
+                '}';
+    }
 }

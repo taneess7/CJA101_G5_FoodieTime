@@ -312,7 +312,7 @@ body {
 		                    <!-- Edit Order Modal -->
             				<div class="col-lg-9">
 					            <div class="modal-body">
-					                <form th:action="@{/gb/update/{gbId}(gbId=${groupBuyingCase.gbId})}"
+					                <form th:action="@{/gb/case/update/{gbId}(gbId=${groupBuyingCase.gbId})}"
 						              th:object="${groupBuyingCase}"
 						              method="post">
 						              <!-- 隱藏原本沒編輯但要驗證的欄位 -->
@@ -360,8 +360,11 @@ body {
 					                    <!-- 取消原因 -->
 					                    <div class="mb-3">
 								            <label class="form-label">取消原因</label>
-								            <textarea th:field="*{cancelReason}" class="form-control" rows="2"></textarea>
-								        </div>
+								            <textarea th:field="*{cancelReason}" class="form-control" rows="2" id="cancelReason"></textarea>
+                                            <div class="invalid-feedback" id="cancelReasonError">
+                                                當團購狀態為「已取消」時，必須填寫取消原因
+                                            </div>
+                                       </div>
 					
 					                    <!-- 通知會員 -->
 								        <div class="form-check">
@@ -380,32 +383,10 @@ body {
 					        
 					   		 </div>
 						</div>
-      
-
-					
-
-
-
-
-
-					<!-- 分頁 -->
-					<nav aria-label="Page navigation" class="mt-4">
-						<ul class="pagination justify-content-center">
-							<li class="page-item disabled"><a class="page-link" href="#"
-								tabindex="-1" aria-disabled="true">上一頁</a></li>
-							<li class="page-item active"><a class="page-link" href="#">1</a></li>
-							<li class="page-item"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link" href="#">下一頁</a>
-							</li>
-						</ul>
-					</nav>
 				</div>
 			</div>
 
 
-		</div>
-	</div>
 
 
 <!-- 登入彈窗 -->
@@ -560,7 +541,57 @@ body {
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
+	<script>
+		// 頁面載入時初始化驗證
+		document.addEventListener('DOMContentLoaded', function() {
+			const statusSelect = document.getElementById('editCaseStatus');
+			const cancelReasonTextarea = document.getElementById('cancelReason');
+			const cancelReasonError = document.getElementById('cancelReasonError');
+			
+			// 初始化驗證狀態
+			updateCancelReasonValidation();
+			
+			// 監聽狀態變更
+			statusSelect.addEventListener('change', updateCancelReasonValidation);
+			
+			// 監聽表單提交
+			document.querySelector('form').addEventListener('submit', function(e) {
+				if (!validateForm()) {
+					e.preventDefault();
+				}
+			});
+			
+			// 更新取消原因驗證狀態
+			function updateCancelReasonValidation() {
+				const isCancelled = statusSelect.value === '5'; // 5 表示已取消
+				
+				if (isCancelled) {
+					cancelReasonTextarea.setAttribute('required', 'required');
+					cancelReasonTextarea.classList.add('is-invalid');
+					cancelReasonError.style.display = 'block';
+				} else {
+					cancelReasonTextarea.removeAttribute('required');
+					cancelReasonTextarea.classList.remove('is-invalid');
+					cancelReasonError.style.display = 'none';
+				}
+			}
+			
+			// 表單驗證
+			function validateForm() {
+				const isCancelled = statusSelect.value === '5';
+				const cancelReason = cancelReasonTextarea.value.trim();
+				
+				if (isCancelled && cancelReason === '') {
+					cancelReasonTextarea.classList.add('is-invalid');
+					cancelReasonError.style.display = 'block';
+					alert('當團購狀態為「已取消」時，必須填寫取消原因');
+					return false;
+				}
+				
+				return true;
+			}
+		});
+	</script>
 
 
 

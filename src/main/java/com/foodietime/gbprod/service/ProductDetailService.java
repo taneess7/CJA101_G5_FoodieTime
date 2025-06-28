@@ -48,7 +48,7 @@ public class ProductDetailService {
             throw new RuntimeException("找不到商品圖片");
         }
 
-        return product.getGbProdPhoto();
+        return product.getGbProdPhotoBytes();
     }
     /**
      * 將GroupBuyingCasesVO轉換為ProductDetailDTO

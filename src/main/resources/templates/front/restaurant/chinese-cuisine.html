@@ -229,60 +229,7 @@
     //         }
     //     });
     // });
-    /**============================================================================== */
-    /**============================================================================== */
 
-    // 領取優惠券按鈕功能
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const couponId = this.dataset.couponId; // 獲取優惠券 ID
-            const button = this; // 儲存按鈕的引用，以便後續修改其狀態
-
-            // 發送 POST 請求到後端
-            fetch('/member/coupons/claim', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 如果有 CSRF 保護，需要加入 token
-                },
-                body: JSON.stringify({couponId: couponId})
-            })
-                .then(response => {
-                    // 檢查 HTTP 響應狀態碼
-                    if (response.status === 401) {
-                        alert('請先登入才能領取優惠券！');
-                        window.location.href = '/login'; // 導向登入頁
-                        throw new Error('User not logged in');
-                    }
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.message || '領取失敗');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('優惠券領取成功！');
-                        // 成功領取後，可以禁用按鈕或改變其文字
-                        button.disabled = true;
-                        button.innerHTML = '<i class="fas fa-check-circle"></i> 已領取';
-                        button.classList.add('claimed'); // 添加一個樣式來表示已領取
-                    } else {
-                        alert(data.message || '領取失敗，請稍後再試。');
-                    }
-                })
-                .catch(error => {
-                    console.error('領取優惠券時發生錯誤:', error);
-                    if (error.message !== 'User not logged in') {
-                        alert('領取優惠券時發生錯誤，請檢查網路或稍後再試。');
-                    }
-                });
-        });
-
-        /**============================================================================== */
-
-    });
 </script>
 </body>
 </html>
