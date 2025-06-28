@@ -99,7 +99,7 @@
 				<td><img style="border: 2px dotted blue; background-color: white;" th:src="@{/act/DBGifReader} + '?actId=' + ${actVO.actId}" width="100px"></td>
 				<td th:text="${actVO.isGlobal == 0 ? '部分' : '全店'}"></td>
 				<td th:text="${#dates.format(actVO.actLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
-<!-- 				<td th:text="${actVO.deptVO.deptno} + '-[' + ${actVO.deptVO.dname} + ']'"></td> -->
+
 			<td>
 			  <form method="post" th:action="@{/act/getOne_For_Update}" style="margin-bottom: 0px;">
 			     <input type="submit" value="修改">
