@@ -24,7 +24,7 @@ body {
 
 /* 表單容器 */
 form.couponForm {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
   background-color: rgba(255, 127, 80, 0.12); /* 較深的透明珊瑚橘底 */
@@ -53,7 +53,7 @@ span.required {
 input[type="text"],
 input[type="number"],
 select {
-  width: 90%;
+  width: 86%;
   padding: 0.6rem 0.8rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -172,4 +172,11 @@ input[type="datetime-local"]:focus {
 .floating-btn button:hover {
   background-color: rgba(144, 238, 144, 0.15); /* 滑過時輕微淡綠 */
   color: #1f603c;
+}
+
+.app-footer {
+	background: white;
+	border-top: 1px solid #e9ecef;
+	padding: 40px 0;
+	margin-top: 80px;
 }

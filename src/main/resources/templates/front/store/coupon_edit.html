@@ -76,7 +76,7 @@
 				
 				<div>
 					<label>優惠券說明<span class="required">*</span></label> 
-					<input type="text" th:field="*{couDesc}" placeholder="買500送500" />
+					<input type="text" th:field="*{couDesc}" placeholder="買500送500"  maxlength="50"/><small style="color: #888;"> 限 50 字</small>
 					<div style="color:red;" th:if="${#fields.hasErrors('couDesc')}" th:errors="*{couDesc}"></div>
 				</div>
 				
@@ -113,6 +113,11 @@
 				<button type="submit">送出</button>
 			</form>
 	</main>
+		<footer class="app-footer">
+		<div class="container">
+			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+		</div>
+	</footer>
 <script>
   
 document.addEventListener('DOMContentLoaded', () => {

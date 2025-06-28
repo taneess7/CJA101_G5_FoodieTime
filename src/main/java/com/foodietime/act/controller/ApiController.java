@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.foodietime.act.model.ActService;
 import com.foodietime.act.model.ActVO;
 
+import jakarta.annotation.PostConstruct;
+
 
 
 @RestController //每個方法回傳物件 Spring自動轉JSON
@@ -30,8 +32,14 @@ public class ApiController {
 	@Autowired
 	private ActService actSvc;
 	
+	//確認是否有啟動api
+//	@PostConstruct
+//	public void init() {
+//	    System.out.println("✅ ApiController 已啟動");
+//	}
+	
 	//單一活動
-	@GetMapping("/{id}")
+	@GetMapping("/act/{id}")
 	public ResponseEntity<ActVO> getActById(@PathVariable Integer id){
 		ActVO act = actSvc.findById(id);
 		if(act == null) {
@@ -40,14 +48,14 @@ public class ApiController {
 		return ResponseEntity.ok(act);
 	}
 
-	//http://localhost:8080/api/allActs 回傳所有api
+	//對應 /api/allActs   http://localhost:8080/api/allActs 回傳所有api
 	// 所有活動文字 Spring Boot 會自動轉成 JSON 並包裝為 200 OK
 	@GetMapping("/allActs")
     public List<ActVO> getAllActs() {
         return actSvc.getAllActs(); 
     }
 	
-	//處理圖片 的 doGet("/bookpic/{id}")
+	//載入圖片 的 doGet("/bookpic/{id}")
 	//Spring 抓出3,傳參數id，網址請求 url: /api/actpic/3 , @GetMapping("actpic/{id})，變數綁定 @PathVariable 3
 	
 	@GetMapping("/actpic/{id}")                

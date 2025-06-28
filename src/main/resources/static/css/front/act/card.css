@@ -42,7 +42,7 @@ body {
 
 /* 左側紅色欄 */
 .card-left {
-  background-color: rgba(167, 116, 99); /* 珊瑚橘半透明背景 */
+  background-color: rgba(167, 116, 99, 1);  /* 咖啡色 */
   width: 150px; /* 視你需要固定寬度 */
   display: flex;
   flex-direction: column;
