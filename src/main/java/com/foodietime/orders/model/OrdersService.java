@@ -1,6 +1,5 @@
 package com.foodietime.orders.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
@@ -9,10 +8,10 @@ import com.foodietime.member.model.MemberRepository;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.memcoupon.model.MemCouponRepository;
 import com.foodietime.memcoupon.model.MemCouponVO;
+import com.foodietime.orddet.dto.OrderDetailDTO;
 import com.foodietime.orddet.model.OrdDetRepository;
 import com.foodietime.orddet.model.OrdDetVO;
-import com.foodietime.orders.dto.OrderNotificationDTO;
-import com.foodietime.orders.websocket.OrderNotificationWebSocket;
+import com.foodietime.orders.dto.NewOrderNotificationDTO;
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
 import jakarta.transaction.Transactional; // 使用 Jakarta EE 的 @Transactional 確保交易原子性
@@ -40,7 +39,6 @@ public class OrdersService {
     private final OrdersRepository ordersRepo;
     private final CartService cartService;
     private final MemberRepository memberRepo;
-    private final OrdDetRepository ordDetRepo;
     private final MemCouponRepository memCouponRepo;
     private final StoreRepository storeRepo;
     private final NotificationService notificationService;
@@ -50,19 +48,19 @@ public class OrdersService {
      * @param ordersRepo   訂單資料庫操作介面
      * @param cartService  購物車服務
      * @param memberRepo   會員資料庫操作介面
-     * @param ordDetRepo   訂單明細資料庫操作介面
+     * @param memCouponRepo 會員優惠卷資料操作介面
      * @param storeRepo    店家資料庫操作介面
+     * @param notificationService 推播服務
+     * @param memService   會員相關業務服務
      */
     @Autowired
     public OrdersService(OrdersRepository ordersRepo,
                          CartService cartService,
-                         MemberRepository memberRepo,
-                         OrdDetRepository ordDetRepo, MemCouponRepository memCouponRepo,
+                         MemberRepository memberRepo, MemCouponRepository memCouponRepo,
                          StoreRepository storeRepo, NotificationService notificationService, MemService memService) {
         this.ordersRepo = ordersRepo;
         this.cartService = cartService;
         this.memberRepo = memberRepo;
-        this.ordDetRepo = ordDetRepo;
         this.memCouponRepo = memCouponRepo;
         this.storeRepo = storeRepo;
         this.notificationService = notificationService;
@@ -328,12 +326,27 @@ public class OrdersService {
             if (storeMember != null) {
                 Integer storeMemId = storeMember.getMemId(); // ★ 成功獲取到 WebSocket 需要的 memId！
 
-                OrderNotificationDTO notificationDTO = new OrderNotificationDTO(
+                // ================== 步驟 3.1: 將訂單明細 (Set<OrdDetVO>) 轉換為 List<OrderDetailDTO> ==============
+                List<OrderDetailDTO> itemDTOs = savedOrder.getOrdDet().stream()
+                        .map(detail -> new OrderDetailDTO(
+                                detail.getProduct().getProdName(),
+                                detail.getProdQty(),
+                                detail.getProdPrice(),
+                                detail.getOrdDesc() // 商品備註
+                        ))
+                        .collect(Collectors.toList());
+                // ================== 步驟 3.2: 組裝完整的 NewOrderNotificationDTO ==================================
+                NewOrderNotificationDTO notificationDTO = new NewOrderNotificationDTO(
                         savedOrder.getOrdId(),
-                        savedOrder.getMember().getMemName(),
                         savedOrder.getOrdDate(),
                         savedOrder.getActualPayment(),
-                        "待處理"
+                        savedOrder.getOrderStatus(), // 傳遞數字 0
+                        "待處理", // 傳遞文字
+                        savedOrder.getComment(), // 訂單備註
+                        savedOrder.getMember().getMemName(),
+                        savedOrder.getMember().getMemPhone(),
+                        savedOrder.getOrdAddr(),
+                        itemDTOs // 傳入組裝好的商品列表
                 );
                 String notificationJson = objectMapper.writeValueAsString(notificationDTO);
                 notificationService.sendOrderNotificationAsync(storeMemId, notificationJson);

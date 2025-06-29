@@ -83,49 +83,92 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * 動態建立並在頁面頂部插入新的訂單卡片
-     * @param {object} order - 從 WebSocket 收到的新訂單物件
+     * 動態建立並在頁面頂部插入新的訂單卡片，樣式與Thymeleaf渲染的完全一致。
+     * @param {object} order - 從 WebSocket 收到的新訂單物件 (NewOrderNotificationDTO)
      */
     function addNewOrderCard(order) {
         const ordersList = document.querySelector('.orders-list');
         if (!ordersList) return;
 
-        // 建立新的訂單卡片 div
-        const newCard = document.createElement('div');
-        newCard.className = 'order-card pending'; // 新訂單預設為待處理狀態
+        // 移除「目前沒有訂單」的提示 (如果存在)
+        const noOrdersMessage = ordersList.querySelector('.no-orders');
+        if (noOrdersMessage) {
+            noOrdersMessage.remove();
+        }
 
-        // 使用模板字符串填充 HTML 結構
-        // 注意：日期格式化和訂單詳情可能需要額外處理
-        newCard.innerHTML = `
-            <div class="order-header">
-                <div class="order-info">
-                    <h3 class="order-id">訂單 #${order.ordId}</h3>
-                    <span class="order-time">${new Date(order.ordDate).toLocaleString()}</span>
-                </div>
-                <div class="order-status">
-                    <span class="status-badge pending">待處理</span>
-                </div>
-            </div>
-            <div class="order-details">
-                <!-- 根據您的需求填充客戶資訊、訂單項目等 -->
-                <p><strong>客戶：</strong>${order.memName}</p>
-                <p><strong>訂單總額：NT$${order.actualPayment}</strong></p>
-            </div>
-            <div class="order-actions">
-                <!-- 根據您的需求填充操作按鈕 -->
+        // --- 步驟 1: 動態生成訂單項目的 HTML 列表 ---
+        const itemsHtml = order.items.map(item => `
+        <li>
+            <span>${item.productName}</span> ×
+            <span>${item.quantity}</span> =
+            NT$<span>${item.price * item.quantity}</span>
+            ${item.note ? `<div class="item-note">備註：${item.note}</div>` : ''}
+        </li>
+    `).join('');
+
+        // --- 步驟 2: 根據訂單狀態，動態生成操作按鈕的 HTML ---
+        // 新訂單一定是待處理 (status == 0)，所以直接生成對應的按鈕
+        const actionsHtml = `
+        <div class="order-actions">
+            <div>
                 <form action="/store/orders/accept/${order.ordId}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-success">接受訂單</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="material-icons-outlined">check</i>
+                        接受訂單
+                    </button>
                 </form>
-                <button type="button" class="btn btn-danger" onclick="showRejectModal(${order.ordId})">拒絕訂單</button>
+                <button type="button" class="btn btn-danger" onclick="showRejectModal(${order.ordId})">
+                    <i class="material-icons-outlined">close</i>
+                    拒絕訂單
+                </button>
             </div>
-        `;
+        </div>
+    `;
+
+        // --- 步驟 3: 建立新的訂單卡片 div，並組裝所有 HTML ---
+        const newCard = document.createElement('div');
+        newCard.className = 'order-card pending'; // 新訂單固定是 pending 狀態
+
+        newCard.innerHTML = `
+        <div class="order-header">
+            <div class="order-info">
+                <h3 class="order-id">訂單 #${order.ordId}</h3>
+                <span class="order-time">${new Date(order.ordDate).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(/\//g, '/')}</span>
+            </div>
+            <div class="order-status">
+                <span class="status-badge pending">${order.orderStatusText}</span>
+            </div>
+        </div>
+
+        <div class="order-details">
+            <div class="customer-info">
+                <p><strong>客戶：</strong><span>${order.memName}</span></p>
+                <p><strong>電話：</strong><span>${order.memPhone}</span></p>
+                ${order.ordAddr ? `<p class="delivery-address"><strong>外送地址：</strong><span>${order.ordAddr}</span></p>` : ''}
+            </div>
+
+            <div class="order-items">
+                <h4>訂購項目：</h4>
+                <ul>
+                    ${itemsHtml}
+                </ul>
+            </div>
+
+            <div class="order-total">
+                <p><strong>訂單總額：NT$<span>${order.actualPayment}</span></strong></p>
+                <p class="order-comment"><strong>備註：</strong><span>${order.comment}</span></p>
+            </div>
+        </div>
+        
+        ${actionsHtml}
+    `;
 
         // 將新卡片插入到列表的最前面
         ordersList.prepend(newCard);
 
         // 可選：新增音效提示或視覺效果
         newCard.style.backgroundColor = '#fff3cd'; // 臨時高亮
-        setTimeout(() => { newCard.style.backgroundColor = ''; }, 2000);
+        setTimeout(() => { newCard.style.backgroundColor = ''; }, 3000);
 
         // 可選：播放提示音
         // const audio = new Audio('/sounds/notification.mp3');
