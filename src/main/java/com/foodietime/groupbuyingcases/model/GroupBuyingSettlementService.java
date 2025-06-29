@@ -9,6 +9,7 @@ import com.foodietime.smg.model.SmgVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class GroupBuyingSettlementService {
     
     
     
-    
+    @Transactional
     public void settleGroupBuying(GroupBuyingCasesVO groupCase) {
         System.out.println("[結算] 開始結算團購案 gbId=" + groupCase.getGbId());
         // 1. 判斷是否達標

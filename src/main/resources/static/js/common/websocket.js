@@ -100,10 +100,10 @@ class NotificationCenter {
                 icon: icons[type] || 'info',
                 title: title,
                 text: text,
-                timer: 4000,
+                // timer: 4000,
                 toast: true,
                 position: 'top-end',
-                showConfirmButton: false,
+                showConfirmButton: true,
                 timerProgressBar: true,
                 background: '#fff',
                 backdrop: false
