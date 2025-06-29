@@ -22,5 +22,8 @@ public interface ProductRepository extends JpaRepository<ProductVO, Integer>{
 		       "LOWER(p.prodDesc) LIKE LOWER(CONCAT('%', :keyword, '%'))")
 		List<ProductVO> searchByKeyword(@Param("keyword") String keyword);
 	
+	//美食轉盤
+//	@Query(value = "SELECT * FROM product ORDER BY RAND() LIMIT 1", nativeQuery = true)
+//	ProductVO findRandomProduct();
 	
 }
