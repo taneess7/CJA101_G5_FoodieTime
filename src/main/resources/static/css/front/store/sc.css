@@ -22,8 +22,10 @@
     }
    
     .sidebar h2 {
-      font-size: 18px;
-      margin: 10px;
+        font-size: 16px;
+		margin: 5px;
+		word-wrap: break-word;  /* ⭐ 自動換行 */
+		white-space: normal;    /* ⭐ 允許斷行 */
     }
     .sidebar button {
       border: 1px dashed #ff5722;
@@ -526,17 +528,31 @@ select.form-input {
 	border-color: #adb5bd;
 }
 
+/* .sidebar { */
+/* 	display: flex; */
+/* 	flex-direction: column; */
+/* 	gap: 10px; */
+/* 	max-height: 80vh; */
+/*     width: 120px; */
+/*     background: white; */
+/*     border-radius: 16px; */
+/*     padding: 14px; */
+/*     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
+/*     text-align: center; */
+/* } */
+
 .sidebar {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	max-height: 80vh;
-    width: 120px;
-    background: white;
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    text-align: center;
+	max-height: 86vh;           /* 高度限制在 86% 螢幕 */
+	overflow-y: auto;           /* ⭐ 加這行才會滾動 */
+	width: 120px;
+	background: white;
+	border-radius: 16px;
+	padding: 14px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	text-align: center;
 }
 
 .info-card {
@@ -822,4 +838,34 @@ select:disabled {
   font-size: 1rem;   /* ↓ 文字縮小一點 */
   border-radius: 20px; /* 如果要更小圓弧也可以 */
 }
+
+.product-list {
+  width: 100%;
+  max-width: 1200px; /* 或不加 max-width，看版型需求 */
+  margin: 0 auto;
+}
+
+/* 整體捲軸寬度 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* 捲軸軌道（背景） */
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+/* 捲軸本體（滑動條） */
+::-webkit-scrollbar-thumb {
+  background-color: #bd9977;  /* 這裡換成你想要的色號 */
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;  /* 外框空隙 */
+}
+
+/* 滑鼠懸停時的顏色 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a97e63;
+}
+
 

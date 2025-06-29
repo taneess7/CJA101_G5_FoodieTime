@@ -2,6 +2,7 @@ package com.foodietime.act.model;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,25 @@ public class ActParticipationService {
 	public boolean hasStoreJoinedAct(StoreVO store, ActVO act) {
 		return partRepo.existsByStoreAndAct(store, act);
 	}
+
+	public void deleteByStoreAndAct(Integer storId, Integer actId) {
+		partRepo.deleteByStore_StorIdAndAct_ActId(storId, actId);
+		
+	}
+
+	public void save(ActParticipationVO participation) {
+		partRepo.save(participation);
+		
+	}
+
+	public boolean hasJoined(Integer storId, Integer actId) {
+		return partRepo.existsByStore_StorIdAndAct_ActId(storId, actId);//檢查是否存在
+	}
 	
+	public List<ActParticipationVO> findByStoreId(Integer storId) {
+	    return partRepo.findByStore_StorId(storId);
+
+	}	
+	
+
 }

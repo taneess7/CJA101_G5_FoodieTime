@@ -71,7 +71,9 @@ public class StoreVO implements Serializable {
 	private StoreCateVO storeCate; 
 	  
 	
-
+	public String getStorCatName() {
+	    return storeCate != null ? storeCate.getStorCatName() : null;
+	}
 	
 	// 3.店家名稱
 	@NotBlank(message="店家名稱: 請勿空白")

@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+body {
+	  margin: 0 auto 2rem auto;
+	  padding: 1rem;
+	  max-width: 100%;
+	  overflow-x: hidden;
+}
+
+td.white-nowrap {
+  white-space: nowrap;
+}
+
+.center-table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.prod-desc-ellipsis {
+  max-width: 200px;       /* 依你需求調整寬度 */
+  white-space: nowrap;    /* 不換行 */
+  overflow: hidden;       /* 超出隱藏 */
+  text-overflow: ellipsis;/* 顯示省略號 ... */
+}
+
+h3{
+	margin: 0;
+}
+
+h2{
+	margin: 0;
+}
+
+.prod-img {
+  width: 80px;             /* 固定寬度 */
+  height: 80px;            /* 固定高度 */
+  object-fit: cover;       /* 保持比例裁切填滿 */
+  border: 2px dotted blue; /* 可選樣式 */
+  background-color: white; /* 背景底色 */
+  display: block;
+  margin: 0 auto;          /* 置中顯示 */
+}

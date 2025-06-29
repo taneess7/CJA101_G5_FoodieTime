@@ -12,15 +12,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>所有活動資料 - listAllAct.html</title>
+<title>所有商品資料</title>
 
-<head th:insert="~{/admin/act/included-fragment}"></head>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>                                    <!-- ●●js  for jquery datatables 用 -->
 <script	src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>              <!-- ●●js  for jquery datatables 用 -->
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.jqueryui.min.css" /> <!-- ●●css for jquery datatables 用 -->
-<link rel="stylesheet" href="/css/admin/act/act-list.css">
-<!-- ●● jquery datatables 設定 -->
+<link rel="stylesheet" href="/css/front/store/prod.css">
 <script>
 	$(document).ready(function() {
 		$('#example').DataTable({
@@ -59,51 +57,45 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>所有活動資料 - listAllAct.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div>
+		 <div align="center"> <h2>一般商品列表</h2>
+<!-- 		 <h3><a class="navbar-brand" th:href="@{/store/prod/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div> -->
 </nav>
 <div class="table-responsive">
   <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
   <thead >
 	<tr style="background-color:#f1e5d9">
-		<th>計數</th>
-		<th>活動編號</th>
-		<th>活動類型</th>
-		<th>活動名稱</th>
-		<th>活動內容</th>
-		<th>折扣類型</th>
-		<th>折扣</th>
-		<th>開始時間</th>
-		<th>結束時間</th>
-		<th>活動狀態</th>
-		<th>活動圖片</th>
-		<th>適用店家</th>
+		<th>商品ID</th><!-- 原本的計數 -->
+<!-- 		<th>商品編號</th> -->
+<!-- 		<th>店家編號</th> -->
+		<th>類別</th>
+		<th>商品名稱</th>
+		<th>商品描述</th>
+		<th>價格</th>
+		<th>商品圖片</th>
+		<th>狀態</th>
 		<th>最後更新時間</th>
 		<th>操作</th>
+<!-- 		<th>被檢舉次數</th> -->
 	</tr>
   </thead>
 	
   <tbody>  <!-- 跑 th:each 迴圈，但又不會讓畫面上真的多出一層 <div> 或 <span> -->
-		<th:block th:each="actVO, stat : ${actListData}">
+		<th:block th:each="prodVO, stat : ${prodListData}">
 			<tr>
 				<td th:text="${stat.count}"></td>
-				<td th:text="${actVO.actId}"></td>
-				<td class="white-nowrap" th:text="${actVO.actCate}"></td>
-				<td th:text="${actVO.actName}"></td>
-				<td th:text="${actVO.actContent}"></td>
-				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '金額'}"></td>
-				<td th:text="${actVO.actDiscValue}"></td>
-				<td th:text="${#dates.format(actVO.actStartTime,'yyyy-MM-dd HH:mm:ss')}"></td>
-				<td th:text="${#dates.format(actVO.actEndTime,'yyyy-MM-dd HH:mm:ss')}"></td>
-				<td th:text="${actVO.actStatus == 0 ? '下架' : '上架'}"></td>
-				<td><img style="border: 2px dotted blue; background-color: white;" th:src="@{/act/DBGifReader} + '?actId=' + ${actVO.actId}" width="100px"></td>
-				<td th:text="${actVO.isGlobal == 0 ? '部分' : '全店'}"></td>
-				<td th:text="${#dates.format(actVO.actLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
-<!-- 				<td th:text="${actVO.deptVO.deptno} + '-[' + ${actVO.deptVO.dname} + ']'"></td> -->
+<!-- 				<td th:text="${prodVO.prodId}"></td> -->
+				<td class="white-nowrap" th:text="${prodVO.productCategory.prodCate}"></td>
+				<td th:text="${prodVO.prodName}"></td>
+				<td class="prod-desc-ellipsis"  th:text="${prodVO.prodDesc}"></td>
+				<td th:text="${prodVO.prodPrice}"></td>
+				<td><img class="prod-img" style="border: 2px dotted blue;width:50px; height:50px; background-color: white;" th:src="@{/store/DBGifReader} + '?prodId=' + ${prodVO.prodId}" width="50px"></td>
+				<td th:text="${prodVO.prodStatus} ? '上架' : '下架'"></td>
+				<td th:text="${#dates.format(prodVO.prodLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
+
 			<td>
-			  <form method="post" th:action="@{/act/getOne_For_Update}" style="margin-bottom: 0px;">
+			  <form method="post" th:action="@{/store/prod/getOne_For_Update}" style="margin-bottom: 0px;">
 			     <input type="submit" value="修改">
-			     <input type="hidden" name="actId" th:value="${actVO.actId}">
+			     <input type="hidden" name="prodId" th:value="${prodVO.prodId}">
 			  </form>
 			
 			</td>

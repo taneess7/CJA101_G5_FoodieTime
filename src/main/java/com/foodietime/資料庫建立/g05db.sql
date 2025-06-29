@@ -1268,7 +1268,21 @@ VALUES (0, 1, 1, 1, 0, 100.00, 10.00, 1, 1, '2025-05-18 12:00:00', '2025-05-18 1
         '202505'),
        (0, 10, 10, 10, 0, 240.00, 24.00, 1, 1, '2025-05-18 21:00:00', '2025-05-18 22:00:00', '2025-05-19 21:00:00',
         '202505');
-
+        
+-- =========================
+-- 32. 店家和活動關聯表
+-- =========================
+DROP TABLE IF EXISTS ACTIVITY_PARTICIPATION;
+CREATE TABLE ACTIVITY_PARTICIPATION (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    STOR_ID INT NULL,
+    ACT_ID INT NULL,
+    JOINED_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (STOR_ID) REFERENCES store(STOR_ID),
+    FOREIGN KEY (ACT_ID) REFERENCES activity(ACT_ID)
+);      
+        
+        
 -- =========================
 -- 外鍵統一於最後設定
 -- =========================

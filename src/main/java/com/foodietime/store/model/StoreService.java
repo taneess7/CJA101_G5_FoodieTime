@@ -122,67 +122,23 @@ public class StoreService {
 	
 	/*********** 可動態帶入資料庫店家類別 ******************/
 
-	// 中式餐廳-改
-
-	public List<StoreVO> getChRestaurants() {
-		String keyword = "%中式%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
-
-	// 日式餐廳-改
-
-	public List<StoreVO> getJaRestaurants() {
-		String keyword = "%日式%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
-
-	// 韓式餐廳-改
-
-	public List<StoreVO> getKoRestaurants() {
-		String keyword = "%韓式%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
-
-	// 泰式餐廳-改
-
-	public List<StoreVO> getThaiRestaurants() {
-		String keyword = "%泰式%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
-
-	// 義式餐廳-改
-
-	public List<StoreVO> getItRestaurants() {
-		String keyword = "%義式%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
-
-	// 美式餐廳-改
-
-	public List<StoreVO> getAmRestaurants() {
-		String keyword = "%美式%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
-
-	// 甜點餐廳-改
+	// 甜點飲料餐廳-改
 
 	public List<StoreVO> getSwRestaurants() {
-		String keyword = "%甜點%";
+		String keyword = "%甜%";
 		return repository.findByStoreCateNameLike(keyword);
 	}
 
-	// 素食餐廳-改
-
-	public List<StoreVO> getVeRestaurants() {
-		String keyword = "%素食%";
-		return repository.findByStoreCateNameLike(keyword);
-	}
 
 	public List<ProductVO> getProdsByStoreId(Integer storId){
 		return repository.findProdsByStorId(storId);
 	}
 	
-
+	//同時查店家和商品
+	public StoreVO getStoreWithProducts(Integer storId) {
+        return repository.findByStorIdWithProducts(storId);
+	
+	}
 
 		
 	}
