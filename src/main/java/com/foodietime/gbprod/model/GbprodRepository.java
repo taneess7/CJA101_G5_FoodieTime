@@ -26,5 +26,8 @@ public interface GbprodRepository extends JpaRepository<GbprodVO, Integer> {
 	           OR CAST(p.gbProdId AS string) = :keyword
 	           OR CAST(p.store.storId AS string) = :keyword
 	    """)
-	    List<GbprodVO> searchByNameOrProdIdOrStoreId(@Param("keyword") String keyword);}
+	    List<GbprodVO> searchByNameOrProdIdOrStoreId(@Param("keyword") String keyword);
+	
+	List<GbprodVO> findByStore(StoreVO store);
+}
 
