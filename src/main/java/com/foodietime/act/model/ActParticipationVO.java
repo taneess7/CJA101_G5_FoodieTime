@@ -21,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name= "activity_participation")
+@Table(name= "ACTIVITY_PARTICIPATION")
 public class ActParticipationVO {
 	
 	@Id
