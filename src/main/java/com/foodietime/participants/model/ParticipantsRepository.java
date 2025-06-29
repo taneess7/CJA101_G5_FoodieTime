@@ -14,4 +14,6 @@ public interface ParticipantsRepository extends JpaRepository<ParticipantsVO, In
 	 //找出這個團購 (gbId) 中 leader = 0 的參加者  
 	 Optional<ParticipantsVO> findByGroupBuyingCase_GbIdAndLeader(Integer gbId, Byte leader);
 
+	 // 查詢某會員(團長)的所有地址
+     List<ParticipantsVO> findByMember_MemIdAndLeader(Integer memId, Byte leader);
 }
