@@ -61,4 +61,6 @@ public class GbpromotionVO implements Serializable {
     @Min(value = 0, message = "優惠價格不可為負")
     @Column(name = "GB_PROD_SPE")
     private Integer gbProdSpe;
+
+    
 }

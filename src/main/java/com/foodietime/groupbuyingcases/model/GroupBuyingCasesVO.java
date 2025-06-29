@@ -127,6 +127,9 @@ public class GroupBuyingCasesVO implements Serializable{
 	@Min(value = 0, message = "累計購買數量: 最少須為 0")
 	private Integer cumulativePurchaseQuantity;  // 累計購買數量
 
+
+	@Column(name = "SETTLED", nullable = false)
+	private Boolean settled = false;  // 是否已結算
 	
 	public GroupBuyingCasesVO() {  //必需有一個不傳參數建構子
 		

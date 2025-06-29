@@ -133,6 +133,6 @@ public class SmgVO implements Serializable {
         // 直接替換整個列表，避免clear()操作
         this.smgauths = newSmgauths;
     }
-
+	
     
 }

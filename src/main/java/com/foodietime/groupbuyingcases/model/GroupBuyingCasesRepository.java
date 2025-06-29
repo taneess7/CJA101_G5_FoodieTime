@@ -49,4 +49,6 @@ public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCas
     
     // 根據標題關鍵字和狀態搜尋團購案
     List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus);
+
+    List<GroupBuyingCasesVO> findByGbStatusAndSettled(Byte gbStatus, Boolean settled);
 }

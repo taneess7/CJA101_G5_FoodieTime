@@ -101,4 +101,10 @@ public class GroupBuyingCasesService {
     public List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus) {
         return groupBuyingCasesRepository.findByGbTitleContainingAndGbStatus(keyword, gbStatus);
     }
+
+    public List<GroupBuyingCasesVO> findAllEndedAndUnsettled() {
+        // 假設 gbStatus=4 表示已結束，且有 settled 欄位
+        // 請根據實際欄位調整查詢條件
+        return groupBuyingCasesRepository.findByGbStatusAndSettled((byte)4, false);
+    }
 }
