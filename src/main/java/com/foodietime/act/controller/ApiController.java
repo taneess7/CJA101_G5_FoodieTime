@@ -111,7 +111,7 @@ public class ApiController {
 	@PostMapping("/store/participate")
 	@ResponseBody
 	public ResponseEntity<String> participateInAct(@RequestBody Map<String, Object> data, HttpSession session) {
-		System.out.println("🟢 Controller 進來了！");
+		//System.out.println("🟢 Controller 進來了！");
 		Integer actId = (Integer) data.get("actId");
 	    Boolean join = (Boolean) data.get("join"); // 你有送這個旗標，別忽略它
 
@@ -135,8 +135,8 @@ public class ApiController {
 	        participation.setStore(store);
 	        participation.setAct(act);
 	        participation.setJoinedTime(new Timestamp(System.currentTimeMillis()));
-	        System.out.println("✅ store id: " + store.getStorId());
-	        System.out.println("✅ act id: " + act.getActId());
+	        //System.out.println("✅ store id: " + store.getStorId());
+	        //System.out.println("✅ act id: " + act.getActId());
 	        actPartSvc.save(participation);
 	        return ResponseEntity.ok("您已成功參加活動！");
 	    } else {

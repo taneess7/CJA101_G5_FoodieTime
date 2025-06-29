@@ -92,7 +92,7 @@ public enum ActCategoryEnum {
                 return e;
             }
         }
-        System.out.println("⚠ 無法解析活動類型：" + input);
+        System.out.println("⚠ 沒有對應的商品，無法解析活動類型：" + input);
         return null;
     }
 }
