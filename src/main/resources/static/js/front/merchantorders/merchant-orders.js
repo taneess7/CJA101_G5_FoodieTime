@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newCard = document.createElement('div');
         newCard.className = 'order-card pending'; // 新訂單預設為待處理狀態
 
-        // 使用模板字符串填充 HTML 結構 (此處為簡化版，請根據您的 VO/DTO 調整)
+        // 使用模板字符串填充 HTML 結構
         // 注意：日期格式化和訂單詳情可能需要額外處理
         newCard.innerHTML = `
             <div class="order-header">
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="order-details">
                 <!-- 根據您的需求填充客戶資訊、訂單項目等 -->
-                <p><strong>客戶：</strong>${order.member.memName}</p>
+                <p><strong>客戶：</strong>${order.memName}</p>
                 <p><strong>訂單總額：NT$${order.actualPayment}</strong></p>
             </div>
             <div class="order-actions">
