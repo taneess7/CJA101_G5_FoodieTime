@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActVO;
 import com.foodietime.coupon.model.CouponService;
 import com.foodietime.coupon.model.CouponVO;
@@ -70,6 +71,8 @@ public class StorePageController {
 
 	@Autowired
 	private ProductService prodSvc;
+	
+
 	
 	
 /*-----------------------------------------------------------整合頁面-------------------------------------------------------*/
@@ -289,38 +292,38 @@ public class StorePageController {
 
 	
 	//撈出session店家的商品
-//	@GetMapping("/listAllProds")
-//	public String listAllProds(HttpSession session, Model model) { 
-//		//1.取得店家session
-//		StoreVO loggedInStore = (StoreVO) session.getAttribute("loggedInStore");
-//		if(loggedInStore == null) {
-//			return "redirect:/front/member/login";
-//		}
-//		Integer storId = loggedInStore.getStorId();
-//		
-//		//2.取得店家的商品
-//		List<ProductVO> list = prodSvc.findByStoreId(storId); //用storeId找商品，進入畫面才會有資料
-//	    System.out.println("清單筆數：" + list.size());
-//	    model.addAttribute("prodListData", list); //提供給html
-//	    return "front/store/prod/listAllProds";
-//	}
-	
-	//測試指定店家
 	@GetMapping("/listAllProds")
-	public String listAllProds(Model model) { 
-//		//1.取得店家session
-//		StoreVO loggedInStore = (StoreVO) session.getAttribute("loggedInStore");
-//		if(loggedInStore == null) {
-//			return "redirect:/front/member/login";
-//		}
-		Integer storId = 5;
+	public String listAllProds(HttpSession session, Model model) { 
+		//1.取得店家session
+		StoreVO loggedInStore = (StoreVO) session.getAttribute("loggedInStore");
+		if(loggedInStore == null) {
+			return "redirect:/front/member/login";
+		}
+		Integer storId = loggedInStore.getStorId();
 		
 		//2.取得店家的商品
 		List<ProductVO> list = prodSvc.findByStoreId(storId); //用storeId找商品，進入畫面才會有資料
-	    //System.out.println("店家id:"+ storId +"清單筆數：" + list.size());
+//	    System.out.println("清單筆數：" + list.size());
 	    model.addAttribute("prodListData", list); //提供給html
 	    return "front/store/prod/listAllProds";
 	}
+	
+	//測試指定店家
+//	@GetMapping("/listAllProds")
+//	public String listAllProds(Model model) { 
+////		//1.取得店家session
+////		StoreVO loggedInStore = (StoreVO) session.getAttribute("loggedInStore");
+////		if(loggedInStore == null) {
+////			return "redirect:/front/member/login";
+////		}
+//		Integer storId = 5;
+//		
+//		//2.取得店家的商品
+//		List<ProductVO> list = prodSvc.findByStoreId(storId); //用storeId找商品，進入畫面才會有資料
+//	    //System.out.println("店家id:"+ storId +"清單筆數：" + list.size());
+//	    model.addAttribute("prodListData", list); //提供給html
+//	    return "front/store/prod/listAllProds";
+//	}
 	
 	
 	
@@ -402,7 +405,7 @@ public class StorePageController {
 			result = removeFieldError(prodVO, result, "upFiles"); //<input type="file" name="upFiles"> removeFieldError 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
 			 // 處理圖片上傳
 			if (parts.length == 0 ||parts[0].isEmpty()) { //未選擇圖片，補驗證訊息
-				model.addAttribute("errorMessage", "活動照片: 請上傳照片"); //addAct.html th:utext="${errorMessage}" 	
+				model.addAttribute("errorMessage", "商品照片: 請上傳照片"); //html th:utext="${errorMessage}" 	
 			} else {
 				for (MultipartFile multipartFile : parts) {
 					byte[] buf = multipartFile.getBytes(); //圖片轉byte[]
@@ -414,7 +417,7 @@ public class StorePageController {
 			 // 表單驗證不通過 → 回原頁
 			if(result.hasErrors() || parts[0].isEmpty()) {
 				List<FieldError> errors = result.getFieldErrors(); //FieldError 表單欄位單一BindingResult，使用傳給前端看錯誤
-				return "admin/act/addAct"; //回到原頁顯示錯誤訊息
+				return "front/store/prod/addProd"; //回到原頁顯示錯誤訊息
 				
 			}
 		
@@ -562,6 +565,7 @@ public class StorePageController {
 //		}
 		
 		
+
 		
 		
 

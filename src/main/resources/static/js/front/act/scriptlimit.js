@@ -93,43 +93,35 @@ function fetchAllActs() {
 								// 建立狀態 flag：是否已參加
 								let hasJoined = false;
 
+								// 綁定點擊事件（toggle 狀態）
 								joinButton.addEventListener("click", function () {
-								  // 決定目前是要「參加」還是「取消參加」
-								  const isJoining = !hasJoined;
+								  if (hasJoined) {
+								    // ❎ 若已參加就不發送請求（或你可以設計取消功能）
+								    hasJoined = false;
+								    joinButton.style.backgroundColor = "red";
+								    joinButton.textContent = "參加";
+								    joinMessage.textContent = "";
+								    return;
+								  }
 
-								  // 發送參加或取消的 POST 請求
-								  fetch(`/api/store/participate`, {
-								    method: 'POST',
-								    headers: {
-								      'Content-Type': 'application/json'
-								    },
-								    body: JSON.stringify({ actId: act.actId, join: isJoining }) // ➜ 加上 join 旗標
+								  // ✅ 發送報名請求（GET or POST 皆可，這邊示範 GET）
+								  fetch(`${contextPath}storeParticipateAct?actId=${act.actId}`, {
+								    method: "GET"
 								  })
-								  .then(response => {
-								    if (!response.ok) {
-								      throw new Error("操作失敗");
-								    }
-								    return response.text();
-								  })
-								  .then(msg => {
-								    hasJoined = isJoining; // ✅ 成功後才切換狀態
+								    .then(response => {
+								      if (!response.ok) throw new Error("參加活動失敗");
 
-								    if (hasJoined) {
+								      // 模擬成功：改變按鈕樣式與訊息
+								      hasJoined = true;
 								      joinButton.style.backgroundColor = "#4CAF50";
 								      joinButton.textContent = "已參加";
-								      joinMessage.textContent = msg || "您已成功參加活動！";
-								    } else {
-								      joinButton.style.backgroundColor = "red";
-								      joinButton.textContent = "參加";
-								      joinMessage.textContent = msg || "您已取消參加活動";
-								    }
-								  })
-								  .catch(error => {
-								    console.error("參加活動錯誤", error);
-								    joinMessage.textContent = "⚠ 參加/取消失敗，請稍後再試";
-								  });
+								      joinMessage.textContent = "您已成功參加活動！";
+								    })
+								    .catch(error => {
+								      console.error("參加活動錯誤", error);
+								      joinMessage.textContent = "⚠ 參加失敗，請確認是否符合條件";
+								    });
 								});
-
 												
 		});
 	})

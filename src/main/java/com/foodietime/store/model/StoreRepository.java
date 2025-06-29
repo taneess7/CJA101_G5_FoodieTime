@@ -62,6 +62,9 @@ public interface StoreRepository extends JpaRepository<StoreVO, Integer> {
     List<StoreVO> findByStoreCateId(@Param("cateId") Integer cateId);
 	
 	
+	 //避免@OneToMany(fetch = LAZY)（預設）時，它只會載入主物件（如 StoreVO），不會馬上載入關聯的商品 List（product），用 .getProduct() 時 session已關閉
+	 @Query("SELECT s FROM StoreVO s LEFT JOIN FETCH s.product WHERE s.storId = :storId")
+	 StoreVO findByStorIdWithProducts(@Param("storId") Integer storId);
 
 	
 	List<StoreVO> findByStoreCate_StorCateId(Integer id);

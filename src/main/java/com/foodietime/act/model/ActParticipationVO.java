@@ -2,6 +2,7 @@ package com.foodietime.act.model;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.foodietime.store.model.StoreVO;
 
@@ -42,6 +43,8 @@ public class ActParticipationVO {
     @JoinColumn(name = "ACT_ID", referencedColumnName = "ACT_ID" ,nullable = true)
     private ActVO act;
 
+	
+	@JsonIgnore
     private Timestamp joinedTime;
 
 }

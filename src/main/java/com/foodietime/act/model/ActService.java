@@ -154,12 +154,12 @@ public class ActService {
 	// 計算顯示價格（ 支援多種活動類型（折扣、買一送一），會檢查「商品是否符合活動關鍵字條件」）
 	public int calDisplayPrice(ProductVO prod, ActVO act, StoreVO store) {
 		
-		//活動不存在，或未啟用，原價
+		//1. 活動或商品無效，原價
 		if (act == null || prod == null || prod.getProdPrice() == null) {
 			return prod.getProdPrice(); 
 		}
 
-		// 1.非全站活動，就需要檢查店家是否參加
+		//2.非全站活動，就需要檢查店家是否參加
 		if (!Boolean.TRUE.equals(act.getIsGlobal())) { // 只要是true的都當作false 所以非全站活動才做下面的判斷
 			boolean hasJoined = actPartRepo.existsByStoreAndAct(store, act); // 店家有參加嗎?
 			if (!hasJoined) { // 沒有參加
@@ -167,13 +167,42 @@ public class ActService {
 			}
 		}
 
-		// 2.呼叫 enum 折扣策略
+		// 3.依活動類型呼叫 enum 折扣策略
 		try {
-			ActCategory cate = ActCategory.valueOf(act.getActCate());
-			return cate.calculate(prod, act.getActContent());
+			ActCategoryEnum cate = ActCategoryEnum.valueOf(act.getActCate());
+			return cate != null? cate.calculate(prod, act) : prod.getProdPrice(); //傳入productVO. actVO.
 		} catch (IllegalArgumentException e) {
-			return prod.getProdPrice();// 為定義類別 -> 原價
+			return prod.getProdPrice();// 沒對應的活動類型-> 原價
 		}
 
 	}
+	
+	//===================================================================================================//
+	//店家點選「參加活動」按鈕時判斷資格
+	public boolean isStoreEligibleForAct(StoreVO store, ActVO act) {
+		if(store == null || store.getProduct() == null || store.getProduct().isEmpty()) {
+			return false;
+		}
+		
+		ActCategoryEnum category = ActCategoryEnum.from(act.getActCate());
+		if(category == null) {
+			return false;//活動類型未定義
+		}
+		
+		//檢查是否至少有一個商品符合活動條件 (折扣後價格有變)
+		for (ProductVO product : store.getProduct()) {
+			int originalPrice = product.getProdPrice();
+			int discountedPrice = category.calculate(product, act);
+			
+			if(discountedPrice != originalPrice) {
+				return true;//符合資格
+			}
+		}
+		
+		return false; //全部商品不符合活動條件
+	}
+	
+	
+	
+	
 }
