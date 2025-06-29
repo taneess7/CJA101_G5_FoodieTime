@@ -36,9 +36,10 @@ public class ActPageController {
 		return "admin/act/select_page"; //select_page.html
 	}
 	
-	@GetMapping("/act/listAllAct")
+	/***進到後台ListAllAct畫面**/
+	@GetMapping("/act/listAllActs")
 	public String listAllAct(Model model) { 
-		return "admin/act/listAllAct";  //listAllAct.html
+		return "admin/act/listAllActs";  //listAllActs.html
 	}
 	
 

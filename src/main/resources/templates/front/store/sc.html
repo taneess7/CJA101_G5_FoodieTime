@@ -828,6 +828,20 @@ select:disabled {
 </head>
 <body>
 <body>
+
+<header  style=" padding: 5px;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+        <a th:href="@{/}" class="logo" style="font-weight: 800;  font-size: 24px; color: #9DB17C;text-decoration: none;">
+            FoodieTime<span style="color: var(--accent-color-1);">食刻</span>
+        </a>
+        <nav class="main-nav">
+            <a th:href="@{/index}" class="clay clay-button clay-convex">回首頁</a>
+            <a th:href="@{/front/member/member_center}" class="clay clay-button clay-convex">會員</a> 
+             <a th:href="@{/front/member/logout}" class="clay clay-button clay-convex">登出</a>       
+        </nav>
+    </div>
+</header>
+
 	
   <main class="dashboard" >
     <aside class="sidebar">
@@ -836,21 +850,13 @@ select:disabled {
       <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
       <button class="tab-btn" data-tab="activity-view">查看活動</button>
       <button class="tab-btn" data-tab="product">上傳商品</button>
-      <button class="tab-btn" data-tab="product-view">查看商品</button>
-      <button class="tab-btn" data-tab="coupon-view">查看優惠券</button>
+      <button class="tab-btn" data-tab="product-view">查看商品</button>   
+      <button class="tab-btn" data-tab="act-product-view">活動商品</button>           
       <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
       <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
 
-      <a href="@{/}" 
-       class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
-        <i class="material-icons-outlined">index</i>
-        <span>回首頁</span>
-    	  </a>
-      <a href="@{/front/member/logout}" 
-       class="member-nav-item flex items-center space-x-2 text-red-600 hover:text-red-800 mt-6">
-        <i class="material-icons-outlined">logout</i>
-        <span>登出</span>
-     </a>
+   
+     
 
                 
              
@@ -908,11 +914,17 @@ select:disabled {
           <option value="group">團購商品</option>
         </select>
       </div>
-      <div id="normalProductList" class="product-list">
-        <!-- 一般商品將由 JS 動態插入 -->
-      </div>
+     
+      <iframe id="normalProductList" class="product-list prod-img"  th:src="@{/store/listAllProds}" style="width:100%;height:900px;border:none;" ></iframe>
+      
       <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
+
+<!-- 查看參加活動的商品 -->
+    <section class="content-panel" id="tab-act-product-view">
+       <iframe th:src="@{/act/myActs}" height="1000"></iframe>
+    </section>
+
     
 
 <!-- 查看活動 -->    

@@ -1,7 +1,9 @@
 package com.foodietime.act.controller;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,13 +17,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodietime.act.model.ActParticipationService;
+import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActService;
 import com.foodietime.act.model.ActVO;
+import com.foodietime.store.model.StoreVO;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 
 
 
@@ -31,6 +38,9 @@ public class ApiController {
 	
 	@Autowired
 	private ActService actSvc;
+	
+	@Autowired
+	private ActParticipationService actPartSvc;
 	
 	//確認是否有啟動api
 //	@PostConstruct
@@ -98,6 +108,42 @@ public class ApiController {
 		return actSvc.updateStoreAct(id, actVO);
 	}
 	
-	
+	@PostMapping("/store/participate")
+	@ResponseBody
+	public ResponseEntity<String> participateInAct(@RequestBody Map<String, Object> data, HttpSession session) {
+		//System.out.println("🟢 Controller 進來了！");
+		Integer actId = (Integer) data.get("actId");
+	    Boolean join = (Boolean) data.get("join"); // 你有送這個旗標，別忽略它
+
+	    // ⛔ 防呆：一定要檢查 actId != null
+	    if (actId == null) return ResponseEntity.badRequest().body("缺少活動 ID");
+
+	    StoreVO store = (StoreVO) session.getAttribute("loggedInStore");
+	    if (store == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("請先登入");
+	    }
+
+	    ActVO act = actSvc.getOneAct(actId);
+	    if (act == null) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("活動不存在");
+	    }
+
+	    // 🔁 檢查 join 是 true 就參加，false 就取消
+	    if (Boolean.TRUE.equals(join)) {
+	        // 儲存活動參與
+	        ActParticipationVO participation = new ActParticipationVO();
+	        participation.setStore(store);
+	        participation.setAct(act);
+	        participation.setJoinedTime(new Timestamp(System.currentTimeMillis()));
+	        //System.out.println("✅ store id: " + store.getStorId());
+	        //System.out.println("✅ act id: " + act.getActId());
+	        actPartSvc.save(participation);
+	        return ResponseEntity.ok("您已成功參加活動！");
+	    } else {
+	        // 刪除活動參與（你也可以加一個 service 方法）
+	        actPartSvc.deleteByStoreAndAct(store.getStorId(), actId);
+	        return ResponseEntity.ok("您已取消參加活動");
+	    }
+	}
 
 }

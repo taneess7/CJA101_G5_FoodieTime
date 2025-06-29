@@ -286,7 +286,7 @@
                 </div>
             </div>
 
-                       <!-- 主要內容 -->
+            <!-- 主要內容 -->
             <div class="col-lg-9">
                 <div class="profile-content">
                     <h3 class="mb-4">訂單管理</h3>
@@ -294,13 +294,14 @@
                     
                     <!-- 團購篩選 -->
                     <div class="mb-4">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-outline-secondary active">全部訂單</button>
-                            <button type="button" class="btn btn-outline-secondary">待付款</button>
-                            <button type="button" class="btn btn-outline-secondary">待發貨</button>
-                            <button type="button" class="btn btn-outline-secondary">待收貨</button>
-                            <button type="button" class="btn btn-outline-secondary">已完成</button>
-                        </div>
+                        <label for="orderFilter" class="form-label">訂單狀態篩選</label>
+                        <select class="form-select" id="orderFilter" onchange="filterOrders()">
+                            <option value="" th:selected="${selectedFilter == null}">全部訂單</option>
+                            <option value="paid" th:selected="${selectedFilter == 'paid'}">已付款</option>
+                            <option value="unpaid" th:selected="${selectedFilter == 'unpaid'}">未付款</option>
+                            <option value="shipped" th:selected="${selectedFilter == 'shipped'}">已出貨</option>
+                            <option value="unshipped" th:selected="${selectedFilter == 'unshipped'}">未出貨</option>
+                        </select>
                     </div>
                     
                     
@@ -309,67 +310,59 @@
 					  <div class="card-header py-3 d-flex justify-content-between align-items-center">
 					    <h6 class="m-0 font-weight-bold">訂單列表</h6>
 					  </div>
-					  <div>
-					  <div class="card-body">
-					    <div class="table-responsive">
-					      <table class="table table-bordered" width="100%" cellspacing="0">
-					        <thead>
+					  
+					  <!-- 如果沒有訂單，直接顯示這個區塊 -->
+					<div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
+					  <h4 class="text-muted">目前無任何團購訂單</h4>
+					</div>
+					
+					<!-- 如果有訂單，才顯示表格和分頁 -->
+					<div th:if="${!#lists.isEmpty(orders)}" class="card-body table-responsive">
+					    <table class="table table-bordered" width="100%" cellspacing="0">
+					      <thead>
 					          <tr>
 					            <th>訂單編號</th>
 					            <th>商品名稱</th>
 					            <th>訂購數量</th>
 					            <th>總金額</th>
 					            <th>付款狀態</th>
-					   			<th>出貨狀態</th>
+					            <th>出貨狀態</th>
 					            <th>操作</th>
 					          </tr>
 					        </thead>
-					        <!-- 這裡開始迴圈，每筆訂單對應一個 tr -->
-					        <tbody>
-						    <tr th:each="o : ${orders}">
-						      <td th:text="${o.gbOrId}">訂單編號</td>
-						      <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
-						      <td th:text="${o.quantity}">數量</td>
-						      <td th:text="${o.amount}">總金額</td>
-						      <td th:text="${o.paymentStatus == 0} ? '未付款' : '已付款'">付款狀態</td>
-						      <td th:text="${o.shippingStatus == 0} ? '未出貨' : '已出貨'">出貨狀態</td>
-						      <td>
-						        <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-primary">
-						          查看詳情
-						        </a>
-						      </td>
-						    </tr>
-						    <!-- 如果 orders 是空清單，顯示「無訂單」 -->
-						    <tr th:if="${#lists.isEmpty(orders)}">
-						      <td colspan="7" class="text-center">目前沒有任何訂單</td>
-						    </tr>
-						  </tbody>
+					        <tbody id="ordersTbody">
+					          <tr th:each="o : ${orders}">
+					            <td th:text="${o.gbOrId}">訂單編號</td>
+					            <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
+					            <td th:text="${o.quantity}">數量</td>
+					            <td th:text="${o.amount}">總金額</td>
+					            <td th:text="${o.paymentStatus == 0 ? '未付款' : '已付款'}">付款狀態</td>
+					            <td th:text="${o.shippingStatus == 0 ? '未出貨' : '已出貨'}">出貨狀態</td>
+					            <td>
+					              <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-primary">
+					                查看詳情
+					              </a>
+					            </td>
+					          </tr>
+					        </tbody>
 					      </table>
-					    </div>
+
+					
+					  <!-- 分頁 -->
+					  <nav aria-label="Page navigation" class="mt-4">
+					    <ul class="pagination justify-content-center" id="pagination"></ul>
+					  </nav>
+					  <!-- 分頁資訊 -->
+					  <div class="d-flex justify-content-between align-items-center mt-3">
+					    <span>
+					      第 <span id="startRecord">0</span>-<span id="endRecord">0</span> 筆，共
+					      <span id="totalRecords" class="fw-bold">0</span> 筆
+					    </span>
 					  </div>
 					</div>
-                    </div>
 
-                    
-                    <!-- 分頁 -->
-                    <nav aria-label="Page navigation" class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一頁</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">下一頁</a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
-            </div>
             
-        </div>
-    </div>
 
 
 <!-- 登入彈窗 -->
@@ -519,5 +512,144 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const ITEMS_PER_PAGE = 5;
+  let currentPage = 1;
+  let allItems = [];
+  let filteredItems = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 初次載入時，先抓所有行
+    initItems();
+    initializePagination();
+  });
+
+  // 把 <tbody> 裡所有有效的 <tr> 存到 allItems
+  function initItems() {
+    const rows = Array.from(document.querySelectorAll('#ordersTbody tr'));
+    allItems = rows.filter(tr =>
+      !tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
+    );
+  }
+
+  // 當下拉選單改變時呼叫
+  function filterOrders() {
+    const filterValue = document.getElementById('orderFilter').value;
+    filteredItems = [];
+
+    allItems.forEach(tr => {
+      const payment = tr.children[4].textContent.trim();
+      const shipping = tr.children[5].textContent.trim();
+      let show = true;
+
+      switch (filterValue) {
+        case 'paid':     show = payment === '已付款';    break;
+        case 'unpaid':   show = payment === '未付款';    break;
+        case 'shipped':  show = shipping === '已出貨';   break;
+        case 'unshipped':show = shipping === '未出貨';   break;
+      }
+
+      tr.style.display = show ? '' : 'none';
+      if (show) filteredItems.push(tr);
+    });
+
+    // 篩完重設到第1頁
+    currentPage = 1;
+    initializePagination();
+  }
+
+  function initializePagination() {
+    // 選要「分頁的資料」：若有篩選，就用 filteredItems，否則就用 allItems
+    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+
+    // 如果筆數超過每頁上限，就顯示分頁器，否則隱藏
+    if (itemsToUse.length > ITEMS_PER_PAGE) {
+      showPage(1);
+      updatePagination();
+    } else {
+      // 顯示所有
+      itemsToUse.forEach(tr => tr.style.display = '');
+      document.querySelectorAll('.pagination').forEach(p => p.style.display = 'none');
+      // 顯示正確資訊
+      updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
+    }
+  }
+
+  function showPage(page) {
+    currentPage = page;
+    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+
+    itemsToUse.forEach((tr, idx) => {
+      tr.style.display = (idx >= start && idx < end) ? '' : 'none';
+    });
+
+    updatePaginationInfo(start, end, itemsToUse.length);
+  }
+
+  function updatePaginationInfo(startIndex, endIndex, total) {
+    const startRecord = total === 0 ? 0 : startIndex + 1;
+    const endRecord = Math.min(endIndex, total);
+    document.getElementById('startRecord').textContent = startRecord;
+    document.getElementById('endRecord').textContent = endRecord;
+    document.getElementById('totalRecords').textContent = total;
+  }
+
+  function updatePagination() {
+    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+    const container = document.getElementById('pagination');
+    container.innerHTML = '';
+
+    // 上一頁
+    const prevLi = document.createElement('li');
+    prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
+    container.appendChild(prevLi);
+
+    // 頁碼
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.className = i === currentPage ? 'page-item active' : 'page-item';
+      li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
+      container.appendChild(li);
+    }
+
+    // 下一頁
+    const nextLi = document.createElement('li');
+    nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
+    container.appendChild(nextLi);
+  }
+
+  window.changePage = function(page) {
+    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+    if (page < 1 || page > totalPages) return;
+    showPage(page);
+    updatePagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  function initializePagination() {
+	  const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+	  const pagers = document.querySelectorAll('.pagination');
+
+	  if (itemsToUse.length > ITEMS_PER_PAGE) {
+	    // 重新顯示分頁器
+	    pagers.forEach(p => p.style.display = 'flex');  
+	    showPage(1);
+	    updatePagination();
+	  } else {
+	    // 隱藏分頁器，並把所有資料攤開
+	    itemsToUse.forEach(tr => tr.style.display = '');
+	    pagers.forEach(p => p.style.display = 'none');  
+	    updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
+	  }
+	}
+
+</script>
+
 </body>
 </html>

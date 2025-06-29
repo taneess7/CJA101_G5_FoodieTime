@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style>
+
+</style>
+</head>
+<body>
+<h1 style="color:#4CAF50";>我參加的活動</h1>
+
+<div th:each="entry : ${actProdMap}">
+    <h2  style="color: #bd9977;" th:text="'活動名稱：' + ${entry.key.actName}"></h2>
+    <p th:text="'內容：' + ${entry.key.actContent}"></p>
+
+    <table border="1">
+        <tr>
+            <th>商品名稱</th>
+            <th>原價</th>
+            <th>折扣價</th>
+        </tr>
+        <tr th:each="prod : ${entry.value}">
+            <td th:text="${prod.prodName}"></td>
+            <td th:text="${prod.prodPrice}" style="color: red;"></td>
+            <td th:text="${@actCategoryEnum.from(entry.key.actCate).calculate(prod, entry.key)}"></td>
+        </tr>
+    </table>
+    <hr/>
+</div>
+
+    
+    
+<!-- 	<tr th:each="entry : ${priceMap}"> -->
+<!-- 		<td th:text="${entry.key.prodName}">商品名稱</td> -->
+<!-- 		<td> -->
+<!-- 			<span th:text="${entry.value} + '元'"></span>折扣價 -->
+<!-- 			<span th:if="${entry.value < entry.key.prodPrice}" style="color:red;"> -->
+<!-- 			  <del th:text="${entry.key.prodPrice} + '元'"></del> 原價刪除線 -->
+<!-- 			</span> -->
+<!-- 		</td> -->
+<!-- 	</tr> -->
+</table>
+</body>
+</html>

@@ -18,4 +18,6 @@ public interface ProductService {
 
 	    List<ProductVO> getAllProducts();
 
+	    //美食轉盤
+//	    ProductVO getRandomProduct();
 }
