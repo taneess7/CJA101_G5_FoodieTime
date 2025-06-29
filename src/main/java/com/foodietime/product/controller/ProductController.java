@@ -21,6 +21,12 @@ public class ProductController {
         this.productService = productService;
     }
 
+    //美食轉盤
+//    @GetMapping("/random")
+//    @ResponseBody
+//    public ProductVO getRandomProduct() {
+//        return productService.getRandomProduct(); // 從 service 撈出隨機商品
+//    }
     // 新增商品
 //    @PostMapping
 //    public ProductVO createProduct(@RequestBody ProductCreateRequest request) {
