@@ -1272,8 +1272,8 @@ VALUES (0, 1, 1, 1, 0, 100.00, 10.00, 1, 1, '2025-05-18 12:00:00', '2025-05-18 1
 -- =========================
 -- 32. 店家和活動關聯表
 -- =========================
-DROP TABLE IF EXISTS activity_participation;
-CREATE TABLE activity_participation (
+DROP TABLE IF EXISTS ACTIVITY_PARTICIPATION;
+CREATE TABLE ACTIVITY_PARTICIPATION (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     STOR_ID INT NULL,
     ACT_ID INT NULL,
