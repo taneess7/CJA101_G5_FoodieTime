@@ -159,36 +159,34 @@
     </style>
 </head>
 <body>
-<!-- 導航欄 -->
+  <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/index}">首頁</a>
+                        <a class="nav-link" th:href="@{/gb/leaderindex}">首頁</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/gb/all}">全部團購</a>
+                        <a class="nav-link" href="#">熱門團購</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link"  th:href="@{/gb/gbindex#hot}">熱門團購</a>
+                        <a class="nav-link" href="#">最新上架</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/gb/gbindex#new}">最新上架</a>
+                        <a class="nav-link" href="#">即將結束</a>
                     </li>
-                    
-                    
                     <li class="nav-item">                                     
                       <!-- 未登入狀態：顯示登入模態視窗 -->
-                      <a th:if="${session.loggedInMember == null}" class="nav-link" th:href="@{/register}" data-bs-toggle="modal" data-bs-target="#organizerModal">
+                      <a th:if="${session.loggedInMember == null}" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
                           <i class="bi bi-person-badge"></i> 我是團長
                       </a>
                       <!-- 已登入狀態：直接跳轉到團長專區 -->
-                      <a th:if="${session.loggedInMember != null}" class="nav-link" th:href="@{/gb/leader}">
+                      <a th:if="${session.loggedInMember != null}" class="nav-link" href="/gb/leader">
                           <i class="bi bi-person-badge"></i> 我是團長
                       </a>
                   </li>
@@ -198,10 +196,10 @@
                     <div class="dropdown">
                         <!-- 未登入狀態：顯示登入 / 註冊 -->
 					    <div th:if="${session.loggedInMember == null}">
-					        <a th:href="@{/login}" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+					        <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
 					            <i class="bi bi-person"></i> 登入
 					        </a>
-					        <a th:href="@{/register}" class="btn btn-outline-primary me-2">
+					        <a href="/register" class="btn btn-outline-primary me-2">
 					            <i class="bi bi-person-plus"></i> 註冊
 					        </a>
 					    </div>
@@ -212,14 +210,12 @@
 					            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
 					        </a>
 					        <ul class="dropdown-menu">
-					            <li><a class="dropdown-item" th:href="@{/front/member/member_center}">會員中心</a></li>
-					            <li><a class="dropdown-item" th:href="@{/front/member/logout}">登出</a></li>
+					            <li><a class="dropdown-item" href="/member/profile">會員中心</a></li>
+					            <li><a class="dropdown-item" href="/logout">登出</a></li>
 					        </ul>
 					    </div>
                     </div>
                 </div>
-                
-                
             </div>
         </div>
     </nav>
@@ -231,6 +227,11 @@
                 <div class="profile-sidebar p-3">
                     <!-- 主要內容：動態顯示團長（從 Session 取） -->
 					<div class="text-center mb-4">
+					  <!-- 如果有頭像 URL，可改這裡 -->
+					  <!--  <img th:if="${session.loggedInMember.photoUrl != null}"
+					       th:src="@{${session.loggedInMember.photoUrl}}"
+					       alt="用戶頭像"
+					       class="profile-avatar mb-3"/>  -->
 					  <!-- 動態顯示團長名稱 -->
 					  <h5 th:text="${session.loggedInMember.memNickname}">團長姓名</h5>
 					  <p class="text-muted mb-0">團長</p>
@@ -354,8 +355,7 @@
 			      <span th:if="${order.orderStatus==0}">未接單</span>
 			      <span th:if="${order.orderStatus==1}">已接單</span>
 			      <span th:if="${order.orderStatus==2}">已完成</span>
-			      <span th:if="${order.orderStatus==3}">開團失敗</span>
-			      <span th:if="${order.orderStatus==4}">團主取消</span>
+			      <span th:if="${order.orderStatus==3}">已取消</span>
 			    </p>
 			    <p><strong>付款狀態：</strong>
 			      <span th:text="${order.paymentStatus==0?'未付款':'已付款'}">已付款</span>
@@ -433,7 +433,7 @@
                 </div>
             </div>
         </div>
-      </footer>  
+        
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
