@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesRepository;
+import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.participants.model.ParticipantsRepository;
 import com.foodietime.participants.model.ParticipantsVO;
@@ -20,6 +21,8 @@ public class GroupOrdersService {
     private GroupOrdersRepository groupOrdersRepository;
     @Autowired
     private GroupBuyingCasesRepository groupBuyingCasesRepository;
+    @Autowired
+    private GroupBuyingCasesService groupBuyingCasesService;
 
 
     //取得當前會員（memId）擔任團長 (leader = 0) 的所有場次訂單
@@ -88,9 +91,26 @@ public class GroupOrdersService {
         return groupOrdersRepository.findById(gbOrId);
     }
 
-    // 新增或修改團購訂單
+ // 新增或修改團購訂單
     public GroupOrdersVO save(GroupOrdersVO groupOrdersVO) {
-        return groupOrdersRepository.save(groupOrdersVO);
+        // 若是新訂單，預設狀態設為 1（接單）
+        if (groupOrdersVO.getGbOrId() == null) {
+            groupOrdersVO.setOrderStatus((byte)1);
+        }
+        GroupOrdersVO savedOrder = groupOrdersRepository.save(groupOrdersVO);
+        // 新增：自動更新團購案累積購買數量並檢查是否成團
+        if (groupOrdersVO.getGroupBuyingCase() != null && groupOrdersVO.getGroupBuyingCase().getGbId() != null) {
+            Integer gbId = groupOrdersVO.getGroupBuyingCase().getGbId();
+            GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
+                .orElseThrow(() -> new RuntimeException("找不到團購案"));
+            // 將本次訂單數量加到累積購買數量
+            int newQuantity = gbCase.getCumulativePurchaseQuantity() + groupOrdersVO.getQuantity();
+            gbCase.setCumulativePurchaseQuantity(newQuantity);
+            groupBuyingCasesRepository.save(gbCase);
+            // 自動判斷團購狀態
+            groupBuyingCasesService.autoUpdateGroupStatus(gbId);
+        }
+        return savedOrder;
     }
 
     // 更新訂單狀態（包括訂單狀態、付款狀態和出貨狀態）

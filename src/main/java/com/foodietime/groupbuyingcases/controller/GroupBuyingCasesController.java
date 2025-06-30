@@ -63,10 +63,14 @@ public class GroupBuyingCasesController {
         if (status != null) {
             // 根據狀態篩選
             groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeaderAndGbStatus(memId, (byte) 0, status);
-            model.addAttribute("selectedStatus", status);
         } else {
             // 查詢全部
             groupBuyingCases = groupBuyingCasesService.findByMember_MemIdAndLeader(memId, (byte) 0);
+        }
+
+        // 新增：查詢每一筆時自動判斷狀態
+        for (GroupBuyingCasesVO gb : groupBuyingCases) {
+            groupBuyingCasesService.autoUpdateGroupStatus(gb.getGbId());
         }
 
         // 3. 放入 Model
@@ -199,25 +203,24 @@ public class GroupBuyingCasesController {
 	     existing.setCancelReason(vo.getCancelReason());
 	     // …如果還有其他欄位可編輯，再一一設定…
 
-	     // 4. 存回資料庫
-	     groupBuyingCasesService.saveGroupBuyingCase(existing);
+	     // 4. 狀態變更時，統一呼叫 Service 處理訂單連動
+         groupBuyingCasesService.updateGroupBuyingCaseStatusAndOrders(gbId, vo.getGbStatus(), vo.getCancelReason() != null ? vo.getCancelReason() : "");
 
-	     // 5. 完成後跳回團購管理列表
-	     return "redirect:/gb/leader-groups";
+         // 5. 完成後跳回團購管理列表
+         return "redirect:/gb/leader-groups";
 	 }
 
-	 //取得團長地址
-	 @GetMapping("/leader-address")
-	    public String leaderAddress(HttpSession session, Model model) {
-	        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-	        if (member == null) {
-	            return "front/member/login";
-	        }
-	        Integer memId = member.getMemId();
-	        List<com.foodietime.participants.model.ParticipantsVO> addresses = participantsService.getLeaderAddresses(memId);
-	        model.addAttribute("addresses", addresses);
-	        return "front/gb/gbleader/leader-address";
-	    }
+	//取得團長地址
+     @GetMapping("/leader-address")
+        public String leaderAddress(HttpSession session, Model model) {
+            MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+            if (member == null) {
+                return "front/member/login";
+            }
+            // 直接傳 member 給前端
+            model.addAttribute("member", member);
+            return "front/gb/gbleader/leader-address";
+        }
 
 
 
