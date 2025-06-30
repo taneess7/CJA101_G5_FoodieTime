@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.foodietime.accrec.model.AccrecVO;
 import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActVO;
@@ -173,6 +174,7 @@ public class StoreVO implements Serializable {
 	
 	//OneToMany
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@JsonManagedReference
     private List<ProductVO> product;
 
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)

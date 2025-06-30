@@ -55,10 +55,10 @@ public class ProductServiceImpl implements ProductService{
     }
 
     //美食轉盤
-//    @Override
-//    public ProductVO getRandomProduct() {
-//        return productRepo.findRandomProduct();
-//    }
+    @Override
+    public ProductVO getRandomProduct() {
+        return productRepo.findRandomProduct();
+    }
     
     @Override
     public void deleteProduct(Integer prodId) {

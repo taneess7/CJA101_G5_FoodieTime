@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<ProductVO, Integer>{
 		List<ProductVO> searchByKeyword(@Param("keyword") String keyword);
 	
 	//美食轉盤
-//	@Query(value = "SELECT * FROM product ORDER BY RAND() LIMIT 1", nativeQuery = true)
-//	ProductVO findRandomProduct();
+	@Query(value = "SELECT * FROM product ORDER BY RAND() LIMIT 1", nativeQuery = true)
+	ProductVO findRandomProduct();
 	
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.foodietime.cart.model.CartVO;
 import com.foodietime.memfavlist.model.FavoriteListVO;
 import com.foodietime.orddet.model.OrdDetVO;
@@ -37,6 +38,7 @@ public class ProductVO implements Serializable{
 	
 	@ManyToOne
     @JoinColumn(name = "stor_id", referencedColumnName = "stor_id")
+	@JsonBackReference
     private StoreVO store;
 	
 	@ManyToOne
