@@ -311,34 +311,44 @@
 					    <h6 class="m-0 font-weight-bold">訂單列表</h6>
 					  </div>
 					  
-					  <!-- 如果沒有訂單，直接顯示這個區塊 -->
+					<!-- 如果沒有訂單，直接顯示這個區塊 -->
 					<div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
 					  <h4 class="text-muted">目前無任何團購訂單</h4>
 					</div>
 					
 					<!-- 如果有訂單，才顯示表格和分頁 -->
-					<div th:if="${!#lists.isEmpty(orders)}" class="card-body table-responsive">
-					    <table class="table table-bordered" width="100%" cellspacing="0">
-					      <thead>
-					          <tr>
-					            <th>訂單編號</th>
-					            <th>商品名稱</th>
-					            <th>訂購數量</th>
-					            <th>總金額</th>
-					            <th>付款狀態</th>
-					            <th>出貨狀態</th>
-					            <th>操作</th>
-					          </tr>
-					        </thead>
-					        <tbody id="ordersTbody">
-					          <tr th:each="o : ${orders}">
-					            <td th:text="${o.gbOrId}">訂單編號</td>
-					            <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
-					            <td th:text="${o.quantity}">數量</td>
-					            <td th:text="${o.amount}">總金額</td>
-					            <td th:text="${o.paymentStatus == 0 ? '未付款' : '已付款'}">付款狀態</td>
-					            <td th:text="${o.shippingStatus == 0 ? '未出貨' : '已出貨'}">出貨狀態</td>
-					            <td>
+                    <div th:if="${!#lists.isEmpty(orders)}" class="card-body table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                          <thead>
+                              <tr>
+                                <th>訂單編號</th>
+                                <th>商品名稱</th>
+                                <th>訂購數量</th>
+                                <th>總金額</th>
+                                <th>付款狀態</th>
+                                <th>出貨狀態</th>
+                                <th>訂單狀態</th>
+                                <th>操作</th>
+                              </tr>
+                            </thead>
+                            <tbody id="ordersTbody">
+                              <tr th:each="o : ${orders}">
+                                <td th:text="${o.gbOrId}">訂單編號</td>
+                                <td th:text="${o.gbprod.gbProdName}">商品名稱</td>
+                                <td th:text="${o.quantity}">數量</td>
+                                <td th:text="${o.amount}">總金額</td>
+                                <td th:text="${o.paymentStatus == 0 ? '未付款' : '已付款'}">付款狀態</td>
+                                <td th:text="${o.shippingStatus == 0 ? '未出貨' : '已出貨'}">出貨狀態</td>
+                                <td>
+                                  <span th:switch="${o.orderStatus}">
+                                    <span th:case="0">未接單</span>
+                                    <span th:case="1">已接單</span>
+                                    <span th:case="2">已完成</span>
+                                    <span th:case="3">已取消</span>
+                                    <span th:case="*">未知</span>
+                                  </span>
+                                </td>
+                                <td>
 					              <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-primary">
 					                查看詳情
 					              </a>

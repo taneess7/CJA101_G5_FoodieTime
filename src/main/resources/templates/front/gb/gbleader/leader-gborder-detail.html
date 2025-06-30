@@ -353,9 +353,9 @@
 			    </p>
 			    <p><strong>訂單狀態：</strong>
 			      <span th:if="${order.orderStatus==0}">未接單</span>
-			      <span th:if="${order.orderStatus==1}">接單</span>
-			      <span th:if="${order.orderStatus==2}">完成</span>
-			      <span th:if="${order.orderStatus==3}">取消</span>
+			      <span th:if="${order.orderStatus==1}">已接單</span>
+			      <span th:if="${order.orderStatus==2}">已完成</span>
+			      <span th:if="${order.orderStatus==3}">已取消</span>
 			    </p>
 			    <p><strong>付款狀態：</strong>
 			      <span th:text="${order.paymentStatus==0?'未付款':'已付款'}">已付款</span>
