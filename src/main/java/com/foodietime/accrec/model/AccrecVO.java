@@ -44,32 +44,32 @@ public class AccrecVO implements Serializable {
     private Integer orderRefId;
 
     @ManyToOne
-    @JoinColumn(name = "STOR_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "STOR_ID")
     private StoreVO store;
 
     @ManyToOne
-    @JoinColumn(name = "MEM_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "MEM_ID")
     private MemberVO member;
 
     @NotNull(message = "角色類型不能為空")
     @Column(name = "PAYOUT_ROLE")
     private Byte payoutRole;
 
-    @NotNull(message = "撥款金額不能為空")
+    
     @DecimalMin(value = "0.00", message = "撥款金額不能小於 0")
     @Column(name = "PAYOUT_AMOUNT", precision = 10, scale = 2)
     private BigDecimal payoutAmount;
 
-    @NotNull(message = "抽成金額不能為空")
+    
     @DecimalMin(value = "0.00", message = "抽成金額不能小於 0")
     @Column(name = "COMMISSION_AMOUNT", precision = 10, scale = 2)
     private BigDecimal commissionAmount;
 
-    @NotNull(message = "撥款狀態不能為空")
+    
     @Column(name = "PAYOUT_STATUS")
     private Byte payoutStatus;
 
-    @NotNull(message = "抽成狀態不能為空")
+    
     @Column(name = "COMMISSION_STATUS")
     private Byte commissionStatus;
 
@@ -92,7 +92,7 @@ public class AccrecVO implements Serializable {
     
     @ManyToOne
     @NotNull(message = "serverManager 不可為空")  
-    @JoinColumn(name = "STOR_ID") 
+    @JoinColumn(name = "SMGR_ID") 
     private SmgVO serverManager;
     
     

@@ -1,3 +1,4 @@
+
 package com.foodietime.config;
 
 import org.springframework.context.annotation.Bean;
@@ -17,4 +18,4 @@ public class WebSocketConfig {
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
-}
+

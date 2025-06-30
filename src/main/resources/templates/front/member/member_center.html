@@ -7,10 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <script>
+    <!-- WebSocket 相關 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/common/websocket.js}"></script>
+    <script th:inline="javascript">
         window.addEventListener('pageshow', function (event) {
             if (event.persisted) {
                 window.location.reload();
+            }
+        });
+        
+        // 頁面載入完成後初始化 WebSocket
+        document.addEventListener('DOMContentLoaded', function() {
+            // 從 Thymeleaf 取得會員 ID
+            const memId = /*[[${member.memId}]]*/ null;
+            console.log('memId in script:', memId);
+            if (memId) {
+                connectWebSocketNotify({
+                    memId: memId
+                });
             }
         });
     </script>

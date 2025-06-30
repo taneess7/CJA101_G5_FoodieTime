@@ -11,6 +11,22 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5722">
     <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+
+    <!-- WebSocket 相關 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/common/websocket.js}"></script>
+    <script th:inline="javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+        // 從 Thymeleaf 取得商家ID，若 storeVO 為 null 則為空字串
+        const storeId = /*[['' + (${storeVO} != null ? ${storeVO.storId} : '')]]*/ '';
+        console.log('storeId:', storeId);
+        if (storeId) {
+          connectWebSocketNotify({ storeId: storeId });
+        }
+      });
+    </script>
  
  
   <style>
@@ -1054,7 +1070,5 @@ select:disabled {
     document.getElementById('normalProductList').style.display = '';
     document.getElementById('groupProductListFrame').style.display = 'none';
   </script>
-  
-  
 </body>
 </html>
