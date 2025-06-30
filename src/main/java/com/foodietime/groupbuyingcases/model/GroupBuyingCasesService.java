@@ -1,16 +1,23 @@
 package com.foodietime.groupbuyingcases.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.foodietime.grouporders.model.GroupOrdersRepository;
 
 @Service
 public class GroupBuyingCasesService {
 
     @Autowired
     private GroupBuyingCasesRepository groupBuyingCasesRepository;
+
+    @Autowired
+    private GroupOrdersRepository groupOrdersRepository;
 
     // 查詢某會員參加的所有團購案
     public List<GroupBuyingCasesVO> findByMemId(Integer memId) {
@@ -102,9 +109,114 @@ public class GroupBuyingCasesService {
         return groupBuyingCasesRepository.findByGbTitleContainingAndGbStatus(keyword, gbStatus);
     }
 
+
     public List<GroupBuyingCasesVO> findAllEndedAndUnsettled() {
         // 假設 gbStatus=4 表示已結束，且有 settled 欄位
         // 請根據實際欄位調整查詢條件
         return groupBuyingCasesRepository.findByGbStatusAndSettled((byte)4, false);
     }
+
+    @Transactional
+    public void cancelGroupBuyingCaseByLeader(Integer gbId, String reason) {
+        // 1. 更新團購案狀態為 4（自主取消）
+        GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+        gbCase.setGbStatus((byte)4);
+        gbCase.setCancelReason(reason);
+        groupBuyingCasesRepository.save(gbCase);
+
+        // 2. 查出所有訂單，設為 4
+        java.util.List<com.foodietime.grouporders.model.GroupOrdersVO> orders = groupOrdersRepository.findByGroupBuyingCase_GbId(gbId);
+        for (com.foodietime.grouporders.model.GroupOrdersVO order : orders) {
+            order.setOrderStatus((byte)4);
+            groupOrdersRepository.save(order);
+        }
+    }
+
+    @Transactional
+    public void failGroupBuyingCaseBySystem(Integer gbId, String reason) {
+        // 1. 更新團購案狀態為 3（開團失敗/取消）
+        GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+        gbCase.setGbStatus((byte)3);
+        gbCase.setCancelReason(reason);
+        groupBuyingCasesRepository.save(gbCase);
+
+        // 2. 查出所有訂單，設為 3
+        java.util.List<com.foodietime.grouporders.model.GroupOrdersVO> orders = groupOrdersRepository.findByGroupBuyingCase_GbId(gbId);
+        for (com.foodietime.grouporders.model.GroupOrdersVO order : orders) {
+            order.setOrderStatus((byte)3);
+            groupOrdersRepository.save(order);
+        }
+    }
+    
+    @Transactional
+    public void updateGroupBuyingCaseStatusAndOrders(Integer gbId, Byte newStatus, String reason) {
+        // 1. 更新團購案狀態
+        GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+        gbCase.setGbStatus(newStatus);
+        if (reason != null) {
+            gbCase.setCancelReason(reason);
+        }
+        groupBuyingCasesRepository.save(gbCase);
+
+        // 2. 查出所有訂單
+        java.util.List<com.foodietime.grouporders.model.GroupOrdersVO> orders = groupOrdersRepository.findByGroupBuyingCase_GbId(gbId);
+
+        // 3. 用 switch-case 對應訂單狀態
+        Byte orderStatus = null;
+        switch (newStatus != null ? newStatus.intValue() : -1) {
+            case 3:
+            case 4:
+            case 5: // 5 也要設為取消
+            case 6:
+                orderStatus = 3; // 取消
+                break;
+            default:
+                // 其他狀態不處理
+        }
+        if (orderStatus != null) {
+            for (com.foodietime.grouporders.model.GroupOrdersVO order : orders) {
+                order.setOrderStatus(orderStatus);
+                groupOrdersRepository.save(order);
+            }
+        }
+    }
+
+   
+    //當累積購買數量達到最低成團數量時，自動將狀態從招募中(1)改為已成團(3)
+   	@Transactional
+      public void checkAndUpdateGroupStatusIfReachedMin(Integer gbId) {
+          GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId).orElseThrow(() -> new RuntimeException("找不到團購案"));
+          if (gbCase.getGbStatus() == 1 &&
+              gbCase.getCumulativePurchaseQuantity() >= gbCase.getGbMinProductQuantity()) {
+              gbCase.setGbStatus((byte)3); // 3: 已成團
+              groupBuyingCasesRepository.save(gbCase);
+              }
+          }
+    
+   	//根據結束日期與累積購買數量自動判斷團購狀態*/@Transactional
+    public void autoUpdateGroupStatus(Integer gbId) {
+        GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId).orElseThrow(() -> new RuntimeException("找不到團購案"));
+        LocalDateTime now = LocalDateTime.now();
+        if (gbCase.getGbStatus() == 5) {
+        	// 已取消不自動變更
+        	return;
+        }
+        if (gbCase.getGbEndTime().isAfter(now)) {
+        	// 結束日期未到，狀態設為招募中
+            gbCase.setGbStatus((byte)1);
+            } else {
+            	// 結束日期已到
+            if (gbCase.getCumulativePurchaseQuantity() >= gbCase.getGbMinProductQuantity()) {
+                gbCase.setGbStatus((byte)4); // 已截止（成團）
+                } else {
+                	gbCase.setGbStatus((byte)5); // 已取消（未成團）
+                } 
+            }
+        groupBuyingCasesRepository.save(gbCase);
+        }
+            
+
 }

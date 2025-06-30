@@ -346,10 +346,9 @@ body {
 
 					<div class="mb-4">
 						<label for="editCaseStatus" class="form-label">團購狀態篩選</label>
-						<select class="form-select" id="editCaseStatus" onchange="filterByStatus(this.value)">
-                            <option value="">全部狀態</option>
+						<select class="form-select" id="editCaseStatus" onchange="filterGroups()">
+                            <option value="" th:selected="${selectedStatus == null}">全部團購</option>
                             <option value="1" th:selected="${selectedStatus != null and selectedStatus == 1}">招募中</option>
-                            <option value="3" th:selected="${selectedStatus != null and selectedStatus == 3}">已開團</option>
                             <option value="4" th:selected="${selectedStatus != null and selectedStatus == 4}">已截止</option>
                             <option value="5" th:selected="${selectedStatus != null and selectedStatus == 5}">已取消</option>
                         </select>
@@ -376,7 +375,7 @@ body {
 											<th>操作</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody id="groupsTbody">
 										<!-- th:each 會對應到 model 裡的 groupBuyingCases -->
 										<tr th:each="gbcase, iterStat : ${groupBuyingCases}"
 											th:data-index="${iterStat.index}">
@@ -393,7 +392,6 @@ body {
 											<!-- 開團狀態 -->
 											<td><span th:switch="${gbcase.gbStatus}"> 
 												<span th:case="1">招募中</span> 
-												<span th:case="3">已開團</span> 
 												<span th:case="4">已截止</span> 
 												<span th:case="5">已取消</span> 
 												<span th:case="*">未知</span>
@@ -414,32 +412,29 @@ body {
 										</tr>
 
 										
-										<!-- 如果沒有任何資料，顯示一行空狀態 -->
-										<tr th:if="${#lists.isEmpty(groupBuyingCases)}">
-											<td colspan="5" class="text-center">目前無任何團購案</td>
-										</tr>
-									</tbody>
-								</table>
+<!-- 如果沒有任何資料，顯示一行空狀態 -->
+                                        <tr th:if="${#lists.isEmpty(groupBuyingCases)}">
+                                            <td colspan="6" class="text-center">目前無任何團購案</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-							</div>
+                            </div>
 
-							<!-- 分頁導航 -->
-							<div
-								class="d-flex justify-content-between align-items-center mt-3">
-								
-								<nav aria-label="分頁導航">
-									<ul class="pagination mb-0" id="pagination">
-										<li class="page-item" id="prevPage"><a class="page-link"
-											href="#" aria-label="上一頁"> <span aria-hidden="true">&laquo;</span>
-										</a></li>
-										<li class="page-item" id="nextPage"><a class="page-link"
-											href="#" aria-label="下一頁"> <span aria-hidden="true">&raquo;</span>
-										</a></li>
-									</ul>
-								</nav>
-							</div>
-						</div>
-					</div>
+                            <!-- 分頁與分頁資訊，僅有資料時顯示 -->
+                            <div th:if="${!#lists.isEmpty(groupBuyingCases)}">
+                                <nav aria-label="Page navigation" class="mt-4">
+                                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                                </nav>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span>
+                                      第 <span id="startRecord">0</span>-<span id="endRecord">0</span> 筆，共
+                                      <span id="totalRecords" class="fw-bold">0</span> 筆
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 
 					
@@ -448,20 +443,7 @@ body {
 
 
 
-					<!-- 分頁 -->
-					<nav aria-label="Page navigation" class="mt-4">
-						<ul class="pagination justify-content-center">
-							<li class="page-item disabled"><a class="page-link" href="#"
-								tabindex="-1" aria-disabled="true">上一頁</a></li>
-							<li class="page-item active"><a class="page-link" href="#">1</a></li>
-							<li class="page-item"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link" href="#">下一頁</a>
-							</li>
-						</ul>
-					</nav>
-				</div>
-			</div>
+					
 
 
 		</div>
@@ -625,102 +607,109 @@ body {
 		const ITEMS_PER_PAGE = 5;
 		let currentPage = 1;
 		let allItems = [];
+		let filteredItems = [];
 
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('DOMContentLoaded', () => {
+			initItems();
 			initializePagination();
 		});
 
-		function initializePagination() {
-			const container = document.querySelector('tbody');
-			// 選擇所有有資料的 tr（排除空狀態的 tr）
-			allItems = Array.from(container.querySelectorAll('tr')).filter(tr => 
+		function initItems() {
+			const rows = Array.from(document.querySelectorAll('#groupsTbody tr'));
+			allItems = rows.filter(tr =>
 				!tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
 			);
+		}
 
-			if (allItems.length > ITEMS_PER_PAGE) {
+		function filterGroups() {
+			const filterValue = document.getElementById('editCaseStatus').value;
+			filteredItems = [];
+			allItems.forEach(tr => {
+				const statusTd = tr.querySelector('td:nth-child(5)');
+				let show = true;
+				if (filterValue) {
+					show = statusTd && statusTd.textContent.indexOf(getStatusText(filterValue)) !== -1;
+				}
+				tr.style.display = show ? '' : 'none';
+				if (show) filteredItems.push(tr);
+			});
+			currentPage = 1;
+			initializePagination();
+		}
+
+		function getStatusText(val) {
+			switch(val) {
+				case '1': return '招募中';
+				case '4': return '已截止';
+				case '5': return '已取消';
+				default: return '';
+			}
+		}
+
+		function initializePagination() {
+			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			if (itemsToUse.length > ITEMS_PER_PAGE) {
 				showPage(1);
 				updatePagination();
+				document.querySelectorAll('.pagination').forEach(p => p.style.display = 'flex');
 			} else {
-				// 隱藏所有分頁區塊
+				itemsToUse.forEach(tr => tr.style.display = '');
 				document.querySelectorAll('.pagination').forEach(p => p.style.display = 'none');
+				updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
 			}
 		}
 
 		function showPage(page) {
 			currentPage = page;
-			const startIndex = (page - 1) * ITEMS_PER_PAGE;
-			const endIndex = startIndex + ITEMS_PER_PAGE;
-
-			allItems.forEach((item, idx) => {
-				if (idx >= startIndex && idx < endIndex) {
-					item.style.display = '';
-				} else {
-					item.style.display = 'none';
-				}
+			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const start = (page - 1) * ITEMS_PER_PAGE;
+			const end = start + ITEMS_PER_PAGE;
+			itemsToUse.forEach((tr, idx) => {
+				tr.style.display = (idx >= start && idx < end) ? '' : 'none';
 			});
-
-			// 更新分頁資訊
-			updatePaginationInfo(startIndex, endIndex);
+			updatePaginationInfo(start, end, itemsToUse.length);
 		}
 
-		function updatePaginationInfo(startIndex, endIndex) {
-			const totalRecords = allItems.length;
-			const startRecord = startIndex + 1;
-			const endRecord = Math.min(endIndex, totalRecords);
-
+		function updatePaginationInfo(startIndex, endIndex, total) {
+			const startRecord = total === 0 ? 0 : startIndex + 1;
+			const endRecord = Math.min(endIndex, total);
 			document.getElementById('startRecord').textContent = startRecord;
 			document.getElementById('endRecord').textContent = endRecord;
-			document.getElementById('totalRecords').textContent = totalRecords;
+			document.getElementById('totalRecords').textContent = total;
 		}
 
 		function updatePagination() {
-			const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
-			// 更新兩個分頁區塊
-			const paginationContainers = document.querySelectorAll('.pagination');
-			
-			paginationContainers.forEach(container => {
-				container.innerHTML = '';
-
-				// 上一頁
-				const prevLi = document.createElement('li');
-				prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
-				prevLi.innerHTML = `<a class="page-link" href="#" tabindex="-1" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
-				container.appendChild(prevLi);
-
-				// 頁碼
-				for (let i = 1; i <= totalPages; i++) {
-					const li = document.createElement('li');
-					li.className = i === currentPage ? 'page-item active' : 'page-item';
-					li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
-					container.appendChild(li);
-				}
-
-				// 下一頁
-				const nextLi = document.createElement('li');
-				nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
-				nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
-				container.appendChild(nextLi);
-			});
+			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+			const container = document.getElementById('pagination');
+			container.innerHTML = '';
+			// 上一頁
+			const prevLi = document.createElement('li');
+			prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+			prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
+			container.appendChild(prevLi);
+			// 頁碼
+			for (let i = 1; i <= totalPages; i++) {
+				const li = document.createElement('li');
+				li.className = i === currentPage ? 'page-item active' : 'page-item';
+				li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
+				container.appendChild(li);
+			}
+			// 下一頁
+			const nextLi = document.createElement('li');
+			nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+			nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
+			container.appendChild(nextLi);
 		}
 
 		window.changePage = function(page) {
-			const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
 			if (page < 1 || page > totalPages) return;
 			showPage(page);
 			updatePagination();
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		}
-		
-		// 狀態篩選函數
-        window.filterByStatus = function(status) {
-            const currentUrl = new URL(window.location);
-            if (status) {
-                currentUrl.searchParams.set('status', status);
-            } else {
-                currentUrl.searchParams.delete('status');
-            }
-            window.location.href = currentUrl.toString();
-        }
 	</script>
 
 </body>

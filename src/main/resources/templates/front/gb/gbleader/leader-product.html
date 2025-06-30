@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高音質無線藍牙耳機 - 團購樂</title>
+    <title>商品詳情 - 團購樂</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
@@ -507,16 +507,7 @@
                     <div class="swiper main-swiper">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="高音質無線藍牙耳機 - 圖片1">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1978&q=80" alt="高音質無線藍牙耳機 - 圖片2">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1606400082777-ef05f3c5cde2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="高音質無線藍牙耳機 - 圖片3">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" alt="高音質無線藍牙耳機 - 圖片4">
+                                <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" />
                             </div>
                         </div>
                         <div class="swiper-pagination"></div>
@@ -526,16 +517,7 @@
                     <div class="swiper thumbnail-swiper">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="縮圖1">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1978&q=80" alt="縮圖2">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1606400082777-ef05f3c5cde2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="縮圖3">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" alt="縮圖4">
+                                <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" />
                             </div>
                         </div>
                     </div>
@@ -546,7 +528,12 @@
             <!-- 商品資訊 -->
             <div class="col-lg-6">
                 <div class="product-container">
-                    <h1 class="product-title">高音質無線藍牙耳機 - 主動降噪版</h1>
+                    <h1 class="product-title" th:text="${product.gbProdName}">商品名稱</h1>
+                    <!-- 商品價格區塊 -->
+                    <div>
+                        <span class="product-price" th:text="${product.gbpromotionList[0] != null && product.gbpromotionList[0].gbProdSales != null ? 'NT$' + #numbers.formatInteger(product.gbpromotionList[0].gbProdSales, 0) : '-'}">NT$0</span>
+                        <span class="product-original-price" th:text="${product.gbpromotionList[0] != null && product.gbpromotionList[0].gbProdSpe != null ? 'NT$' + #numbers.formatInteger(product.gbpromotionList[0].gbProdSpe, 0) : '-'}">NT$0</span>
+                    </div>
                     <div class="organizer-info">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="團長頭像" class="organizer-avatar">
                         <div>
@@ -564,32 +551,24 @@
 
                    <h4>團長開團設置</h4>
                     <div class="group-buy-settings">
-                        <form id="group-buy-form">
+                        <form th:action="@{/gb/create-case}" method="post">
+                            <input type="hidden" name="gbProdId" th:value="${product.gbProdId}" />
                             <div class="mb-3">
-                                <label for="min-quantity" class="form-label">最少成團數量</label>
-                                <input type="number" class="form-control" id="min-quantity" value="10" min="1" required>
+                                <label class="form-label">團購標題</label>
+                                <input type="text" class="form-control" name="gbTitle" required>
                             </div>
-
                             <div class="mb-3">
-                                <label for="group-price" class="form-label">團購價格</label>
-                                <input type="number" class="form-control" id="group-price" value="1299" min="0" required>
+                                <label class="form-label">團購描述</label>
+                                <textarea class="form-control" name="gbDescription" rows="4" required></textarea>
                             </div>
-
                             <div class="mb-3">
-                                <label for="max-quantity" class="form-label">最大購買數量 (每人)</label>
-                                <input type="number" class="form-control" id="max-quantity" value="5" min="1" required>
+                                <label class="form-label">最低成團數量</label>
+                                <input type="number" class="form-control" name="gbMinQty" min="1" required>
                             </div>
-
                             <div class="mb-3">
-                                <label for="end-time" class="form-label">結束時間</label>
-                                <input type="datetime-local" class="form-control" id="end-time" required>
+                                <label class="form-label">結束時間</label>
+                                <input type="datetime-local" class="form-control" name="endTime" required>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="group-description" class="form-label">團購描述</label>
-                                <textarea class="form-control" id="group-description" rows="4" required></textarea>
-                            </div>
-
                             <button type="submit" class="btn btn-primary">開啟團購</button>
                         </form>
                     </div>
@@ -631,7 +610,7 @@
                         <li><strong>高清通話</strong>：內建4麥克風，通話清晰，有效過濾環境噪音</li>
                     </ul>
                     
-                    <img src="https://images.unsplash.com/photo-1606400082777-ef05f3c5cde2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="產品展示圖">
+                    <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" alt="產品展示圖">
                     
                     <h5>舒適貼合的設計</h5>
                     <p>採用人體工學設計，輕量化材質，長時間佩戴也不會感到不適。配備三種尺寸的耳塞，滿足不同用戶的需求，確保穩固貼合。</p>
@@ -639,7 +618,7 @@
                     <h5>智能觸控操作</h5>
                     <p>輕觸耳機即可控制音樂播放、接聽電話、喚醒語音助手等功能，操作簡單直觀。</p>
                     
-                    <img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" alt="產品展示圖">
+                    <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" alt="產品展示圖">
                     
                     <h5>包裝內容</h5>
                     <ul>
@@ -783,8 +762,7 @@
                             <div class="review-content">
                                 <p>音質非常好，降噪效果也很棒！戴著耳機在捷運上完全聽不到外界噪音，可以專心聽音樂。電池續航也很驚人，充一次電可以用好幾天。整體來說非常滿意這次的購買！</p>
                                 <div class="review-images">
-                                    <img src="https://images.unsplash.com/photo-1606400082777-ef05f3c5cde2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="評價圖片" class="review-image">
-                                    <img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="評價圖片" class="review-image">
+                                    <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" alt="評價圖片" class="review-image">
                                 </div>
                             </div>
                         </div>
@@ -832,9 +810,6 @@
                             </div>
                             <div class="review-content">
                                 <p>這款耳機的音質和降噪效果都很棒！我特別喜歡它的觸控功能，非常方便。充電盒也很小巧，放在包包裡一點都不佔空間。唯一的小缺點是藍牙連接有時候會有點不穩定，但整體來說還是很推薦的！</p>
-                                <div class="review-images">
-                                    <img src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="評價圖片" class="review-image">
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1122,40 +1097,6 @@
     
     <!-- 自定義 JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化主要輪播
-            const mainSwiper = new Swiper('.main-swiper', {
-                loop: true,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true
-                }
-            });
-            
-            // 初始化縮圖輪播
-            const thumbnailSwiper = new Swiper('.thumbnail-swiper', {
-                slidesPerView: 4,
-                spaceBetween: 10,
-                loop: false,
-                watchSlidesProgress: true
-            });
-            
-            // 連結兩個輪播
-            mainSwiper.controller.control = thumbnailSwiper;
-            thumbnailSwiper.controller.control = mainSwiper;
-            
-            // 點擊縮圖切換主圖
-            document.querySelectorAll('.thumbnail-swiper .swiper-slide').forEach((slide, index) => {
-                slide.addEventListener('click', function() {
-                    mainSwiper.slideTo(index + 1);
-                });
-            });
-            
-            
-        });
-    </script>
-
-    <script>
         document.getElementById("group-buy-form").addEventListener("submit", function(event) {
             event.preventDefault();
 
@@ -1171,7 +1112,7 @@
                 "最大購買數量: " + maxQuantity + "\n" +
                 "結束時間: " + endTime + "\n" +
                 "團購描述: " + groupDescription);
-            
+
             // 這裡可以用來送出團購資料，可能會調用後端API來儲存團購設定
         });
     </script>

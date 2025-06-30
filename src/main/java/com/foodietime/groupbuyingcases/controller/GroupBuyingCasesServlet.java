@@ -21,13 +21,13 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader";
     }
 	
-	@GetMapping("/leader-address")
-    public String leaderaddress(HttpSession session){
-		if(session.getAttribute("loggedInMember") == null) {
-			return "front/member/login";
-		}
-        return "front/gb/gbleader/leader-address";
-    }
+//	@GetMapping("/leader-address")
+//    public String leaderaddress(HttpSession session){
+//		if(session.getAttribute("loggedInMember") == null) {
+//			return "front/member/login";
+//		}
+//        return "front/gb/gbleader/leader-address";
+//    }
 	
 	@GetMapping("/leader-cashflow")
     public String leadercashflow(HttpSession session){

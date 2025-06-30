@@ -6,12 +6,11 @@ import com.foodietime.member.model.MemberVO;
 import com.foodietime.store.model.StoreVO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -139,5 +138,50 @@ public class CartController {
         return "redirect:/cart/cart";
     }
 
+    /**
+     * 處理從商品燈箱發來的異步加入購物車請求。
+     *
+     * @param shopId   (用不到，但可以留著符合 DTO 格式)
+     * @param prodId   要加入的商品 ID
+     * @param quantity 商品數量
+     * @param session  用於獲取當前登入的會員
+     * @return 返回一個包含操作結果的 ResponseEntity<Map<String, Object>>
+     */
+    @PostMapping("/api/add")
+    @ResponseBody // 👈 核心註解：告訴 Spring Boot 直接回傳 JSON，而不是視圖名稱
+    public ResponseEntity<Map<String, Object>> addToCartAPI(
+            @RequestParam(required = false) Integer shopId, // 這個參數從燈箱來可能沒有，設為非必要
+            @RequestParam Integer prodId,
+            @RequestParam Integer quantity,
+            HttpSession session) {
 
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        // ==================== 1. 檢查會員登入狀態 ====================
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO == null) {
+            response.put("success", false);
+            response.put("message", "請先登入會員");
+            // 回傳 401 Unauthorized 狀態碼，讓前端可以精準判斷是未登入
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        // ==================== 2. 執行加入購物車邏輯 ====================
+        try {
+            cartService.addCart(memberVO.getMemId(), prodId, quantity);
+            Integer totalItems = cartService.getCartItemCount(memberVO.getMemId()); // 獲取更新後的購物車商品總數
+
+            response.put("success", true);
+            response.put("message", "已成功加入購物車！");
+            response.put("cartItemCount", totalItems); // 順便回傳最新的數量給前端更新介面
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            // ==================== 3. 處理可能發生的錯誤 ====================
+            e.printStackTrace(); // 在伺服器後台印出錯誤，方便除錯
+            response.put("success", false);
+            response.put("message", "加入購物車失敗，請稍後再試。");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

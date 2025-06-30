@@ -3,15 +3,15 @@ package com.foodietime.orders.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
+import com.foodietime.member.model.MemService;
 import com.foodietime.member.model.MemberRepository;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.memcoupon.model.MemCouponRepository;
 import com.foodietime.memcoupon.model.MemCouponVO;
+import com.foodietime.orddet.dto.OrderDetailDTO;
 import com.foodietime.orddet.model.OrdDetRepository;
 import com.foodietime.orddet.model.OrdDetVO;
-import com.foodietime.orders.dto.OrderNotificationDTO;
-import com.foodietime.orders.websocket.OrderNotificationWebSocket;
-import com.foodietime.product.model.ProductVO; // 確保 ProductVO 可以被引用
+import com.foodietime.orders.dto.NewOrderNotificationDTO;
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
 import jakarta.transaction.Transactional; // 使用 Jakarta EE 的 @Transactional 確保交易原子性
@@ -39,30 +39,32 @@ public class OrdersService {
     private final OrdersRepository ordersRepo;
     private final CartService cartService;
     private final MemberRepository memberRepo;
-    private final OrdDetRepository ordDetRepo;
     private final MemCouponRepository memCouponRepo;
     private final StoreRepository storeRepo;
-
+    private final NotificationService notificationService;
+    private final MemService memService;
     /**
      * 建構子注入依賴
      * @param ordersRepo   訂單資料庫操作介面
      * @param cartService  購物車服務
      * @param memberRepo   會員資料庫操作介面
-     * @param ordDetRepo   訂單明細資料庫操作介面
+     * @param memCouponRepo 會員優惠卷資料操作介面
      * @param storeRepo    店家資料庫操作介面
+     * @param notificationService 推播服務
+     * @param memService   會員相關業務服務
      */
     @Autowired
     public OrdersService(OrdersRepository ordersRepo,
                          CartService cartService,
-                         MemberRepository memberRepo,
-                         OrdDetRepository ordDetRepo, MemCouponRepository memCouponRepo,
-                         StoreRepository storeRepo) {
+                         MemberRepository memberRepo, MemCouponRepository memCouponRepo,
+                         StoreRepository storeRepo, NotificationService notificationService, MemService memService) {
         this.ordersRepo = ordersRepo;
         this.cartService = cartService;
         this.memberRepo = memberRepo;
-        this.ordDetRepo = ordDetRepo;
         this.memCouponRepo = memCouponRepo;
         this.storeRepo = storeRepo;
+        this.notificationService = notificationService;
+        this.memService = memService;
     }
 
     /**
@@ -155,30 +157,7 @@ public class OrdersService {
 
         // ★★★★★★★★★★★★★★★★★★★★★★ 新增區塊開始 ★★★★★★★★★★★★★★★★★★★★★★
         // ============================== 步驟7：觸發 WebSocket 即時推播通知 ==============================
-        try {
-            // 7.1 獲取需要通知的商家 ID
-            Integer storeId = savedOrder.getStore().getStorId();
-
-            // 7.2 將訂單實體(VO)轉換為專門用於通知的資料傳輸物件(DTO)
-            OrderNotificationDTO notificationDTO = new OrderNotificationDTO(
-                    savedOrder.getOrdId(),
-                    savedOrder.getMember().getMemName(),
-                    savedOrder.getOrdDate(),
-                    savedOrder.getActualPayment(),
-                    "待處理" // 直接給予初始狀態文字
-            );
-
-            // 7.3 將 DTO 物件序列化為 JSON 字串
-            String orderJson = objectMapper.writeValueAsString(notificationDTO);
-
-            // 7.4 呼叫 WebSocket 端點的靜態方法，向指定商家推送新訂單訊息
-            OrderNotificationWebSocket.sendNotificationToStore(storeId, orderJson);
-            log.info("新訂單 #{} 已成功觸發 WebSocket 推播至商家 #{}", savedOrder.getOrdId(), storeId);
-
-        } catch (Exception e) {
-            // 重要：推播失敗不應影響主訂單流程，僅記錄錯誤日誌
-            log.error("為訂單 #{} 觸發 WebSocket 推播時發生錯誤", savedOrder.getOrdId(), e);
-        }
+        triggerNotification(savedOrder);
         // ★★★★★★★★★★★★★★★★★★★★★ 新增區塊結束 ★★★★★★★★★★★★★★★★★★★★★★
 
         return savedOrder;
@@ -247,7 +226,7 @@ public class OrdersService {
                 .orElseThrow(() -> new IllegalStateException("更新訂單狀態失敗：找不到訂單ID " + ordId));
 
         // ================== 步驟2：驗證新狀態 (可選，根據業務需求添加更複雜的狀態機驗證) ==================
-        if (newStatus < 0 || newStatus > 99) { // 假設狀態碼範圍為 0-99
+        if (newStatus < 0 || newStatus > 4) { // 假設狀態碼範圍為 0-99
             throw new IllegalStateException("無效的訂單狀態碼：" + newStatus);
         }
         // TODO: 如果有複雜的狀態轉換規則，例如：未付款不能直接跳到已完成，則在此處添加邏輯。
@@ -281,7 +260,7 @@ public class OrdersService {
 
         // ================== 步驟3：設定取消原因和更新訂單狀態 ==================
         order.setCancelReason(cancelReason);
-        order.setOrderStatus(99); // 假設 99 代表已取消狀態
+        order.setOrderStatus(4); // 4 代表已取消狀態
 
         // ================== 步驟4：模擬退款和庫存回滾 (根據實際業務邏輯實現) ==================
         // TODO: 實際的退款邏輯可能需要與支付閘道整合。
@@ -313,4 +292,75 @@ public class OrdersService {
         OrdersVO order = orderOpt.get();
         return order.getStore().getStorId().equals(storeId);
     }
+
+    @Transactional
+    public OrdersVO createNewOrder(OrdersVO newOrderVO) {
+        // ==================== 1. 儲存訂單到資料庫 ====================
+        OrdersVO savedOrder = ordersRepo.save(newOrderVO);
+
+        // ==================== 2. 觸發 WebSocket 推播通知 ====================
+        triggerNotification(savedOrder);
+
+        // ==================== 3. 返回儲存後的訂單 ====================
+        return savedOrder;
+    }
+
+    /**
+     * 輔助方法：觸發新訂單的 WebSocket 推播通知。
+     * 此版本使用團隊已有的 getByMemEmail 方法，並執行 null 檢查。
+     * @param savedOrder 剛剛儲存到資料庫的訂單實體
+     */
+    private void triggerNotification(OrdersVO savedOrder) {
+        try {
+            // ================ 步驟 1: 從訂單中獲取 StoreVO，再從 StoreVO 中獲取店家的 email。========================
+            String storeEmail = savedOrder.getStore().getStorEmail();
+            if (storeEmail == null || storeEmail.isBlank()) {
+                log.warn("無法為訂單 #{} 觸發推播，因為店家的 Email 為空。", savedOrder.getOrdId());
+                return;
+            }
+
+            // ================ 步驟 2: 使用團隊已有的 memberService.getByMemEmail 方法，透過 email 查找對應的 MemberVO。
+            MemberVO storeMember = memService.getByMemEmail(storeEmail);
+
+            // ================ 步驟 3: 檢查回傳的 MemberVO 是否為 null。如果不為 null，才進行推播。
+            if (storeMember != null) {
+                Integer storeMemId = storeMember.getMemId(); // ★ 成功獲取到 WebSocket 需要的 memId！
+
+                // ================== 步驟 3.1: 將訂單明細 (Set<OrdDetVO>) 轉換為 List<OrderDetailDTO> ==============
+                List<OrderDetailDTO> itemDTOs = savedOrder.getOrdDet().stream()
+                        .map(detail -> new OrderDetailDTO(
+                                detail.getProduct().getProdName(),
+                                detail.getProdQty(),
+                                detail.getProdPrice(),
+                                detail.getOrdDesc() // 商品備註
+                        ))
+                        .collect(Collectors.toList());
+                // ================== 步驟 3.2: 組裝完整的 NewOrderNotificationDTO ==================================
+                NewOrderNotificationDTO notificationDTO = new NewOrderNotificationDTO(
+                        savedOrder.getOrdId(),
+                        savedOrder.getOrdDate(),
+                        savedOrder.getActualPayment(),
+                        savedOrder.getOrderStatus(), // 傳遞數字 0
+                        "待處理", // 傳遞文字
+                        savedOrder.getComment(), // 訂單備註
+                        savedOrder.getMember().getMemName(),
+                        savedOrder.getMember().getMemPhone(),
+                        savedOrder.getOrdAddr(),
+                        itemDTOs // 傳入組裝好的商品列表
+                );
+                String notificationJson = objectMapper.writeValueAsString(notificationDTO);
+                notificationService.sendOrderNotificationAsync(storeMemId, notificationJson);
+                log.info("新訂單 #{} 已成功觸發 WebSocket 推播至商家 (會員ID: {})", savedOrder.getOrdId(), storeMemId);
+
+            } else {
+                // 如果找不到對應的店家會員帳號，記錄一個警告。
+                log.warn("無法為訂單 #{} 觸發推播，因為找不到 email 為 {} 的店家會員帳號。", savedOrder.getOrdId(), storeEmail);
+            }
+            // ==========================================================
+
+        } catch (Exception e) {
+            log.error("為訂單 #{} 觸發 WebSocket 推播時發生未知錯誤", savedOrder.getOrdId(), e);
+        }
+    }
+
 }

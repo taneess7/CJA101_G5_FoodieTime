@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.foodietime.member.model.MemberVO;
 import com.foodietime.participants.model.ParticipantsService;
 import com.foodietime.participants.model.ParticipantsVO;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/participants")
@@ -57,5 +60,47 @@ public class ParticipantsController {
 		model.addAttribute("participant", savedParticipant);
 		return "participants/participant-detail"; // 顯示新增或更新後的參與者詳情
 	}
+	
+	// 新增地址
+    @PostMapping("/add-address")
+    public String addAddress(@ModelAttribute ParticipantsVO address, HttpSession session) {
+        MemberVO loggedInMember = (MemberVO) session.getAttribute("loggedInMember");
+        if (loggedInMember != null) {
+            participantsService.addAddress(address, loggedInMember.getMemId());
+        }
+        return "redirect:/gb/leader-address";
+    }
+    
+	// 編輯表單頁
+    @GetMapping("/edit/{parId}")
+    public String editAddressForm(@PathVariable Integer parId, Model model, HttpSession session) {
+        ParticipantsVO addr = participantsService.getParticipantById(parId);
+        model.addAttribute("address", addr);
+        return "front/gb/gbleader/leader-address-edit";
+    }
+
+    // 編輯送出
+    @PostMapping("/edit/{parId}")
+    public String updateAddress(@PathVariable Integer parId, @ModelAttribute ParticipantsVO form, HttpSession session) {
+        ParticipantsVO addr = participantsService.getParticipantById(parId);
+        if (addr != null) {
+            addr.setParName(form.getParName());
+            addr.setParPhone(form.getParPhone());
+            addr.setParAddress(form.getParAddress());
+            participantsService.save(addr);
+        }
+        return "redirect:/gb/leader-address";
+    }
+
+    // 清空地址
+    @PostMapping("/delete/{parId}")
+    public String clearAddress(@PathVariable Integer parId) {
+        ParticipantsVO addr = participantsService.getParticipantById(parId);
+        if (addr != null) {
+            addr.setParAddress(""); // 清空地址
+            participantsService.save(addr);
+        }
+        return "redirect:/gb/leader-address";
+    }
 
 }

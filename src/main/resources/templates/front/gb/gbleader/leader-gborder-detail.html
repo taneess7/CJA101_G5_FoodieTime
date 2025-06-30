@@ -287,115 +287,153 @@
             </div>
 
 
-<!-- 團購資訊區塊 -->
-<div class="col-lg-9">
-  <div class="profile-content">
-  	<div class="row mb-4">
-	  <div class="col text-start">
-	    <h3>
-	      <strong>
-	        訂單編號：<span th:text="${order.gbOrId}">3</span>
-	      </strong>
-	    </h3>
-	  </div>
-	</div>
-    <!-- 第一行：團購名稱 + 編號 -->
-    <div class="row align-items-center mb-3">
-      <div class="col text-start">
-        <strong>團購名稱：</strong>
-        <span th:text="${order.groupBuyingCase.gbTitle}">甜點團購</span>
-      </div>
-      <div class="col text-center">
-        <strong>團購編號：</strong>
-        <span th:text="${order.groupBuyingCase.gbId}">2</span>
-      </div>
-      <div class="col"><!-- 保留空白 --></div>
-    </div>
+			<!-- 團購資訊區塊 -->
+			<div class="col-lg-9">
+			  <div class="profile-content">
+			  	<div class="row mb-4">
+				  <div class="col text-start">
+				    <h3>
+				      <strong>
+				        訂單編號：<span th:text="${order.gbOrId}">3</span>
+				      </strong>
+				    </h3>
+				  </div>
+				</div>
+			    <!-- 第一行：團購名稱 + 編號 -->
+			    <div class="row align-items-center mb-3">
+			      <div class="col text-start">
+			        <strong>團購名稱：</strong>
+			        <span th:text="${order.groupBuyingCase.gbTitle}">甜點團購</span>
+			      </div>
+			      <div class="col text-center">
+			        <strong>團購編號：</strong>
+			        <span th:text="${order.groupBuyingCase.gbId}">2</span>
+			      </div>
+			      <div class="col"><!-- 保留空白 --></div>
+			    </div>
+			
+			    <!-- 第二行：店家名稱 + 編號 -->
+			    <div class="row align-items-center mb-3">
+			      <div class="col text-start">
+			        <strong>店家名稱：</strong>
+			        <span th:text="${order.store.storName}">阿華餛飩專賣</span>
+			      </div>
+			      <div class="col text-center">
+			        <strong>店家編號：</strong>
+			        <span th:text="${order.store.storId}">2</span>
+			      </div>
+			      <div class="col"></div>
+			    </div>
+			
+			    <!-- 第三行：商品名稱 + 編號 -->
+			    <div class="row align-items-center mb-3">
+			      <div class="col text-start">
+			        <strong>商品名稱：</strong>
+			        <span th:text="${order.gbprod.gbProdName}">草莓蛋糕</span>
+			      </div>
+			      <div class="col text-center">
+			        <strong>商品編號：</strong>
+			        <span th:text="${order.gbprod.gbProdId}">2</span>
+			      </div>
+			      <div class="col"></div>
+			    </div>
+			
+			
+			
+			    <p><strong>參與時間：</strong>
+				  <span th:text="${order.joinTime.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss'))}">2025-06-21 14:00:00</span>
+				</p>
+			
+			    <p><strong>訂單總金額：</strong><span th:text="${order.amount}">1200</span></p>
+			    <p><strong>購買數量：</strong><span th:text="${order.quantity}">3</span></p>
+			    <p><strong>付款方式：</strong>
+			      <span th:if="${order.payMethod==0}">信用卡</span>
+			      <span th:if="${order.payMethod==1}">現金</span>
+			      <span th:if="${order.payMethod==2}">第三方</span>
+			    </p>
+			    <p><strong>訂單狀態：</strong>
+			      <span th:if="${order.orderStatus==0}">未接單</span>
+			      <span th:if="${order.orderStatus==1}">接單</span>
+			      <span th:if="${order.orderStatus==2}">完成</span>
+			      <span th:if="${order.orderStatus==3}">取消</span>
+			    </p>
+			    <p><strong>付款狀態：</strong>
+			      <span th:text="${order.paymentStatus==0?'未付款':'已付款'}">已付款</span>
+			    </p>
+			    <p><strong>出貨狀態：</strong>
+			      <span th:text="${order.shippingStatus==0?'未出貨':'已出貨'}">未出貨</span>
+			    </p>
+			
+			    <hr>
+			
+			    <h5 class="mt-3">收件資訊</h5>
+			    <p><strong>收件人姓名：</strong><span th:text="${order.parName}">王小明</span></p>
+			    <p><strong>收件人地址：</strong><span th:text="${order.parAddress}">台北市信義區信義路五段7號</span></p>
+			    <p><strong>收件人電話：</strong><span th:text="${order.parPhone}">0912-345-678</span></p>
+			    <p><strong>配送方式：</strong>
+			      <span th:text="${order.deliveryMethod==0?'宅配':'自取'}">宅配</span>
+			    </p>
+			    <p><strong>評價：</strong>
+				  <span th:text="${order.comment != null ? order.comment : '未評價'}">
+				    未評價
+				  </span>
+				</p>
+				<p><strong>星等：</strong>
+				  <span th:text="${order.rating != null ? order.rating + ' 顆' : '未評價'}">
+				    未評價
+				  </span>
+				</p>
+			    <a th:href="@{/gb/leader-orders}" class="btn btn-secondary mt-3">返回訂單列表</a>
+			  </div>
+			</div>
+	    </div>
+ 	 </div>
 
-    <!-- 第二行：店家名稱 + 編號 -->
-    <div class="row align-items-center mb-3">
-      <div class="col text-start">
-        <strong>店家名稱：</strong>
-        <span th:text="${order.store.storName}">阿華餛飩專賣</span>
-      </div>
-      <div class="col text-center">
-        <strong>店家編號：</strong>
-        <span th:text="${order.store.storId}">2</span>
-      </div>
-      <div class="col"></div>
-    </div>
-
-    <!-- 第三行：商品名稱 + 編號 -->
-    <div class="row align-items-center mb-3">
-      <div class="col text-start">
-        <strong>商品名稱：</strong>
-        <span th:text="${order.gbprod.gbProdName}">草莓蛋糕</span>
-      </div>
-      <div class="col text-center">
-        <strong>商品編號：</strong>
-        <span th:text="${order.gbprod.gbProdId}">2</span>
-      </div>
-      <div class="col"></div>
-    </div>
-
-
-
-    <p><strong>參與時間：</strong>
-	  <span th:text="${order.joinTime.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss'))}">2025-06-21 14:00:00</span>
-	</p>
-
-    <p><strong>訂單總金額：</strong><span th:text="${order.amount}">1200</span></p>
-    <p><strong>購買數量：</strong><span th:text="${order.quantity}">3</span></p>
-    <p><strong>付款方式：</strong>
-      <span th:if="${order.payMethod==0}">信用卡</span>
-      <span th:if="${order.payMethod==1}">現金</span>
-      <span th:if="${order.payMethod==2}">第三方</span>
-    </p>
-    <p><strong>訂單狀態：</strong>
-      <span th:if="${order.orderStatus==0}">未接單</span>
-      <span th:if="${order.orderStatus==1}">接單</span>
-      <span th:if="${order.orderStatus==2}">完成</span>
-      <span th:if="${order.orderStatus==3}">取消</span>
-    </p>
-    <p><strong>付款狀態：</strong>
-      <span th:text="${order.paymentStatus==0?'未付款':'已付款'}">已付款</span>
-    </p>
-    <p><strong>出貨狀態：</strong>
-      <span th:text="${order.shippingStatus==0?'未出貨':'已出貨'}">未出貨</span>
-    </p>
-
-    <hr>
-
-    <h5 class="mt-3">收件資訊</h5>
-    <p><strong>收件人姓名：</strong><span th:text="${order.parName}">王小明</span></p>
-    <p><strong>收件人地址：</strong><span th:text="${order.parAddress}">台北市信義區信義路五段7號</span></p>
-    <p><strong>收件人電話：</strong><span th:text="${order.parPhone}">0912-345-678</span></p>
-    <p><strong>配送方式：</strong>
-      <span th:text="${order.deliveryMethod==0?'宅配':'自取'}">宅配</span>
-    </p>
-    <p><strong>評價：</strong>
-	  <span th:text="${order.comment != null ? order.comment : '未評價'}">
-	    未評價
-	  </span>
-	</p>
-	<p><strong>星等：</strong>
-	  <span th:text="${order.rating != null ? order.rating + ' 顆' : '未評價'}">
-	    未評價
-	  </span>
-	</p>
-    <a th:href="@{/gb/leader-orders}" class="btn btn-secondary mt-3">返回訂單列表</a>
-  </div>
-</div>
-
-
-
-
-      
-      
-      
-    </div>
-  </div>
-
+<!-- 頁腳 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">團購樂</h5>
+                    <p>團購樂是一個專業的團購平台，提供各種優質商品的團購服務，讓您與朋友一起購買，享受更多折扣。</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-line"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="footer-title">快速連結</h5>
+                    <ul class="footer-links">
+                        <li><a href="../gp/loginindex.html">首頁</a></li>
+                        <li><a href="#">熱門團購</a></li>
+                        <li><a href="#">最新上架</a></li>
+                        <li><a href="#">即將結束</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="footer-title">幫助中心</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">常見問題</a></li>
+                        <li><a href="#">如何參團</a></li>
+                        <li><a href="#">付款方式</a></li>
+                        <li><a href="#">配送方式</a></li>
+                        <li><a href="#">退換貨政策</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">聯絡我們</h5>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-envelope me-2"></i> service@groupbuy.com</li>
+                        <li><i class="bi bi-telephone me-2"></i> (02) 2345-6789</li>
+                        <li><i class="bi bi-geo-alt me-2"></i> 台北市信義區松高路1號</li>
+                    </ul>
+                    <p class="small mt-3">© 2023 團購樂. 版權所有.</p>
+                </div>
+            </div>
+        </div>
+        
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -227,3 +227,30 @@ section {
     margin-top: 4rem;
     border-top: 2px solid rgba(93, 64, 55, 0.1);
 }
+
+/* 美食轉盤 */
+#floating-roulette {
+	position: absolute; /* fixed */
+	top: 100px;
+	right: 50px;
+	width: 200px;
+	text-align: center;
+	z-index: 9999;
+	/* 👇 讓背景完全透明，移除白底 */
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+}
+
+#floating-roulette img {
+	width: 100%;
+	cursor: pointer;
+}
+
+#floating-roulette p,
+#roulette-result {
+	color: #333;
+	font-size: 0.9rem;
+	margin-top: 10px;
+}

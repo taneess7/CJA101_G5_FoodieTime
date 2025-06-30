@@ -538,60 +538,39 @@ body {
 
 
 	<!-- Bootstrap JS -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-	<script>
-		// 頁面載入時初始化驗證
-		document.addEventListener('DOMContentLoaded', function() {
-			const statusSelect = document.getElementById('editCaseStatus');
-			const cancelReasonTextarea = document.getElementById('cancelReason');
-			const cancelReasonError = document.getElementById('cancelReasonError');
-			
-			// 初始化驗證狀態
-			updateCancelReasonValidation();
-			
-			// 監聽狀態變更
-			statusSelect.addEventListener('change', updateCancelReasonValidation);
-			
-			// 監聽表單提交
-			document.querySelector('form').addEventListener('submit', function(e) {
-				if (!validateForm()) {
-					e.preventDefault();
-				}
-			});
-			
-			// 更新取消原因驗證狀態
-			function updateCancelReasonValidation() {
-				const isCancelled = statusSelect.value === '5'; // 5 表示已取消
-				
-				if (isCancelled) {
-					cancelReasonTextarea.setAttribute('required', 'required');
-					cancelReasonTextarea.classList.add('is-invalid');
-					cancelReasonError.style.display = 'block';
-				} else {
-					cancelReasonTextarea.removeAttribute('required');
-					cancelReasonTextarea.classList.remove('is-invalid');
-					cancelReasonError.style.display = 'none';
-				}
-			}
-			
-			// 表單驗證
-			function validateForm() {
-				const isCancelled = statusSelect.value === '5';
-				const cancelReason = cancelReasonTextarea.value.trim();
-				
-				if (isCancelled && cancelReason === '') {
-					cancelReasonTextarea.classList.add('is-invalid');
-					cancelReasonError.style.display = 'block';
-					alert('當團購狀態為「已取消」時，必須填寫取消原因');
-					return false;
-				}
-				
-				return true;
-			}
-		});
-	</script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            var gbStatus = /*[[${groupBuyingCase.gbStatus}]]*/ 0;
+            if (gbStatus == 5) {
+                // 禁用所有表單欄位
+                document.querySelectorAll('form input, form select, form textarea').forEach(function(el) {
+                    el.setAttribute('disabled', 'disabled');
+                });
+                // 隱藏送出按鈕
+                var submitBtn = document.querySelector('form button[type="submit"]');
+                if (submitBtn) submitBtn.style.display = 'none';
+                // 警告彈窗
+                alert('此團購案已取消，無法再次編輯！');
+            }
+            // 新增：送出前如果選擇已取消，彈出確認
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    var statusSelect = document.getElementById('editCaseStatus');
+                    if (statusSelect && statusSelect.value === '5') {
+                        if (!confirm('確定要將此團購案設為「已取消」嗎？此動作不可逆，且所有訂單將同步取消！')) {
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 
 
 
