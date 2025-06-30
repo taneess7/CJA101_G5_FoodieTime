@@ -19,3 +19,4 @@ public class WebSocketConfig {
         return new ServerEndpointExporter();
     }
 
+}
