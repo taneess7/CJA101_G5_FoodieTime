@@ -1,5 +1,6 @@
 package com.foodietime.reportmessage.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,10 @@ public class ReportMessageService {
 	public List<ReportMessageVO> getAll(){
 		return repository.findAll();
 	}
+	
+	//後臺使用的方法
+	public List<ReportMessageVO> findForAdmin(Byte status, Integer postId, String keyword, LocalDate startDate, LocalDate endDate) {
+		return repository.findForAdmin(status, postId, keyword, startDate, endDate);
+    }
 
 }
