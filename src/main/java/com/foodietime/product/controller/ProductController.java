@@ -12,7 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/product")
@@ -50,6 +52,28 @@ public class ProductController {
 
         // ==================== 4. 回傳圖片數據 ====================
         // 將圖片的 byte[] 陣列、Headers 和 OK 狀態碼包裝成 ResponseEntity 回傳
-        return new ResponseEntity<>(productVO.getProdPhoto(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(productVO.getProdPhoto(), headers, HttpStatus.OK);      
+    }
+    
+    //美食轉盤
+    @GetMapping("/roulette")
+    @ResponseBody
+    public Map<String, Object> getRandomProduct() {
+        ProductVO product = productService.getRandomProduct();
+
+        if (product == null) {
+            return Map.of("error", "找不到商品");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("prodId", product.getProdId());
+        result.put("prodName", product.getProdName());
+        result.put("prodDesc", product.getProdDesc());
+
+        if (product.getStore() != null) {
+            result.put("storId", product.getStore().getStorId());
+        }
+
+        return result;
     }
 }
