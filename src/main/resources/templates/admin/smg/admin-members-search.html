@@ -229,37 +229,14 @@
 								    </select>
 								
 								    <input type="date" class="form-control" name="regDateFrom" th:value="${regDateFrom}">
-								    <input type="date" class="form-control" name="regDateTo" th:value="${regDateTo}">
+								    
 								
 								    <input type="number" class="form-control" name="orderCountMin" th:value="${orderCountMin}">
 								    <input type="number" class="form-control" name="totalSpentMin" th:value="${totalSpentMin}">
 								
 								    <button type="submit" class="btn btn-primary">查詢</button>
 								    
-								    <!-- Additional Filters -->
-		                            <div class="row g-3 mb-4">
-		                                <div class="col-md-2">
-		                                    <label for="registrationDateFrom" class="form-label">註冊日期(起)</label>
-		                                    <input type="date" class="form-control" id="registrationDateFrom" name="regDateFrom">
-		                                </div>
-		                                <div class="col-md-2">
-		                                    <label for="registrationDateTo" class="form-label">註冊日期(迄)</label>
-		                                    <input type="date" class="form-control" id="registrationDateTo" name="regDateTo">
-		                                </div>
-		                                <div class="col-md-2">
-		                                    <label for="orderCountMin" class="form-label">訂單數量(最少)</label>
-		                                    <input type="number" class="form-control" id="orderCountMin" placeholder="0">
-		                                </div>
-		                                <div class="col-md-2">
-		                                    <label for="totalSpentMin" class="form-label">消費金額(最少)</label>
-		                                    <input type="number" class="form-control" id="totalSpentMin" placeholder="0">
-		                                </div>
-		                                <div class="col-md-2 d-flex align-items-end">
-		                                    <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
-		                                        <i class="fas fa-times me-1"></i>清除
-		                                    </button>
-		                                </div>
-		                            </div>
+								   
 								    
 								    
 								</form>
@@ -588,23 +565,11 @@
             alert('發送訊息功能開發中...');
         }
 
-        // Activate Member Function
-        function activateMember(memberId) {
-            if (confirm('確定要啟用此會員嗎？')) {
-                alert('會員已啟用');
-                location.reload();
-            }
-        }
+    
 
-        // Edit Member from Modal
-        function editMemberFromModal() {
-            alert('編輯會員功能開發中...');
-        }
+    
 
-        // Send Message from Modal
-        function sendMessageFromModal() {
-            alert('發送訊息功能開發中...');
-        }
+     
 
         // Clear Filters Function
         function clearFilters() {
