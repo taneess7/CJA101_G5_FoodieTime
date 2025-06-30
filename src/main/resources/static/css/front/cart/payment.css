@@ -1,0 +1,41 @@
+/* FoodieTime - payment.css */
+.payment-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #F5F5F5;
+}
+.payment-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+.payment-logo { height: 40px; margin-bottom: 20px; }
+h2 { font-size: 1.2rem; color: #333; margin-bottom: 25px; }
+#qrcode-canvas {
+    width: 200px !important; /* qrcode.js 會設定 inline style，用 !important 覆蓋 */
+    height: 200px !important;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+}
+.payment-timer { margin: 20px 0; font-size: 1.5rem; color: #FF5722; font-weight: bold; }
+#countdown { font-family: 'Courier New', Courier, monospace; }
+.payment-info { color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+#payment-status { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.spinner {
+    width: 20px; height: 20px;
+    border: 2px solid #FFCCBC;
+    border-top-color: #FF5722;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+.payment-footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+@keyframes spin { to { transform: rotate(360deg); } }
