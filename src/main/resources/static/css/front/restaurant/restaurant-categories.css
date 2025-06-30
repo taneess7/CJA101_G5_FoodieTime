@@ -130,3 +130,202 @@
         height: 160px;
     }
 }
+
+
+
+/* ==================== 商品燈箱 (Modal) 樣式 ==================== */
+
+/* 燈箱背景遮罩 */
+.product-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* 半透明黑色背景 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: var(--z-modal, 200); /* 使用您定義的 z-index 或一個高數值 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.product-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 燈箱主體內容 */
+.product-modal-content {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-4);
+    width: 90%;
+    max-width: 800px; /* 燈箱最大寬度 */
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transform: translateY(20px) scale(0.95);
+    transition: transform var(--transition-normal);
+}
+
+.product-modal-overlay.active .product-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+/* 關閉按鈕 */
+.modal-close-btn {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    background: var(--neutral-200);
+    color: var(--text-secondary);
+    border-radius: var(--radius-full);
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+    line-height: 36px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    z-index: 10;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+    background-color: var(--neutral-300);
+    transform: rotate(90deg);
+}
+
+/* 燈箱內容佈局 */
+.modal-body {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .modal-body {
+        flex-direction: column;
+        overflow-y: auto; /* 在手機上允許滾動 */
+    }
+}
+
+/* 商品圖片區塊 */
+.modal-product-image-container {
+    flex: 1;
+    min-width: 40%;
+}
+
+.modal-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 商品資訊區塊 */
+.modal-product-info {
+    flex: 1.5;
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.modal-product-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.modal-product-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+    flex-grow: 1; /* 讓描述區塊填滿多餘空間 */
+}
+
+.modal-price-and-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.modal-product-price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* 數量控制器 */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.quantity-controls .quantity-btn {
+    background-color: var(--neutral-200);
+    color: var(--text-primary);
+    border: 1px solid var(--neutral-300);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.quantity-controls .quantity-btn:hover {
+    background-color: var(--neutral-300);
+}
+
+.quantity-controls .quantity-input {
+    width: 40px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    font-weight: 500;
+    /* 隱藏 number input 的上下箭頭 */
+    -moz-appearance: textfield;
+}
+
+.quantity-controls .quantity-input::-webkit-outer-spin-button,
+.quantity-controls .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* 加入購物車按鈕 */
+.btn-add-to-cart {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: 1.1rem;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.btn-add-to-cart:hover {
+    background-color: var(--primary-dark);
+}
+
+/* 讓可點擊的商品有手形指標 */
+.product-clickable {
+    cursor: pointer;
+}
+/* ==================== 商品燈箱 (Modal) 樣式 ==================== */

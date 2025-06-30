@@ -168,7 +168,10 @@
         <h2>相關料理</h2>
         <div class="menu-items">
             <div class="menu-item" th:each="prod : ${productList}">
-                <img th:src="@{/images/restaurant/placeholder.svg}" alt="商品圖片">
+                <img th:src="@{/product/image/{prodId}(prodId=${prod.prodId})}"
+                     th:alt="${prod.prodName}"
+                     class="menu-item-image"
+                     onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
                 <div class="menu-item-info">
                     <h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
                     <p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
@@ -271,8 +274,13 @@
                             <div class="tab-content active"
                                  th:id="'menu-content-' + ${store.storId}">
                                 <div class="menu-items">
-                                    <div class="menu-item"
-                                         th:each="prod : ${storeProductMap[store.storId]}">
+                                    <div class="menu-item product-clickable"
+                                         th:each="prod : ${storeProductMap[store.storId]}"
+                                         th:attr="data-prod-id=${prod.prodId},
+                                         data-prod-name=${prod.prodName},
+                                         data-prod-desc=${prod.prodDesc},
+                                         data-prod-price=${prod.prodPrice} "><!--,-->
+<!--                                         data-prod-photo-url=@{/product/image/{prodId}(prodId=${prod.prodId})}">-->
                                         <img th:src="@{/images/restaurant/placeholder.svg}" alt=""
                                              class="menu-item-image">
                                         <div class="menu-item-info">
@@ -372,12 +380,41 @@
         <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
     </div>
 </footer>
-
+<!-- ==================== 商品燈箱 (Modal) 結構 ============================================================ -->
+<!-- ==================== 商品燈箱 (Modal) 結構 ============================================================ -->
+<div class="product-modal-overlay" id="productModalOverlay">
+    <div class="product-modal-content">
+        <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+        <div class="modal-body">
+            <div class="modal-product-image-container">
+                <img id="modalProductImage" src="" alt="商品圖片" class="modal-product-image">
+            </div>
+            <div class="modal-product-info">
+                <h2 id="modalProductName" class="modal-product-name">商品名稱</h2>
+                <p id="modalProductDesc" class="modal-product-description">商品描述會顯示在這裡。</p>
+                <div class="modal-price-and-controls">
+                    <span id="modalProductPrice" class="modal-product-price">NT$ 0</span>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" id="quantityDecrement">-</button>
+                        <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" max="99" readonly>
+                        <button class="quantity-btn" id="quantityIncrement">+</button>
+                    </div>
+                </div>
+                <button id="addToCartBtn" class="btn btn-primary btn-add-to-cart">
+                    <span>加入購物車 - NT$ 0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==================== /商品燈箱 (Modal) 結構 ============================================================ -->
+<!-- ==================== /商品燈箱 (Modal) 結構 ============================================================ -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // 收藏商品功能
         document.querySelectorAll('.favorite-product-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
                 const prodId = this.dataset.prodid;
                 const icon = this.querySelector('i');
                 const isFavorited = icon.classList.contains('fas');
@@ -502,8 +539,155 @@
                 alert('您已經領取過此優惠券！');
             });
         });
-        /**============================================================================== */
 
+            // =================================================================
+            // ==================== 商品燈箱 (Modal) 核心邏輯 ====================
+            // =================================================================
+
+            // 1. 獲取所有需要的 DOM 元素
+        const modalOverlay = document.getElementById('productModalOverlay');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalImage = document.getElementById('modalProductImage');
+        const modalName = document.getElementById('modalProductName');
+        const modalDesc = document.getElementById('modalProductDesc');
+        const modalPrice = document.getElementById('modalProductPrice');
+        const quantityInput = document.getElementById('quantityInput');
+        const quantityDecrement = document.getElementById('quantityDecrement');
+        const quantityIncrement = document.getElementById('quantityIncrement');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+
+        let currentProductPrice = 0;
+        let currentProdId = null;
+
+        // 2. 使用事件委派，監聽整個餐廳列表的點擊事件，提高效能
+        document.querySelector('.restaurant-list').addEventListener('click', function(e) {
+            // 找到被點擊的、帶有 .product-clickable class 的父元素
+            const productCard = e.target.closest('.product-clickable');
+
+            if (productCard) {
+                e.preventDefault(); // 防止可能的默認行為
+                openProductModal(productCard);
+            }
+        });
+
+
+        /**
+         * 開啟並填充商品燈箱
+         * @param {HTMLElement} productCard - 被點擊的商品卡片元素
+         */
+        function openProductModal(productCard) {
+
+            const productData = productCard.dataset;
+            currentProdId = parseInt(productData.prodId, 10);
+            currentProductPrice = parseFloat(productData.prodPrice);
+
+            modalImage.src = '/images/restaurant/placeholder.svg';
+            modalImage.alt = productData.prodName;
+            modalName.textContent = productData.prodName;
+            modalDesc.textContent = productData.prodDesc;
+            modalPrice.textContent = `NT$ ${currentProductPrice}`;
+
+            quantityInput.value = 1;
+            updateAddToCartButton();
+
+            // 顯示燈箱
+            modalOverlay.classList.add('active');
+        }
+
+        /**
+         * 關閉商品燈箱
+         */
+        function closeProductModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        /**
+         * 更新「加入購物車」按鈕上的文字和總價
+         */
+        function updateAddToCartButton() {
+            const quantity = parseInt(quantityInput.value, 10);
+            const totalPrice = currentProductPrice * quantity;
+            addToCartBtn.querySelector('span').textContent = `加入購物車 - NT$ ${totalPrice}`;
+        }
+
+        // 3. 綁定燈箱內的事件監聽器
+        // 關閉按鈕
+        modalCloseBtn.addEventListener('click', closeProductModal);
+        // 點擊背景遮罩關閉
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                closeProductModal();
+            }
+        });
+
+        // 數量增加
+        quantityIncrement.addEventListener('click', () => {
+            let currentVal = parseInt(quantityInput.value, 10);
+            if (currentVal < 99) {
+                quantityInput.value = currentVal + 1;
+                updateAddToCartButton();
+            }
+        });
+
+        // 數量減少
+        quantityDecrement.addEventListener('click', () => {
+            let currentVal = parseInt(quantityInput.value, 10);
+            if (currentVal > 1) {
+                quantityInput.value = currentVal - 1;
+                updateAddToCartButton();
+            }
+        });
+
+        // 「加入購物車」按鈕點擊事件
+        addToCartBtn.addEventListener('click', function() {
+            const quantity = parseInt(quantityInput.value, 10);
+
+            // 準備要發送到後端的資料
+            const formData = new URLSearchParams();
+            formData.append('prodId', currentProdId);
+            formData.append('quantity', quantity);
+
+            // 發送異步請求
+            fetch('/cart/api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    // 如果有 CSRF token，也需要加在這裡
+                },
+                body: formData
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        // 處理未登入的情況
+                        showLoginPrompt(); // 調用您現有的登入提示框
+                        return Promise.reject('User not logged in'); // 中斷 then 鏈
+                    }
+                    if (!response.ok) {
+                        // 處理其他伺服器錯誤
+                        return response.json().then(err => Promise.reject(err.message || '伺服器錯誤'));
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        closeProductModal();
+                        showToast(data.message); // 調用您現有的提示訊息框
+                        // (可選) 更新頁首購物車圖標的數字
+                        // const cartCountElement = document.querySelector('.cart-count');
+                        // if (cartCountElement && data.cartItemCount !== undefined) {
+                        //     cartCountElement.textContent = data.cartItemCount;
+                        // }
+                    } else {
+                        alert('錯誤：' + data.message);
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'User not logged in') {
+                        console.error('加入購物車失敗:', error);
+                        alert('加入購物車時發生未知錯誤，請查看控制台。');
+                    }
+                });
+        });
 
     });
 
