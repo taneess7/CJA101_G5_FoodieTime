@@ -41,49 +41,53 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    // ================= WebSocket 即時通知邏輯 =================
+    // ================= WebSocket 即時通知邏輯 (STOMP 版本) =================
     const body = document.querySelector('body');
-    const storeId = body.dataset.storeId; // 從 <body> 的 data-store-id 屬性獲取商家ID
+    const storeId = body.dataset.storeId; // 從 <body> 的 data-store-id 屬性獲取商家ID (memId)
+    let stompClient = null; // 將 stompClient 設為全域變數
 
     if (storeId) {
         connectWebSocket(storeId);
     }
 
     function connectWebSocket(storeId) {
-        const protocol = window.location.protocol === 'https' ? 'wss://' : 'ws://';
-        const host = window.location.host;
-        const wsUrl = `${protocol}${host}/ws/orders/${storeId}`;
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
 
-        const websocket = new WebSocket(wsUrl);
+        stompClient.connect({}, function(frame) {
+            console.log('STOMP 連線成功: ' + frame);
 
-        websocket.onopen = function(event) {
-            console.log('WebSocket 連線成功！');
-        };
+            // 訂閱邏輯
+            const subscriptionUrl = `/topic/orders/${storeId}`;
+            stompClient.subscribe(subscriptionUrl, function(notification) {
+                console.log('收到新訂單通知:', notification.body);
+                try {
+                    const newOrder = JSON.parse(notification.body);
+                    addNewOrderCard(newOrder);
+                } catch (e) {
+                    console.error('解析新訂單資料失敗:', e);
+                }
+            });
 
-        // 核心：接收到伺服器推播的訊息
-        websocket.onmessage = function(event) {
-            console.log('收到新訂單通知:', event.data);
-            try {
-                const newOrder = JSON.parse(event.data);
-                addNewOrderCard(newOrder); // 呼叫函式來動態新增訂單卡片
-            } catch (e) {
-                console.error('解析新訂單資料失敗:', e);
+        }, function(error) {
+            console.error('STOMP 連線失敗，將觸發 onclose 事件進行重連:', error);
+        });
+
+        socket.onclose = function() {
+            console.log('SockJS 連線已關閉，將在 5 秒後嘗試重連...');
+            if (stompClient) {
+                stompClient.disconnect();
             }
-        };
-
-        websocket.onclose = function(event) {
-            console.log('WebSocket 連線已關閉。');
-            // 可在此處加入 5 秒後自動重連的邏輯
-            setTimeout(() => connectWebSocket(storeId), 5000);
-        };
-
-        websocket.onerror = function(event) {
-            console.error('WebSocket 發生錯誤:', event);
+            setTimeout(() => {
+                console.log('正在嘗試重新連線...');
+                connectWebSocket(storeId);
+            }, 5000);
         };
     }
 
     /**
-     * 動態建立並在頁面頂部插入新的訂單卡片，樣式與Thymeleaf渲染的完全一致。
+     * 動態建立並在頁面頂部插入新的訂單卡片...
      * @param {object} order - 從 WebSocket 收到的新訂單物件 (NewOrderNotificationDTO)
      */
     function addNewOrderCard(order) {
@@ -174,4 +178,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // const audio = new Audio('/sounds/notification.mp3');
         // audio.play();
     }
+
+    window.addEventListener('beforeunload', function() {
+        if (stompClient && stompClient.connected) {
+            stompClient.disconnect(function() {
+                console.log('STOMP 連線已主動關閉。');
+            });
+        }
+    });
 });
