@@ -5,12 +5,18 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.foodietime.grouporders.model.GroupOrdersRepository;
 
 @Service
 public class GroupBuyingCasesService {
 
     @Autowired
     private GroupBuyingCasesRepository groupBuyingCasesRepository;
+
+    @Autowired
+    private GroupOrdersRepository groupOrdersRepository;
 
     // 查詢某會員參加的所有團購案
     public List<GroupBuyingCasesVO> findByMemId(Integer memId) {
@@ -100,5 +106,39 @@ public class GroupBuyingCasesService {
     // 根據標題關鍵字和狀態搜尋團購案
     public List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus) {
         return groupBuyingCasesRepository.findByGbTitleContainingAndGbStatus(keyword, gbStatus);
+    }
+
+    @Transactional
+    public void cancelGroupBuyingCaseByLeader(Integer gbId, String reason) {
+        // 1. 更新團購案狀態為 4（自主取消）
+        GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+        gbCase.setGbStatus((byte)4);
+        gbCase.setCancelReason(reason);
+        groupBuyingCasesRepository.save(gbCase);
+
+        // 2. 查出所有訂單，設為 4
+        java.util.List<com.foodietime.grouporders.model.GroupOrdersVO> orders = groupOrdersRepository.findByGroupBuyingCase_GbId(gbId);
+        for (com.foodietime.grouporders.model.GroupOrdersVO order : orders) {
+            order.setOrderStatus((byte)4);
+            groupOrdersRepository.save(order);
+        }
+    }
+
+    @Transactional
+    public void failGroupBuyingCaseBySystem(Integer gbId, String reason) {
+        // 1. 更新團購案狀態為 3（開團失敗/取消）
+        GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
+            .orElseThrow(() -> new RuntimeException("找不到團購案"));
+        gbCase.setGbStatus((byte)3);
+        gbCase.setCancelReason(reason);
+        groupBuyingCasesRepository.save(gbCase);
+
+        // 2. 查出所有訂單，設為 3
+        java.util.List<com.foodietime.grouporders.model.GroupOrdersVO> orders = groupOrdersRepository.findByGroupBuyingCase_GbId(gbId);
+        for (com.foodietime.grouporders.model.GroupOrdersVO order : orders) {
+            order.setOrderStatus((byte)3);
+            groupOrdersRepository.save(order);
+        }
     }
 }
