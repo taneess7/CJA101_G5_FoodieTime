@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.postcategory.model.PostCategoryVO;
@@ -123,7 +124,7 @@ public class PostService {
 				}
 			}
 			return updatedCount;
-		}
+		}	
 
 		// 4. 批量刪除貼文
 		public int batchDelete(List<Integer> postIds) {
@@ -136,5 +137,32 @@ public class PostService {
 			}
 			return deletedCount;
 		}
+		
+		// 現有方法：專用於下架貼文（狀態設為2）
+		public void disablePost(Integer postId) {
+		    PostVO post = repository.findById(postId)
+		        .orElseThrow(() -> new RuntimeException("貼文不存在"));
+		    post.setPostStatus((byte) 2); // 假設狀態2=已下架
+		    repository.save(post);
+		}
+
+		/**
+		 * 通用貼文狀態更新
+		 * @param postId 貼文ID
+		 * @param status 狀態值 (0:已發佈, 1:未發佈, 2:已下架)
+		 */
+		@Transactional
+		public void updateStatus(Integer postId, byte status) {
+		    if (status < 0 || status > 2) {
+		        throw new IllegalArgumentException("無效的狀態值: " + status);
+		    }
+		    PostVO post = repository.findById(postId)
+		        .orElseThrow(() -> new RuntimeException("貼文不存在: " + postId));
+		    post.setPostStatus(status);
+		    post.setEditDate(new Timestamp(System.currentTimeMillis()));
+		    repository.save(post);
+		}
+
+		
 
 }
