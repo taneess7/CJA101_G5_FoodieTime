@@ -43,6 +43,12 @@ import com.foodietime.act.model.ActVO;
 import com.foodietime.coupon.model.CouponService;
 import com.foodietime.coupon.model.CouponVO;
 import com.foodietime.member.model.MemberVO;
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
+=======
+import com.foodietime.product.model.ProductCategoryService;
+import com.foodietime.product.model.ProductCategoryServiceImpl;
+import com.foodietime.product.model.ProductCategoryVO;
+>>>>>>> 51944d1 fix: prod_edit 功能
 import com.foodietime.product.model.ProductService;
 import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreService;
@@ -72,6 +78,12 @@ public class StorePageController {
 	@Autowired
 	private ProductService prodSvc;
 	
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
+=======
+	@Autowired
+	private ProductCategoryServiceImpl prodCateSvcImpl;
+	
+>>>>>>> 51944d1 fix: prod_edit 功能
 
 	
 	
@@ -352,6 +364,17 @@ public class StorePageController {
 			model.addAttribute("storeVO", new StoreVO());
 			return storeSvc.getAll();
 		}
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
+=======
+		
+		
+		//所有商品類別的清單（for 下拉選單）
+		@ModelAttribute("prodCateListData")
+		protected List<ProductCategoryVO> referenceListData_prodCate(Model model){
+			model.addAttribute("prodCate", new ProductCategoryVO());
+			return prodCateSvcImpl.getAllCategories();
+	   }
+>>>>>>> 51944d1 fix: prod_edit 功能
 	
 //		<select th:field="*{storeVO.storId}"> 一定要 new 一個 VO 放進 model
 //		  <option th:each="storeVO : ${storeListData}" th:value="${storeVO.storId}" th:text="${storeVO.storName}"></option>
@@ -385,11 +408,32 @@ public class StorePageController {
 		
 /***商品新增功能:完成轉交給listAll***/
 		@PostMapping("/insert")
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
 		public String insert(
 				@Valid ProductVO prodVO, BindingResult result, ModelMap model,
 //				@RequestParam("storeCateId") Integer storeCateId,
 				@RequestParam("upFiles") MultipartFile[] parts,RedirectAttributes redirectAttrs, HttpServletRequest request) throws IOException{  
+=======
+		public String insert( // , HttpServletRequest request
+				@Valid 
+				@ModelAttribute("prod") ProductVO prod, BindingResult result, HttpSession session, Model model,//@ModelAttribute("prod") 給 th:object="${prod}"用
+				RedirectAttributes redirectAttr) { //顯示新增成功訊息
+
+			System.out.println(">>> insert方法觸發");
+
+			// 從 session 中取出店家資訊
+		    Object obj = session.getAttribute("loggedInStore");
+
+		    if (!(obj instanceof StoreVO)) {
+		        System.out.println("⚠️ session 中的 loggedInStore 無效，導回登入頁");
+		        return "redirect:/front/member/login";
+		    }
+
+		    StoreVO loggedInStore = (StoreVO) obj;
+		    Integer storId = loggedInStore.getStorId();
+>>>>>>> 51944d1 fix: prod_edit 功能
 			
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
 			
 			// ✅ <<< 這裡加上 debug log
 			 System.out.println(">>> insert 方法有觸發");
@@ -399,14 +443,68 @@ public class StorePageController {
 			        System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
 			    }
 			    
+=======
+			  
+			//如果驗證錯誤，補上 store 與優惠券下拉選單
+			if (result.hasErrors()) {
+				for (FieldError fe : result.getFieldErrors()) {
+					System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
+				}
+				// 若驗證失敗，要補上 store 進去（否則會是 null）
+				
+		        if (prod.getStore() == null) {
+		            StoreVO storeVO = new StoreVO();
+		            storeVO.setStorId(storId);
+		            prod.setStore(storeVO);
+		        }
+		        
+		        //取得店家單一商 prod
+		        model.addAttribute("prod", prod); //單一商品資料（填表用）
+		        
+		        //取得該店家所有prods
+				List<ProductVO> prods = prodSvc.findByStoreId(storId);
+				model.addAttribute("prods", prods);//所有商品（若前端有顯示商品列表）
+				
+				//下拉選單自動選中分類
+				Integer categoryId = prod.getProductCategory().getProdCateId();
+				model.addAttribute("prodCate", categoryId);//// 這可選填，若前端用 th:field 就不需要
+				
+				//取得該店家所有prodCateList
+				List<ProductCategoryVO> prodCateList = prodCateSvcImpl.getAllCategories();
+				model.addAttribute("prodCateList", prodCateList);
+				
+				//顯示驗證錯誤訊息:
+				List<String> errorMessages = result.getFieldErrors()
+	                    .stream()
+	                    .map(FieldError::getDefaultMessage)
+	                    .collect(Collectors.toList());
+>>>>>>> 51944d1 fix: prod_edit 功能
 
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
 			/***接收請求參數，輸入格式錯誤處理***/
 			 // 去除圖片欄位驗證錯誤
 			result = removeFieldError(prodVO, result, "upFiles"); //<input type="file" name="upFiles"> removeFieldError 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
 			 // 處理圖片上傳
 			if (parts.length == 0 ||parts[0].isEmpty()) { //未選擇圖片，補驗證訊息
 				model.addAttribute("errorMessage", "商品照片: 請上傳照片"); //html th:utext="${errorMessage}" 	
+=======
+			    model.addAttribute("errorMessages", errorMessages);
+				return "front/store/prod_edit";
+			}
+
+			// 新增 or 修改分流（判斷是否有 prodId）
+			if (prod.getProdId() == null) {
+				System.out.println(">>> 進行新增");
+				// 儲存商品
+				prodSvc.addProduct(prod, prod.getProductCategory().getProdCateId());
+				//service: ProductVO addProduct(ProductVO vo, Integer categoryId);
+				//提示新增成功
+				redirectAttr.addFlashAttribute("successMessage", "優惠券新增成功！");
+				return "redirect:/store/addProd"; // 儲存成功重新導向 GET /store/addProd 方法，，避免重複提交
+
+>>>>>>> 51944d1 fix: prod_edit 功能
 			} else {
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime.git
 				for (MultipartFile multipartFile : parts) {
 					byte[] buf = multipartFile.getBytes(); //圖片轉byte[]
 					prodVO.setProdPhoto(buf);
@@ -418,6 +516,17 @@ public class StorePageController {
 			if(result.hasErrors() || parts[0].isEmpty()) {
 				List<FieldError> errors = result.getFieldErrors(); //FieldError 表單欄位單一BindingResult，使用傳給前端看錯誤
 				return "front/store/prod/addProd"; //回到原頁顯示錯誤訊息
+=======
+				System.out.println(">>> 進行修改，prodId: " + prod.getProdId());
+				//修改商品
+				prodSvc.updateProduct(prod.getProdId(), prod, prod.getProductCategory().getProdCateId());
+				//service:  ProductVO updateProduct(Integer prodId, ProductVO newData, Integer categoryId);
+				redirectAttr.addFlashAttribute("successMessage", "優惠券修改成功！");
+				// 修改成功後回到該筆資料的編輯頁面
+				System.out.println("更新成功");
+	            return "redirect:/store/edit_prod?prodId=" + prod.getProdId();
+				
+>>>>>>> 51944d1 fix: prod_edit 功能
 				
 			}
 		

@@ -1,0 +1,172 @@
+<!-- coupon_edit.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編輯商品 - FoodieTime 食刻</title>
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link rel="stylesheet" href="/css/front/coupon/cou.css">
+
+</head>
+<body>
+
+		
+	<main>
+		
+		<h1 class="section-title">編輯商品</h1>
+		<p class="section-subtitle">填寫商品資訊以吸引顧客購買</p>
+
+		<!-- 顯示新增成功訊息（置中） -->
+		<div th:if="${successMessage}"
+		     id="successMessage"
+		     class="success-message"
+		     style="color: green; font-weight: bold;">
+		  <p th:text="${successMessage}"></p>
+		</div>
+		
+		<!-- 顯示錯誤訊息（置中） -->
+		<ul th:if="${errorMessages}" style="color: red;">
+  			<li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
+		</ul>
+		
+
+		<th:block th:if="${prod != null}">
+			<form th:action="@{/store/insert}" th:object="${prod}" method="post" enctype="multipart/form-data" class="prodForm" id="prodFormSection">
+				
+				<!-- 修改特定product需要prodId -->
+				<input type="hidden" th:field="*{prodId}" />
+
+				 <div>
+				        <label>商品類別<span class="required">*</span></label>
+				        <select name="categoryId" required>
+				            <option value="" disabled selected>請選擇類別</option>
+				            <option th:each="cat : ${prodCateList}"
+				                    th:value="${cat.prodCateId}"
+				                    th:text="${cat.prodCate}">
+				            </option>
+				        </select>
+				 </div>>
+
+				<div>
+					<label>商品編號: </lable> <span th:text="*{prodId}"></span>
+					<input type="hidden" th:field="*{prodId}" />
+				</div>
+				
+				<div>
+					<label>商品名稱<span class="required">*</span></label> 
+					<input type="text" th:field="*{prodName}" placeholder="描述餐點名稱" />
+					 <div style="color:red;" th:if="${#fields.hasErrors('prodName')}" th:errors="*{prodName}"></div>
+				</div>
+				
+				<div>
+					<label>商品描述<span class="required">*</span></label> 
+					<input type="text" th:field="*{prodDesc}" placeholder="描述餐點的特色" />
+					<div style="color:red;" th:if="${#fields.hasErrors('prodDesc')}" th:errors="*{prodDesc}"></div>
+				</div>
+				
+				
+				<div>
+					<label>商品價格<span class="required">*</span></label> 
+					<input type="text" th:field="*{prodPrice}" placeholder="最低金額為0" />
+					<div style="color:red;" th:if="${#fields.hasErrors('prodPrice')}" th:errors="*{prodPrice}"></div>
+				</div>
+				
+				<div>                <!-- id="upFiles" 是 JavaScript getElementById("upFiles") 要抓的元素 -->
+					<label>活動圖片:</label><!-- name="upFiles" 是你後端 @RequestParam("upFiles") 要抓的名字 -->
+					<input type="file" name="upFiles" id="upFiles"   onchange="previewImage() ; hideContent('upFiles.errors');" />
+					<div class="error-block">
+						<span class="error" th:utext="${errorMessage}" id="upFiles.errors"></span> <!-- 錯誤信息errorMessage來自AddUpdateController. -->
+						
+					<!-- 預覽圖 -->
+						<div id="blob_holder"><img th:src="@{/prod/DBGifReader} + '?prodId=' + ${prod.prodId}" width="100px"></div> 
+					</div>
+				</div>
+				
+				<!-- 顯示暫存圖片（新增失敗後也能看到） -->
+				<div th:if="${base64Image != null}">
+    				<img th:src="'data:image/jpeg;base64,' + ${base64Image}" width="150" />
+				</div>
+				
+			<td th:if="${prodVO != null}" th:text="${#dates.format(prodVO.prodLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
+				
+				
+			<!-- 上架狀態 -->
+				<div class="form-group">
+					<label class="form-label">上架狀態</label> <select
+						   class="form-input" th:field="*{prodStatus}">
+							<option value="1">上架</option>
+							<option value="2">未上架</option>
+					</select>
+				</div>
+
+				
+				<button type="submit">送出</button>
+			</form>
+	</main>
+		<footer class="app-footer">
+		<div class="container">
+			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+		</div>
+	</footer>
+<script>
+  
+document.addEventListener('DOMContentLoaded', () => {
+  const message = document.getElementById('successMessage');
+  const form = document.getElementById('couponForm');
+  const startInput = document.getElementById('couStartDate');
+  const endInput = document.getElementById('couEndDate');
+
+  // ✅ 1. 成功訊息淡出
+  if (message) {
+    setTimeout(() => {
+      message.classList.add('fade-out');
+    }, 1000);
+
+    setTimeout(() => {
+      message.remove();
+    }, 3000);
+  }
+
+  // ✅ 2. 設定現在時間為 startInput 最小值
+  function getNowDatetimeLocal() {
+    const now = new Date();
+    now.setSeconds(0, 0); // 移除秒與毫秒
+    const offset = now.getTimezoneOffset();
+    const localISOTime = new Date(now.getTime() - offset * 60000)
+      .toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+    return localISOTime;
+  }
+
+  if (startInput) {
+    startInput.min = getNowDatetimeLocal();
+  }
+
+  // ✅ 3. 啟用日期變動時，更新截止日的 min 限制
+  if (startInput && endInput) {
+    startInput.addEventListener('change', () => {
+      endInput.min = startInput.value;
+    });
+  }
+
+  // ✅ 4. 截止日不可早於啟用日（前端阻擋）
+  if (form && startInput && endInput) {
+    form.addEventListener('submit', function (e) {
+      const start = new Date(startInput.value);
+      const end = new Date(endInput.value);
+      if (start && end && end < start) {
+        e.preventDefault();
+        alert("⚠️ 截止期限不能早於啟用期限！");
+        endInput.focus();
+      }
+    });
+  }
+  
+
+});
+</script>
+
+
+</body>
+</html>
