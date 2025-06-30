@@ -3,6 +3,7 @@ package com.foodietime.gbprod.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -85,4 +87,37 @@ public class gbleaderservlet {
 	    }
 
 
+	    @GetMapping("/leader-product/{gbProdId}")
+        public String getLeaderProductDetail(@PathVariable Integer gbProdId, Model model, HttpSession session) {
+            // 檢查登入
+            MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+            if (member == null) {
+                return "front/member/login";
+            }
+            // 查詢商品
+            GbprodVO product = gbprodService.findById(gbProdId);
+            if (product == null) {
+                return "error/404";
+            }
+            model.addAttribute("product", product);
+            return "front/gb/gbleader/leader-product";
+        }
+	    
+	    @PostMapping("/create-case")
+        public String createGroupBuyingCase(
+            @RequestParam Integer gbProdId,
+            @RequestParam String gbTitle,
+            @RequestParam String gbDescription,
+            @RequestParam Integer gbMinQty,
+            @RequestParam("endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endTime,
+            HttpSession session,
+            Model model
+        ) {
+            MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+            if (member == null) {
+                return "front/member/login";
+            }
+            gbleaderService.createGroupBuyingCase(gbProdId, gbTitle, gbDescription, gbMinQty, endTime, member);
+            return "redirect:/gb/leaderindex";
+        }
 }

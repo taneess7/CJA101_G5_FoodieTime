@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.participants.model.ParticipantsService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,6 +22,8 @@ public class GroupBuyingCasesController {
 
 	@Autowired
 	private GroupBuyingCasesService groupBuyingCasesService;
+	@Autowired
+    private ParticipantsService participantsService;
 
 	// 查詢某會員參加的所有團購案
 //	@GetMapping("/member/{memId}")
@@ -203,6 +206,18 @@ public class GroupBuyingCasesController {
 	     return "redirect:/gb/leader-groups";
 	 }
 
+	 //取得團長地址
+	 @GetMapping("/leader-address")
+	    public String leaderAddress(HttpSession session, Model model) {
+	        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+	        if (member == null) {
+	            return "front/member/login";
+	        }
+	        Integer memId = member.getMemId();
+	        List<com.foodietime.participants.model.ParticipantsVO> addresses = participantsService.getLeaderAddresses(memId);
+	        model.addAttribute("addresses", addresses);
+	        return "front/gb/gbleader/leader-address";
+	    }
 
 
 

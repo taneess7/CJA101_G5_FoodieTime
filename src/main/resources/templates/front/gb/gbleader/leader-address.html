@@ -81,17 +81,7 @@
             border-color: #ff6b6b;
         }
 
-        .address-card.default::after {
-            content: '預設';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #ff6b6b;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
+        
 
         .address-name {
             font-weight: bold;
@@ -313,104 +303,85 @@
                 <div class="profile-content">
                     <h3 class="mb-4">收貨地址</h3>
                     <p>在這裡您可以管理您的團購地址，並設置預設地址。</p>
-                    <button class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#addAddressForm">
-                        <i class="bi bi-plus-lg"></i> 新增地址
-                    </button>
-
-                    <!-- 新增地址表單 -->
-                    <div class="collapse mb-4" id="addAddressForm">
-                        <div class="address-form">
-                            <h5 class="mb-3">新增收貨地址</h5>
-                            <form>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="receiverName" class="form-label">收件人姓名</label>
-                                        <input type="text" class="form-control" id="receiverName" placeholder="請輸入收件人姓名">
+                    
+                    <!-- 只有沒有地址時才顯示新增地址按鈕與表單 -->
+                    <div th:if="${#lists.isEmpty(addresses)}">
+                        <button class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#addAddressForm">
+                            <i class="bi bi-plus-lg"></i> 新增地址
+                        </button>
+                        <!-- 新增地址表單 -->
+                        <div class="collapse mb-4" id="addAddressForm">
+                            <div class="address-form">
+                                <h5 class="mb-3">新增收貨地址</h5>
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="receiverName" class="form-label">收件人姓名</label>
+                                            <input type="text" class="form-control" id="receiverName" placeholder="請輸入收件人姓名">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="receiverPhone" class="form-label">聯絡電話</label>
+                                            <input type="text" class="form-control" id="receiverPhone" placeholder="請輸入聯絡電話">
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="receiverPhone" class="form-label">聯絡電話</label>
-                                        <input type="text" class="form-control" id="receiverPhone" placeholder="請輸入聯絡電話">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="city" class="form-label">縣市</label>
+                                            <select class="form-select" id="city">
+                                                <option selected disabled>請選擇縣市</option>
+                                                <option value="taipei">台北市</option>
+                                                <option value="newtaipei">新北市</option>
+                                                <option value="taoyuan">桃園市</option>
+                                                <option value="taichung">台中市</option>
+                                                <option value="tainan">台南市</option>
+                                                <option value="kaohsiung">高雄市</option>
+                                                <option value="other">其他縣市</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="district" class="form-label">區域</label>
+                                            <select class="form-select" id="district">
+                                                <option selected disabled>請選擇區域</option>
+                                                <option value="xinyi">信義區</option>
+                                                <option value="daan">大安區</option>
+                                                <option value="zhongshan">中山區</option>
+                                                <option value="zhongzheng">中正區</option>
+                                                <option value="songshan">松山區</option>
+                                                <option value="other">其他區域</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="zipcode" class="form-label">郵遞區號</label>
+                                            <input type="text" class="form-control" id="zipcode" placeholder="請輸入郵遞區號">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label for="city" class="form-label">縣市</label>
-                                        <select class="form-select" id="city">
-                                            <option selected disabled>請選擇縣市</option>
-                                            <option value="taipei">台北市</option>
-                                            <option value="newtaipei">新北市</option>
-                                            <option value="taoyuan">桃園市</option>
-                                            <option value="taichung">台中市</option>
-                                            <option value="tainan">台南市</option>
-                                            <option value="kaohsiung">高雄市</option>
-                                            <option value="other">其他縣市</option>
-                                        </select>
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">詳細地址</label>
+                                        <input type="text" class="form-control" id="address" placeholder="請輸入詳細地址">
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="district" class="form-label">區域</label>
-                                        <select class="form-select" id="district">
-                                            <option selected disabled>請選擇區域</option>
-                                            <option value="xinyi">信義區</option>
-                                            <option value="daan">大安區</option>
-                                            <option value="zhongshan">中山區</option>
-                                            <option value="zhongzheng">中正區</option>
-                                            <option value="songshan">松山區</option>
-                                            <option value="other">其他區域</option>
-                                        </select>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="defaultAddress">
+                                        <label class="form-check-label" for="defaultAddress">設為預設收貨地址</label>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="zipcode" class="form-label">郵遞區號</label>
-                                        <input type="text" class="form-control" id="zipcode" placeholder="請輸入郵遞區號">
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="collapse" data-bs-target="#addAddressForm">取消</button>
+                                        <button type="submit" class="btn btn-primary">儲存</button>
                                     </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">詳細地址</label>
-                                    <input type="text" class="form-control" id="address" placeholder="請輸入詳細地址">
-                                </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="defaultAddress">
-                                    <label class="form-check-label" for="defaultAddress">設為預設收貨地址</label>
-                                </div>
-                                <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="collapse" data-bs-target="#addAddressForm">取消</button>
-                                    <button type="submit" class="btn btn-primary">儲存</button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
                     <!-- 已儲存的地址 -->
-                    <div class="address-card default">
-                        <div class="address-name">林小美</div>
-                        <div class="address-phone">0912-345-678</div>
-                        <div class="address-detail">台北市信義區松高路1號 11樓</div>
+                    <div th:each="addr : ${addresses}" class="address-card" th:classappend="${addr.leader == 0} ? ' default'">
+                        <div class="address-name" th:text="${addr.parName}">收件人</div>
+                        <div class="address-phone" th:text="${addr.parPhone}">電話</div>
+                        <div class="address-detail" th:text="${addr.parAddress}">地址</div>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
-                            <button class="btn btn-sm btn-outline-danger">刪除</button>
+                            <a th:href="@{/participants/edit/{parId}(parId=${addr.parId})}" class="btn btn-sm btn-outline-secondary me-2">編輯</a>
                         </div>
                     </div>
-
-                    <div class="address-card">
-                        <div class="address-name">林小美 (公司)</div>
-                        <div class="address-phone">0912-345-678</div>
-                        <div class="address-detail">台北市中山區南京東路三段219號 5樓</div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary me-2">設為預設</button>
-                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
-                            <button class="btn btn-sm btn-outline-danger">刪除</button>
-                        </div>
-                    </div>
-
-                    <div class="address-card">
-                        <div class="address-name">林小美 (父母家)</div>
-                        <div class="address-phone">0987-654-321</div>
-                        <div class="address-detail">新北市板橋區縣民大道二段7號</div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary me-2">設為預設</button>
-                            <button class="btn btn-sm btn-outline-secondary me-2">編輯</button>
-                            <button class="btn btn-sm btn-outline-danger">刪除</button>
-                        </div>
-                    </div>
+                    <div th:if="${#lists.isEmpty(addresses)}" class="text-center text-muted">目前沒有任何地址</div>
                 </div>
             </div>
         </div>

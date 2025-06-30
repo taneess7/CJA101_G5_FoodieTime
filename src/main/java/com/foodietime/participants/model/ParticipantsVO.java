@@ -102,7 +102,7 @@ public class ParticipantsVO implements Serializable {
 
 	@Column(name = "PAR_PURCHASE_QUANTITY", nullable = false)
 	@NotNull(message = "購買數量: 請勿空白")
-	@Min(value = 1, message = "購買數量: 最少須為 1")
+	@Min(value = 0, message = "購買數量: 最少須為 0")
 	private Integer parPurchaseQuantity;  //購買數量
 	
 
