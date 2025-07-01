@@ -3,6 +3,7 @@ package com.foodietime.act.model;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,10 +45,14 @@ public class ActParticipationService {
 		return partRepo.existsByStore_StorIdAndAct_ActId(storId, actId);//檢查是否存在
 	}
 	
-	public List<ActParticipationVO> findByStoreId(Integer storId) {
+	public List<ActParticipationVO> findByStorId(Integer storId) {
 	    return partRepo.findByStore_StorId(storId);
 
-	}	
+	}
+
+
+	
+	
 	
 
 }

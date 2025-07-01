@@ -18,13 +18,13 @@ public interface ActParticipationRepository extends JpaRepository<ActParticipati
      
      Optional<ActParticipationVO> findByStoreAndAct(StoreVO store, ActVO act);
      
-     List<ActParticipationVO> findByStore(StoreVO store);//可查出所有參加活動
+     List<ActParticipationVO> findByStore(StoreVO store); // 透過 StoreVO 查詢所有該店家的活動參與資料
      
      @Transactional
 	 void deleteByStore_StorIdAndAct_ActId(Integer storId, Integer actId);
 	
 	 
-	 List<ActParticipationVO> findByStore_StorId(Integer storId);
+	 List<ActParticipationVO> findByStore_StorId(Integer storId); // 透過 StorId 查詢所有該店家的活動參與資料
 	 
 
 }

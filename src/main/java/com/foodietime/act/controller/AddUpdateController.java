@@ -370,7 +370,7 @@ public class AddUpdateController {
 		// 改這裡：透過 service 重新查詢含 product 的 store，避免lazy，session關閉無法取得prod
 		StoreVO store = storeSvc.getStoreWithProducts(storeInSession.getStorId());
 
-		List<ActParticipationVO> joinedList = actPartSvc.findByStoreId(store.getStorId());
+		List<ActParticipationVO> joinedList = actPartSvc.findByStorId(store.getStorId());
 
 		// 資料結構：Map<ActVO, List<ProductVO>>，每個活動對應一組折扣商品
 		Map<ActVO, List<ProductVO>> actProdMap = new LinkedHashMap<>();
