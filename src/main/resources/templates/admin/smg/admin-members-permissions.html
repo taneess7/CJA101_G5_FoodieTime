@@ -13,13 +13,21 @@
     <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
     
     <style>
-    .container-fluid {
-    margin-left: 250px;
-    padding: 20px;
-    min-height: 100vh;
-    transition: all 0.3s;
-	}
-</style>
+	  html, body {
+	    max-width: 100%;
+	    overflow-x: hidden; /* ✅ 禁止橫向捲動 */
+	  }
+	
+	  .container-fluid {
+	    margin-left: 250px; /* 跟 sidebar 一致 */
+	    padding: 20px;
+	    min-height: 100vh;
+	    box-sizing: border-box;
+	    max-width: calc(100vw - 250px); /* ✅ 剩餘寬度，不要超出視窗 */
+	    overflow-x: hidden; /* ✅ 防止子元素溢出 */
+	  }
+	</style>
+
 
 </head>
 
@@ -53,7 +61,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                <a class="nav-link" th:href="@{/smg/admin-users-permissions}">
                     <i class="fas fa-user-shield"></i>
                     <span>管理員權限管理</span>
                 </a>
@@ -105,10 +113,12 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
-                    <i class="fas fa-user-cog"></i>
-                    <span>權限變更</span>
-                </a>
+               <a class="nav-link"
+				   th:href="@{/smg/admin-members-permissions}"
+				   th:classappend="${currentPath == '/smg/admin-members-permissions'} ? 'active'">
+				   <i class="fas fa-user-cog"></i>
+				   <span>權限變更</span>
+				</a>
             </li>
 
             <li class="nav-item section-title">團購管理</li>
@@ -180,7 +190,7 @@
     </div>
 
     <!-- Page Content -->
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-left: 250px; max-width: calc(100vw - 250px); overflow-x: hidden;">
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -303,18 +313,24 @@
 
                             <!-- Pagination -->
                             <nav aria-label="會員列表分頁">
-                                <ul class="pagination mb-0">
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="#" tabindex="-1">上一頁</a>
-                                    </li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">下一頁</a>
-                                    </li>
-                                </ul>
-                            </nav>
+							    <ul class="pagination mb-0">
+							        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+							            <a class="page-link"
+							               th:href="@{/smg/admin-members-permissions(page=${currentPage - 1}, keyword=${param.keyword}, status=${param.status}, lastModified=${param.lastModified})}">上一頁</a>
+							        </li>
+							        <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+							            th:classappend="${i == currentPage} ? 'active'">
+							            <a class="page-link"
+							               th:href="@{/smg/admin-members-permissions(page=${i}, keyword=${param.keyword}, status=${param.status}, lastModified=${param.lastModified})}"
+							               th:text="${i}">1</a>
+							        </li>
+							        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+							            <a class="page-link"
+							               th:href="@{/smg/admin-members-permissions(page=${currentPage + 1}, keyword=${param.keyword}, status=${param.status}, lastModified=${param.lastModified})}">下一頁</a>
+							        </li>
+							    </ul>
+							</nav>
+
                         </div>
                     </div>
                 </div>
