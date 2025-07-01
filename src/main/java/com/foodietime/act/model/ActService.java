@@ -42,7 +42,7 @@ public class ActService {
 		repository.save(actVO);
 	}
 
-	// d 有值且對應資料庫有該筆資料，則是更新。(若有null的欄位會蓋掉原本資料)
+	// id 有值且對應資料庫有該筆資料，則是更新。(若有null的欄位會蓋掉原本資料)
 	public void updateAct(ActVO actVO) {
 		repository.save(actVO);
 	}
@@ -68,6 +68,13 @@ public class ActService {
 	public List<ActVO> findActsBetween(String start, String end) { // 查區間資料
 		return repository.findActsBetween(start, end);
 	}
+	
+	public boolean existsByStoreAndAct(Integer storId, Integer actId) {//確認有無參加活動
+		return actPartRepo.existsByStore_StorIdAndAct_ActId(storId, actId);
+	}
+	
+
+
 
 	// 更新 - 查資料後再改欄位
 	public String updateStoreAct(Integer id, ActVO newActData) {
@@ -167,9 +174,9 @@ public class ActService {
 			}
 		}
 
-		// 3.依活動類型呼叫 enum 折扣策略
+		// 3.依活動類型呼叫 enum 折扣策略，支援定義的別名("素食推薦")
 		try {
-			ActCategoryEnum cate = ActCategoryEnum.valueOf(act.getActCate());
+			ActCategoryEnum cate = ActCategoryEnum.from(act.getActCate());
 			return cate != null? cate.calculate(prod, act) : prod.getProdPrice(); //傳入productVO. actVO.
 		} catch (IllegalArgumentException e) {
 			return prod.getProdPrice();// 沒對應的活動類型-> 原價
@@ -201,8 +208,9 @@ public class ActService {
 		
 		return false; //全部商品不符合活動條件
 	}
-	
-	
+
+
+
 	
 	
 }

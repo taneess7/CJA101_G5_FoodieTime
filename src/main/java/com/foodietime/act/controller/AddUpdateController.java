@@ -137,7 +137,7 @@ public class AddUpdateController {
 				actVO.setStorId(Integer.valueOf(storIdStr));
 			}
 		}
-
+		
 		actSvc.addAct(actVO);
 
 //		//儲存活動及關聯
@@ -341,8 +341,18 @@ public class AddUpdateController {
 //			redirectAttr.addFlashAttribute("errorMessage", "商品不符合參加此活動的資格");
 //			return "redirect:/act";
 //		}
+		
+		// 取得當前登入店家id（透過 Session）
+		Integer storId = store.getStorId();
+	
+		// 判斷是否重複加入
+		boolean alreadyJoined = actSvc.existsByStoreAndAct(storId, actId);
+		if (alreadyJoined) {
+			 redirectAttr.addFlashAttribute("errorMessage", "⚠️ 您已參加此活動，請勿重複加入");
+			 return "redirect:/act";  // 看你要導去哪
+		}
 
-		// 符合資格，進行參加流程
+		// 尚未參加，進行參加流程
 		actPartSvc.joinAct(store, act);
 
 		redirectAttr.addFlashAttribute("successMessage", "已成功報名活動");
@@ -360,15 +370,16 @@ public class AddUpdateController {
 		// 改這裡：透過 service 重新查詢含 product 的 store，避免lazy，session關閉無法取得prod
 		StoreVO store = storeSvc.getStoreWithProducts(storeInSession.getStorId());
 
-		List<ActParticipationVO> joinedList = actPartSvc.findByStoreId(store.getStorId());
+		List<ActParticipationVO> joinedList = actPartSvc.findByStorId(store.getStorId());
 
 		// 資料結構：Map<ActVO, List<ProductVO>>，每個活動對應一組折扣商品
 		Map<ActVO, List<ProductVO>> actProdMap = new LinkedHashMap<>();
 
 		for (ActParticipationVO join : joinedList) {
 			ActVO act = join.getAct();
+			//System.out.println("📌 從資料庫抓到的 actCate = " + act.getActCate());
 			ActCategoryEnum cate = ActCategoryEnum.from(act.getActCate()); // 抓出class enum 的提示錯誤
-
+			//System.out.println("📌 解析對應到 enum = " + cate);  // 如果是 null 就代表解析失敗
 			// 避免 NullPointerException
 			if (cate == null)
 				continue;

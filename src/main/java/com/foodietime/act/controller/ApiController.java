@@ -2,8 +2,12 @@ package com.foodietime.act.controller;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -58,12 +62,43 @@ public class ApiController {
 		return ResponseEntity.ok(act);
 	}
 
-	//對應 /api/allActs   http://localhost:8080/api/allActs 回傳所有api
+	//進入可參加活動畫面 /api/allActs   http://localhost:8080/api/allActs 回傳所有api
 	// 所有活動文字 Spring Boot 會自動轉成 JSON 並包裝為 200 OK
 	@GetMapping("/allActs")
     public List<ActVO> getAllActs() {
         return actSvc.getAllActs(); 
     }
+	
+	//前端載入更新過的活動列表
+		@GetMapping("/store/activities")
+		public List<Map<String, Object>> getActivitiesWithJoinStatus(HttpSession session) {
+		    StoreVO store = (StoreVO) session.getAttribute("loggedInStore");
+		    if (store == null) return List.of(); // 如果沒登入就給空
+
+		    List<ActVO> allActs = actSvc.getAllActs(); // 獲取所有活動
+		   
+		    List<ActParticipationVO> joinedActs = actPartSvc.findByStorId(store.getStorId()); // 獲取店家已參加的活動 ID 集合
+
+		    //從joinedActs 中提取已參加的活動 ID
+		    Set<Integer> joinedActIds = joinedActs.stream()
+		    		.map(joinedAct -> joinedAct.getAct().getActId()) //提取活動ID
+		    		.collect(Collectors.toSet());
+		    
+		    List<Map<String, Object>> result = new ArrayList<>();
+		    
+		    //遍歷所有活動並組裝結果	    		
+		    for (ActVO act : allActs) {
+		        Map<String, Object> map = new HashMap<>();
+		        map.put("actId", act.getActId()); //顯示活動編號
+		        map.put("actName", act.getActName()); //顯示活動名稱
+		        map.put("actContent", act.getActContent()); // 顯示活動內容
+		        map.put("actEndTime", act.getActEndTime()); // 顯示有效期限
+		        map.put("isJoined", joinedActIds.contains(act.getActId())); // 判斷是否已參加，若已參加會回傳 true，否則 false
+		        result.add(map);
+		    }
+
+		    return result;
+		}
 	
 	//載入圖片 的 doGet("/bookpic/{id}")
 	//Spring 抓出3,傳參數id，網址請求 url: /api/actpic/3 , @GetMapping("actpic/{id})，變數綁定 @PathVariable 3
@@ -108,6 +143,9 @@ public class ApiController {
 		return actSvc.updateStoreAct(id, actVO);
 	}
 	
+	
+	
+	
 	@PostMapping("/store/participate")
 	@ResponseBody
 	public ResponseEntity<String> participateInAct(@RequestBody Map<String, Object> data, HttpSession session) {
@@ -142,7 +180,7 @@ public class ApiController {
 	    } else {
 	        // 刪除活動參與（你也可以加一個 service 方法）
 	        actPartSvc.deleteByStoreAndAct(store.getStorId(), actId);
-	        return ResponseEntity.ok("您已取消參加活動");
+	        return ResponseEntity.ok(" ");//"您已取消參加活動！"
 	    }
 	}
 
