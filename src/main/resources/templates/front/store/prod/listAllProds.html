@@ -93,9 +93,9 @@
 				<td th:text="${#dates.format(prodVO.prodLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
 
 			<td>
-			  <form method="post" th:action="@{/store/prod/getOne_For_Update}" style="margin-bottom: 0px;">
-			     <input type="submit" value="修改">
+			  <form method="get" th:action="@{/store/prod/prodEdit}" style="margin-bottom: 0px;">
 			     <input type="hidden" name="prodId" th:value="${prodVO.prodId}">
+			     <input type="submit" value="修改">
 			  </form>
 			
 			</td>
