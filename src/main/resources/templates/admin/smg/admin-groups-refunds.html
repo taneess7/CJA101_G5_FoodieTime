@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- 自定義CSS -->
     <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 
 </head>
 <body>
@@ -202,140 +204,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-undo me-2"></i>團購退款管理</h5>
-                            <div>
-                                <button class="btn btn-info me-2" onclick="exportRefunds()">
-                                    <i class="fas fa-download me-1"></i>匯出報表
-                                </button>
-                                <button class="btn btn-success" onclick="batchProcess()">
-                                    <i class="fas fa-tasks me-1"></i>批量處理
-                                </button>
-                            </div>
-                        </div>
+                        
                         <div class="card-body">
-                            <!-- Statistics Cards -->
-                            <div class="row mb-4">
-                                <div class="col-md-3">
-                                    <div class="card bg-warning text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">待處理退款</h6>
-                                                    <h4 class="mb-0">23</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-clock fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-success text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">已完成退款</h6>
-                                                    <h4 class="mb-0">156</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-check-circle fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-danger text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">退款失敗</h6>
-                                                    <h4 class="mb-0">8</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-times-circle fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-info text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">退款總額</h6>
-                                                    <h4 class="mb-0">NT$ 89,450</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-dollar-sign fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
 
-                            <!-- Search and Filter Form -->
-                            <form class="row g-3 mb-4">
-                                <div class="col-md-2">
-                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                                    <input type="text" class="form-control" id="searchKeyword" placeholder="退款編號、會員姓名">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="refundStatus" class="form-label">退款狀態</label>
-                                    <select class="form-select" id="refundStatus">
-                                        <option value="">全部狀態</option>
-                                        <option value="pending">待審核</option>
-                                        <option value="approved">已核准</option>
-                                        <option value="processing">處理中</option>
-                                        <option value="completed">已完成</option>
-                                        <option value="failed">失敗</option>
-                                        <option value="rejected">已拒絕</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="refundType" class="form-label">退款類型</label>
-                                    <select class="form-select" id="refundType">
-                                        <option value="">全部類型</option>
-                                        <option value="full">全額退款</option>
-                                        <option value="partial">部分退款</option>
-                                        <option value="fee_only">僅退手續費</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="refundReason" class="form-label">退款原因</label>
-                                    <select class="form-select" id="refundReason">
-                                        <option value="">全部原因</option>
-                                        <option value="customer_request">客戶要求</option>
-                                        <option value="product_defect">商品瑕疵</option>
-                                        <option value="delivery_issue">配送問題</option>
-                                        <option value="vendor_cancel">廠家取消</option>
-                                        <option value="system_error">系統錯誤</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="dateRange" class="form-label">申請時間</label>
-                                    <select class="form-select" id="dateRange">
-                                        <option value="">全部時間</option>
-                                        <option value="today">今天</option>
-                                        <option value="week">本週</option>
-                                        <option value="month">本月</option>
-                                        <option value="quarter">本季</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="fas fa-search"></i> 搜尋
-                                    </button>
-                                </div>
-                            </form>
+                            
 
                             <!-- Refunds Table -->
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover datatable">
                                     <thead class="table-light">
                                         <tr>
                                             <th>
@@ -376,9 +253,7 @@
                                             <td class="text-muted">-</td>
                                             <td><span class="badge bg-warning">待處理</span></td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewRefund('R001')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
+                                                
                                                 <button class="btn btn-sm btn-outline-success me-1" onclick="approveRefund('R001')">
                                                     <i class="fas fa-check"></i>
                                                 </button>
@@ -392,34 +267,7 @@
                                 </table>
                             </div>
 
-                            <!-- Batch Actions and Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <button class="btn btn-success me-2" onclick="batchApprove()">
-                                        <i class="fas fa-check me-1"></i>批量核准
-                                    </button>
-                                    <button class="btn btn-info me-2" onclick="batchProcess()">
-                                        <i class="fas fa-cog me-1"></i>批量處理
-                                    </button>
-                                    <button class="btn btn-danger" onclick="batchReject()">
-                                        <i class="fas fa-times me-1"></i>批量拒絕
-                                    </button>
-                                </div>
-                                
-                                <!-- Pagination -->
-                                <nav aria-label="退款列表分頁">
-                                    <ul class="pagination mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">下一頁</a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                            
                             </div>
                         </div>
                     </div>
@@ -672,8 +520,14 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (DataTables 依賴) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <!-- 自定義JS -->
     <script th:src="@{/js/admin/admin-script.js}"></script>
+    <!-- DataTables 初始化 -->
+    <script th:src="@{/js/admin/datatable.js}"></script>
     
     <script>
         // Select All Checkbox

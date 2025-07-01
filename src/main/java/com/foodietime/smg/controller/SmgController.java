@@ -285,8 +285,10 @@ public class SmgController {
     	return "admin/smg/admin-groups-status"; 
     }
     @GetMapping("/admin-groups-orders")
-    public String admingroupsorders() {
-    	return "admin/smg/admin-groups-orders"; 
+    public String admingroupsorders(Model model) {
+        List<GroupOrdersVO> groupOrders = groupOrdersService.findAll();
+        model.addAttribute("groupOrders", groupOrders);
+        return "admin/smg/admin-groups-orders";
     }
     @GetMapping("/admin-groups-payments")
     public String admingroupspayments() {

@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- 自訂CSS -->
     <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
-
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -204,140 +205,14 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>團購訂單詳情檢視</h5>
-                            <div>
-                                <button class="btn btn-info me-2" onclick="exportOrders()">
-                                    <i class="fas fa-download me-1"></i>匯出訂單
-                                </button>
-                                <button class="btn btn-success" onclick="batchProcess()">
-                                    <i class="fas fa-tasks me-1"></i>批次處理
-                                </button>
-                            </div>
+                           
                         </div>
                         <div class="card-body">
-                            <!-- Statistics Cards -->
-                            <div class="row mb-4">
-                                <div class="col-md-3">
-                                    <div class="card bg-primary text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">總訂單數</h6>
-                                                    <h4 class="mb-0">1,234</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-shopping-cart fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-success text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">已完成</h6>
-                                                    <h4 class="mb-0">987</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-check-circle fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-warning text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">處理中</h6>
-                                                    <h4 class="mb-0">156</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-clock fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-info text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="card-title">總金額</h6>
-                                                    <h4 class="mb-0">NT$ 456,789</h4>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <i class="fas fa-dollar-sign fa-2x"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Search and Filter Form -->
-                            <form class="row g-3 mb-4">
-                                <div class="col-md-2">
-                                    <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                                    <input type="text" class="form-control" id="searchKeyword" placeholder="訂單編號、會員姓名">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="groupSelect" class="form-label">團購選擇</label>
-                                    <select class="form-select" id="groupSelect">
-                                        <option value="">全部團購</option>
-                                        <option value="G001">日本進口美食團購</option>
-                                        <option value="G002">韓國美妝保養團購</option>
-                                        <option value="G003">3C電子產品團購</option>
-                                        <option value="G004">服飾配件團購</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="orderStatus" class="form-label">訂單狀態</label>
-                                    <select class="form-select" id="orderStatus">
-                                        <option value="">全部狀態</option>
-                                        <option value="pending">待付款</option>
-                                        <option value="paid">已付款</option>
-                                        <option value="processing">處理中</option>
-                                        <option value="shipped">已出貨</option>
-                                        <option value="delivered">已送達</option>
-                                        <option value="completed">已完成</option>
-                                        <option value="cancelled">已取消</option>
-                                        <option value="refunded">已退款</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="paymentMethod" class="form-label">付款方式</label>
-                                    <select class="form-select" id="paymentMethod">
-                                        <option value="">全部方式</option>
-                                        <option value="credit_card">信用卡</option>
-                                        <option value="bank_transfer">銀行轉帳</option>
-                                        <option value="cash_on_delivery">貨到付款</option>
-                                        <option value="mobile_payment">行動支付</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="dateRange" class="form-label">訂單日期</label>
-                                    <select class="form-select" id="dateRange">
-                                        <option value="">全部日期</option>
-                                        <option value="today">今天</option>
-                                        <option value="week">本週</option>
-                                        <option value="month">本月</option>
-                                        <option value="quarter">本季</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="fas fa-search"></i> 搜尋
-                                    </button>
-                                </div>
-                            </form>
+<!--                             
 
                             <!-- Orders Table -->
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover datatable">
                                     <thead class="table-light">
                                         <tr>
                                             <th>
@@ -350,139 +225,51 @@
                                             <th>訂單金額</th>
                                             <th>付款方式</th>
                                             <th>訂單時間</th>
-                                            <th>狀態</th>
+                                            <th>訂單狀態</th>
+                                            <th>出貨狀態</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input order-checkbox" data-order-id="O001"></td>
-                                            <td class="fw-bold">O001</td>
+                                        <tr th:each="order : ${groupOrders}">
+                                            <td><input type="checkbox" class="form-check-input order-checkbox" th:attr="data-order-id=${order.gbOrId}"></td>
+                                            <td class="fw-bold" th:text="${order.gbOrId}"></td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
+                                                    <span class="me-2" th:text="${order.groupBuyingCase.gbTitle}"></span>
                                                     <div>
-                                                        <div class="fw-bold">日本進口零食團購</div>
-                                                        <small class="text-muted">G001 王美麗小姐</small>
+                                                        <div class="fw-bold" th:text="${order.gbprod.gbProdName}"></div>
+                                                        <small class="text-muted" th:text="${order.groupBuyingCase.gbId}"></small>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div>王小明</div>
-                                                <small class="text-muted">M001 wang@example.com</small>
+                                                <div th:text="${order.parName}"></div>
                                             </td>
-                                            <td class="text-center">3</td>
-                                            <td class="fw-bold text-success">NT$ 897</td>
-                                            <td><span class="badge bg-primary">信用卡</span></td>
-                                            <td>2024-01-15 14:30</td>
-                                            <td><span class="badge bg-success">已完成</span></td>
+                                            <td class="text-center" th:text="${order.quantity}"></td>
+                                            <td class="fw-bold text-success" th:text="${order.amount}"></td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O001')">
+                                                <span class="badge bg-primary" th:if="${order.payMethod == 0}">信用卡</span>
+                                                <span class="badge bg-info" th:if="${order.payMethod == 1}">現金</span>
+                                                <span class="badge bg-success" th:if="${order.payMethod == 2}">第三方</span>
+                                            </td>
+                                            <td th:text="${#temporals.format(order.joinTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                            <td>
+                                                <span class="badge bg-secondary" th:if="${order.orderStatus == 0}">未接單</span>
+                                                <span class="badge bg-primary" th:if="${order.orderStatus == 1}">接單</span>
+                                                <span class="badge bg-success" th:if="${order.orderStatus == 2}">完成</span>
+                                                <span class="badge bg-danger" th:if="${order.orderStatus == 3}">開團失敗取消</span>
+                                                <span class="badge bg-warning" th:if="${order.orderStatus == 4}">自主退款</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning" th:if="${order.shippingStatus == 0}">未出貨</span>
+                                                <span class="badge bg-success" th:if="${order.shippingStatus == 1}">已出貨</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" th:onclick="|viewOrder('${order.gbOrId}')|">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O001')">
-                                                    <i class="fas fa-truck"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editOrder('O001')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input order-checkbox" data-order-id="O002"></td>
-                                            <td class="fw-bold">O002</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">美國品牌家電團購</div>
-                                                        <small class="text-muted">G002 李美華女士</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>李大華</div>
-                                                <small class="text-muted">M002 lee@example.com</small>
-                                            </td>
-                                            <td class="text-center">1</td>
-                                            <td class="fw-bold text-success">NT$ 599</td>
-                                            <td><span class="badge bg-info">銀行轉帳</span></td>
-                                            <td>2024-01-15 10:15</td>
-                                            <td><span class="badge bg-warning">處理中</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O002')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O002')">
-                                                    <i class="fas fa-truck"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editOrder('O002')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input order-checkbox" data-order-id="O003"></td>
-                                            <td class="fw-bold">O003</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">3C產品團購</div>
-                                                        <small class="text-muted">G003 科技小舖</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>張美玲</div>
-                                                <small class="text-muted">M003 zhang@example.com</small>
-                                            </td>
-                                            <td class="text-center">2</td>
-                                            <td class="fw-bold text-success">NT$ 2,598</td>
-                                            <td><span class="badge bg-success">行動支付</span></td>
-                                            <td>2024-01-14 16:45</td>
-                                            <td><span class="badge bg-info">已出貨</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O003')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O003')">
-                                                    <i class="fas fa-truck"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editOrder('O003')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input order-checkbox" data-order-id="O004"></td>
-                                            <td class="fw-bold">O004</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
-                                                    <div>
-                                                        <div class="fw-bold">服飾配件團購</div>
-                                                        <small class="text-muted">G004 時尚精品</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div>陳小芳</div>
-                                                <small class="text-muted">M004 chen@example.com</small>
-                                            </td>
-                                            <td class="text-center">5</td>
-                                            <td class="fw-bold text-success">NT$ 1,995</td>
-                                            <td><span class="badge bg-warning">貨到付款</span></td>
-                                            <td>2024-01-14 09:20</td>
-                                            <td><span class="badge bg-danger">待確認</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrder('O004')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info me-1" onclick="trackOrder('O004')">
-                                                    <i class="fas fa-truck"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editOrder('O004')">
+                                                <button class="btn btn-sm btn-outline-warning" th:onclick="|editOrder('${order.gbOrId}')|">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             </td>
@@ -491,34 +278,8 @@
                                 </table>
                             </div>
 
-                            <!-- Batch Actions and Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <button class="btn btn-success me-2" onclick="batchConfirm()">
-                                        <i class="fas fa-check me-1"></i>批量確認
-                                    </button>
-                                    <button class="btn btn-info me-2" onclick="batchShip()">
-                                        <i class="fas fa-truck me-1"></i>批量出貨
-                                    </button>
-                                    <button class="btn btn-warning" onclick="batchCancel()">
-                                        <i class="fas fa-times me-1"></i>批量取消
-                                    </button>
-                                </div>
+                            
                                 
-                                <!-- Pagination -->
-                                <nav aria-label="訂單列表分頁">
-                                    <ul class="pagination mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" tabindex="-1">上一頁</a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">下一頁</a>
-                                        </li>
-                                    </ul>
-                                </nav>
                             </div>
                         </div>
                     </div>
@@ -798,8 +559,14 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (DataTables 依賴) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <!-- 自定義JS -->
     <script th:src="@{/js/admin/admin-script.js}"></script>
+    <!-- DataTables 初始化 -->
+    <script th:src="@{/js/admin/datatable.js}"></script>
     
     <script>
         // Select All Checkbox
