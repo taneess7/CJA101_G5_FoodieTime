@@ -439,7 +439,7 @@ public class StorePageController {
 		}
 		
 		
-		/***商品新增或修改功能***/
+		/***查看商品列表選修改功能，按送出會進到這***/
 		@PostMapping("/prod/save")
 		public String insert( 
 						@Valid
@@ -450,8 +450,8 @@ public class StorePageController {
 						RedirectAttributes redirectAttr) throws IOException{  //顯示新增成功訊息 
 			
 			System.out.println(">>> save方法觸發");
-			System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
-		    System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
+			//System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
+		    //System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
 
 			// 從 session 中取出店家資訊
 		    Object obj = session.getAttribute("loggedInStore");
@@ -463,6 +463,13 @@ public class StorePageController {
 
 		    StoreVO loggedInStore = (StoreVO) obj;
 		    Integer storId = loggedInStore.getStorId();
+		    
+		    //表單綁住分類，避免點修改ProductVO.getProductCategory()" is null
+		    if(prod.getProductCategory() == null) {
+		    	ProductCategoryVO category = new ProductCategoryVO();
+		    	category.setProdCateId(categoryId);
+		    	prod.setProductCategory(category);
+		    }
 
 		    //圖片處理: 有上傳圖片就存入(新增或修改)
 			if(parts!=null && parts.length > 0 && !parts[0].isEmpty()) {
@@ -484,13 +491,14 @@ public class StorePageController {
 					System.out.println("欄位錯誤" + fe.getField() + "->" + 
 				    fe.getDefaultMessage());
 				}
-				// 驗證失敗，補上 store 與 商品類別下拉選單避免null
+				// 驗證失敗，一定要再補一次（分類）下拉選單避免null
 		        if (prod.getProductCategory() == null) {
 		        	ProductCategoryVO category = new ProductCategoryVO();
 		        	category.setProdCateId(categoryId);
 		        	prod.setProductCategory(category);
 		        }
 		        
+		        //補上 store
 		        if(prod.getStore() == null) {
 		        	StoreVO storeVO = new StoreVO();
 		        	storeVO.setStorId(storId);
@@ -529,9 +537,9 @@ public class StorePageController {
 
 			
 			
-			//分流: 新增 or 修改（判斷是否有 prodId）
+			//驗證ok，分流: 新增 or 修改（判斷是否有 prodId）
 			if (prod.getProdId() == null) {
-				System.out.println(">>> 進行新增");
+				//System.out.println(">>> 進行新增");
 				// 補上分類資料（重要！）
 				if (prod.getProductCategory() == null) {
 			        ProductCategoryVO category = new ProductCategoryVO();
@@ -549,7 +557,7 @@ public class StorePageController {
 				return "redirect:/store/prod/prodEdit";
 
 			} else {
-				System.out.println(">>> 進行修改，prodId: " + prod.getProdId());
+				//System.out.println(">>> 進行修改，prodId: " + prod.getProdId());
 				
 			
 				// 圖片非必填，去除圖片欄位驗證錯誤
@@ -560,13 +568,18 @@ public class StorePageController {
 					return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();	
 				}
 				
+				// ⬇⬇⬇ update前加這一行補上非空值，否則無法儲存修改⬇⬇⬇
+				prod.setProdLastUpdate(new Timestamp(System.currentTimeMillis()));
+				prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
+				
 				prodSvc.updateProduct(prod.getProdId(), prod, prod.getProductCategory().getProdCateId());
 				//service:  ProductVO updateProduct(Integer prodId, ProductVO newData, Integer categoryId);
 				redirectAttr.addFlashAttribute("successMessage", "商品修改成功！");
 				
 				System.out.println("更新成功");
-				// 修改成功後回到該筆資料的編輯頁面
-	            return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();				
+				
+//	            return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();	 //停在編輯頁面
+				return "redirect:/store/listAllProds";	 // 修改成功後回到該筆資料的listAll 
 			  }
 		
 			}
