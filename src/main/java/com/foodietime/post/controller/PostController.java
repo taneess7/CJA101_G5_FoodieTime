@@ -24,6 +24,7 @@ import com.foodietime.post.model.PostService;
 import com.foodietime.post.model.PostVO;
 import com.foodietime.postcategory.model.PostCategoryService;
 import com.foodietime.postcategory.model.PostCategoryVO;
+import com.foodietime.reportpost.model.ReportPostService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -49,6 +50,9 @@ public class PostController {
 
 	@Autowired
 	FavoritePostService favoritePostService;
+
+	@Autowired
+	ReportPostService reportPostService;
 
 //	@Autowired
 //	PostCategoryService postcategory;
@@ -82,7 +86,16 @@ public class PostController {
 		}
 		postVO.setMember(member);
 
-		// 2. 驗證失敗時，帶回表單與資料
+		// 2. 檢查會員是否因檢舉過多而被禁止發文
+		if (reportPostService.isMemberBannedFromPosting(member.getMemId())) {
+			model.addAttribute("errorMessage", "您的帳號因多次違規已被禁止發文，如有疑問請聯繫客服。");
+			List<PostCategoryVO> category = postCategoryservice.getAll();
+			model.addAttribute("category", category);
+			model.addAttribute("postVO", postVO);
+			return "front/post/addPost";
+		}
+
+		// 3. 驗證失敗時，帶回表單與資料
 		if (result.hasErrors()) {
 			List<PostCategoryVO> category = postCategoryservice.getAll();
 			model.addAttribute("category", category);
@@ -139,6 +152,15 @@ public class PostController {
 			@RequestParam("action") String action) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
+		// 檢查會員是否因檢舉過多而被禁止發文
+		if (reportPostService.isMemberBannedFromPosting(postVO.getMember().getMemId())) {
+			model.addAttribute("errorMessage", "您的帳號因多次違規已被禁止發文，如有疑問請聯繫客服。");
+			List<PostCategoryVO> category = postCategoryservice.getAll();
+			model.addAttribute("category", category);
+			model.addAttribute("postVO", postVO);
+			return "front/post/updatePost";
+		}
+
 		if (result.hasErrors()) {
 			// 驗證失敗時，要重新把分類列表加回 model
 			List<PostCategoryVO> category = postCategoryservice.getAll();

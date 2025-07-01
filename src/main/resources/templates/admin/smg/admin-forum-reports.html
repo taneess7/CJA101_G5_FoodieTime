@@ -1,548 +1,477 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>討論區檢舉審核管理 - 團購樂後台管理系統</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 自訂CSS -->
-    <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>討論區檢舉審核管理 - 團購樂後台管理系統</title>
+<!-- Bootstrap CSS -->
+<!-- CSRF Token for AJAX requests (with null check) -->
+<th:block th:if="${_csrf != null}">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</th:block>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- 自訂CSS -->
+<link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
 
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo text-center">
-            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
-        </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-dashboard}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>儀表板</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">討論區管理</li>
-            <li class="nav-item">
-                <a class="nav-link active" th:href="@{/smg/admin-forum-reports}">
-                    <i class="fas fa-flag"></i>
-                    <span>檢舉審核管理</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">管理員管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-users-add}">
-                    <i class="fas fa-user-plus"></i>
-                    <span>新增管理員</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-users-permissions}">
-                    <i class="fas fa-user-shield"></i>
-                    <span>管理員權限管理</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">商家管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
-                    <i class="fas fa-check-circle"></i>
-                    <span>審核商家</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-edit}">
-                    <i class="fas fa-store-alt"></i>
-                    <span>廠家帳號查詢/編輯</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
-                    <i class="fas fa-flag"></i>
-                    <span>檢舉功能</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
-                    <i class="fas fa-ban"></i>
-                    <span>黑名單管理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
-                    <i class="fas fa-times-circle"></i>
-                    <span>下架商品</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
-                    <i class="fas fa-key"></i>
-                    <span>權限變更</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">會員管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-members-search}">
-                    <i class="fas fa-users"></i>
-                    <span>會員查詢與篩選</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-members-permissions}">
-                    <i class="fas fa-user-cog"></i>
-                    <span>權限變更</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">團購管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-reports}">
-                    <i class="fas fa-flag"></i>
-                    <span>檢舉審核管理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
-                    <i class="fas fa-toggle-on"></i>
-                    <span>啟用/停用</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-orders}">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>訂單詳情檢視</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
-                    <i class="fas fa-undo"></i>
-                    <span>退款</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>月結付款</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">訂單管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-orders-view}">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>訂單詳情檢視</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
-                    <i class="fas fa-credit-card"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
-            
-            <li class="nav-item section-title">客服管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-service-tickets}">
-                    <i class="fas fa-headset"></i>
-                    <span>表單回覆</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link logout-btn" href="#">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>登出</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+	<!-- Sidebar -->
+	<div class="sidebar">
+		<div class="logo text-center">
+			<img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
+		</div>
+		<ul class="nav flex-column">
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-dashboard}"> <i
+					class="fas fa-tachometer-alt"></i> <span>儀表板</span>
+			</a></li>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Navigation -->
-        <div class="top-nav">
-            <button class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
-                <i class="fas fa-bars"></i>
-            </button>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
-                    <li class="breadcrumb-item">團購樂後台管理系統</li>
-                    <li class="breadcrumb-item active">檢舉審核管理</li>
-                </ol>
-            </nav>
-            <div class="user-dropdown dropdown">
-                <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
-				   role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
+			<li class="nav-item section-title">討論區管理</li>
+			<li class="nav-item"><a class="nav-link active"
+				th:href="@{/smg/admin-forum-reports}"> <i class="fas fa-flag"></i>
+					<span>檢舉審核管理</span>
+			</a></li>
+
+			<li class="nav-item section-title">管理員管理</li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-users-add}"> <i class="fas fa-user-plus"></i>
+					<span>新增管理員</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-users-permissions}"> <i
+					class="fas fa-user-shield"></i> <span>管理員權限管理</span>
+			</a></li>
+
+			<li class="nav-item section-title">商家管理</li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-vendors-review}"> <i
+					class="fas fa-check-circle"></i> <span>審核商家</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-vendors-edit}"> <i
+					class="fas fa-store-alt"></i> <span>廠家帳號查詢/編輯</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-vendors-reports}"> <i class="fas fa-flag"></i>
+					<span>檢舉功能</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-vendors-blacklist}"> <i class="fas fa-ban"></i>
+					<span>黑名單管理</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-products-disable}"> <i
+					class="fas fa-times-circle"></i> <span>下架商品</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-vendors-permissions}"> <i
+					class="fas fa-key"></i> <span>權限變更</span>
+			</a></li>
+
+			<li class="nav-item section-title">會員管理</li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-members-search}"> <i class="fas fa-users"></i>
+					<span>會員查詢與篩選</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-members-permissions}"> <i
+					class="fas fa-user-cog"></i> <span>權限變更</span>
+			</a></li>
+
+			<li class="nav-item section-title">團購管理</li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-groups-reports}"> <i class="fas fa-flag"></i>
+					<span>檢舉審核管理</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-groups-status}"> <i
+					class="fas fa-toggle-on"></i> <span>啟用/停用</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-groups-orders}"> <i
+					class="fas fa-clipboard-list"></i> <span>訂單詳情檢視</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-groups-payments}"> <i
+					class="fas fa-money-bill-wave"></i> <span>付款處理</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-groups-refunds}"> <i class="fas fa-undo"></i>
+					<span>退款</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-groups-monthly}"> <i
+					class="fas fa-calendar-alt"></i> <span>月結付款</span>
+			</a></li>
+
+			<li class="nav-item section-title">訂單管理</li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-orders-view}"> <i
+					class="fas fa-shopping-cart"></i> <span>訂單詳情檢視</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-orders-payments}"> <i
+					class="fas fa-credit-card"></i> <span>付款處理</span>
+			</a></li>
+
+			<li class="nav-item section-title">客服管理</li>
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/smg/admin-service-tickets}"> <i
+					class="fas fa-headset"></i> <span>表單回覆</span>
+			</a></li>
+			<li class="nav-item"><a class="nav-link logout-btn" href="#">
+					<i class="fas fa-sign-out-alt"></i> <span>登出</span>
+			</a></li>
+		</ul>
+	</div>
+
+	<!-- Main Content -->
+	<div class="main-content">
+		<!-- Top Navigation -->
+		<div class="top-nav">
+			<button
+				class="btn btn-sm btn-outline-secondary sidebar-toggle d-lg-none">
+				<i class="fas fa-bars"></i>
+			</button>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
+					<li class="breadcrumb-item">團購樂後台管理系統</li>
+					<li class="breadcrumb-item active">檢舉審核管理</li>
+				</ol>
+			</nav>
+			<div class="user-dropdown dropdown">
+				<a
+					class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center"
+					href="#" role="button" id="userDropdown" data-bs-toggle="dropdown"
+					aria-expanded="false"> <img
+					src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像"
+					class="user-avatar me-2"> <span class="user-name"
+					th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
 				</a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
-                </ul>
-            </div>
-        </div>
+				<ul class="dropdown-menu dropdown-menu-end"
+					aria-labelledby="userDropdown">
+					<li><a class="dropdown-item" href="#"><i
+							class="fas fa-user"></i> 個人資料</a></li>
+					<li><a class="dropdown-item" href="#"><i
+							class="fas fa-cog"></i> 設定</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item logout-btn" href="#"><i
+							class="fas fa-sign-out-alt"></i> 登出</a></li>
+				</ul>
+			</div>
+		</div>
 
-        <!-- Page Content -->
-        <div class="container-fluid">
-            <!-- 搜尋與篩選 -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form class="row g-3">
-                        <div class="col-md-3">
-                            <label for="searchKeyword" class="form-label">關鍵字搜尋</label>
-                            <input type="text" class="form-control" id="searchKeyword" placeholder="標題或內容關鍵字">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="filterType" class="form-label">檢舉類型</label>
-                            <select class="form-select" id="filterType">
-                                <option value="">全部</option>
-                                <option value="post">貼文</option>
-                                <option value="comment">留言</option>
-                                <option value="user">用戶</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="filterStatus" class="form-label">處理狀態</label>
-                            <select class="form-select" id="filterStatus">
-                                <option value="">全部</option>
-                                <option value="pending">待處理</option>
-                                <option value="processing">處理中</option>
-                                <option value="resolved">已解決</option>
-                                <option value="rejected">已駁回</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filterDate" class="form-label">檢舉日期</label>
-                            <div class="input-group">
-                                <input type="date" class="form-control" id="filterDateStart">
-                                <span class="input-group-text">至</span>
-                                <input type="date" class="form-control" id="filterDateEnd">
-                            </div>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="button" class="btn btn-primary w-100">搜尋</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- 檢舉列表 -->
-            <div class="card mb-4">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold">檢舉列表</h6>
-                    <div>
-                        <button class="btn btn-sm btn-outline-success me-2" id="batchApproveBtn">
-                            <i class="fas fa-check"></i> 批量通過
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" id="batchRejectBtn">
-                            <i class="fas fa-times"></i> 批量駁回
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th width="30px">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="selectAll">
-                                        </div>
-                                    </th>
-                                    <th>ID</th>
-                                    <th>檢舉類型</th>
-                                    <th>被檢舉內容</th>
-                                    <th>檢舉原因</th>
-                                    <th>檢舉者</th>
-                                    <th>檢舉時間</th>
-                                    <th>狀態</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input report-checkbox" type="checkbox" value="1">
-                                        </div>
-                                    </td>
-                                    <td>1001</td>
-                                    <td><span class="badge bg-primary">貼文</span></td>
-                                    <td>
-                                        <a href="#" class="text-truncate d-inline-block" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="這是一篇違反社群規範的貼文，內容包含不當言論...">
-                                            這是一篇違反社群規範的貼文，內容包含不當言論...
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="包含侮辱性言論">
-                                            包含侮辱性言論
-                                        </span>
-                                    </td>
-                                    <td>user123</td>
-                                    <td>2023-05-01 10:30:25</td>
-                                    <td><span class="badge bg-warning text-dark">待處理</span></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary view-btn" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="1001">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success approve-btn" data-id="1001">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger reject-btn" data-id="1001">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input report-checkbox" type="checkbox" value="2">
-                                        </div>
-                                    </td>
-                                    <td>1002</td>
-                                    <td><span class="badge bg-info">留言</span></td>
-                                    <td>
-                                        <a href="#" class="text-truncate d-inline-block" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="這個留言包含垃圾內容，疑似廣告推銷...">
-                                            這個留言包含垃圾內容，疑似廣告推銷...
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="垃圾訊息/廣告">
-                                            垃圾訊息/廣告
-                                        </span>
-                                    </td>
-                                    <td>user456</td>
-                                    <td>2023-05-01 11:15:42</td>
-                                    <td><span class="badge bg-info">已處理</span></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary view-btn" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="1002">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success approve-btn" data-id="1002">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger reject-btn" data-id="1002">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input report-checkbox" type="checkbox" value="3">
-                                        </div>
-                                    </td>
-                                    <td>1003</td>
-                                    <td><span class="badge bg-secondary">用戶</span></td>
-                                    <td>
-                                        <a href="#" class="text-truncate d-inline-block" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="用戶 baduser789 多次發布不當內容...">
-                                            用戶 baduser789 多次發布不當內容...
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="多次違反社群規範">
-                                            多次違反社群規範
-                                        </span>
-                                    </td>
-                                    <td>user789</td>
-                                    <td>2023-05-01 09:45:33</td>
-                                    <td><span class="badge bg-success">已解決</span></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary view-btn" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="1003">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success approve-btn" data-id="1003" disabled>
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger reject-btn" data-id="1003" disabled>
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input report-checkbox" type="checkbox" value="4">
-                                        </div>
-                                    </td>
-                                    <td>1004</td>
-                                    <td><span class="badge bg-primary">貼文</span></td>
-                                    <td>
-                                        <a href="#" class="text-truncate d-inline-block" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="貼文內容涉及敏感政治議題...">
-                                            貼文內容涉及敏感政治議題...
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="違反社群規範 - 敏感內容">
-                                            違反社群規範 - 敏感內容
-                                        </span>
-                                    </td>
-                                    <td>user321</td>
-                                    <td>2023-04-30 14:20:05</td>
-                                    <td><span class="badge bg-danger">已駁回</span></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary view-btn" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="1004">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success approve-btn" data-id="1004" disabled>
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger reject-btn" data-id="1004" disabled>
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input report-checkbox" type="checkbox" value="5">
-                                        </div>
-                                    </td>
-                                    <td>1005</td>
-                                    <td><span class="badge bg-info">留言</span></td>
-                                    <td>
-                                        <a href="#" class="text-truncate d-inline-block" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="這個留言包含垃圾內容，疑似廣告推銷...">
-                                            這個留言包含垃圾內容，疑似廣告推銷...
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="垃圾訊息/廣告">
-                                            垃圾訊息/廣告
-                                        </span>
-                                    </td>
-                                    <td>user654</td>
-                                    <td>2023-04-30 16:35:18</td>
-                                    <td><span class="badge bg-warning text-dark">待處理</span></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary view-btn" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="1005">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-success approve-btn" data-id="1005">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger reject-btn" data-id="1005">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- 分頁 -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center mt-4">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一頁</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">下一頁</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
+		<!-- Page Content -->
+		<div class="container-fluid">
+			<!-- 搜尋與篩選 -->
+			<div class="card mb-4">
+				<div class="card-body">
+					<form class="row g-3" th:action="@{/smg/admin-forum-reports}"
+						method="get">
+						<div class="col-md-3">
+							<label for="searchKeyword" class="form-label">關鍵字搜尋</label> <input
+								type="text" class="form-control" id="searchKeyword"
+								name="keyword" placeholder="標題或內容關鍵字"
+								th:value="${currentKeyword}">
+						</div>
+						<div class="col-md-2">
+							<label for="filterType" class="form-label">檢舉類型</label> <select
+								class="form-select" id="filterType" name="reportType">
+								<option value=""
+									th:selected="${currentReportType == null or currentReportType.isEmpty()}">全部</option>
+								<option value="post"
+									th:selected="${#strings.equals(currentReportType, 'post')}">貼文</option>
+								<option value="comment"
+									th:selected="${#strings.equals(currentReportType, 'comment')}">留言</option>
+								<option value="user"
+									th:selected="${#strings.equals(currentReportType, 'user')}">用戶</option>
+							</select>
+						</div>
+						<div class="col-md-2">
+							<label for="filterStatus" class="form-label">處理狀態</label> <select
+								class="form-select" id="filterStatus" name="status">
+								<option value="">全部</option>
+								<option value="0" th:selected="${currentStatus == 0}">待處理</option>
+								<option value="1" th:selected="${currentStatus == 1}">已解決</option>
+								<option value="2" th:selected="${currentStatus == 2}">已駁回</option>
+								<option value="3" th:selected="${currentStatus == 3}">處理中</option>
+							</select>
+						</div>
+						<div class="col-md-3">
+							<label for="filterDate" class="form-label">檢舉日期</label>
+							<div class="input-group">
+								<input type="date" class="form-control" id="filterDateStart"
+									name="startDate" th:value="${currentStartDate}"> <span
+									class="input-group-text">至</span> <input type="date"
+									class="form-control" id="filterDateEnd" name="endDate"
+									th:value="${currentEndDate}">
+							</div>
+						</div>
+						<div class="col-md-2 d-flex align-items-end">
+							<button type="submit" class="btn btn-primary w-100">搜尋</button>
+						</div>
+					</form>
+				</div>
+			</div>
 
-    <!-- 檢視檢舉詳情 Modal -->
-    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewModalLabel">檢舉詳情</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><strong>檢舉 ID:</strong> <span id="reportId">1001</span></p>
-                            <p><strong>檢舉類型:</strong> <span id="reportType">貼文</span></p>
-                            <p><strong>檢舉時間:</strong> <span id="reportTime">2023-05-01 10:30:25</span></p>
-                            <p><strong>檢舉者:</strong> <span id="reporter">user123</span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>狀態:</strong> <span id="reportStatus" class="badge bg-warning text-dark">待處理</span></p>
-                            <p><strong>處理人員:</strong> <span id="handler">-</span></p>
-                            <p><strong>處理時間:</strong> <span id="handleTime">-</span></p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>檢舉原因</h6>
-                        <div class="p-3 bg-light rounded" id="reportReason">
-                            包含侮辱性言論，對特定族群有歧視內容，違反社群規範。
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>被檢舉內容</h6>
-                        <div class="p-3 bg-light rounded" id="reportedContent">
-                            <p>這是一篇違反社群規範的貼文，內容包含不當言論..</p>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl nisl eget nisl.</p>
-                            <p>貼文中包含對特定族群的侮辱性言論，該內容已被標記為不當...</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>處理註記</h6>
-                        <textarea class="form-control" id="handleNote" rows="3" placeholder="請輸入處理說明..."></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>處理動作</h6>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="deleteContent">
-                            <label class="form-check-label" for="deleteContent">刪除內容</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="warnUser">
-                            <label class="form-check-label" for="warnUser">警告用戶</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="restrictUser">
-                            <label class="form-check-label" for="restrictUser">限制用戶權限</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="banUser">
-                            <label class="form-check-label" for="banUser">封鎖用戶</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                    <button type="button" class="btn btn-danger" id="modalRejectBtn">駁回檢舉</button>
-                    <button type="button" class="btn btn-success" id="modalApproveBtn">通過檢舉</button>
-                </div>
-            </div>
-        </div>
-    </div>
+			<!-- 檢舉列表 -->
+			<div class="card mb-4">
+				<div
+					class="card-header py-3 d-flex justify-content-between align-items-center">
+					<h6 class="m-0 font-weight-bold">檢舉列表</h6>
+					<div>
+						<button class="btn btn-sm btn-outline-success me-2"
+							id="batchApproveBtn">
+							<i class="fas fa-check"></i> 批量通過
+						</button>
+						<button class="btn btn-sm btn-outline-danger" id="batchRejectBtn">
+							<i class="fas fa-times"></i> 批量駁回
+						</button>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-bordered" width="100%" cellspacing="0">
+							<thead>
+								<tr>
+									<th width="30px">
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox"
+												id="selectAll">
+										</div>
+									</th>
+									<th>ID</th>
+									<th>檢舉類型</th>
+									<th>被檢舉內容</th>
+									<th>檢舉原因</th>
+									<th>檢舉者</th>
+									<th>檢舉時間</th>
+									<th>狀態</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody th:if="${reportPage.hasContent()}">
+								<tr th:each="report : ${reportPage.content}">
+									<td>
+										<div class="form-check">
+											<input class="form-check-input report-checkbox"
+												type="checkbox" th:data-report-id="${report.repPostId}"
+												th:data-report-type="${report.post != null ? 'post' : 'comment'}"
+												th:data-content-id="${report.post?.postId ?: report.comment?.mesId}">
+										</div>
+									</td>
+									<td th:text="${report.repPostId}">1001</td>
+									<td><span th:if="${report.post != null}"
+										class="badge bg-primary">貼文</span> <span
+										th:if="${report.comment != null}" class="badge bg-info">留言</span>
+									</td>
+									<td><a href="#" class="text-truncate d-inline-block"
+										style="max-width: 200px;" data-bs-toggle="tooltip"
+										data-bs-placement="top"
+										th:title="${report.post?.postContent ?: report.comment?.mesContent ?: '內容不存在'}"
+										th:text="${#strings.abbreviate(report.post?.postContent ?: report.comment?.mesContent ?: '內容不存在', 50)}">
+											被檢舉的內容... </a></td>
+									<td><span class="text-truncate d-inline-block"
+										style="max-width: 150px;" data-bs-toggle="tooltip"
+										data-bs-placement="top"
+										th:title="${report.repPostReason ?: '無'}"
+										th:text="${report.repPostReason ?: '無'}"> 檢舉原因... </span></td>
+									<td th:text="${report.member?.memName ?: '未知用戶'}">user123</td>
+									<td
+										th:text="${report.repPostDate != null ? #dates.format(report.repPostDate, 'yyyy-MM-dd HH:mm:ss') : 'N/A'}">2023-05-01
+										10:30:25</td>
+									<td><span th:switch="${report.repPostStatus}"> <span
+											th:case="0" class="badge bg-warning text-dark">待處理</span> <span
+											th:case="1" class="badge bg-success">已解決</span> <span
+											th:case="2" class="badge bg-danger">已駁回</span> <span
+											th:case="3" class="badge bg-info">處理中</span> <span
+											th:case="*" class="badge bg-secondary">未知</span>
+									</span></td>
+									<td>
+										<button type="button"
+											class="btn btn-sm btn-outline-primary view-btn"
+											data-bs-toggle="modal" data-bs-target="#viewModal"
+											th:data-id="${report.repPostId}"
+											th:data-type-text="${report.post != null ? '貼文' : '留言'}"
+											th:data-content="${report.post?.postContent ?: report.comment?.mesContent ?: '內容不存在'}"
+											th:data-reason="${report.repPostReason ?: '無'}"
+											th:data-reporter="${report.member?.memName ?: '未知用戶'}"
+											th:data-report-time="${report.repPostDate != null ? #dates.format(report.repPostDate, 'yyyy-MM-dd HH:mm:ss') : 'N/A'}"
+											th:data-status-text="${report.repPostStatus == 0 ? '待處理' : (report.repPostStatus == 1 ? '已解決' : (report.repPostStatus == 2 ? '已駁回' : (report.repPostStatus == 3 ? '處理中' : '未知')))}"
+											th:data-handler-name="${report.handlerName ?: '-'}"
+											th:data-handle-time="${report.handleDate != null ? #dates.format(report.handleDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">
+											<i class="fas fa-eye"></i>
+										</button>
+										<button type="button"
+											class="btn btn-sm btn-outline-success approve-btn"
+											th:data-report-id="${report.repPostId}"
+											th:data-report-type="${report.post != null ? 'post' : 'comment'}"
+											th:data-content-id="${report.post?.postId ?: report.comment?.mesId}"
+											th:disabled="${report.repPostStatus == 1 or report.repPostStatus == 2}">
+											<i class="fas fa-check"></i>
+										</button>
+										<button type="button"
+											class="btn btn-sm btn-outline-danger reject-btn"
+											th:data-report-id="${report.repPostId}"
+											th:data-report-type="${report.post != null ? 'post' : 'comment'}"
+											th:data-content-id="${report.post?.postId ?: report.comment?.mesId}"
+											th:disabled="${report.repPostStatus == 1 or report.repPostStatus == 2}">
+											<i class="fas fa-times"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+							<tbody th:if="${!reportPage.hasContent()}">
+								<tr>
+									<td colspan="9" class="text-center p-4">目前沒有任何檢舉資料</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- 自定義JavaScript -->
-    <script th:src="@{/js/admin/admin-script.js}"></script>
-    
-    <!-- 頁面特定 JavaScript -->
-    <script>
+					<!-- 分頁 -->
+					<nav aria-label="Page navigation"
+						th:if="${reportPage.totalPages > 1}">
+						<ul class="pagination justify-content-center mt-4">
+							<!-- 上一頁 -->
+							<li class="page-item"
+								th:classappend="${reportPage.first} ? 'disabled'"><a
+								class="page-link"
+								th:href="@{/smg/admin-forum-reports(page=${reportPage.number - 1}, size=${reportPage.size}, status=${currentStatus}, postId=${currentPostId}, keyword=${currentKeyword})}">上一頁</a>
+							</li>
+							<!-- 頁碼 -->
+							<li class="page-item"
+								th:each="i : ${#numbers.sequence(0, reportPage.totalPages - 1)}"
+								th:classappend="${i == reportPage.number} ? 'active'"><a
+								class="page-link"
+								th:href="@{/smg/admin-forum-reports(page=${i}, size=${reportPage.size}, status=${currentStatus}, postId=${currentPostId}, keyword=${currentKeyword})}"
+								th:text="${i + 1}"></a></li>
+
+							<!-- 下一頁 -->
+							<li class="page-item"
+								th:classappend="${reportPage.last} ? 'disabled'"><a
+								class="page-link"
+								th:href="@{/smg/admin-forum-reports(page=${reportPage.number + 1}, size=${reportPage.size}, status=${currentStatus}, postId=${currentPostId}, keyword=${currentKeyword})}">下一頁</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 檢視檢舉詳情 Modal -->
+	<div class="modal fade" id="viewModal" tabindex="-1"
+		aria-labelledby="viewModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="viewModalLabel">檢舉詳情</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<p>
+								<strong>檢舉 ID:</strong> <span id="reportId">1001</span>
+							</p>
+							<p>
+								<strong>檢舉類型:</strong> <span id="reportType">貼文</span>
+							</p>
+							<p>
+								<strong>檢舉時間:</strong> <span id="reportTime">2023-05-01
+									10:30:25</span>
+							</p>
+							<p>
+								<strong>檢舉者:</strong> <span id="reporter">user123</span>
+							</p>
+						</div>
+						<div class="col-md-6">
+							<p>
+								<strong>狀態:</strong> <span id="reportStatus"
+									class="badge bg-warning text-dark">待處理</span>
+							</p>
+							<p>
+								<strong>處理人員:</strong> <span id="handler">-</span>
+							</p>
+							<p>
+								<strong>處理時間:</strong> <span id="handleTime">-</span>
+							</p>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<h6>檢舉原因</h6>
+						<div class="p-3 bg-light rounded" id="reportReason">
+							包含侮辱性言論，對特定族群有歧視內容，違反社群規範。</div>
+					</div>
+
+					<div class="mb-3">
+						<h6>被檢舉內容</h6>
+						<div class="p-3 bg-light rounded" id="reportedContent">
+							<p>這是一篇違反社群規範的貼文，內容包含不當言論..</p>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+								Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam
+								nisl, eget aliquam nisl nisl eget nisl. Nullam auctor, nisl eget
+								ultricies tincidunt, nisl nisl aliquam nisl, eget aliquam nisl
+								nisl eget nisl.</p>
+							<p>貼文中包含對特定族群的侮辱性言論，該內容已被標記為不當...</p>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<h6>處理註記</h6>
+						<textarea class="form-control" id="handleNote" rows="3"
+							placeholder="請輸入處理說明..."></textarea>
+					</div>
+
+					<div class="mb-3">
+						<h6>處理動作</h6>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox"
+								id="deleteContent"> <label class="form-check-label"
+								for="deleteContent">刪除內容</label>
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox" id="warnUser">
+							<label class="form-check-label" for="warnUser">警告用戶</label>
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox" id="restrictUser">
+							<label class="form-check-label" for="restrictUser">限制用戶權限</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="banUser">
+							<label class="form-check-label" for="banUser">封鎖用戶</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">關閉</button>
+					<button type="button" class="btn btn-danger" id="modalRejectBtn">駁回檢舉</button>
+					<button type="button" class="btn btn-success" id="modalApproveBtn">通過檢舉</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- 自定義JavaScript -->
+	<script th:src="@{/js/admin/admin-script.js}"></script>
+
+	<!-- 頁面特定 JavaScript -->
+	<script>
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化tooltip
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -558,57 +487,60 @@
                 });
             });
             
-            // 檢視按鈕點擊事件
-            const viewButtons = document.querySelectorAll('.view-btn');
-            viewButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const reportId = this.getAttribute('data-id');
-                    // 這裡可以根據 reportId 從後端獲取檢舉詳情
-                    // 現在使用靜態資料示範
-                    document.getElementById('reportId').textContent = reportId;
-                    
-                    // 從表格行中獲取資料填入Modal
-                    const row = this.closest('tr');
-                    const type = row.cells[2].textContent;
-                    const content = row.cells[3].querySelector('a').getAttribute('title');
-                    const reason = row.cells[4].querySelector('span').getAttribute('title');
-                    const reporter = row.cells[5].textContent;
-                    const time = row.cells[6].textContent;
-                    const status = row.cells[7].textContent;
-                    
-                    document.getElementById('reportType').textContent = type;
-                    document.getElementById('reportTime').textContent = time;
-                    document.getElementById('reporter').textContent = reporter;
-                    
-                    // 設置狀態樣式
-                    const reportStatus = document.getElementById('reportStatus');
-                    reportStatus.textContent = status;
-                    reportStatus.className = 'badge';
-                    if (status.includes('待處理')) {
-                        reportStatus.classList.add('bg-warning', 'text-dark');
-                    } else if (status.includes('處理中')) {
-                        reportStatus.classList.add('bg-info');
-                    } else if (status.includes('已解決')) {
-                        reportStatus.classList.add('bg-success');
-                    } else if (status.includes('已駁回')) {
-                        reportStatus.classList.add('bg-danger');
-                    }
-                    
-                    // 填入檢舉原因和被檢舉內容
-                    document.getElementById('reportReason').textContent = reason;
-                    document.getElementById('reportedContent').innerHTML = `<p>${content}</p>`;
-                    
-                    // 根據狀態設置按鈕可用性
-                    const modalApproveBtn = document.getElementById('modalApproveBtn');
-                    const modalRejectBtn = document.getElementById('modalRejectBtn');
-                    if (status.includes('已解決') || status.includes('已駁回')) {
-                        modalApproveBtn.disabled = true;
-                        modalRejectBtn.disabled = true;
-                    } else {
-                        modalApproveBtn.disabled = false;
-                        modalRejectBtn.disabled = false;
-                    }
-                });
+            // 檢視按鈕點擊事件 (使用事件委派，更高效)
+            const viewModal = document.getElementById('viewModal');
+            viewModal.addEventListener('show.bs.modal', function (event) {
+                // 獲取觸發 modal 的按鈕
+                const button = event.relatedTarget;
+
+                // 從按鈕的 data-* 屬性中提取資訊
+                const reportId = button.dataset.id;
+                const typeText = button.dataset.typeText;
+                const content = button.dataset.content;
+                const reason = button.dataset.reason;
+                const reporter = button.dataset.reporter;
+                const reportTime = button.dataset.reportTime;
+                const statusText = button.dataset.statusText;
+                const handlerName = button.dataset.handlerName;
+                const handleTime = button.dataset.handleTime;
+
+                // 更新 Modal 內容
+                this.querySelector('#reportId').textContent = reportId;
+                this.querySelector('#reportType').textContent = typeText;
+                this.querySelector('#reportTime').textContent = reportTime;
+                this.querySelector('#reporter').textContent = reporter;
+                this.querySelector('#handler').textContent = handlerName;
+                this.querySelector('#handleTime').textContent = handleTime;
+                this.querySelector('#reportReason').textContent = reason;
+                this.querySelector('#reportedContent').innerHTML = `<p>${content.replace(/\n/g, '<br>')}</p>`; // 處理換行
+
+                // 更新狀態標籤
+                const reportStatusEl = this.querySelector('#reportStatus');
+                reportStatusEl.textContent = statusText;
+                reportStatusEl.className = 'badge'; // 重置 class
+                if (statusText.includes('待處理')) {
+                    reportStatusEl.classList.add('bg-warning', 'text-dark');
+                } else if (statusText.includes('處理中')) {
+                    reportStatusEl.classList.add('bg-info');
+                } else if (statusText.includes('已解決')) {
+                    reportStatusEl.classList.add('bg-success');
+                } else if (statusText.includes('已駁回')) {
+                    reportStatusEl.classList.add('bg-danger');
+                } else {
+                    reportStatusEl.classList.add('bg-secondary');
+                }
+
+                // 根據狀態設置按鈕可用性
+                const modalApproveBtn = this.querySelector('#modalApproveBtn');
+                const modalRejectBtn = this.querySelector('#modalRejectBtn');
+                const isHandled = statusText.includes('已解決') || statusText.includes('已駁回');
+                
+                modalApproveBtn.disabled = isHandled;
+                modalRejectBtn.disabled = isHandled;
+                
+                // 清空之前的處理註記和選項
+                this.querySelector('#handleNote').value = '';
+                this.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             });
             
             // 通過檢舉按鈕點擊事件
@@ -680,45 +612,156 @@
             });
             
             // 表格中通過按鈕點擊事件
-            const approveButtons = document.querySelectorAll('.approve-btn');
-            approveButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const reportId = this.getAttribute('data-id');
-                    if (confirm(`確定要通過檢舉 ${reportId}？`)) {
-                        // 這裡可以發送請求到後端
-                        // 現在使用模擬示範
-                        alert(`檢舉 ${reportId} 已成功通過`);
-                        
-                        // 更新表格中狀態
-                        const row = this.closest('tr');
-                        row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
-                        this.disabled = true;
-                        row.querySelector('.reject-btn').disabled = true;
+           document.querySelectorAll('.approve-btn').forEach(button => {
+    button.addEventListener('click', async function() {
+        const reportId = this.dataset.reportId;
+        const reportType = this.dataset.reportType;
+        const contentId = this.dataset.contentId;
+
+        const actionText = reportType === 'post' 
+            ? "確定下架此貼文並標記檢舉為「已處理」？" 
+            : "確定刪除此留言並標記檢舉為「已處理」？";
+
+        if (confirm(actionText)) {
+        	 const rejectBtn = this.closest('tr').querySelector('.reject-btn');
+        	 const reportId = this.dataset.reportId;
+		        const reportType = this.dataset.reportType;
+		        const contentId = this.dataset.contentId;
+            try {
+                // 显示加载状态
+                this.disabled = true;
+                if (rejectBtn) rejectBtn.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+             // --- CSRF Token Handling ---
+                // 方案A: 嘗試從 meta 標籤獲取
+                let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+
+                // 方案B: 如果 meta 標籤沒有，嘗試從 cookie 獲取 (另一種常見的 Spring Security 配置)
+                if (!token || !header) {
+                    const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                    if (match) {
+                        token = match[2];
+                        header = 'X-XSRF-TOKEN'; // Cookie 模式的標準 Header 名稱
                     }
+                }
+
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+             // 如果成功獲取到 token，就將其加入到請求標頭
+                if (token && header) {
+                    headers[header] = token;
+                } else {
+                    console.warn("CSRF Token not found. The request might be rejected by the server.");
+                }
+
+                // 回歸標準的 JSON 請求，並帶上 CSRF token
+                const response = await fetch('/smg/reports/resolve', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        repPostId: reportId,
+                        reportType: reportType,
+                        contentId: contentId
+                    })
                 });
-            });
+
+
+                if (!response.ok) {
+                	const errorText = await response.text(); // 嘗試讀取錯誤的回應內容
+                    console.error("伺服器錯誤回應:", errorText);
+                    throw new Error(`HTTP錯誤! 狀態碼: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const row = this.closest('tr');
+                    row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
+                    this.innerHTML = '<i class="fas fa-times"></i>';
+                    this.disabled = true; // 操作成功後保持禁用
+                    if (rejectBtn) rejectBtn.disabled = true;
+                    alert("操作成功！");
+                } else {
+                	throw new Error(result.message || "後端請求失敗");
+                }
+            } catch (error) {
+                console.error("處理失敗:", error);
+                alert("操作失敗: " + error.message);
+                // 重置按钮状态
+                this.disabled = false;
+                if (rejectBtn) rejectBtn.disabled = false;
+                this.innerHTML = originalIcon;
+            }
+        }
+    });
+});
             
             // 表格中的駁回按鈕點擊事件
-            const rejectButtons = document.querySelectorAll('.reject-btn');
-            rejectButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const reportId = this.getAttribute('data-id');
-                    if (confirm(`確定要駁回檢舉 ${reportId}？`)) {
-                        // 這裡可以發送駁回請求到後端
-                        // 現在使用模擬示例
-                        alert(`檢舉 ${reportId} 已駁回`);
-                        
-                        // 更新表格中的狀態
-                        const row = this.closest('tr');
-                        row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
-                        this.disabled = true;
-                        row.querySelector('.approve-btn').disabled = true;
-                    }
-                });
+            document.querySelectorAll('.reject-btn').forEach(button => {
+			    button.addEventListener('click', async function() {
+			        const reportId = this.dataset.reportId;
+			        const reportType = this.dataset.reportType;
+			        
+			        if (confirm(`確定要駁回檢舉 #${reportId}？此操作將標記檢舉為「已駁回」。`)) {
+			            const approveBtn = this.closest('tr').querySelector('.approve-btn');
+			            const originalText = this.innerHTML;
+			            try {
+			                this.disabled = true;
+			                if (approveBtn) approveBtn.disabled = true;
+			                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+			
+			                // CSRF Token Handling
+			                let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+			                let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+			                if (!token || !header) {
+			                    const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+			                    if (match) {
+			                        token = match[2];
+			                        header = 'X-XSRF-TOKEN';
+			                    }
+			                }
+			                const headers = { 'Content-Type': 'application/json' };
+			                if (token && header) headers[header] = token;
+			
+			                const response = await fetch('/smg/reports/reject', {
+			                    method: 'POST',
+			                    headers: headers,
+			                    body: JSON.stringify({ repPostId: reportId, reportType: reportType }) // 將類型一起傳送
+			                });
+			
+			                if (!response.ok) {
+			                    const errorText = await response.text();
+			                    console.error("伺服器錯誤回應:", errorText);
+			                    throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+			                }
+			                const result = await response.json();
+			
+			                if (result.success) {
+			                    alert(result.message || "操作成功！");
+			                    const row = this.closest('tr');
+			                    row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
+			                    this.innerHTML = '<i class="fas fa-check"></i>';
+			                    this.disabled = true;
+			                    if (approveBtn) approveBtn.disabled = true;
+			                } else {
+			                    throw new Error(result.message || "後端請求失敗");
+			                }
+			            } catch (error) {
+			                console.error("駁回失敗:", error);
+			                alert("操作失敗: " + error.message);
+			                this.disabled = false;
+			                if (approveBtn) approveBtn.disabled = false;
+			                this.innerHTML = originalText;
+			            }
+			        }
+			    });
             });
             
             // 批量通過按鈕點擊事件
-            document.getElementById('batchApproveBtn').addEventListener('click', function() {
+             document.getElementById('batchApproveBtn').addEventListener('click', async function() {
                 const selectedCheckboxes = document.querySelectorAll('.report-checkbox:checked');
                 if (selectedCheckboxes.length === 0) {
                     alert('請至少選擇一個檢舉項目');
@@ -726,22 +769,66 @@
                 }
                 
                 if (confirm(`確定要批量通過 ${selectedCheckboxes.length} 個檢舉項目？`)) {
-                    // 這裡可以發送批量通過請求到後端
-                    // 現在使用模擬示例
-                    alert(`已成功通過 ${selectedCheckboxes.length} 個檢舉項目`);
-                    
-                    // 更新表格中的狀態
-                    selectedCheckboxes.forEach(checkbox => {
-                        const row = checkbox.closest('tr');
-                        row.cells[7].innerHTML = '<span class="badge bg-success">已通過</span>';
-                        row.querySelector('.approve-btn').disabled = true;
-                        row.querySelector('.reject-btn').disabled = true;
-                    });
+                	 const reports = Array.from(selectedCheckboxes).map(cb => ({
+                         repPostId: cb.dataset.reportId,
+                         reportType: cb.dataset.reportType,
+                         contentId: cb.dataset.contentId
+                     }));
+
+                     const batchBtn = this;
+                     const originalHtml = batchBtn.innerHTML;
+                     try {
+                         batchBtn.disabled = true;
+                         batchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 處理中...';
+
+                         let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                         let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                         if (!token || !header) {
+                             const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                             if (match) {
+                                 token = match[2];
+                                 header = 'X-XSRF-TOKEN';
+                             }
+                         }
+                         const headers = { 'Content-Type': 'application/json' };
+                         if (token && header) headers[header] = token;
+
+                         const response = await fetch('/smg/reports/batch-resolve', {
+                             method: 'POST',
+                             headers: headers,
+                             body: JSON.stringify({
+			                        repPostId: reportId,
+			                        reportType: reportType,
+			                        contentId: contentId
+			                    })
+                         });
+
+                         const result = await response.json();
+                         if (!response.ok) throw new Error(result.message || `HTTP 錯誤! 狀態碼: ${response.status}`);
+
+                         if (result.success) {
+                             alert(result.message);
+                             selectedCheckboxes.forEach(checkbox => {
+                                 const row = checkbox.closest('tr');
+                                 row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
+                                 row.querySelector('.approve-btn')?.setAttribute('disabled', 'true');
+                                 row.querySelector('.reject-btn')?.setAttribute('disabled', 'true');
+                             });
+                         } else {
+                             throw new Error(result.message || "後端請求失敗");
+                         }
+                     } catch (error) {
+                         console.error("批量處理失敗:", error);
+                         alert("操作失敗: " + error.message);
+                     } finally {
+                         batchBtn.disabled = false;
+                         batchBtn.innerHTML = originalHtml;
+                     }
                 }
             });
             
             // 批量駁回按鈕點擊事件
-            document.getElementById('batchRejectBtn').addEventListener('click', function() {
+            document.getElementById('batchRejectBtn').addEventListener('click', async function() {
                 const selectedCheckboxes = document.querySelectorAll('.report-checkbox:checked');
                 if (selectedCheckboxes.length === 0) {
                     alert('請至少選擇一個檢舉項目');
@@ -749,17 +836,57 @@
                 }
                 
                 if (confirm(`確定要批量駁回 ${selectedCheckboxes.length} 個檢舉項目？`)) {
-                    // 這裡可以發送批量駁回請求到後端
-                    // 現在使用模擬示例
-                    alert(`已成功駁回 ${selectedCheckboxes.length} 個檢舉項目`);
-                    
-                    // 更新表格中的狀態
-                    selectedCheckboxes.forEach(checkbox => {
-                        const row = checkbox.closest('tr');
-                        row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
-                        row.querySelector('.approve-btn').disabled = true;
-                        row.querySelector('.reject-btn').disabled = true;
-                    });
+                	const reportsToReject = Array.from(selectedCheckboxes).map(cb => ({
+                        repPostId: cb.dataset.reportId,
+                        reportType: cb.dataset.reportType
+                    }));
+
+                    const batchBtn = this;
+                    const originalHtml = batchBtn.innerHTML;
+                    try {
+                        batchBtn.disabled = true;
+                        batchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 處理中...';
+
+                        // CSRF Token Handling
+                        let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                        let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                        if (!token || !header) {
+                            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                            if (match) {
+                                token = match[2];
+                                header = 'X-XSRF-TOKEN';
+                            }
+                        }
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (token && header) headers[header] = token;
+
+                        const response = await fetch('/smg/reports/batch-reject', {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify({ reports: reportsToReject })
+                        });
+
+                        const result = await response.json();
+                        if (!response.ok) throw new Error(result.message || `HTTP 錯誤! 狀態碼: ${response.status}`);
+
+                        if (result.success) {
+                            alert(result.message);
+                            selectedCheckboxes.forEach(checkbox => {
+                                const row = checkbox.closest('tr');
+                                row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
+                                row.querySelector('.approve-btn')?.setAttribute('disabled', 'true');
+                                row.querySelector('.reject-btn')?.setAttribute('disabled', 'true');
+                            });
+                        } else {
+                            throw new Error(result.message || "後端請求失敗");
+                        }
+                    } catch (error) {
+                        console.error("批量駁回失敗:", error);
+                        alert("操作失敗: " + error.message);
+                    } finally {
+                        batchBtn.disabled = false;
+                        batchBtn.innerHTML = originalHtml;
+                    }
                 }
             });
         });
