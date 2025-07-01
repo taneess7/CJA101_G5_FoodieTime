@@ -42,7 +42,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" th:href="@{/smg/admin-users-permissions}">
+                <a class="nav-link" th:href="@{/smg/admin-users-permissions}">
                     <i class="fas fa-user-shield"></i>
                     <span>管理員權限管理</span>
                 </a>
@@ -88,7 +88,9 @@
             
             <li class="nav-item section-title">會員管理</li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-members-search}">
+                <a class="nav-link" 
+                th:href="@{/smg/admin-members-search}"
+                th:classappend="${currentPath == '/smg/admin-members-search'} ? 'active'">>
                     <i class="fas fa-users"></i>
                     <span>會員查詢與篩選</span>
                 </a>
@@ -366,19 +368,22 @@
                                 </div>
                                 
                                 <!-- Pagination -->
-                                <nav aria-label="會員列表分頁">
-                                    <ul class="pagination mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#">上一頁</a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">下一頁</a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                <nav th:if="${totalPages > 1}">
+								    <ul class="pagination justify-content-center">
+								        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+								            <a class="page-link" th:href="@{/smg/admin-members-search(page=${currentPage - 1}, keyword=${keyword}, ...)}">上一頁</a>
+								        </li>
+								        <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+								            th:classappend="${i == currentPage} ? 'active'">
+								            <a class="page-link" th:href="@{/smg/admin-members-search(page=${i}, keyword=${keyword}, ...)}"
+								               th:text="${i}">1</a>
+								        </li>
+								        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+								            <a class="page-link" th:href="@{/smg/admin-members-search(page=${currentPage + 1}, keyword=${keyword}, ...)}">下一頁</a>
+								        </li>
+								    </ul>
+								</nav>
+
                             </div>
                         </div>
                     </div>
