@@ -39,4 +39,12 @@ public interface ReportPostRepository extends JpaRepository<ReportPostVO, Intege
 	@Query("UPDATE ReportPostVO r SET r.repPostStatus = :newStatus WHERE r.repPostId IN :repPostIds")
 	int batchUpdateStatus(@Param("repPostIds") List<Integer> repPostIds, @Param("newStatus") byte newStatus);
 
+	/**
+	 * 計算指定會員的貼文被檢舉次數（只計算已處理的檢舉，狀態為1或2）
+	 * @param memberId 會員ID
+	 * @param statuses 檢舉狀態列表
+	 * @return 被檢舉次數
+	 */
+	long countByPost_Member_MemIdAndRepPostStatusIn(Integer memberId, List<Byte> statuses);
+
 }

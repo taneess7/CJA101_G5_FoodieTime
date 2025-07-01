@@ -32,18 +32,20 @@ import com.foodietime.member.model.MemService;
 	
 	    @GetMapping
 	    public String showMemberPermissions(
-	    		@RequestParam(value = "keyword", required = false) String keyword,
-	    	    @RequestParam(value = "status", required = false) String status,
-	    	    @RequestParam(value = "lastModified", required = false) String lastModified,
-	    		Model model) {
-	        List<MemberVO> members = memService.getAll();
-	        
-	     // 加篩選條件
-	        members = members.stream()
+	            @RequestParam(value = "keyword", required = false) String keyword,
+	            @RequestParam(value = "status", required = false) String status,
+	            @RequestParam(value = "lastModified", required = false) String lastModified,
+	            @RequestParam(value = "page", defaultValue = "1") int page,
+	            Model model) {
+
+	        int pageSize = 10;
+	        List<MemberVO> allMembers = memService.getAll();
+
+	        // 篩選條件
+	        List<MemberVO> filtered = allMembers.stream()
 	            .filter(member -> {
 	                boolean match = true;
 
-	                // 關鍵字
 	                if (keyword != null && !keyword.isBlank()) {
 	                    match = match && (
 	                        member.getMemName().contains(keyword) ||
@@ -51,46 +53,40 @@ import com.foodietime.member.model.MemService;
 	                    );
 	                }
 
-	                // 狀態
 	                if (status != null && !status.isBlank()) {
 	                    int targetStatus = status.equals("active") ? 1 : 0;
 	                    match = match && (member.getMemStatus().ordinal() == targetStatus);
 	                }
 
-	                // Last Modified（範例是用 DTO 假的日期：LocalDate.now()）
-	                // 👉 如果你以後有實際欄位，換成 member.getLastModifiedDate()
 	                if (lastModified != null && !lastModified.isBlank()) {
 	                    LocalDate now = LocalDate.now();
 	                    LocalDate compareDate = null;
 
 	                    switch (lastModified) {
-	                        case "today":
-	                            compareDate = now;
-	                            break;
-	                        case "week":
-	                            compareDate = now.minusDays(7);
-	                            break;
-	                        case "month":
-	                            compareDate = now.minusMonths(1);
-	                            break;
-	                        case "quarter":
-	                            compareDate = now.minusMonths(3);
-	                            break;
+	                        case "today" -> compareDate = now;
+	                        case "week" -> compareDate = now.minusDays(7);
+	                        case "month" -> compareDate = now.minusMonths(1);
+	                        case "quarter" -> compareDate = now.minusMonths(3);
 	                    }
 
-	                    // 因為目前 DTO 假資料 = today，全部顯示
-	                    // 你之後有「member.getLastModifiedDate()」就可以這樣比：
-	                    // LocalDate memberDate = member.getLastModifiedDate();
-	                    LocalDate memberDate = now; // demo 寫死 today
-
+	                    LocalDate memberDate = now; // 未來你可替換成 member.getLastModifiedDate()
 	                    match = match && (memberDate.isAfter(compareDate) || memberDate.isEqual(compareDate));
 	                }
 
 	                return match;
 	            })
 	            .collect(Collectors.toList());
-	
-	        List<MemberDTO> dtoList = members.stream().map(member -> {
+
+	        // 分頁
+	        int totalItems = filtered.size();
+	        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+	        page = Math.max(1, Math.min(page, totalPages)); // 防止頁碼越界
+	        int start = (page - 1) * pageSize;
+	        int end = Math.min(start + pageSize, totalItems);
+
+	        List<MemberVO> pageData = filtered.subList(start, end);
+
+	        List<MemberDTO> dtoList = pageData.stream().map(member -> {
 	            MemberDTO dto = new MemberDTO();
 	            dto.setMemId(member.getMemId());
 	            dto.setMemName(member.getMemName());
@@ -101,29 +97,38 @@ import com.foodietime.member.model.MemService;
 	            dto.setMemNoPost(member.getMemNoPost().ordinal());
 	            dto.setMemNoGroup(member.getMemNoGroup().ordinal());
 	            dto.setMemNoJoinGroup(member.getMemNoJoingroup().ordinal());
-	
+
 	            if (member.getMemTime() != null) {
 	                dto.setMemTime(member.getMemTime().toLocalDateTime().toLocalDate().toString());
 	            }
-	
+
 	            if (member.getMemAvatar() != null && member.getMemAvatar().length > 0) {
 	                String base64 = java.util.Base64.getEncoder().encodeToString(member.getMemAvatar());
 	                dto.setAvatarBase64(base64);
 	            } else {
-	                dto.setAvatarBase64(""); // 不要 null，給 "" 比較保險
+	                dto.setAvatarBase64("");
 	            }
-	
-	            // 最後修改 — 假資料
+
 	            dto.setLastModifiedDate(LocalDate.now().toString());
 	            dto.setLastModifiedBy("系統管理員");
-	
+
 	            return dto;
 	        }).collect(Collectors.toList());
-	        
-	        model.addAttribute("dbVersion", "20250629");  //更改DB時更改版本時間以清除localstorage
+
+	        model.addAttribute("dbVersion", "20250629");
 	        model.addAttribute("members", dtoList);
+	        model.addAttribute("currentPage", page);
+	        model.addAttribute("totalPages", totalPages);
+	        model.addAttribute("param", Map.of(
+	                "keyword", keyword == null ? "" : keyword,
+	                "status", status == null ? "" : status,
+	                "lastModified", lastModified == null ? "" : lastModified
+	        ));
+	        model.addAttribute("currentPath", "/smg/admin-members-permissions");
+
 	        return "admin/smg/admin-members-permissions";
 	    }
+
 	
 	    // 提交表單更新
 	    @PostMapping("/update-status")

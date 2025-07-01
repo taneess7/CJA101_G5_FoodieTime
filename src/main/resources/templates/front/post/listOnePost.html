@@ -72,17 +72,17 @@
 							</span>
 						</div>
 					</div>
-
+	
 					<div class="post-content">
 						<p th:text="${postVO.postContent}">貼文內容</p>
 					</div>
-
+	
 					<div class="post-actions">
 						<a th:href="@{/post/update(postId=${postVO.postId})}"
 							class="btn btn-primary"
 							th:if="${loginMember != null and postVO.member.memId == loginMember.memId}">
 							修改貼文 </a>
-
+	
 						<form
 							th:if="${loginMember != null and postVO.member.memId == loginMember.memId}"
 							th:action="@{/post/delete}" method="post"
@@ -91,24 +91,67 @@
 							<button type="submit" class="btn btn-danger"
 								onclick="return confirm('確定要刪除這篇貼文嗎？');">刪除貼文</button>
 						</form>
-
+	
 						<button
 							th:if="${loginMember == null or postVO.member.memId != loginMember.memId}"
 							class="btn btn-danger" disabled>僅限本人可刪除</button>
-
+	
 						<button class="btn btn-danger" th:if="${loginMember != null}"
 							onclick="openReportModal()" type="button">檢舉貼文</button>
 					</div>
-				</div>
 
+					<div class="post-interactions">
+						<div class="interaction-stats">
+							<div class="interaction-counts">
+								<span>👍 <span th:text="${postVO.likeCount}">0</span> 個讚
+								</span> <span>💬 <span th:text="${#lists.size(messageList)}">0</span>
+									則留言
+								</span> <span>👁️ <span th:text="${postVO.Views}">0</span> 次瀏覽
+								</span>
+							</div>
+							<div class="interaction-buttons-group">
+								<form th:action="@{/post/unlike}" method="post"
+									style="display: inline;" th:if="${liked}">
+									<input type="hidden" name="postId" th:value="${postVO.postId}" />
+									<button class="interaction-btn active" type="submit">
+										<i class="material-icons-outlined" style="color: #1976d2;">thumb_up</i>
+										<span>已讚</span>
+									</button>
+								</form>
+								<form th:action="@{/post/like}" method="post"
+									style="display: inline;" th:unless="${liked}">
+									<input type="hidden" name="postId" th:value="${postVO.postId}" />
+									<button class="interaction-btn" type="submit">
+										<i class="material-icons-outlined">thumb_up_off_alt</i> <span>讚</span>
+									</button>
+								</form>
+	
+								<form th:action="@{/FavoritePost/delete}" method="post"
+									style="display: inline;" th:if="${bookmarked}">
+									<input type="hidden" name="postId" th:value="${postVO.postId}" />
+									<button class="interaction-btn active" type="submit">
+										<i class="material-icons-outlined" style="color: #f59e42;">bookmark</i>
+										<span>已收藏</span>
+									</button>
+								</form>
+								<form th:action="@{/FavoritePost/insert}" method="post"
+									style="display: inline;" th:unless="${bookmarked}">
+									<input type="hidden" name="postId" th:value="${postVO.postId}" />
+									<button class="interaction-btn" type="submit">
+										<i class="material-icons-outlined">bookmark_border</i> <span>收藏</span>
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				
 				<div th:if="${session.reportSuccess}" class="alert alert-success">
 					<span th:text="${session.reportSuccess}"></span>
 				</div>
 			</div>
-			<div id="reportModal"
-				style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
-				<div
-					style="background: #fff; max-width: 500px; margin: 15vh auto; padding: 24px; border-radius: 8px; position: relative;">
+			<div id="reportModal">
+				<div class="modal-content">
 					<h3 class="text-lg font-bold mb-2">檢舉貼文</h3>
 					<form th:action="@{/reportpost/insert}" method="post">
 						<input type="hidden" name="post.postId"
@@ -133,51 +176,7 @@
 				</div>
 			</div>
 
-			<div class="post-interactions">
-				<div class="interaction-stats">
-					<div class="interaction-counts">
-						<span>👍 <span th:text="${postVO.likeCount}">0</span> 個讚
-						</span> <span>💬 <span th:text="${#lists.size(messageList)}">0</span>
-							則留言
-						</span> <span>👁️ <span th:text="${postVO.Views}">0</span> 次瀏覽
-						</span>
-					</div>
-					<div class="interaction-buttons-group">
-						<form th:action="@{/post/unlike}" method="post"
-							style="display: inline;" th:if="${liked}">
-							<input type="hidden" name="postId" th:value="${postVO.postId}" />
-							<button class="interaction-btn active" type="submit">
-								<i class="material-icons-outlined" style="color: #1976d2;">thumb_up</i>
-								<span>已讚</span>
-							</button>
-						</form>
-						<form th:action="@{/post/like}" method="post"
-							style="display: inline;" th:unless="${liked}">
-							<input type="hidden" name="postId" th:value="${postVO.postId}" />
-							<button class="interaction-btn" type="submit">
-								<i class="material-icons-outlined">thumb_up_off_alt</i> <span>讚</span>
-							</button>
-						</form>
-
-						<form th:action="@{/FavoritePost/delete}" method="post"
-							style="display: inline;" th:if="${bookmarked}">
-							<input type="hidden" name="postId" th:value="${postVO.postId}" />
-							<button class="interaction-btn active" type="submit">
-								<i class="material-icons-outlined" style="color: #f59e42;">bookmark</i>
-								<span>已收藏</span>
-							</button>
-						</form>
-						<form th:action="@{/FavoritePost/insert}" method="post"
-							style="display: inline;" th:unless="${bookmarked}">
-							<input type="hidden" name="postId" th:value="${postVO.postId}" />
-							<button class="interaction-btn" type="submit">
-								<i class="material-icons-outlined">bookmark_border</i> <span>收藏</span>
-							</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
+			
 		<section class="comments-section">
 			<div class="comments-header">
 				<h3 class="comments-title">
@@ -240,10 +239,8 @@
 					</div>
 				</div>
 			</div>
-			<div id="reportMessageModal"
-				style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4);">
-				<div
-					style="background: #fff; max-width: 500px; margin: 15vh auto; padding: 24px; border-radius: 8px; position: relative;">
+			<div id="reportMessageModal">
+				<div class="modal-content">
 					<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
 					<form th:action="@{/reportmessage/insert}" method="post">
 						<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input

@@ -5,6 +5,7 @@ import com.foodietime.message.model.MessageVO;
 import com.foodietime.post.model.PostVO;
 import lombok.Data;
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 用於後台統一顯示貼文和留言檢舉的資料傳輸物件 (DTO)。
@@ -18,6 +19,8 @@ public class ForumReportDTO {
 	private Timestamp repPostDate;
 	private String repPostReason;
 	private byte repPostStatus;
+	private String handlerName; // 處理人員姓名
+    private Date handleDate;    // 處理時間
 
 	// 檢舉類型判斷
 	public boolean isPostReport() {

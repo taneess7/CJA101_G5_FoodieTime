@@ -51,36 +51,7 @@
 			</nav>
 		</div>
 	</header>
-	<!--     頂部分頁導航 -->
-<!-- 	<div class="bg-white border-b border-gray-200">
-		<div class="max-w-7xl mx-auto px-4 py-3">
-			<div class="flex items-center justify-center space-x-2">
-				<button class="btn btn-ghost px-3">
-					<i class="fas fa-chevron-left"></i>
-				</button>
-				<div class="flex flex-col items-center min-w-16 text-center">
-				   <div class="text-xs text-gray-500 mb-1"
-				     th:text="${thread.postCate != null ? thread.postCate.postCate : '未分類'}"></div>
-				    <div class="text-xl font-bold" th:text="${thread.postId}"></div>
-				<div class="flex items-center space-x-1">
-					<button th:each="page : ${pages}"
-						th:classappend="${page.active} ? 'btn-primary' : 'btn-ghost'"
-						class="btn px-3 py-1 text-sm" th:text="${page.number}"></button>
-					<span class="text-gray-500" th:if="${pages.size() > 5}">...</span>
-					<button class="btn btn-ghost px-3 py-1 text-sm"
-						th:text="${pages != null ? pages[pages.size()-1].number : ''}"
-						th:if="${pages != null and pages.size() > 5}"></button>
-				</div>
-				<div class="flex items-center space-x-1">
-					<button class="btn px-3 py-1 text-sm">1</button>
-					<button class="btn px-3 py-1 text-sm">2</button>
-				</div>
-				<button class="btn btn-ghost px-3">
-					<i class="fas fa-chevron-right"></i>
-				</button>
-			</div>
-		</div>
-	</div> -->
+
 
 	<div class="max-w-7xl mx-auto">
 		<div class="bg-white border-b border-gray-200">
@@ -115,40 +86,41 @@
 			<div class="flex items-center space-x-4">
 				<div class="relative inline-block w-48">
 					<form id="sortForm" method="get" th:action="@{/post/}">
-    <input type="hidden" name="categoryId" th:value="${currentCategory}">
-    <input type="hidden" name="title" th:value="${currentKeyword}">
-    
-    <select name="sort" 
-            onchange="document.getElementById('sortForm').submit()"
-            class="block appearance-none w-full bg-white border border-gray-300 hover:border-orange-400 px-4 py-2 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 cursor-pointer text-gray-700">
-        <option value="editDate" th:selected="${currentSort == 'editDate'}">最新貼文</option>
-        <option value="like_Count" th:selected="${currentSort == 'like_Count'}">讚數</option>
-        <option value="messagecount" th:selected="${currentSort == 'messagecount'}">留言數</option>
-        <option value="views" th:selected="${currentSort == 'views'}">瀏覽數</option>
-    </select>
-</form>
+						<input type="hidden" name="categoryId"
+							th:value="${currentCategory}"> <input type="hidden"
+							name="title" th:value="${currentKeyword}"> <select
+							name="sort"
+							onchange="document.getElementById('sortForm').submit()"
+							class="block appearance-none w-full bg-white border border-gray-300 hover:border-orange-400 px-4 py-2 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 cursor-pointer text-gray-700">
+							<option value="editDate"
+								th:selected="${currentSort == 'editDate'}">最新貼文</option>
+							<option value="like_Count"
+								th:selected="${currentSort == 'like_Count'}">讚數</option>
+							<option value="messagecount"
+								th:selected="${currentSort == 'messagecount'}">留言數</option>
+							<option value="views" th:selected="${currentSort == 'views'}">瀏覽數</option>
+						</select>
+					</form>
 
 				</div>
 				<a class="btn px-3 py-1 text-sm"
 					th:classappend="${isFavoritePage} ? 'btn-primary' : ''"
 					th:href="${isFavoritePage} ? @{/post/} : @{/FavoritePost/my}">
-					我的收藏 </a>
-
-				<a class="btn px-3 py-1 text-sm"
+					我的收藏 </a> <a class="btn px-3 py-1 text-sm"
 					th:classappend="${isMyPostsPage} ? 'btn-primary' : ''"
-					th:href="${isMyPostsPage} ? @{/post/} : @{/post/myPosts}">
-					我的貼文 </a>
+					th:href="${isMyPostsPage} ? @{/post/} : @{/post/myPosts}"> 我的貼文
+				</a>
 
 			</div>
 			<div class="flex items-center space-x-6">
+				<!-- <div class="text-center">
+					<div class="text-sm font-medium">發文時間</div>
+				</div> -->
+				<div class="text-center">
+					<div class="text-sm font-medium">作者</div>
+				</div>
 				<div class="text-center">
 					<div class="text-sm font-medium">發文時間</div>
-				</div>
-				<div class="text-center">
-					<div class="text-sm font-medium">互動 / 人氣</div>
-				</div>
-				<div class="text-center">
-					<div class="text-sm font-medium">最新留言</div>
 				</div>
 			</div>
 		</div>
@@ -159,7 +131,7 @@
 	<div>
 		<a th:each="thread,iterStat : ${threads}"
 			th:href="@{${thread.postStatus == 1 ? '/post/update' : '/post/one'}(postId=${thread.postId})}"
-			class="forum-thread-row border-b border-gray-200 p-3 block hover:bg-orange-50 transition" >
+			class="forum-thread-row border-b border-gray-200 p-3 block hover:bg-orange-50 transition">
 			<div class="flex items-start space-x-4">
 				<!-- 分類和編號 -->
 				<div class="flex flex-col items-center min-w-16 text-center">
@@ -172,8 +144,11 @@
 					<h3
 						class="text-sm font-medium text-gray-900 leading-relaxed flex items-center">
 						<span th:text="${thread.postTitle}"></span> <span
-						th:if="${thread.postStatus == 1}"
-						class="ml-2 bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">草稿</span>
+							th:if="${thread.postStatus == 1}"
+							class="ml-2 bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">草稿</span>
+						<span th:if="${thread.postStatus == 2}"
+							class="ml-2 bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full">已下架</span>
+					</h3>
 					</h3>
 					<p class="text-xs text-gray-600 mt-1"
 						th:text="${thread.postContent}"></p>
@@ -192,25 +167,6 @@
 			</div>
 		</a>
 	</div>
-	<!-- ...existing code... -->
-	<!--     底部分頁導航 -->
-<!-- 	<div class="bg-white border-t border-gray-200 mt-4">
-		<div class="max-w-7xl mx-auto px-4 py-3">
-			<div class="flex items-center justify-center space-x-2">
-				<button class="btn btn-ghost px-3">
-					<i class="fas fa-chevron-left"></i>
-				</button>
-				<div class="flex items-center space-x-1">
-					<button class="btn px-3 py-1 text-sm">1</button>
-					<button class="btn px-3 py-1 text-sm">2</button>
-					<button class="btn px-3 py-1 text-sm">3</button>
-				</div>
-				<button class="btn btn-ghost px-3">
-					<i class="fas fa-chevron-right"></i>
-				</button>
-			</div>
-		</div>
-	</div> -->
 	<script th:src="@{/js/front/post/discuss.js}"></script>
 
 </body>

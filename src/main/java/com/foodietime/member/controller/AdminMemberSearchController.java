@@ -31,6 +31,7 @@ public class AdminMemberSearchController {
 
     @GetMapping
     public String searchMembers(
+    		@RequestParam(defaultValue = "1") int page,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "gender", required = false) String gender,
@@ -39,6 +40,9 @@ public class AdminMemberSearchController {
             @RequestParam(value = "orderCountMin", required = false) Integer orderCountMin,
             @RequestParam(value = "totalSpentMin", required = false) Integer totalSpentMin,
             Model model) {
+    	
+    	
+        List<MemberVO> allMembers = memService.getAll();
     	
     	
     	  // ✅ 總會員數
@@ -170,18 +174,32 @@ public class AdminMemberSearchController {
 
             return dto;
         }).collect(Collectors.toList());
+        
+     // ✨ 分頁邏輯針對已篩選的 dtoList
+        int pageSize = 10;
+        int totalItems = dtoList.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        int fromIndex = Math.min((page - 1) * pageSize, totalItems);
+        int toIndex = Math.min(page * pageSize, totalItems);
+        List<MemberDTO> pageMembers = dtoList.subList(fromIndex, toIndex);
 
         // 傳到畫面
-        model.addAttribute("members", dtoList);
+        model.addAttribute("members", pageMembers);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
 
         // 傳篩選值 (保持畫面有原值)
         model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", (int) Math.ceil((double) allMembers.size() / pageSize));
         model.addAttribute("status", status);
         model.addAttribute("gender", gender);
         model.addAttribute("regDateFrom", regDateFrom);
         model.addAttribute("regDateTo", regDateTo);
         model.addAttribute("orderCountMin", orderCountMin);
         model.addAttribute("totalSpentMin", totalSpentMin);
+        model.addAttribute("currentPath", "/smg/admin-members-search");
+
 
         return "admin/smg/admin-members-search";
     }

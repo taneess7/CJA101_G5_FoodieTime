@@ -1,0 +1,145 @@
+<!-- coupon_edit.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編輯商品 - FoodieTime 食刻</title>
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link rel="stylesheet" th:href="@{/css/front/store/prod.css}" />
+
+</head>
+<body>
+
+		
+	<main>
+		
+		<h1 class="section-title">編輯商品</h1>
+		<p class="section-subtitle">填寫商品資訊以吸引顧客購買</p>
+
+		<!-- 顯示新增成功訊息（置中） -->
+		<div th:if="${successMessage}"
+		     id="successMessage"
+		     class="success-message"
+		     style="color: green; font-weight: bold;">
+		  <p th:text="${successMessage}"></p>
+		</div>
+		
+		<!-- 顯示錯誤訊息（置中） -->
+		<ul th:if="${errorMessages}" style="color: red;">
+  			<li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
+		</ul>
+		
+
+		<th:block th:if="${prod != null}">
+			<form th:action="@{/store/prod/save}" th:object="${prod}" method="post" enctype="multipart/form-data" class="prodForm" id="prodFormSection">
+				
+				<!-- 修改特定product需要prodId -->
+				<input type="hidden" th:field="*{prodId}" />
+				
+				<div>
+					<label>商品編號: </lable> <span th:text="*{prodId}"></span>
+					<input type="hidden" th:field="*{prodId}" />
+				</div>
+				
+				 <div>
+				        <label>商品類別<span class="required">*</span></label>
+				        <select name="categoryId"><!-- 處理lazy 改成name, 及selected取類別值 -->
+						    <option value="" disabled selected>請選擇類別</option>
+						    <option th:each="cat : ${prodCateList}"
+						            th:value="${cat.prodCateId}"
+						            th:text="${cat.prodCate}"
+						            th:selected="${prod.productCategory != null} ? ${cat.prodCateId} == ${prod.productCategory.prodCateId} : false">
+  						    </option>
+						</select>
+				 </div>
+
+				
+				
+				<div>
+					<label>商品名稱<span class="required">*</span></label> 
+					<input type="text" th:field="*{prodName}" placeholder="描述餐點名稱" />
+					 <div style="color:red;" th:if="${#fields.hasErrors('prodName')}" th:errors="*{prodName}"></div>
+				</div>
+				
+				<div>
+					<label>商品描述<span class="required">*</span></label> 
+					<input type="text" th:field="*{prodDesc}" placeholder="描述餐點的特色" />
+					<div style="color:red;" th:if="${#fields.hasErrors('prodDesc')}" th:errors="*{prodDesc}"></div>
+				</div>
+				
+				
+				<div>
+					<label>商品價格<span class="required">*</span></label> 
+					<input type="number"
+      					 th:field="*{prodPrice}"
+       					 placeholder="請輸入數字，最低金額為0"
+       					 min="0"
+                         oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+					<div style="color:red;" th:if="${#fields.hasErrors('prodPrice')}" th:errors="*{prodPrice}"></div>
+				</div>
+				
+				<!-- 店家照片上傳含預覽功能 ，頁面載入時可見-綁定th:src -->
+							<div class="form-group">
+								<label class="form-label">店家照片</label> <input type="file"
+									class="form-input" name="upFiles" id="store-image"
+									accept="image/*" onchange="previewImage(event)">
+								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
+								<img id="imagePreview"
+									th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="預覽圖片"
+									style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
+
+							</div>
+				
+				
+				
+				
+			<!-- 上架狀態 -->
+				<div class="form-group">
+					<label class="form-label">上架狀態</label> <select
+						   class="form-input" th:field="*{prodStatus}">
+							<option value="true">上架</option>
+							<option value="false">未上架</option>
+					</select>
+				</div>
+
+				
+				<button type="submit">送出</button>
+			</form>
+	</main>
+		<footer class="app-footer">
+		<div class="container">
+			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+		</div>
+	</footer>
+<script>
+  
+
+	/*店家照片預覽*/
+	  function previewImage(event) {
+	    const reader = new FileReader();
+	    reader.onload = function () {
+	      const output = document.getElementById('imagePreview');
+	      output.src = reader.result;
+	    };
+	    reader.readAsDataURL(event.target.files[0]);
+	  }
+  
+	//訊息淡出
+	  document.addEventListener("DOMContentLoaded", () => {
+		    const msg = document.getElementById("successMessage");
+		    if (msg) {
+		      setTimeout(() => {
+		        msg.style.transition = "opacity 1s";
+		        msg.style.opacity = 0;
+		        setTimeout(() => msg.style.display = "none", 1000); // 完全隱藏
+		      }, 2000); // 2秒後開始淡出
+		    }
+		  });
+
+</script>
+
+
+</body>
+</html>
