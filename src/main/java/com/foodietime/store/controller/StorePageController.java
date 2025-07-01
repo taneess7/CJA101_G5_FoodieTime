@@ -374,6 +374,13 @@ public class StorePageController {
 //		</select>
 		
 		
+		//所有商品類別的清單（for 下拉選單）
+		@ModelAttribute("prodCateListData")
+		protected List<ProductCategoryVO> referenceListData_prodCate(Model model){
+			model.addAttribute("prodCate", new ProductCategoryVO());
+			return prodCateSvcImpl.getAllCategories();
+	   }
+		
 /***進入商品新增畫面***/
 		@GetMapping("/addProd")
 		public String addProd(Model model) {
@@ -399,13 +406,12 @@ public class StorePageController {
 		}
 		
 		
-		/***商品新增功能:***/
+		/***商品新增功能:完成轉交給listAll***/
 		@PostMapping("/insert")
-		public String insert( // , HttpServletRequest request
-				@Valid 
-				@ModelAttribute("prod") ProductVO prod, BindingResult result, HttpSession session, Model model,//@ModelAttribute("prod") 給 th:object="${prod}"用
-				RedirectAttributes redirectAttr) { //顯示新增成功訊息
-
+		public String insert( 
+						@Valid ProductVO prodVO, BindingResult result, ModelMap model,
+						@RequestParam("upFiles") MultipartFile[] parts,HttpSession session,
+						RedirectAttributes redirectAttrs, HttpServletRequest request) throws IOException{  //顯示新增成功訊息 
 			System.out.println(">>> insert方法觸發");
 
 			// 從 session 中取出店家資訊
@@ -419,18 +425,27 @@ public class StorePageController {
 		    StoreVO loggedInStore = (StoreVO) obj;
 		    Integer storId = loggedInStore.getStorId();
 
-			  
-			//如果驗證錯誤，補上 store 與優惠券下拉選單
+		 // ✅ <<< 這裡加上 debug log
+			 System.out.println(">>> insert 方法有觸發");
+			    System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
+			    System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
+			    for (FieldError fe : result.getFieldErrors()) {
+			        System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
+			    }
+			    
+			   
+			//如果驗證錯誤，補上 store 與 商品類別下拉選單
 			if (result.hasErrors()) {
 				for (FieldError fe : result.getFieldErrors()) {
-					System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
+					System.out.println("欄位錯誤" + fe.getField() + "->" + 
+				    fe.getDefaultMessage());
 				}
 				// 若驗證失敗，要補上 store 進去（否則會是 null）
 				
-		        if (prod.getStore() == null) {
+		        if (prodVO.getStore() == null) {
 		            StoreVO storeVO = new StoreVO();
 		            storeVO.setStorId(storId);
-		            prod.setStore(storeVO);
+		            prodVO.setStore(storeVO);
 		        }
 		        
 		        //取得店家單一商 prod
