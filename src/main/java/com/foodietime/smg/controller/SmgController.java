@@ -85,10 +85,10 @@ public class SmgController {
     public String admindashboard() {
         return "admin/smg/admin-dashboard"; 
     }
-    @GetMapping("/admin-forum-reports")
-    public String adminforumreports() {
-    	return "admin/smg/admin-forum-reports"; 
-    }
+//    @GetMapping("/admin-forum-reports")
+//    public String adminforumreports() {
+//    	return "admin/smg/admin-forum-reports"; 
+//    }
     @GetMapping("/admin-users-add")
     public String adminusersadd(Model model) {
         model.addAttribute("smg", new SmgVO()); // 傳空 VO 讓表單能綁定
