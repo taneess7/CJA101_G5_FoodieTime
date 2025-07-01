@@ -1,5 +1,6 @@
 package com.foodietime.orders.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodietime.cart.model.CartService;
 import com.foodietime.cart.model.CartVO;
@@ -11,29 +12,47 @@ import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orddet.dto.OrderDetailDTO;
 import com.foodietime.orddet.model.OrdDetRepository;
 import com.foodietime.orddet.model.OrdDetVO;
+import com.foodietime.orders.dto.LinePayRequestDTO;
+import com.foodietime.orders.dto.LinePayResponseDTO;
 import com.foodietime.orders.dto.NewOrderNotificationDTO;
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
-import jakarta.transaction.Transactional; // 使用 Jakarta EE 的 @Transactional 確保交易原子性
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class OrdersService {
-    // ★★★ 新增 Logger 和 ObjectMapper ★★★
+    // =========================== (Web socket) 新增 Logger 和 ObjectMapper ================================================
     private static final Logger log = LoggerFactory.getLogger(OrdersService.class);
 
     @Autowired
     private ObjectMapper objectMapper; // Spring Boot 會自動配置此 Bean，用於序列化
+
+    //============================= line pay 設定 =============================================================
+    @Value("${line.pay.channel.id}")
+    private String linePayChannelId;
+
+    @Value("${line.pay.channel.secret}")
+    private String linePayChannelSecret;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String linePayApiUri = "/v3/payments/request"; // ★ API 路徑
+    private final String linePayApiUrl = "https://sandbox-api-pay.line.me" + linePayApiUri; // ★ API 完整網址
+    //=================================================================================================
 
     // 依據使用者要求，修改參數名稱
     private final OrdersRepository ordersRepo;
@@ -66,7 +85,7 @@ public class OrdersService {
         this.notificationService = notificationService;
         this.memService = memService;
     }
-
+//=================================================================================================
     /**
      * 根據會員【選定】的購物車內容建立新的訂單。
      * 此方法不再查詢完整購物車，而是直接使用傳入的、已經過驗證的商品列表。
@@ -362,5 +381,231 @@ public class OrdersService {
             log.error("為訂單 #{} 觸發 WebSocket 推播時發生未知錯誤", savedOrder.getOrdId(), e);
         }
     }
+    //================================================================================================================================
+    //                      line pay 相關的方法
+    //================================================================================================================================
+    /**
+     * 【核心修改】從 `createOrderFromCart` 複製並修改而來，用於建立一筆「待付款」的訂單
+     * 主要差異是不會清理購物車、不更新優惠券狀態，並將付款狀態設為 0 (待付款)
+     */
+    @Transactional
+    public OrdersVO createPendingOrder(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems, Integer selectedMemCouId) {
+        // ... (步驟 1-3 與 createOrderFromCart 完全相同：獲取資料、建立主物件、處理訂單明細)
+        MemberVO member = memberRepo.findById(memberId)
+                .orElseThrow(() -> new IllegalStateException("訂單建立失敗：找不到會員ID " + memberId));
+        if (checkoutItems == null || checkoutItems.isEmpty()) {
+            throw new IllegalStateException("訂單建立失敗：沒有需要結帳的商品。");
+        }
+        StoreVO orderStore = checkoutItems.get(0).getProduct().getStore();
 
+        OrdersVO order = new OrdersVO();
+        order.setMember(member);
+        order.setStore(orderStore);
+        order.setOrdAddr(orderFormData.getOrdAddr());
+        order.setPayMethod(orderFormData.getPayMethod());
+        order.setDeliver(orderFormData.getDeliver());
+        order.setComment(orderFormData.getComment());
+        order.setOrdDate(new Timestamp(System.currentTimeMillis()));
+
+        // ★★★ 關鍵差異點 ★★★
+        order.setPaymentStatus(0); // 0: 待付款
+        order.setOrderStatus(0);   // 0: 處理中 (但未付款)
+
+        Integer ordSum = 0;
+        Set<OrdDetVO> orderDetails = new HashSet<>();
+        for (CartVO cartItem : checkoutItems) {
+            OrdDetVO ordDet = new OrdDetVO();
+            ordDet.setOrders(order);
+            ordDet.setProduct(cartItem.getProduct());
+            ordDet.setProdQty(cartItem.getProdN());
+            ordDet.setProdPrice(cartItem.getProduct().getProdPrice());
+            orderDetails.add(ordDet);
+            ordSum += cartItem.getProdN() * cartItem.getProduct().getProdPrice();
+        }
+        order.setOrdSum(ordSum);
+        order.setOrdDet(orderDetails);
+
+        // ... (步驟 4-5 與 createOrderFromCart 相同：處理優惠券、計算最終金額)
+        // 但此處「不」更新優惠券使用狀態
+        Integer couponDiscount = 0;
+        if (selectedMemCouId != null && selectedMemCouId > 0) {
+            MemCouponVO memCoupon = memCouponRepo.findById(selectedMemCouId)
+                    .orElseThrow(() -> new IllegalStateException("優惠券無效或已不存在。"));
+            // ... (省略驗證邏輯)
+            if (ordSum >= memCoupon.getCoupon().getCouMinOrd()) {
+                couponDiscount = memCoupon.getCoupon().getCouDiscount().intValue();
+                order.setCoupon(memCoupon.getCoupon());
+            }
+        }
+        order.setCouponDiscount(couponDiscount);
+        order.setPromoDiscount(0);
+
+        Integer actualPayment = ordSum - couponDiscount - order.getPromoDiscount();
+        order.setActualPayment(Math.max(0, actualPayment));
+
+        // ★★★ 關鍵差異點：只儲存訂單，不清空購物車，不更新優惠券狀態 ★★★
+        return ordersRepo.save(order);
+    }
+
+//    /**
+//     * 【新增】模擬呼叫 LINE Pay API
+//     * 實際上這裡會使用 RestTemplate 或 WebClient 向 LINE Pay 發送請求
+//     * @param order 待付款的訂單
+//     * @return 模擬的 LINE Pay 支付 URL
+//     */
+//    public String initiateLinePayPayment(OrdersVO order) {
+//        // 這裡應組裝發送給 LINE Pay 的請求內容，包含訂單編號、金額、商品等
+//        System.out.println("正在為訂單 #" + order.getOrdId() + " 向 LINE Pay 請求支付，金額為：" + order.getActualPayment());
+//
+//        // 模擬從 LINE Pay API 收到的回應，其中包含一個跳轉支付的 URL
+//        // 這個 URL 用於生成 QR Code
+//        // 實際的 URL 會由 LINE Pay 提供
+//        return "https://line.me/pay/simulate/transaction/" + order.getOrdId() + "_" + System.currentTimeMillis();
+//    }
+    /**
+     * 呼叫 LINE Pay Request API 以取得真實支付 URL，並使用 HMAC 簽章認證。
+     */
+    public String initiateLinePayPayment(OrdersVO order) {
+        String nonce = UUID.randomUUID().toString();
+        String requestBodyJson;
+
+        // ==================== 1. 組裝請求主體 (Request Body) ====================
+        LinePayRequestDTO requestDTO = LinePayRequestDTO.builder()
+                // ... (此處的 builder 邏輯與您附件中的版本完全相同，保持不變) ...
+                .amount(order.getActualPayment().longValue())
+                .currency("TWD")
+                .orderId(order.getOrdId().toString())
+                .packages(List.of(
+                        LinePayRequestDTO.Package.builder()
+                                .id("package-" + order.getOrdId())
+                                .amount(order.getActualPayment().longValue())
+                                .products(order.getOrdDet().stream().map(det ->
+                                        LinePayRequestDTO.Product.builder()
+                                                .name(det.getProduct().getProdName())
+                                                .quantity(det.getProdQty())
+                                                .price(det.getProdPrice().longValue())
+                                                .build()
+                                ).collect(Collectors.toList()))
+                                .build()
+                ))
+                .redirectUrls(LinePayRequestDTO.RedirectUrls.builder()
+                        .confirmUrl("http://localhost:8080/orders/order-confirmation?orderId=" + order.getOrdId())
+                        .cancelUrl("http://localhost:8080/cart/cart")
+                        .build())
+                .build();
+
+        try {
+            // 將 DTO 物件序列化為 JSON 字串，用於產生簽章和發送請求
+            requestBodyJson = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("序列化 LINE Pay 請求失敗", e);
+        }
+
+        // ==================== 2. 產生簽章 ====================
+        String signature = createHmacSignature(linePayChannelSecret, linePayApiUri, requestBodyJson, nonce);
+
+        // ==================== 3. 組裝請求標頭 (Headers) - ★★★ 這是核心修改點 ★★★ ====================
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-LINE-ChannelId", linePayChannelId);
+        headers.set("X-LINE-Authorization-Nonce", nonce);
+        // 【重點】使用計算出的簽章，放入 X-LINE-Authorization 標頭
+        headers.set("X-LINE-Authorization", signature);
+        // 【移除】不再需要直接傳送 ChannelSecret
+        // headers.set("X-LINE-ChannelSecret", linePayChannelSecret); // <-- 移除此行
+
+        // ==================== 4. 發送請求 ====================
+        HttpEntity<String> entity = new HttpEntity<>(requestBodyJson, headers);
+
+        try {
+            ResponseEntity<LinePayResponseDTO> response = restTemplate.postForEntity(linePayApiUrl, entity, LinePayResponseDTO.class);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                LinePayResponseDTO responseBody = response.getBody();
+                if ("0000".equals(responseBody.getReturnCode())) {
+                    return responseBody.getInfo().getPaymentUrl();
+                } else {
+                    throw new RuntimeException("LINE Pay 請求失敗: " + responseBody.getReturnMessage());
+                }
+            } else {
+                throw new RuntimeException("LINE Pay 請求失敗，伺服器無回應。");
+            }
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("LINE Pay API 請求錯誤: " + e.getStatusCode() + " " + e.getResponseBodyAsString());
+        }
+    }
+    /**
+     * 【新增】當收到 Webhook 或確認支付成功後，更新訂單狀態
+     * @param orderId 要確認的訂單 ID
+     * @return 更新後的訂單
+     */
+    @Transactional
+    public OrdersVO confirmPayment(Integer orderId) {
+        // ==================== 步驟 1：查找訂單 ====================
+        OrdersVO order = ordersRepo.findById(orderId)
+                .orElseThrow(() -> new IllegalStateException("Webhook 錯誤：找不到要更新的訂單 #" + orderId));
+
+        // ==================== 步驟 2：【冪等性檢查】 ====================
+        // 如果訂單的付款狀態已經是「已付款」(1)，則直接返回該訂單，不做任何操作。
+        // 這可以防止因 LINE Pay 重複發送 Webhook 而導致的重複處理。
+        if (order.getPaymentStatus() == 1) {
+            System.out.println("訂單 #" + orderId + " 已處理過，跳過 Webhook 更新。");
+            return order;
+        }
+
+        // ==================== 步驟 3：更新訂單狀態 ====================
+        order.setPaymentStatus(1); // 1: 已付款
+        order.setOrderStatus(1);   // 假設 1: 待出貨
+
+        // ==================== 步驟 4：執行後續業務邏輯 ====================
+        // a. 如果有使用優惠券，此時才將其標記為已使用
+        if (order.getCoupon() != null) {
+            // 這部分邏輯需要根據你的 MemCoupon 設計來實現
+            // 例如：memCouponService.markAsUsed(order.getMember().getMemId(), order.getCoupon().getCouId());
+            System.out.println("訂單 #" + orderId + " 使用的優惠券已標記為已使用。");
+        }
+
+        // b. 從會員的購物車中移除已經結帳的商品
+        // 這需要反向從訂單明細(OrdDetVO)中獲取商品ID列表
+        List<Integer> productIds = order.getOrdDet().stream()
+                .map(ordDet -> ordDet.getProduct().getProdId())
+                .collect(Collectors.toList());
+        // 假設 CartService 有一個批量刪除的方法
+        // cartService.deleteItemsByMemberAndProducts(order.getMember().getMemId(), productIds);
+        System.out.println("已從購物車中移除訂單 #" + orderId + " 的商品。");
+
+        // ==================== 步驟 5：儲存更新後的訂單 ====================
+        return ordersRepo.save(order);
+    }
+
+    /**
+     * 【新增】產生 LINE Pay API 所需的 HMAC-SHA256 簽章。
+     *
+     * @param channelSecret 您的 Channel Secret
+     * @param uri           您要請求的 API 路徑 (e.g., /v3/payments/request)
+     * @param requestBody   您的請求主體 (JSON 字串)
+     * @param nonce         一次性的隨機字串
+     * @return Base64 編碼後的簽章字串
+     */
+    private String createHmacSignature(String channelSecret, String uri, String requestBody, String nonce) {
+        try {
+            // 1. 組合要進行加密的原始字串
+            String stringToSign = channelSecret + uri + requestBody + nonce;
+
+            // 2. 建立 HMAC-SHA256 加密器
+            Mac mac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(channelSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            mac.init(secretKeySpec);
+
+            // 3. 執行加密
+            byte[] hmacBytes = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
+
+            // 4. 將加密後的 byte[] 進行 Base64 編碼
+            return Base64.getEncoder().encodeToString(hmacBytes);
+
+        } catch (Exception e) {
+            // 在生產環境中，應使用日誌框架記錄此類嚴重錯誤
+            throw new RuntimeException("產生 LINE Pay 簽章失敗", e);
+        }
+    }
 }

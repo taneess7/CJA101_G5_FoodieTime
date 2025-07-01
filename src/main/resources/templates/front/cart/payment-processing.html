@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>訂單付款 - FoodieTime</title>
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/cart/payment.css}"> <!-- 新的 CSS 檔案 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</head>
+<body>
+<main class="payment-page">
+    <div class="payment-container">
+        <div class="payment-header">
+            <img th:src="@{/images/line-pay-logo.png}" alt="LINE Pay" class="payment-logo">
+            <h2>請使用 LINE 掃描 QR Code 完成付款</h2>
+        </div>
+
+        <div class="payment-body">
+            <!-- QR Code 將會被 JS 渲染到這裡 -->
+            <canvas id="qrcode-canvas"></canvas>
+
+            <div class="payment-timer">
+                付款剩餘時間：<span id="countdown">05:00</span>
+            </div>
+
+            <div class="payment-info">
+                <p>訂單編號: <span th:text="${orderId}"></span></p>
+                <p>請在倒數結束前完成付款，否則訂單將自動取消。</p>
+            </div>
+
+            <div id="payment-status" class="status-pending">
+                <div class="spinner"></div>
+                <span>等待付款結果...</span>
+            </div>
+        </div>
+
+        <div class="payment-footer">
+            <a th:href="@{/cart/cart}" class="btn btn-text">遇到問題？返回購物車</a>
+        </div>
+    </div>
+</main>
+<script th:src="@{/js/front/cart/payment.js}"></script>
+
+<script th:inline="javascript">
+    /* 將後端資料傳遞給 JS */
+    const orderId = [[${orderId}]];
+    const linePayUrl = [[${linePayUrl}]];
+</script>
+</body>
+</html>

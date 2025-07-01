@@ -8,6 +8,8 @@
   <!-- 引入公共樣式和購物車專用樣式 -->
   <link rel="stylesheet" th:href="@{/css/common/style.css}">
   <link rel="stylesheet" th:href="@{/css/front/cart/checkout.css}">
+  <script src="https://cdn.jsdelivr.net/npm/creditcard.js@latest/dist/creditcard.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
   <!-- PWA 支援 -->
   <link rel="manifest" href="./manifest.json">
@@ -95,17 +97,41 @@
               <h2 class="section-title">付款方式</h2>
               <div class="payment-methods">
                 <div class="payment-method">
-                  <!-- 【修改點 3】: 使用 th:field="*{payMethod}" 取代 name="payMethod" -->
-                  <input type="radio" id="payMethod1" th:field="*{payMethod}" value="0">
+                  <!-- value="0" 對應信用卡 -->
+                  <input type="radio" id="payMethod1" th:field="*{payMethod}" value="0" checked>
                   <label for="payMethod1">信用卡</label>
                 </div>
                 <div class="payment-method">
+                  <!-- value="1" 對應貨到付款 -->
                   <input type="radio" id="payMethod2" th:field="*{payMethod}" value="1">
                   <label for="payMethod2">貨到付款</label>
                 </div>
                 <div class="payment-method">
+                  <!-- 【修改】value="2" 對應 LINE Pay -->
                   <input type="radio" id="payMethod3" th:field="*{payMethod}" value="2">
-                  <label for="payMethod2">第三方</label>
+                  <label for="payMethod3">LINE Pay</label>
+                </div>
+              </div>
+
+              <!-- 【新增】信用卡詳細資料輸入區塊，預設隱藏 -->
+              <div id="credit-card-details" class="payment-details">
+                <div class="form-group">
+                  <label for="cc-number">信用卡號</label>
+                  <div class="credit-card-input">
+                    <input type="text" id="cc-number" placeholder="xxxx-xxxx-xxxx-xxxx" maxlength="19">
+                    <span id="cc-type-icon"></span>
+                  </div>
+                  <small id="cc-number-error" class="error-message"></small>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="cc-expiry">到期日 (MM/YY)</label>
+                    <input type="text" id="cc-expiry" placeholder="MM/YY">
+                  </div>
+                  <div class="form-group">
+                    <label for="cc-cvc">安全碼 (CVC)</label>
+                    <input type="text" id="cc-cvc" placeholder="CVC">
+                  </div>
                 </div>
               </div>
             </div>

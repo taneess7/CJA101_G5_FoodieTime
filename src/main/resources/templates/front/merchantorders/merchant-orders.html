@@ -228,9 +228,11 @@
 <footer class="app-footer">
     <!-- footer內容保持不變 -->
 </footer>
+<!-- SockJS 用於提供跨瀏覽器的 WebSocket 連線能力 -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+<!-- Stomp.js 用於在 WebSocket 之上使用 STOMP 協定 -->
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script th:src="@{/js/front/merchantorders/merchant-orders.js}"></script>
 
-<script th:src="@{/js/front/merchantorders/merchant-orders.js}">
-
-</script>
 </body>
 </html>
