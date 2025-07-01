@@ -37,65 +37,79 @@ public class AdminMessageController {
     private MemService memService;
     
     @GetMapping
-    public String listTickets(@RequestParam(required = false, defaultValue = "all") String type,@RequestParam(required = false) String keyword,@RequestParam(required = false) String dateRange
-,Model model) {
+    public String listTickets(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(required = false, defaultValue = "all") String type,
+                              @RequestParam(required = false) String keyword,
+                              @RequestParam(required = false) String dateRange,
+                              Model model) {
+
         List<DirectMessageDTO> allMessages = dmService.getAllMemberMessagesWithLatestReply();
-        
+
+        // 補上回覆狀態
+        for (DirectMessageDTO msg : allMessages) {
+            DirectMessageVO reply = dmService.getReplyByReplyToId(msg.getDmId());
+            msg.setReplyStatus(reply != null ? "已回覆" : "待處理");
+        }
+
         // keyword 過濾
         if (keyword != null && !keyword.isBlank()) {
             allMessages = allMessages.stream()
-                .filter(m -> m.getMemName().contains(keyword)
-                          || String.valueOf(m.getDmId()).contains(keyword))
-                .toList();
+                    .filter(m -> m.getMemName().contains(keyword)
+                            || String.valueOf(m.getDmId()).contains(keyword))
+                    .toList();
         }
-        
+
         // 日期篩選
         if (dateRange != null && !dateRange.isBlank()) {
             allMessages = allMessages.stream()
-                .filter(m -> m.getMessTime().toLocalDate().toString().equals(dateRange))
-                .toList();
+                    .filter(m -> m.getMessTime().toLocalDate().toString().equals(dateRange))
+                    .toList();
         }
-        
-     // 預設
-        List<DirectMessageDTO> messageList = allMessages;
 
         // 條件篩選
-        if ("pending".equals(type)) {
-            messageList = allMessages.stream()
-                .filter(m -> "待處理".equals(m.getReplyStatus()))
-                .toList();
-        } else if ("completed".equals(type)) {
-            messageList = allMessages.stream()
-                .filter(m -> "已回覆".equals(m.getReplyStatus()))
-                .toList();
-        }
-        
+        List<DirectMessageDTO> filteredMessages = switch (type) {
+            case "pending" -> allMessages.stream()
+                    .filter(m -> "待處理".equals(m.getReplyStatus()))
+                    .toList();
+            case "completed" -> allMessages.stream()
+                    .filter(m -> "已回覆".equals(m.getReplyStatus()))
+                    .toList();
+            default -> allMessages;
+        };
+
         // 統計數
-        long pendingCount = allMessages.stream()
-            .filter(m -> "待處理".equals(m.getReplyStatus()))
-            .count();
+        long pendingCount = allMessages.stream().filter(m -> "待處理".equals(m.getReplyStatus())).count();
+        long completedCount = allMessages.stream().filter(m -> "已回覆".equals(m.getReplyStatus())).count();
 
-        long completedCount = allMessages.stream()
-            .filter(m -> "已回覆".equals(m.getReplyStatus()))
-            .count();
-	
-	
-	    model.addAttribute("messages", messageList);
-	    model.addAttribute("pendingCount", pendingCount);
-	    model.addAttribute("completedCount", completedCount);
-	    model.addAttribute("type", type);
-	    model.addAttribute("keyword", keyword);
-	    model.addAttribute("dateRange", dateRange);
+        // 分頁邏輯
+        int pageSize = 10;
+        int totalItems = filteredMessages.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        int fromIndex = Math.min((page - 1) * pageSize, totalItems);
+        int toIndex = Math.min(page * pageSize, totalItems);
 
+        List<DirectMessageDTO> pageMessages = filteredMessages.subList(fromIndex, toIndex);
+
+        // 時間格式化（正確對應 pageMessages）
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        List<String> formattedTimes = messageList.stream()
+        List<String> formattedTimes = pageMessages.stream()
                 .map(msg -> msg.getMessTime().format(formatter))
                 .toList();
 
+        model.addAttribute("messages", pageMessages);
         model.addAttribute("formattedTimes", formattedTimes);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("completedCount", completedCount);
+        model.addAttribute("type", type);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("dateRange", dateRange);
+        model.addAttribute("currentPath", "/smg/admin-service-tickets");
 
         return "admin/smg/admin-service-tickets";
     }
+
     
     // 查詢單筆工單 (view)
     @GetMapping("/view/{dmId}")

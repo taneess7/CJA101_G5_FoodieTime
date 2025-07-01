@@ -65,6 +65,13 @@
                 <i class="material-icons-outlined">person</i>
                 <span>會員資料</span>
             </a>
+            <div th:if="${session.loggedInStore != null}">
+		        <a th:href="@{/store/sc}" 
+		           class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+		            <i class="material-icons-outlined">store</i>
+		            <span>店家後台</span>
+		        </a>
+		    </div>
             <a th:href="@{/member/orders}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
                 <i class="material-icons-outlined">receipt_long</i>
                 <span>訂單記錄</span>
@@ -77,10 +84,7 @@
                 <i class="material-icons-outlined">favorite</i>
                 <span>收藏餐廳</span>
             </a>
-            <a th:href="@{/front/member/points}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">stars</i>
-                <span>點數紀錄</span>
-            </a>
+           
             <a th:href="@{/front/member/logout}" 
            class="flex items-center space-x-2 text-red-600 hover:text-red-800 pt-4 border-t border-gray-200 mt-3">
             <i class="material-icons-outlined">logout</i>
@@ -177,9 +181,14 @@
                 </a>
             </div>
 
-            <div class="mt-4 text-center">
-                <a href="/front/directmessage/send" class="text-orange-600 hover:text-orange-800">聯絡我們</a>
-            </div>
+           <div class="mt-4 text-center">
+			    <a href="/front/directmessage/send"
+			       class="inline-flex items-center justify-center bg-white text-orange-600 border border-orange-400 px-5 py-2 rounded-xl shadow hover:bg-orange-50 hover:text-orange-800 transition duration-300">
+			        <i class="material-icons-outlined mr-2">support_agent</i>
+			        聯絡我們
+			    </a>
+			</div>
+
 
         </div> <!-- 右側內容 -->
 

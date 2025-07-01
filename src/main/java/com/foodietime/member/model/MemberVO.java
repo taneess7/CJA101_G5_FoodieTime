@@ -85,8 +85,9 @@ public class MemberVO implements Serializable {
 	@Column(name = "mem_phone", nullable = false)
 	@NotBlank(message="手機請勿空白")
 	@Pattern(
-		    regexp = "^(?:\\(?0\\d{1,2}\\)?[-\\s]?)?\\d{6,8}$|^09\\d{2}[-\\s]?\\d{3}[-\\s]?\\d{3}$",
-		    message = "手機格式錯誤")
+		    regexp = "^09\\d{8}$",
+		    message = "手機格式錯誤，請輸入 09 開頭的 10 碼手機號碼"
+		)
 	private String memPhone;
 	
 	@Column(name = "mem_gender", nullable = false)
