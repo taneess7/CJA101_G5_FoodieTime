@@ -137,7 +137,7 @@ public class AddUpdateController {
 				actVO.setStorId(Integer.valueOf(storIdStr));
 			}
 		}
-
+		
 		actSvc.addAct(actVO);
 
 //		//儲存活動及關聯
@@ -377,8 +377,9 @@ public class AddUpdateController {
 
 		for (ActParticipationVO join : joinedList) {
 			ActVO act = join.getAct();
+			System.out.println("📌 從資料庫抓到的 actCate = " + act.getActCate());
 			ActCategoryEnum cate = ActCategoryEnum.from(act.getActCate()); // 抓出class enum 的提示錯誤
-
+			System.out.println("📌 解析對應到 enum = " + cate);  // 如果是 null 就代表解析失敗
 			// 避免 NullPointerException
 			if (cate == null)
 				continue;

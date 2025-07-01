@@ -174,9 +174,9 @@ public class ActService {
 			}
 		}
 
-		// 3.依活動類型呼叫 enum 折扣策略
+		// 3.依活動類型呼叫 enum 折扣策略，支援定義的別名("素食推薦")
 		try {
-			ActCategoryEnum cate = ActCategoryEnum.valueOf(act.getActCate());
+			ActCategoryEnum cate = ActCategoryEnum.from(act.getActCate());
 			return cate != null? cate.calculate(prod, act) : prod.getProdPrice(); //傳入productVO. actVO.
 		} catch (IllegalArgumentException e) {
 			return prod.getProdPrice();// 沒對應的活動類型-> 原價
