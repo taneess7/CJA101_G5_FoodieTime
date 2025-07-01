@@ -82,13 +82,13 @@
 				
 				<div>
 					<label>最低消費金額限制<span class="required">*</span></label> 
-					<input type="text" th:field="*{couMinOrd}" placeholder="最低金額為0" />
+					<input type="number" th:field="*{couMinOrd}" placeholder="最低金額為0，只能寫數字" min="0" step="1"/>
 					<div style="color:red;" th:if="${#fields.hasErrors('couMinOrd')}" th:errors="*{couMinOrd}"></div>
 				</div>
 				
 				<div>
 					<label>優惠額度<span class="required">*</span></label> 
-					<input type="text" th:field="*{couDiscount}" placeholder="折扣金直接寫數字 ; 打8折寫 0.8"/>
+					<input type="number" th:field="*{couDiscount}" placeholder="折扣金直接寫數字 ; 打8折寫 0.8"/>
 					<div style="color:red;" th:if="${#fields.hasErrors('couDiscount')}" th:errors="*{couDiscount}"></div>
 				</div>
 				

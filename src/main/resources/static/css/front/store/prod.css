@@ -23,7 +23,7 @@ body {
 }
 
 /* 表單容器 */
-form.couponForm {
+form.prodForm {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;

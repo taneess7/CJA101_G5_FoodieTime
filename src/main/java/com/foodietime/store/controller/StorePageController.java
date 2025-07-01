@@ -568,10 +568,18 @@ public class StorePageController {
 					return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();	
 				}
 				
-				// ⬇⬇⬇ update前加這一行補上非空值，否則無法儲存修改⬇⬇⬇
-				prod.setProdLastUpdate(new Timestamp(System.currentTimeMillis()));
-				prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
-				
+				// 處理商品圖片欄位（如果沒上傳新圖片，就保留原圖）
+				if (parts[0].isEmpty()) {
+				    byte[] originalPhoto = prodSvc.getProductById(prod.getProdId()).getProdPhoto(); // ← 取得原圖
+				    prod.setProdPhoto(originalPhoto);  // ← 設定為原圖
+				    System.out.println("圖片未更新，保留原圖");
+				} else {
+				    byte[] photo = parts[0].getBytes(); // ← 新圖轉 byte[]
+				    prod.setProdPhoto(photo);           // ← 設定新圖
+				    System.out.println("圖片更新成功");
+				}
+				prod.setProdLastUpdate(new Timestamp(System.currentTimeMillis())); //補上非空值欄位
+				prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis())); //補上非空值欄位
 				prodSvc.updateProduct(prod.getProdId(), prod, prod.getProductCategory().getProdCateId());
 				//service:  ProductVO updateProduct(Integer prodId, ProductVO newData, Integer categoryId);
 				redirectAttr.addFlashAttribute("successMessage", "商品修改成功！");
