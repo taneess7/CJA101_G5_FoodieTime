@@ -117,6 +117,7 @@ function fetchAllActs() {
 								    if (hasJoined) {
 								      joinButton.style.backgroundColor = "#4CAF50";
 								      joinButton.textContent = "已參加";
+									  joinButton.disabled = true; // ✅ 禁用按鈕，防止重複點擊
 								      joinMessage.textContent = msg || "您已成功參加活動！";
 								    } else {
 								      joinButton.style.backgroundColor = "red";
@@ -126,7 +127,7 @@ function fetchAllActs() {
 								  })
 								  .catch(error => {
 								    console.error("參加活動錯誤", error);
-								    joinMessage.textContent = "⚠ 參加/取消失敗，請稍後再試";
+								    joinMessage.textContent = "⚠ 無法失敗";
 								  });
 								});
 

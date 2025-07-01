@@ -341,8 +341,18 @@ public class AddUpdateController {
 //			redirectAttr.addFlashAttribute("errorMessage", "商品不符合參加此活動的資格");
 //			return "redirect:/act";
 //		}
+		
+		// 取得當前登入店家id（透過 Session）
+		Integer storId = store.getStorId();
+	
+		// 判斷是否重複加入
+		boolean alreadyJoined = actSvc.existsByStoreAndAct(storId, actId);
+		if (alreadyJoined) {
+			 redirectAttr.addFlashAttribute("errorMessage", "⚠️ 您已參加此活動，請勿重複加入");
+			 return "redirect:/act";  // 看你要導去哪
+		}
 
-		// 符合資格，進行參加流程
+		// 尚未參加，進行參加流程
 		actPartSvc.joinAct(store, act);
 
 		redirectAttr.addFlashAttribute("successMessage", "已成功報名活動");

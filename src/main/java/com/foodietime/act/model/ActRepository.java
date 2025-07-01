@@ -26,6 +26,8 @@ public interface ActRepository extends JpaRepository<ActVO, Integer>{
 	@Query("SELECT a.actPhoto FROM ActVO a WHERE a.actId = :id")
 	byte[] findActPhotoById(@Param("id") Integer id);
 	
+	 
+	
 }
 
 
