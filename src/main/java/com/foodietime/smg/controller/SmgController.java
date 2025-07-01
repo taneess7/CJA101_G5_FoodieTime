@@ -24,6 +24,8 @@ import com.foodietime.smgfc.model.SmgfcVO;
 import com.foodietime.smgauth.model.SmgauthService;
 import com.foodietime.smgauth.model.SmgauthVO;
 import com.foodietime.smgauth.model.SmgauthId;
+import com.foodietime.grouppurchasereport.model.GroupPurchaseReportService;
+import com.foodietime.grouppurchasereport.model.GroupPurchaseReportVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -40,6 +42,8 @@ public class SmgController {
 	SmgauthService smgauthService;
 	@Autowired
 	GroupOrdersService groupOrdersService;
+	@Autowired
+	private GroupPurchaseReportService groupPurchaseReportService;
 	@GetMapping("/login")
 	public String showLoginPage() {
 	    return "admin/smg/admin-login"; // 對應到你的 Thymeleaf 登入頁面
@@ -271,8 +275,10 @@ public class SmgController {
     }	
    
     @GetMapping("/admin-groups-reports")
-    public String admingroupsreports() {
-    	return "admin/smg/admin-groups-reports"; 
+    public String adminGroupsReports(Model model) {
+        List<GroupPurchaseReportVO> reports = groupPurchaseReportService.getAll();
+        model.addAttribute("reports", reports);
+        return "admin/smg/admin-groups-reports";
     }
     @GetMapping("/admin-groups-status")
     public String admingroupsstatus() {

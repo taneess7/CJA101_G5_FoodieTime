@@ -55,5 +55,9 @@ public class GroupPurchaseReportService {
         report.setUpdateAt(LocalDateTime.now());
         return groupPurchaseReportRepository.save(report);
     }
+    // 查看全部檢舉
+	public List<GroupPurchaseReportVO> getAll() {
+		return groupPurchaseReportRepository.findAll();
+	}
 
 }
