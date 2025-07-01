@@ -18,13 +18,7 @@
 		<h1 class="section-title">新增一般商品</h1>
 		<p class="section-subtitle">填寫商品資訊以吸引顧客購買</p>
 
-		<!-- 顯示新增成功訊息（置中） -->
-		<div th:if="${successMessage}"
-		     id="successMessage"
-		     class="success-message"
-		     style="color: green; font-weight: bold;">
-		  <p th:text="${successMessage}"></p>
-		</div>
+		
 		
 		<!-- 顯示錯誤訊息（置中） -->
 		<ul th:if="${errorMessages}" style="color: red;">
@@ -92,9 +86,6 @@
 
 							</div>
 				
-				
-				
-				
 			<!-- 上架狀態 -->
 				<div class="form-group">
 					<label class="form-label">上架狀態</label> <select
@@ -103,11 +94,18 @@
 							<option value="false">未上架</option>
 					</select>
 				</div>
-
+<!-- 顯示新增成功訊息（置中） -->
+		<div th:if="${successMessage}"
+		     id="successMessage"
+		     class="success-message"
+		     style="color: green; font-weight: bold;">
+		  <p th:text="${successMessage}"></p>
+		</div>
 				
 				<button type="submit">送出</button>
 			</form>
 	</main>
+	
 		<footer class="app-footer">
 		<div class="container">
 			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
