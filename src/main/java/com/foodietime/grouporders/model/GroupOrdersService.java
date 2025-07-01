@@ -142,6 +142,8 @@ public class GroupOrdersService {
         }
     }
     
-    
-    
+    // 查詢全部團購訂單
+    public List<GroupOrdersVO> findAll() {
+        return groupOrdersRepository.findAll();
+    }
 }

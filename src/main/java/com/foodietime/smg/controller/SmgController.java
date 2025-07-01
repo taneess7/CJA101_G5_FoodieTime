@@ -85,10 +85,6 @@ public class SmgController {
     public String admindashboard() {
         return "admin/smg/admin-dashboard"; 
     }
-    @GetMapping("/admin-forum-reports")
-    public String adminforumreports() {
-    	return "admin/smg/admin-forum-reports"; 
-    }
     @GetMapping("/admin-users-add")
     public String adminusersadd(Model model) {
         model.addAttribute("smg", new SmgVO()); // 傳空 VO 讓表單能綁定
@@ -285,8 +281,10 @@ public class SmgController {
     	return "admin/smg/admin-groups-status"; 
     }
     @GetMapping("/admin-groups-orders")
-    public String admingroupsorders() {
-    	return "admin/smg/admin-groups-orders"; 
+    public String admingroupsorders(Model model) {
+        List<GroupOrdersVO> groupOrders = groupOrdersService.findAll();
+        model.addAttribute("groupOrders", groupOrders);
+        return "admin/smg/admin-groups-orders";
     }
     @GetMapping("/admin-groups-payments")
     public String admingroupspayments() {
