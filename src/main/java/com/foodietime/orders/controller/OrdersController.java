@@ -152,7 +152,10 @@ public class OrdersController {
         model.addAttribute("finalTotal", Math.max(0, finalTotal)); // 確保總計不為負數
 
         model.addAttribute("checkoutItems", checkoutItems); // 傳遞購物車商品列表
-        model.addAttribute("orderData", new OrdersVO());    // 傳遞一個空的 OrdersVO 物件用於表單綁定
+        OrdersVO orderData = new OrdersVO();
+        orderData.setPayMethod(0); // 預設選中 "信用卡" (value=0)
+        orderData.setDeliver(1);   // 預設選中 "外送" (value=1)
+        model.addAttribute("orderData", orderData);
         model.addAttribute("selectedCouponId", selectedCouponId); // 傳遞當前選中的優惠券ID，用於前端 select 預選
 
         model.addAttribute("now", new java.util.Date()); // 如果 HTML 中日期判斷仍使用，需要保留
@@ -238,9 +241,7 @@ public class OrdersController {
                     String linePayUrl = ordersService.initiateLinePayPayment(pendingOrder);
 
                     // 3. 將訂單ID和支付連結存起來，重導向到付款處理頁面
-                    redirectAttributes.addAttribute("orderId", pendingOrder.getOrdId());
-                    session.setAttribute("linePayUrl", linePayUrl); // 實際應用中，URL可能很長，放session較佳
-                    return "redirect:/orders/payment";
+                    return "redirect:" + linePayUrl;
 
                 } else {
                     // --- 信用卡或貨到付款流程 (原有邏輯) ---
@@ -369,6 +370,35 @@ public class OrdersController {
         // 無論業務邏輯成功與否，只要成功接收並驗證了請求，就應回傳 200 OK。
         // 這是在告知 LINE Pay：「我收到你的通知了，請不用再發了。」
         return ResponseEntity.ok("OK");
+    }
+    // src/main/java/com/foodietime/orders/controller/OrdersController.java
+
+    /**
+     * 【新增】接收來自 LINE Pay 的成功付款重導向。
+     *
+     * @param orderId 從 URL 參數中獲取的訂單ID
+     * @param redirectAttributes 用於傳遞訊息到最終頁面
+     * @return 重導向到訂單確認頁面
+     */
+    @GetMapping("/linepay/confirm")
+    public String handleLinePayConfirm(@RequestParam String orderId, RedirectAttributes redirectAttributes) {
+        try {
+            Integer orderIdInt = Integer.parseInt(orderId);
+
+            // ★ 核心邏輯：直接在這裡更新訂單狀態 ★
+            ordersService.confirmPayment(orderIdInt);
+
+            redirectAttributes.addFlashAttribute("successMessage", "訂單已成功付款！");
+            // 將使用者導向最終的訂單確認頁
+            return "redirect:/orders/order-confirmation?orderId=" + orderIdInt;
+
+        } catch (NumberFormatException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "無效的訂單編號。");
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "確認付款時發生錯誤：" + e.getMessage());
+            return "redirect:/cart/cart";
+        }
     }
 
     /**

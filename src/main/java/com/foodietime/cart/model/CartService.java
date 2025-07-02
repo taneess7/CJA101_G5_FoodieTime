@@ -159,4 +159,17 @@ public class CartService {
         return repo.findAllByIdsWithDetails(shopIds);
     }
 
+    /**
+     * 【新增】根據會員和商品列表，批量刪除購物車中的項目。
+     * @param member   執行刪除操作的會員
+     * @param products 要從購物車中移除的商品列表
+     */
+    @Transactional
+    public void deleteItemsByMemberAndProducts(MemberVO member, List<ProductVO> products) {
+        if (member == null || products == null || products.isEmpty()) {
+            return;
+        }
+        repo.deleteByMemberAndProducts(member, products);
+    }
+
 }

@@ -15,6 +15,7 @@ import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.orders.dto.LinePayRequestDTO;
 import com.foodietime.orders.dto.LinePayResponseDTO;
 import com.foodietime.orders.dto.NewOrderNotificationDTO;
+import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
 import jakarta.transaction.Transactional;
@@ -24,8 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -447,21 +451,6 @@ public class OrdersService {
         return ordersRepo.save(order);
     }
 
-//    /**
-//     * 【新增】模擬呼叫 LINE Pay API
-//     * 實際上這裡會使用 RestTemplate 或 WebClient 向 LINE Pay 發送請求
-//     * @param order 待付款的訂單
-//     * @return 模擬的 LINE Pay 支付 URL
-//     */
-//    public String initiateLinePayPayment(OrdersVO order) {
-//        // 這裡應組裝發送給 LINE Pay 的請求內容，包含訂單編號、金額、商品等
-//        System.out.println("正在為訂單 #" + order.getOrdId() + " 向 LINE Pay 請求支付，金額為：" + order.getActualPayment());
-//
-//        // 模擬從 LINE Pay API 收到的回應，其中包含一個跳轉支付的 URL
-//        // 這個 URL 用於生成 QR Code
-//        // 實際的 URL 會由 LINE Pay 提供
-//        return "https://line.me/pay/simulate/transaction/" + order.getOrdId() + "_" + System.currentTimeMillis();
-//    }
     /**
      * 呼叫 LINE Pay Request API 以取得真實支付 URL，並使用 HMAC 簽章認證。
      */
@@ -489,8 +478,9 @@ public class OrdersService {
                                 .build()
                 ))
                 .redirectUrls(LinePayRequestDTO.RedirectUrls.builder()
-                        .confirmUrl("http://localhost:8080/orders/order-confirmation?orderId=" + order.getOrdId())
-                        .cancelUrl("http://localhost:8080/cart/cart")
+                        // 修改點：將使用者導向我們新的確認端點
+                        .confirmUrl("http://localhost:8080/orders/linepay/confirm?orderId=" + order.getOrdId())
+                        .cancelUrl("http://localhost:8080/cart/cart") // 取消時導回購物車
                         .build())
                 .build();
 
@@ -523,7 +513,7 @@ public class OrdersService {
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 LinePayResponseDTO responseBody = response.getBody();
                 if ("0000".equals(responseBody.getReturnCode())) {
-                    return responseBody.getInfo().getPaymentUrl();
+                    return responseBody.getInfo().getPaymentUrl().getWeb();
                 } else {
                     throw new RuntimeException("LINE Pay 請求失敗: " + responseBody.getReturnMessage());
                 }
@@ -541,41 +531,49 @@ public class OrdersService {
      */
     @Transactional
     public OrdersVO confirmPayment(Integer orderId) {
-        // ==================== 步驟 1：查找訂單 ====================
+        // ==================== 步驟 1：查找訂單 (與您原版相同) ====================
         OrdersVO order = ordersRepo.findById(orderId)
-                .orElseThrow(() -> new IllegalStateException("Webhook 錯誤：找不到要更新的訂單 #" + orderId));
+                .orElseThrow(() -> new IllegalStateException("確認付款失敗：找不到訂單 #" + orderId));
 
-        // ==================== 步驟 2：【冪等性檢查】 ====================
-        // 如果訂單的付款狀態已經是「已付款」(1)，則直接返回該訂單，不做任何操作。
-        // 這可以防止因 LINE Pay 重複發送 Webhook 而導致的重複處理。
+        // ==================== 步驟 2：冪等性檢查 (與您原版相同) ====================
         if (order.getPaymentStatus() == 1) {
-            System.out.println("訂單 #" + orderId + " 已處理過，跳過 Webhook 更新。");
+            log.info("訂單 #{} 已處理過，跳過重複確認。", orderId);
             return order;
         }
 
-        // ==================== 步驟 3：更新訂單狀態 ====================
+        // ==================== 步驟 3：更新訂單狀態 (與您原版相同) ====================
         order.setPaymentStatus(1); // 1: 已付款
         order.setOrderStatus(1);   // 假設 1: 待出貨
 
-        // ==================== 步驟 4：執行後續業務邏輯 ====================
-        // a. 如果有使用優惠券，此時才將其標記為已使用
+        // ==================== 步驟 4：【核心修正】執行與 createOrderFromCart 同步的後續業務邏輯 ====================
+
+        // a. 將使用的優惠券標記為「已使用」
         if (order.getCoupon() != null) {
-            // 這部分邏輯需要根據你的 MemCoupon 設計來實現
-            // 例如：memCouponService.markAsUsed(order.getMember().getMemId(), order.getCoupon().getCouId());
-            System.out.println("訂單 #" + orderId + " 使用的優惠券已標記為已使用。");
+            memCouponRepo.findByMemberAndCoupon(order.getMember(), order.getCoupon())
+                    .ifPresent(memCoupon -> {
+                        memCoupon.setUseStatus(1);
+                        memCouponRepo.save(memCoupon);
+                        log.info("訂單 #{} 使用的優惠券 (ID: {}) 已標記為已使用。", orderId, memCoupon.getMemCouId());
+                    });
         }
 
         // b. 從會員的購物車中移除已經結帳的商品
-        // 這需要反向從訂單明細(OrdDetVO)中獲取商品ID列表
-        List<Integer> productIds = order.getOrdDet().stream()
-                .map(ordDet -> ordDet.getProduct().getProdId())
+        List<ProductVO> productsInOrder = order.getOrdDet().stream()
+                .map(OrdDetVO::getProduct)
                 .collect(Collectors.toList());
-        // 假設 CartService 有一個批量刪除的方法
-        // cartService.deleteItemsByMemberAndProducts(order.getMember().getMemId(), productIds);
-        System.out.println("已從購物車中移除訂單 #" + orderId + " 的商品。");
+
+        if (!productsInOrder.isEmpty()) {
+            cartService.deleteItemsByMemberAndProducts(order.getMember(), productsInOrder);
+            log.info("已從購物車中移除訂單 #{} 的商品。", orderId);
+        }
 
         // ==================== 步驟 5：儲存更新後的訂單 ====================
-        return ordersRepo.save(order);
+        OrdersVO savedOrder = ordersRepo.save(order);
+
+        // ==================== 步驟 6：【核心修正】觸發 WebSocket 即時推播通知 ====================
+        triggerNotification(savedOrder);
+
+        return savedOrder;
     }
 
     /**

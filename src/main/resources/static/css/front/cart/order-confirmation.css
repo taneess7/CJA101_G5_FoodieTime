@@ -921,3 +921,18 @@
         gap: var(--space-2);
     }
 }
+
+/* 自訂成功訊息樣式 */
+.success-message {
+    max-width: 400px;          /* 限制寬度 */
+    margin: 20px auto;         /* 上下間距20px，左右置中 */
+    padding: 15px 25px;        /* 內距加大 */
+    font-size: 1.2rem;         /* 字體放大 */
+    font-weight: 600;          /* 粗體 */
+    border-radius: 12px;       /* 圓角 */
+    box-shadow: 0 4px 12px rgba(72, 180, 97, 0.3); /* 輕微陰影 */
+    text-align: center;        /* 文字置中 */
+    background: linear-gradient(135deg, #4caf50 0%, #81c784 100%); /* 漸層綠色 */
+    color: white;              /* 白字 */
+}
+

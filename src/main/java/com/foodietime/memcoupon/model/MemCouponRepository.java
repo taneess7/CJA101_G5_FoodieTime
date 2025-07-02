@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MemCouponRepository extends JpaRepository<MemCouponVO, Integer> {
@@ -15,6 +16,6 @@ public interface MemCouponRepository extends JpaRepository<MemCouponVO, Integer>
     @Query("SELECT m FROM MemCouponVO m JOIN FETCH m.coupon c LEFT JOIN FETCH c.store s WHERE m.member = :member")
     List<MemCouponVO> findByMemberIdWithDetails(@Param("member") MemberVO member);
 
-    MemCouponVO findByMemberAndCoupon(MemberVO member, CouponVO coupon);
+    Optional<MemCouponVO> findByMemberAndCoupon(MemberVO member, CouponVO coupon);
 }
 

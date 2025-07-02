@@ -70,7 +70,7 @@
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
     <!-- 成功訊息顯示區 (從 placeOrder 重定向過來時顯示) -->
-    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${successMessage}" class="alert alert-success success-message" th:text="${successMessage}"></div>
 
     <!-- 訂單確認內容 (只有當 order 物件存在時才顯示) -->
     <!-- th:if="${order}" 是 th:if="${order != null}" 的簡寫，更簡潔 -->

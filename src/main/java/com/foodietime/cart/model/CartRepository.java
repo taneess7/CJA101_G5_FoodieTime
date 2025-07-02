@@ -3,6 +3,7 @@ package com.foodietime.cart.model;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.product.model.ProductVO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -26,4 +27,12 @@ public interface CartRepository extends JpaRepository<CartVO, Integer> {
 
     @Query("SELECT c FROM CartVO c JOIN FETCH c.product p JOIN FETCH p.store s WHERE c.shopId IN :shopIds")
     List<CartVO> findAllByIdsWithDetails(@Param("shopIds") List<Integer> shopIds);
+
+    /**
+     * 【新增】根據會員和一個商品列表，刪除所有匹配的購物車記錄。
+     */
+    @Modifying
+    @Query("DELETE FROM CartVO c WHERE c.member = :member AND c.product IN :products")
+    void deleteByMemberAndProducts(@Param("member") MemberVO member, @Param("products") List<ProductVO> products);
+
 }
