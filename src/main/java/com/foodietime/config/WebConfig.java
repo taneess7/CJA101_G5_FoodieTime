@@ -25,14 +25,27 @@ public class WebConfig implements WebMvcConfigurer {
                     "/front/member/member_center",
                     "/front/member/edit_profile",
                     "/front/member/messages",
-                    "/front/member/coupons",
-                    "/front/member/orders"
+                    "/member/coupons/**",
+                    "/member/orders/**",
+                    "/cart/**",
+                    "/favorite/**"
+                    
                 )
                 .excludePathPatterns(
-                    "/front/member/login",
+                	"/front/member/login",
                     "/front/member/register",
-                    "/front/member/success",
+                    "/front/member/verify",
+                    "/front/member/activate",
+                    "/front/member/logout",
                     "/front/member/storeregister"
                 );
-    }
+        // 店家 Interceptor
+        registry.addInterceptor(new StoreLoginInterceptor())
+                .addPathPatterns("/store/**")
+                .excludePathPatterns(
+                    "/store/desert2",         // 公開瀏覽的頁面不要攔
+                    "/store/DBGifReader"      // 顯示圖片 endpoint 不應攔截
+                );
+
+    }   
 }	
