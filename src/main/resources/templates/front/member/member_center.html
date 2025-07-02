@@ -6,6 +6,8 @@
     <title>會員中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
+    <link rel="stylesheet" th:href="@{/css/common/index.css}">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <!-- WebSocket 相關 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -31,17 +33,56 @@
             }
         });
     </script>
+    <style>
+ 
+  .app-header {
+    position: fixed;           /* ✅ 固定在畫面頂部 */
+    top: 0;
+    left: 0;
+    width: 100%;               /* 撐滿整個寬度 */
+    z-index: 50;               /* 確保蓋在上方 */
+    height: 64px;
+    background-color: white;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+  }
+</style>
+
+
+
+ 
+    
 </head>
 
-<body class="bg-gradient-to-br from-orange-100 to-rose-200 min-h-screen font-sans">
+<body class="bg-gradient-to-br from-orange-100 to-rose-200 font-sans overflow-x-hidden">
+
+
+
+
 	<header th:replace="~{front/common/header :: main-header}"></header>
     <!-- 整頁容器（padding 不要包 flex） -->
-   	<div class="max-w-6xl mx-auto flex items-start gap-8 px-4 py-8">
+   	
+
+
+<div class="w-full min-h-screen overflow-x-hidden pt-24">
+
+ 	<div class="max-w-6xl mx-auto flex gap-8 px-4 py-8 min-h-screen items-start relative">
+
+
 
 
 
         <!-- 左側側邊欄 -->
-       	<aside class="sticky top-8 h-fit self-start w-1/4 bg-white p-6 rounded-3xl shadow-lg flex flex-col">
+        <aside id="sidebar" class="w-[260px] bg-white p-6 rounded-3xl shadow-lg flex-shrink-0">
+
+
+
+
+
+
+
 
 
     <!-- 上半 avatar + nav -->
@@ -102,7 +143,10 @@
 
 
         <!-- 右側會員中心內容 -->
-        <div class="flex-1 bg-white p-10 rounded-3xl shadow-2xl transition-all duration-300">
+         <div class="flex-1 bg-white p-10 rounded-3xl shadow-2xl">
+
+
+
 
             <h2 class="text-4xl font-bold text-orange-700 mb-8 text-center tracking-wide">會員資料</h2>
 
@@ -121,10 +165,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 text-[16px] leading-relaxed">
                     <div><strong>暱稱：</strong><span th:text="${member.memNickname}"></span></div>
                     <div><strong>姓名：</strong><span th:text="${member.memName}"></span></div>
-                    <div><strong>Email：</strong><span th:text="${member.memEmail}"></span></div>
+                    <div class="break-words overflow-hidden">
+					  <strong>Email：</strong>
+					  <span th:text="${member.memEmail}"></span>
+					</div>
                     <div><strong>電話：</strong><span th:text="${member.memPhone}"></span></div>
                     <div><strong>城市：</strong><span th:text="${member.memCity} + ' ' + ${member.memCityarea}"></span></div>
-                    <div><strong>地址：</strong><span th:text="${member.memAddress}"></span></div>
+                    <div class="break-all overflow-hidden">
+					  <strong>地址：</strong>
+					  <span th:text="${member.memAddress}"></span>
+					</div>
                 </div>
 
                 <!-- 我的訊息 -->
@@ -195,8 +245,14 @@
 
         </div> <!-- 右側內容 -->
 
+    </div>
     </div> <!-- max-w-6xl flex -->
-	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+	<footer id="footer" th:replace="~{front/common/footer :: main-footer}"></footer>
+	<script th:src="@{/js/common/main.js}"></script>
+
+
+
+	
 </body>
 
 </html>
