@@ -8,17 +8,25 @@ import jakarta.servlet.http.HttpSession;
 
 public class MemberLoginInterceptor implements HandlerInterceptor{
 	@Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	        throws Exception {
 
-        HttpSession session = request.getSession();
-        Object loggedInMember = session.getAttribute("loggedInMember");
+	    HttpSession session = request.getSession();
+	    Object loggedInMember = session.getAttribute("loggedInMember");
 
-        if (loggedInMember == null) {
-            response.sendRedirect(request.getContextPath() + "/front/member/login");
-            return false;
-        }
+	    if (loggedInMember == null) {
+	        // ⏺ 記住原始請求網址（包含查詢參數）
+	        String uri = request.getRequestURI();
+	        String query = request.getQueryString();
+	        String fullUrl = uri + (query != null ? "?" + query : "");
 
-        return true;
-    }
+	        session.setAttribute("redirectAfterLogin", fullUrl);
+
+	        response.sendRedirect(request.getContextPath() + "/front/member/login");
+	        return false;
+	    }
+
+	    return true;
+	}
+
 }
