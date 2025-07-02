@@ -6,6 +6,7 @@ import com.foodietime.memfavlist.model.FavoriteListVO;
 import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreVO;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +106,15 @@ public class FavoriteListController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "移除失敗"));
 	    }
 	}
+	
+	@GetMapping("/logout")
+    public String logout(HttpSession session,HttpServletResponse response) {
+        session.invalidate();
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        return "redirect:/index";
+    }
 //	// 主頁
 //    @GetMapping("/select_page")
 //    public String index() {

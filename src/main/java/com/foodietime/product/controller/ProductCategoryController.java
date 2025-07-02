@@ -95,6 +95,13 @@ public class ProductCategoryController {
         model.addAttribute("storeList", storeList);
         model.addAttribute("categoryId", cateId);
 
+     // 🔍 加入這段 debug 印出星星總數與評價人數
+        for (StoreVO store : storeList) {
+            System.out.println("🟡 店家: " + store.getStorName() +
+                               ", starNum = " + store.getStarNum() +
+                               ", reviews = " + store.getReviews());
+        }
+        
         // 3. 根據店家撈商品
         List<ProductVO> allProducts = new ArrayList<>();
         for (StoreVO store : storeList) {
@@ -338,59 +345,6 @@ public class ProductCategoryController {
         return "front/restaurant/category";
     }
     
-    
-    //中式料理
-    @GetMapping("/chinese-cuisine")
-    public String listChinese() {
-        
-        return "front/restaurant/chinese-cuisine";
-    }
-    
-    //日式料理
-    @GetMapping("/japanese-cuisine")
-    public String listJapanese() {
-        
-        return "/front/restaurant/japanese-cuisine";
-    }
-    //韓式料理
-    @GetMapping("/korean-cuisine")
-    public String listKorean() {
-        
-        return "/front/restaurant/korean-cuisine";
-    }
-    //泰式料理
-    @GetMapping("/thai-cuisine")
-    public String listThai() {
-        
-        return "/front/restaurant/thai-cuisine";
-    }
-    //義式料理
-    @GetMapping("/italian-cuisine")
-    public String listItalian() {
-        
-        return "/front/restaurant/italian-cuisine";
-    }
-    //美式餐廳 (可動態帶入資料庫店家)
-//    @GetMapping("/american-cuisine")
-//    public String showAmeStore(Model model) {
-//        List<StoreVO> ameStores = categoryService.getAmericanRestaurants(); // 呼叫 StoreService
-//        model.addAttribute("AmeStore", ameStores); // 傳到 Thymeleaf 頁面
-//        return "front/restaurant/american-cuisine"; // 返回 american-cuisine.html
-//    }
-
-
-    //甜點飲料
-    @GetMapping("/dessert-drinks")
-    public String listDessert() {
-        
-        return "/front/restaurant/dessert-drinks";
-    }
-    //素食料理
-    @GetMapping("/vegetarian-cuisine")
-    public String listVegetarian() {
-        
-        return "/front/restaurant/vegetarian-cuisine";
-    }
 //    // 顯示新增頁面
 //    @GetMapping("/add")
 //    public String showAddForm(Model model) {

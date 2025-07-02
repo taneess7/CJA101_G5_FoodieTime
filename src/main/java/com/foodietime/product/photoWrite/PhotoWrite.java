@@ -11,8 +11,8 @@ class PhotoWrite {
 		String url = "jdbc:mysql://localhost:3306/g05?serverTimezone=Asia/Taipei";
 		String userid = "root";
 		String passwd = "123456";
-		String photos = "src/main/resources/static/images/actimg"; //測試用圖片已置於【專案錄徑】底下的【resources/DB_photos1】目錄內
-		String update = "update activity set ACT_PHOTO =? where ACT_ID=?";
+		String photos = "src/main/resources/static/images/product"; //測試用圖片已置於【專案錄徑】底下的【resources/DB_photos1】目錄內
+		String update = "update product set PROD_PHOTO =? where PROD_ID=?";
 
 		int count = 1;
 		try {
