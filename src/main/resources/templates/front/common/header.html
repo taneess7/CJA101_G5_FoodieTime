@@ -39,7 +39,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a th:href="@{/member/login}" class="nav-link login-btn">登入/註冊</a>
+            <a th:href="@{/front/member/login}" class="nav-link login-btn">登入/註冊</a>
           </li>
         </th:block>
 
@@ -54,14 +54,12 @@
           </li>
           <li class="nav-item nav-user-greeting">
             <!-- 直接使用 model 中的 loginMember 物件 -->
-            <a th:href="@{/member/profile}" class="nav-link"
+            <a th:href="@{/front/member/member_center}" class="nav-link"
                th:if="${loginMember != null}"
                th:text="'你好, ' + ${loginMember.memName}">你好, 會員</a>
           </li>
           <li class="nav-item">
-            <form th:action="@{/member/logout}" method="post" class="logout-form">
-              <button type="submit" class="nav-link login-btn">登出</button>
-            </form>
+             <a th:href="@{/front/member/logout}" class="nav-link login-btn">登出</a>
           </li>
         </th:block>
       </ul>
