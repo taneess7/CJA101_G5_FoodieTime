@@ -89,7 +89,7 @@ public class GroupOrdersVO implements Serializable{
 	@Column(name = "ORDER_STATUS", nullable = false)
     @NotNull(message = "訂單狀態: 請指定訂單狀態")
     @Min(value = 0, message = "訂單狀態: 最小值為 0")
-    @Max(value = 3, message = "訂單狀態: 最大值為 4")
+    @Max(value = 4, message = "訂單狀態: 最大值為 4")
     private Byte orderStatus;  // 訂單狀態 (0: 未接單, 1: 接單, 2: 完成, 3: 取消, 4: 退款)
 
 	

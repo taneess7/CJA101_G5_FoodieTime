@@ -97,7 +97,7 @@ public class GroupProductController {
         }
 
         gbprodService.save(gbprodVO);
-        return "redirect:/store/sc";
+        return "redirect:/store/group-prod-list";
     }
 
     @GetMapping("/group-prod-list")
