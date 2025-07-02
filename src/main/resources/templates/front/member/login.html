@@ -7,11 +7,15 @@
 	<meta http-equiv="Expires" content="0" />
     <meta charset="UTF-8">
     <title>會員登入</title>
+    <link rel="stylesheet" th:href="@{/css/common/index.css}">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/common/main.js}"></script>
 </head>
 
-<body class="bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 min-h-screen flex items-center justify-center font-sans">
+<body class="min-h-screen flex flex-col font-sans bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100">
 
+	<main class="flex-grow flex items-center justify-center">
     <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md transition-all duration-300">
         <h2 class="text-4xl font-bold text-center text-orange-700 mb-8 tracking-wide">會員登入</h2>
 
@@ -75,6 +79,8 @@
             </div>
         </form>
     </div>
+  </main>
+    <footer th:replace="~{front/common/footer :: main-footer}"></footer>
     <!-- login.html 頁面中 -->
 		<script th:inline="javascript">
 		/*<![CDATA[*/
