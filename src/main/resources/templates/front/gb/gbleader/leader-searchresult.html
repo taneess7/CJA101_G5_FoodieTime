@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團主開團 - 團購樂</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+        }
+
+        .search-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 0;
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-title {
+            color: white;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .search-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .filter-bar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            height: 48px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .product-price {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .product-original-price {
+            text-decoration: line-through;
+            color: #adb5bd;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+
+        .product-discount {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        .progress {
+            height: 8px;
+            margin: 10px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .time-left {
+            color: #ff6b6b;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .join-btn {
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .section-title {
+            margin: 30px 0 20px 0;
+            font-weight: bold;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #ff6b6b;
+        }
+
+        .badge-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/gb/leaderindex}">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">熱門團購</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">最新上架</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">即將結束</a>
+                    </li>
+                    <li class="nav-item">                                     
+                      <!-- 未登入狀態：顯示登入模態視窗 -->
+                      <a th:if="${session.loggedInMember == null}" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#organizerModal">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
+                      <!-- 已登入狀態：直接跳轉到團長專區 -->
+                      <a th:if="${session.loggedInMember != null}" class="nav-link" href="/gb/leader">
+                          <i class="bi bi-person-badge"></i> 我是團長
+                      </a>
+                  </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <!-- 用戶資訊下拉選單 -->
+                    <div class="dropdown">
+                        <!-- 未登入狀態：顯示登入 / 註冊 -->
+					    <div th:if="${session.loggedInMember == null}">
+					        <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+					            <i class="bi bi-person"></i> 登入
+					        </a>
+					        <a href="/register" class="btn btn-outline-primary me-2">
+					            <i class="bi bi-person-plus"></i> 註冊
+					        </a>
+					    </div>
+					
+					    <!-- 已登入狀態：顯示帳號 -->
+					    <div th:if="${session.loggedInMember != null}" class="dropdown">
+					        <a href="#" class="btn btn-outline-success dropdown-toggle me-2" data-bs-toggle="dropdown" aria-expanded="false">
+					            <i class="bi bi-person-circle"></i> <span th:text="${session.loggedInMember.memNickname}">帳號名稱</span>
+					        </a>
+					        <ul class="dropdown-menu">
+					            <li><a class="dropdown-item" href="/member/profile">會員中心</a></li>
+					            <li><a class="dropdown-item" href="/logout">登出</a></li>
+					        </ul>
+					    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 搜尋區塊 -->
+	<section class="search-section">
+	  <div class="container">
+	    <div class="search-container text-center">
+	      <h1 class="search-title">挑選開團商品</h1>
+	      <p class="search-subtitle">
+	        選擇您想開設的團購商品，讓我們幫助您更方便的管理團購活動
+	      </p>
+	
+	      <!-- 改成 form，action 指到 /gb/leader-groups/search -->
+	      <form th:action="@{/gb/search}" method="get" class="input-group mb-3">
+	        <!-- 只用商品名稱搜尋：name 要和 @RequestParam("gbProdName") 一致 -->
+	        <input type="text"
+	               name="gbProdName"
+	               class="form-control form-control-lg"
+	               placeholder="搜尋商品..."
+	               th:value="${gbProdName}" />
+	
+	        <button type="submit" class="btn btn-primary btn-lg">
+	          <i class="bi bi-search"></i> 搜尋
+	        </button>
+	      </form>
+	
+	    </div>
+	  </div>
+	</section>
+
+
+    <!-- 篩選欄 -->
+    <div class="container">
+        <div class="filter-bar">
+            <div class="row">
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <select class="form-select">
+                        <option selected>所有分類</option>
+                        <option>3C電子</option>
+                        <option>美妝保養</option>
+                        <option>服飾配件</option>
+                        <option>居家生活</option>
+                        <option>美食餐飲</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <select class="form-select">
+                        <option selected>所有地區</option>
+                        <option>北部</option>
+                        <option>中部</option>
+                        <option>南部</option>
+                        <option>東部</option>
+                        <option>離島</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <select class="form-select">
+                        <option selected>價格範圍</option>
+                        <option>$0 - $500</option>
+                        <option>$501 - $1,000</option>
+                        <option>$1,001 - $3,000</option>
+                        <option>$3,001 以上</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option selected>排序方式</option>
+                        <option>熱門程度</option>
+                        <option>最新上架</option>
+                        <option>價格低至高</option>
+                        <option>價格高至低</option>
+                        <option>即將結束</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+		<!-- 麵包屑導航 -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="gbindex.html">首頁</a></li>
+                <li class="breadcrumb-item"><a href="#">3C電子</a></li>
+                <li class="breadcrumb-item"><a href="#">耳機/音響</a></li>
+                <li class="breadcrumb-item active" aria-current="page">高音質無線藍牙耳機</li>
+            </ol>
+        </nav>
+        <!-- 搜尋結果 -->
+        
+		<!-- 搜尋結果（只有在有資料時才顯示） -->
+		<div class="container mt-4" th:if="${groupBuyingCases}">
+		  <h2 class="section-title">搜尋結果</h2>
+		  <table class="table table-striped">
+		    <thead>
+		      <tr>
+		        <th>編號</th>
+		        <th>標題</th>
+		        <th>狀態</th>
+		        <th>開始時間</th>
+		        <th>結束時間</th>
+		        <th>最低成團</th>
+		        <th>操作</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr th:each="case : ${groupBuyingCases}">
+		        <td th:text="${case.gbId}">1</td>
+		        <td th:text="${case.gbTitle}">標題</td>
+		        <td>
+		          <span th:switch="${case.gbStatus}">
+		            <span th:case="1">招募中</span>
+		            <span th:case="2">即將截止</span>
+		            <span th:case="3">已開團</span>
+		            <span th:case="4">已截止</span>
+		            <span th:case="5">已取消</span>
+		          </span>
+		        </td>
+		        <td th:text="${#dates.format(case.startTime,'yyyy-MM-dd HH:mm')}">2025-06-23 10:00</td>
+		        <td th:text="${#dates.format(case.endTime,  'yyyy-MM-dd HH:mm')}">2025-06-30 23:59</td>
+		        <td th:text="${case.minGroupSize}">10</td>
+		        <td>
+		          <a th:href="@{/gb/leader-groups/search(gbId=${case.gbId})}"
+		             class="btn btn-sm btn-primary">詳情</a>
+		          <a th:href="@{/gb/leader-groups/edit/{id}(id=${case.gbId})}"
+		             class="btn btn-sm btn-secondary">編輯</a>
+		        </td>
+		      </tr>
+		    </tbody>
+		  </table>
+		</div>
+
+
+
+            
+<!-- 登入彈窗 -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">會員登入</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/front/member/login" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">帳號</label>
+                            <input type="text" class="form-control" name="mem_account" id="mem_account" placeholder="帳號">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密碼</label>
+                            <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">記住我</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">登入</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <p>還沒有帳號？ <a href="#" class="text-decoration-none">立即註冊</a></p>
+                        <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-outline-danger">
+                            <i class="bi bi-google"></i> 使用 Google 登入
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-facebook"></i> 使用 Facebook 登入
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="organizerModal" tabindex="-1" aria-labelledby="organizerModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="organizerModalLabel">團長專區</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-center mb-4">
+                      <i class="bi bi-person-badge" style="font-size: 3rem; color: #ff6b6b;"></i>
+                      <h4 class="mt-2">團長登入</h4>
+                      <p class="text-muted">登入您的團長帳號，管理您的團購活動</p>
+                  </div>
+                  <form>
+                      <div class="mb-3">
+                          <label for="organizerEmail" class="form-label">帳號</label>
+                          <input type="text" class="form-control" name="mem_account" id="mem_account" placeholder="帳號">
+                      </div>
+                      <div class="mb-3">
+                          <label for="organizerPassword" class="form-label">密碼</label>
+                          <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
+                      </div>
+                      <div class="mb-3 form-check">
+                          <input type="checkbox" class="form-check-input" id="organizerRememberMe">
+                          <label class="form-check-label" for="organizerRememberMe">記住我</label>
+                      </div>
+                      <div class="d-grid">
+                          <button type="submit" class="btn btn-primary">登入團長專區</button>
+                      </div>
+                  </form>
+                  <hr>
+                  <div class="text-center">
+                      <p>還不是團長？ <a href="#" class="text-decoration-none">立即申請成為團長</a></p>
+                      <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                  </div>
+                  <div class="mt-4">
+                      <h5 class="text-center mb-3">團長專區功能</h5>
+                      <div class="row text-center">
+                          <div class="col-4">
+                              <i class="bi bi-shop" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">開設團購</p>
+                          </div>
+                          <div class="col-4">
+                              <i class="bi bi-graph-up" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">銷售分析</p>
+                          </div>
+                          <div class="col-4">
+                              <i class="bi bi-people" style="font-size: 1.5rem; color: #ff6b6b;"></i>
+                              <p class="mt-2">會員管理</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+    <!-- 頁腳 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">團購樂</h5>
+                    <p>團購樂是一個專業的團購平台，提供各種優質商品的團購服務，讓您與朋友一起購買，享受更多折扣。</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-line"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="footer-title">快速連結</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">首頁</a></li>
+                        <li><a href="#">熱門團購</a></li>
+                        <li><a href="#">最新上架</a></li>
+                        <li><a href="#">即將結束</a></li>
+                        <li><a href="#">我要開團</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">訂閱電子報</h5>
+                    <p>訂閱我們的電子報，獲取最新優惠和團購資訊。</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="您的電子郵件" aria-label="您的電子郵件">
+                        <button class="btn btn-outline-light" type="button">訂閱</button>
+                    </div>
+                    <p class="small mt-3">© 2023 團購樂. 版權所有.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
