@@ -162,7 +162,7 @@
   <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -355,7 +355,8 @@
 			      <span th:if="${order.orderStatus==0}">未接單</span>
 			      <span th:if="${order.orderStatus==1}">已接單</span>
 			      <span th:if="${order.orderStatus==2}">已完成</span>
-			      <span th:if="${order.orderStatus==3}">已取消</span>
+			      <span th:if="${order.orderStatus==3}">開團失敗</span>
+			      <span th:if="${order.orderStatus==4}">團主取消</span>
 			    </p>
 			    <p><strong>付款狀態：</strong>
 			      <span th:text="${order.paymentStatus==0?'未付款':'已付款'}">已付款</span>

@@ -162,7 +162,7 @@
     <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -301,6 +301,10 @@
                             <option value="unpaid" th:selected="${selectedFilter == 'unpaid'}">未付款</option>
                             <option value="shipped" th:selected="${selectedFilter == 'shipped'}">已出貨</option>
                             <option value="unshipped" th:selected="${selectedFilter == 'unshipped'}">未出貨</option>
+                            <option value="1">已接單</option>
+                            <option value="2">已完成</option>
+                            <option value="3">開團失敗</option>
+                            <option value="4">團主取消</option>
                         </select>
                     </div>
                     
@@ -338,14 +342,13 @@
                                 <td th:text="${o.amount}">總金額</td>
                                 <td th:text="${o.paymentStatus == 0 ? '未付款' : '已付款'}">付款狀態</td>
                                 <td th:text="${o.shippingStatus == 0 ? '未出貨' : '已出貨'}">出貨狀態</td>
-                                <td>
-                                  <span th:switch="${o.orderStatus}">
-                                    <span th:case="0">未接單</span>
-                                    <span th:case="1">已接單</span>
-                                    <span th:case="2">已完成</span>
-                                    <span th:case="3">已取消</span>
-                                    <span th:case="*">未知</span>
-                                  </span>
+                                <td th:switch="${o.orderStatus}" th:attr="data-status=${o.orderStatus}">
+                                  <span th:case="0">未接單</span>
+                                  <span th:case="1">已接單</span>
+                                  <span th:case="2">已完成</span>
+                                  <span th:case="3">開團失敗</span>
+                                  <span th:case="4">團主取消</span>
+                                  <span th:case="*">未知</span>
                                 </td>
                                 <td>
 					              <a th:href="@{/gb/order/{id}/detail(id=${o.gbOrId})}" class="btn btn-sm btn-primary">
@@ -558,6 +561,7 @@
     allItems.forEach(tr => {
       const payment = tr.children[4].textContent.trim();
       const shipping = tr.children[5].textContent.trim();
+      const orderStatus = tr.children[6].dataset.status;
       let show = true;
 
       switch (filterValue) {
@@ -565,6 +569,10 @@
         case 'unpaid':   show = payment === '未付款';    break;
         case 'shipped':  show = shipping === '已出貨';   break;
         case 'unshipped':show = shipping === '未出貨';   break;
+        case '1': show = orderStatus === '1'; break;
+        case '2': show = orderStatus === '2'; break;
+        case '3': show = orderStatus === '3'; break;
+        case '4': show = orderStatus === '4'; break;
       }
 
       tr.style.display = show ? '' : 'none';

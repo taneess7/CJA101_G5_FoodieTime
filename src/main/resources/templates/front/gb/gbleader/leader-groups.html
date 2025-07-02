@@ -215,7 +215,7 @@ body {
 	<nav
 		class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
 		<div class="container">
-			<a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
+			<a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
 			<button class="navbar-toggler" type="button"
 				data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false"
@@ -397,11 +397,11 @@ body {
 												2025-06-21 14:00</td>
 											<!-- 開團狀態 -->
 											<td><span th:switch="${gbcase.gbStatus}"> 
-												<span th:case="1">招募中</span> 
-												<span th:case="4">已截止</span> 
-												<span th:case="5">已取消</span> 
-												<span th:case="6">開團失敗</span>
-												<span th:case="*">未知</span>
+												<span th:case="1" class="text-success">招募中</span>
+											    <span th:case="4" class="text-warning">已截止</span>
+											    <span th:case="5" class="text-danger">已取消</span>
+											    <span th:case="6" class="text-danger">開團失敗</span>
+											    <span th:case="*">未知</span>
 											</span></td>
 											<!-- 查看詳情 按鈕 -->
 											<td>

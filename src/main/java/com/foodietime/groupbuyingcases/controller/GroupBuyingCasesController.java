@@ -161,6 +161,16 @@ public class GroupBuyingCasesController {
 
 	     // 3. 放到 Model 裡供表單綁定
 	     model.addAttribute("groupBuyingCase", group);
+	  // 取得促銷結束時間
+         String promoEndTime = null;
+         if (group.getGbProd() != null && group.getGbProd().getGbpromotionList() != null && !group.getGbProd().getGbpromotionList().isEmpty()) {
+             var promo = group.getGbProd().getGbpromotionList().get(0);
+             if (promo.getPromotEnd() != null) {
+                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                 promoEndTime = sdf.format(promo.getPromotEnd());
+             }
+         }
+         model.addAttribute("promoEndTime", promoEndTime);
 	     return "front/gb/gbleader/leader-groups-edit";
 	 }
 

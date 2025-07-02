@@ -326,31 +326,29 @@ body {
                                                     <select th:field="*{gbStatus}" class="form-select" id="editCaseStatus">
                                                         <option th:value="1">招募中</option>
                                                         <option th:value="5">已取消</option>
-                                                        <option th:value="6">開團失敗</option>
+                                                        
                                                     </select>
-                                                    <small class="form-text text-muted">「已取消」為團主手動取消，「開團失敗」為未達標自動失敗</small>
+                                                    <small class="form-text text-muted"></small>
                                                 </div>
                                             </div>
-					                        
-					                        <!-- 最低成團數量 -->
+                                            
+						                    <!-- 最低成團數量欄位（只讀） -->
 					                        <div class="col-md-6 mb-3">
-								              <label class="form-label">最低成團數量</label>
-								              <input type="number" th:field="*{gbMinProductQuantity}"
-								                     class="form-control" min="1"/>
-								            </div>
-					                    
-					
-					                    <div class="row">
+						                        <label class="form-label">最低成團數量</label>
+						                        <input type="number" th:field="*{gbMinProductQuantity}" class="form-control" min="1" readonly />
+						                    </div>
+						                   
+			                        	<div class="row">
 					                        <!-- 開始時間 -->
 					                        <div class="col-md-6 mb-3">
-								              <label class="form-label">開始時間</label>
-								              <input type="datetime-local" th:field="*{gbStartTime}" class="form-control"/>
+								                <label class="form-label">開始時間</label>
+								                <input type="datetime-local" th:field="*{gbStartTime}" class="form-control" id="startTimeInput" />
 								            </div>
 					                        
 					                        <!-- 結束時間 -->
 					                        <div class="col-md-6 mb-3">
 								              <label class="form-label">結束時間</label>
-								              <input type="datetime-local" th:field="*{gbEndTime}" class="form-control"/>
+								              <input type="datetime-local" th:field="*{gbEndTime}" class="form-control" id="endTimeInput" th:max="${promoEndTime}" />
 								            </div>
 					                    </div>
 					
@@ -362,14 +360,6 @@ body {
                                                 當團購狀態為「已取消」時，必須填寫取消原因
                                             </div>
                                        </div>
-					
-					                    <!-- 通知會員 -->
-								        <div class="form-check">
-								          <input class="form-check-input" type="checkbox" id="notifyMember">
-								          <label class="form-check-label" for="notifyMember">
-								            通知會員團購狀態變更
-								          </label>
-								        </div>
 					          
 							            <div class="modal-footer">
 							                <button type="submit" class="btn btn-danger">儲存變更</button>
@@ -542,30 +532,74 @@ body {
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
             var gbStatus = /*[[${groupBuyingCase.gbStatus}]]*/ 0;
-            if (gbStatus == 5) {
+            var form = document.querySelector('form');
+            if (gbStatus !== 1) {
                 // 禁用所有表單欄位
-                document.querySelectorAll('form input, form select, form textarea').forEach(function(el) {
+                document.querySelectorAll('form input, form select, form textarea, form button[type="submit"]').forEach(function(el) {
                     el.setAttribute('disabled', 'disabled');
                 });
-                // 隱藏送出按鈕
-                var submitBtn = document.querySelector('form button[type="submit"]');
-                if (submitBtn) submitBtn.style.display = 'none';
-                // 警告彈窗
-                alert('此團購案已取消，無法再次編輯！');
+                // 顯示提示
+                setTimeout(function() {
+                    alert('只有「招募中」狀態才能編輯團購案！');
+                }, 100);
             }
-            // 新增：送出前如果選擇已取消，彈出確認
-            var form = document.querySelector('form');
+         // 新增：送出前如果選擇已取消，彈出確認
             if (form) {
                 form.addEventListener('submit', function(e) {
                     var statusSelect = document.getElementById('editCaseStatus');
+                    var cancelReason = document.getElementById('cancelReason');
+                    var cancelReasonError = document.getElementById('cancelReasonError');
                     if (statusSelect && statusSelect.value === '5') {
+                        if (!cancelReason.value.trim()) {
+                            e.preventDefault();
+                            cancelReason.classList.add('is-invalid');
+                            if (cancelReasonError) cancelReasonError.style.display = 'block';
+                            cancelReason.focus();
+                            return;
+                        } else {
+                            cancelReason.classList.remove('is-invalid');
+                            if (cancelReasonError) cancelReasonError.style.display = 'none';
+                        }
                         if (!confirm('確定要將此團購案設為「已取消」嗎？此動作不可逆，且所有訂單將同步取消！')) {
                             e.preventDefault();
                         }
+                    } else {
+                        cancelReason.classList.remove('is-invalid');
+                        if (cancelReasonError) cancelReasonError.style.display = 'none';
                     }
                 });
             }
+         // 設定開始時間min為當前時間（不含秒）
+            var startTimeInput = document.getElementById('startTimeInput');
+            var endTimeInput = document.getElementById('endTimeInput');
+            if (startTimeInput) {
+                var now = new Date();
+                now.setSeconds(0, 0); // 秒與毫秒歸零
+                var offset = now.getTimezoneOffset();
+                var local = new Date(now.getTime() - offset * 60000);
+                var nowStr = local.toISOString().slice(0,16); // yyyy-MM-ddTHH:mm
+                startTimeInput.setAttribute('min', nowStr);
+                // 若input預設值有秒數，自動去除
+                if (startTimeInput.value && startTimeInput.value.length > 16) {
+                    startTimeInput.value = startTimeInput.value.slice(0,16);
+                }
+            }
+            // 結束時間min設為開始時間
+            function updateEndTimeMin() {
+                if (endTimeInput && startTimeInput) {
+                    endTimeInput.setAttribute('min', startTimeInput.value);
+                    // 若結束時間早於開始時間，自動修正
+                    if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
+                        endTimeInput.value = startTimeInput.value;
+                    }
+                }
+            }
+            if (startTimeInput && endTimeInput) {
+                updateEndTimeMin();
+                startTimeInput.addEventListener('change', updateEndTimeMin);
+            }
         });
+
         /*]]>*/
     </script>
 

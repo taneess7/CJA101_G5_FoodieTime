@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的團購清單 - FoodieTime 食刻</title>
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .table th, .table td { vertical-align: middle; }
+        .status-available { color: #28a745; font-weight: bold; }
+        .status-expired { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+<header class="app-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a th:href="@{/index}" class="logo">
+                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a th:href="@{/map}" class="nav-link">地圖</a></li>
+                <li class="nav-item"><a th:href="@{/group-order.html}" class="nav-link">團購</a></li>
+                <li class="nav-item"><a th:href="@{/deals.html}" class="nav-link">優惠</a></li>
+                <li class="nav-item"><button class="login-btn"><a th:href="@{/login}">登入/註冊</a></button></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="main-content">
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <div class="profile-sidebar p-3 bg-white rounded shadow-sm">
+                    <div class="text-center mb-4">
+                        <img src="img/avatar.svg" alt="會員頭像" class="profile-avatar mb-3" style="width:80px;height:80px;">
+                        <h5>王小明</h5>
+                        <p class="text-muted mb-0">會員</p>
+                    </div>
+                    <nav class="nav flex-column">
+                        <a href="member.html" class="nav-link"><i class="bi bi-person"></i> 會員資料</a>
+                        <a href="member-orders.html" class="nav-link"><i class="bi bi-receipt"></i> 訂單記錄</a>
+                        <a href="member-coupons.html" class="nav-link"><i class="bi bi-ticket"></i> 優惠券</a>
+                        <a href="member-favorites.html" class="nav-link"><i class="bi bi-heart"></i> 收藏餐廳</a>
+                        <a href="member-points.html" class="nav-link"><i class="bi bi-star"></i> 點數紀錄</a>
+                        <a href="#" class="nav-link logout"><i class="bi bi-box-arrow-right"></i> 登出</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="profile-content bg-white rounded shadow-sm p-4">
+                    <h3 class="mb-4">我的團購清單</h3>
+                    <div id="noDataMessage" class="text-center py-5" th:if="${#lists.isEmpty(orders)}">
+                        <h4 class="text-muted">目前無任何團購訂單</h4>
+                    </div>
+                    <div class="card mb-4" id="orderTableCard" th:if="${!#lists.isEmpty(orders)}">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold">團購訂單列表</h6>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>訂單編號</th>
+                                        <th>團購標題</th>
+                                        <th>商品名稱</th>
+                                        <th>數量</th>
+                                        <th>總金額</th>
+                                        <th>訂單狀態</th>
+                                        <th>有效期限</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTbody">
+                                    <tr th:each="order : ${orders}"
+                                        th:with="gbcase=${order.groupBuyingCase},
+                                                 prod=${gbcase.gbProd},
+                                                 isActive=${gbcase.gbStatus == 1 or gbcase.gbStatus == 3},
+                                                 isFailed=${gbcase.gbStatus == 6},
+                                                 isCanceled=${gbcase.gbStatus == 5},
+                                                 isEnded=${gbcase.gbStatus == 4}">
+                                        <td th:text="${order.gbOrId}">訂單編號</td>
+                                        <td th:text="${gbcase.gbTitle}">團購標題</td>
+                                        <td th:text="${prod != null ? prod.gbProdName : '商品'}">商品名稱</td>
+                                        <td th:text="${order.quantity}">數量</td>
+                                        <td th:text="${order.amount}">總金額</td>
+                                        <td th:switch="${order.orderStatus}" th:attr="data-status=${order.orderStatus}">
+                                            <span th:case="0">未接單</span>
+                                            <span th:case="1">已接單</span>
+                                            <span th:case="2">已完成</span>
+                                            <span th:case="3">開團失敗</span>
+                                            <span th:case="4">團主取消</span>
+                                            <span th:case="*">未知</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(gbcase.gbStartTime, 'yyyy/MM/dd') + ' - ' + #temporals.format(gbcase.gbEndTime, 'yyyy/MM/dd')}">有效期限</td>
+                                        <td>
+                                            <a th:href="@{/gb/order/{id}/detail(id=${order.gbOrId})}" class="btn btn-sm btn-primary">查看詳情</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center" id="pagination"></ul>
+                            </nav>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span>
+                                    第 <span id="startRecord">0</span>-<span id="endRecord">0</span> 筆，共
+                                    <span id="totalRecords" class="fw-bold">0</span> 筆
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="app-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">功能</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="map.html">地圖搜尋</a></li>
+                        <li><a href="group-order.html">團購功能</a></li>
+                        <li><a href="deals.html">比價優惠</a></li>
+                        <li><a href="collections.html">收藏管理</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">關於我們</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="about.html">公司簡介</a></li>
+                        <li><a href="team.html">團隊成員</a></li>
+                        <li><a href="careers.html">加入我們</a></li>
+                        <li><a href="press.html">媒體報導</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">幫助</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="faq.html">常見問題</a></li>
+                        <li><a href="contact.html">聯絡我們</a></li>
+                        <li><a href="terms.html">使用條款</a></li>
+                        <li><a href="privacy.html">隱私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const ITEMS_PER_PAGE = 5;
+  let currentPage = 1;
+  let allItems = [];
+  let filteredItems = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initItems();
+    initializePagination();
+  });
+
+  function initItems() {
+    const rows = Array.from(document.querySelectorAll('#ordersTbody tr'));
+    allItems = rows.filter(tr =>
+      !tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
+    );
+  }
+
+  function getCurrentItemsToUse() {
+    return allItems;
+  }
+
+  function initializePagination() {
+    const itemsToUse = getCurrentItemsToUse();
+    const pagers = document.querySelectorAll('.pagination');
+    if (itemsToUse.length === 0) {
+      allItems.forEach(tr => tr.style.display = 'none');
+      pagers.forEach(p => p.style.display = 'none');
+      updatePaginationInfo(0, 0, 0);
+      updateNoDataMessage();
+      return;
+    }
+    if (itemsToUse.length > ITEMS_PER_PAGE) {
+      pagers.forEach(p => p.style.display = 'flex');
+      showPage(1);
+      updatePagination();
+    } else {
+      itemsToUse.forEach(tr => tr.style.display = '');
+      pagers.forEach(p => p.style.display = 'none');
+      updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
+    }
+    updateNoDataMessage();
+  }
+
+  function showPage(page) {
+    currentPage = page;
+    const itemsToUse = getCurrentItemsToUse();
+    if (itemsToUse.length === 0) {
+      allItems.forEach(tr => tr.style.display = 'none');
+      updatePaginationInfo(0, 0, 0);
+      updateNoDataMessage();
+      return;
+    }
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    itemsToUse.forEach((tr, idx) => {
+      tr.style.display = (idx >= start && idx < end) ? '' : 'none';
+    });
+    updatePaginationInfo(start, end, itemsToUse.length);
+    updateNoDataMessage();
+  }
+
+  function updatePaginationInfo(startIndex, endIndex, total) {
+    const startRecord = total === 0 ? 0 : startIndex + 1;
+    const endRecord = Math.min(endIndex, total);
+    document.getElementById('startRecord').textContent = startRecord;
+    document.getElementById('endRecord').textContent = endRecord;
+    document.getElementById('totalRecords').textContent = total;
+  }
+
+  function updatePagination() {
+    const itemsToUse = getCurrentItemsToUse();
+    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+    const container = document.getElementById('pagination');
+    container.innerHTML = '';
+    if (itemsToUse.length === 0) return;
+    const prevLi = document.createElement('li');
+    prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
+    container.appendChild(prevLi);
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.className = i === currentPage ? 'page-item active' : 'page-item';
+      li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
+      container.appendChild(li);
+    }
+    const nextLi = document.createElement('li');
+    nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
+    container.appendChild(nextLi);
+  }
+
+  window.changePage = function(page) {
+    const itemsToUse = getCurrentItemsToUse();
+    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+    if (page < 1 || page > totalPages) return;
+    showPage(page);
+    updatePagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  function updateNoDataMessage() {
+    const itemsToUse = getCurrentItemsToUse();
+    const visibleCount = itemsToUse.filter(tr => tr.style.display !== 'none').length;
+    document.getElementById('noDataMessage').style.display = visibleCount === 0 ? '' : 'none';
+    document.getElementById('orderTableCard').style.display = visibleCount === 0 ? 'none' : '';
+  }
+</script>
+</body>
+</html>
