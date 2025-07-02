@@ -31,14 +31,27 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition" required>
             </div>
 
-            <!-- 我是店家 -->
-            <div class="flex items-center">
-                <input type="checkbox" id="isStore" name="isStore"
-                    class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
-                <label for="isStore" class="ml-2 block text-sm text-gray-700">
-                    我是店家
-                </label>
-            </div>
+            <div class="flex items-center space-x-6">
+		    <!-- 記住我 -->
+		    <div class="flex items-center">
+		        <input type="checkbox" id="rememberMe" name="rememberMe"
+		            class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
+		        <label for="rememberMe" class="ml-2 block text-sm text-gray-700">
+		            記住我
+		        </label>
+		    </div>
+		
+		    <!-- 我是店家 -->
+		    <div class="flex items-center">
+		        <input type="checkbox" id="isStore" name="isStore"
+		            class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
+		        <label for="isStore" class="ml-2 block text-sm text-gray-700">
+		            我是店家
+		        </label>
+		    </div>
+		</div>
+
+            
 
             <!-- 錯誤提示 -->
             <div th:if="${error}" class="bg-red-50 border border-red-400 text-red-700 px-4 py-2 rounded-lg text-sm text-center shadow-sm">
@@ -74,11 +87,36 @@
 		    }
 		/*]]>*/
 		</script>
-
 		
-    
-    
-
+		<script>
+		    // 頁面載入時自動填入帳號
+		    window.addEventListener('DOMContentLoaded', () => {
+		        const savedAccount = localStorage.getItem('mem_account');
+		        const isStoreChecked = localStorage.getItem('isStore') === 'true';
+		        const rememberMe = localStorage.getItem('rememberMe') === 'true';
+		
+		        if (savedAccount) document.getElementById('mem_account').value = savedAccount;
+		        if (isStoreChecked) document.getElementById('isStore').checked = true;
+		        if (rememberMe) document.getElementById('rememberMe').checked = true;
+		    });
+		
+		    // 表單送出時儲存資料
+		    document.querySelector('form').addEventListener('submit', () => {
+		        const rememberMe = document.getElementById('rememberMe').checked;
+		
+		        if (rememberMe) {
+		            localStorage.setItem('mem_account', document.getElementById('mem_account').value);
+		            localStorage.setItem('isStore', document.getElementById('isStore').checked);
+		            localStorage.setItem('rememberMe', true);
+		        } else {
+		            localStorage.removeItem('mem_account');
+		            localStorage.removeItem('isStore');
+		            localStorage.removeItem('rememberMe');
+		        }
+		    });
+		</script>
+		
+  
 </body>
 
 
