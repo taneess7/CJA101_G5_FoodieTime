@@ -151,22 +151,27 @@
                 </div>
               </div>
             </div>
-            <!-- 在訂單摘要區塊或合適位置，加入優惠券選單 -->
-            <div class="coupon-selection">
-              <label for="coupon-select">使用優惠券:</label>
-              <!-- 【重要】name 屬性必須是 "selectedCouponId"，以對應控制器中的 @RequestParam -->
-              <select name="selectedCouponId" id="coupon-select" class="form-select" onchange="this.form.submit()">
-                <option value="0">-- 不使用優惠券 --</option>
-                <!-- 使用 th:if 檢查是否有可用的優惠券 -->
-                <th:block th:if="${not #lists.isEmpty(availableCoupons)}">
-                  <!-- 遍歷從控制器傳來的優惠券列表 -->
-                  <option th:each="memCoupon : ${availableCoupons}"
-                          th:value="${memCoupon.memCouId}"
-                          th:text="${memCoupon.coupon.couName} + ' (折抵$' + ${memCoupon.coupon.couDiscount} + '，低消$' + ${memCoupon.coupon.couMinOrd} + ')'">
-                    [範例] 全館九折優惠券
-                  </option>
-                </th:block>
-              </select>
+            <!-- 優惠券選擇區塊 -->
+            <div class="form-section coupon-selection">
+              <h2 class="section-title">優惠券</h2>
+              <div class="form-group">
+                <label for="coupon-select">選擇可用的優惠券</label>
+                <!-- 【修改點 5】: ★★★ 在 option 標籤中加入 data-discount 屬性來存放折扣金額 ★★★ -->
+                <select id="coupon-select" class="form-select">
+                  <option value="0" data-discount="0" data-min-spend="0">-- 不使用優惠券 --</option>
+                  <th:block th:if="${not #lists.isEmpty(availableCoupons)}">
+                    <!-- 【核心修改點】: 新增一個 th:attr 來綁定 data-min-spend 屬性 -->
+                    <option th:each="memCoupon : ${availableCoupons}"
+                            th:value="${memCoupon.memCouId}"
+                            th:text="${memCoupon.coupon.couName} + ' (-' + ${memCoupon.coupon.couDiscount} + '元，低消' + ${memCoupon.coupon.couMinOrd} + '元)'"
+                            th:attr="data-discount=${memCoupon.coupon.couDiscount}, data-min-spend=${memCoupon.coupon.couMinOrd}"
+                            th:selected="${memCoupon.memCouId == selectedCouponId}">
+                    </option>
+                  </th:block>
+                </select>
+                <!-- 【重要】這個隱藏的 input 仍然需要，用於在最終提交表單時傳遞 ID -->
+                <input type="hidden" id="selected-coupon-id-input" name="selectedCouponId" th:value="${selectedCouponId}" />
+              </div>
             </div>
             <!-- 訂單備註 - 對應 OrdersVO 的 comment -->
             <div class="form-section">
@@ -190,16 +195,9 @@
         <div class="checkout-sidebar cart-sidebar">
           <div class="order-summary cart-summary">
             <h2 class="summary-title">訂單摘要</h2>
-            <div id="checkout-items" class="checkout-items">
-              <div th:each="item : ${checkoutItems}" class="checkout-item">
-                <div class="item-info">
-                  <span class="item-name" th:text="${item.product.prodName}">商品名稱</span>
-                </div>
-                <span class="item-price" th:text="${item.prodN} + ' x NT$ ' + ${item.product.prodPrice} +' = '">數量 x 單價</span>
-                <span class="item-subtotal" th:text="'NT$ ' + (${item.prodN} * ${item.product.prodPrice})">小計金額</span>
-              </div>
-            </div>
+            <!-- ... 訂購項目列表 ... -->
             <div class="summary-divider"></div>
+
             <div class="summary-row">
               <span>小計</span>
               <span id="checkout-subtotal" th:text="'NT$ ' + ${totalAmount}">NT$ 0</span>
@@ -208,12 +206,8 @@
               <span>運費</span>
               <span id="checkout-shipping" th:text="'NT$ ' + ${shippingFee}">NT$ 0</span>
             </div>
-            <!-- 折扣行，如果沒有折扣可以隱藏 -->
-            <!-- 【修改點 3】: 這裡的 th:if 判斷應該是 ${couponDiscount != null and couponDiscount > 0} -->
-            <div class="summary-row discount-row" th:if="${couponDiscount != null and couponDiscount > 0}">
-              <span>折扣</span>
-              <span id="checkout-discount" th:text="'-NT$ ' + ${couponDiscount}">-NT$ 0</span>
-            </div>
+            <div id="dynamic-discount-display" class="summary-row discount-row"></div>
+
             <div class="summary-divider"></div>
             <div class="summary-row total-row">
               <span>總計</span>

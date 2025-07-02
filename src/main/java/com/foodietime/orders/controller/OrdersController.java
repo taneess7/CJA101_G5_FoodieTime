@@ -152,7 +152,10 @@ public class OrdersController {
         model.addAttribute("finalTotal", Math.max(0, finalTotal)); // 確保總計不為負數
 
         model.addAttribute("checkoutItems", checkoutItems); // 傳遞購物車商品列表
-        model.addAttribute("orderData", new OrdersVO());    // 傳遞一個空的 OrdersVO 物件用於表單綁定
+        OrdersVO orderData = new OrdersVO();
+        orderData.setPayMethod(0); // 預設選中 "信用卡" (value=0)
+        orderData.setDeliver(1);   // 預設選中 "外送" (value=1)
+        model.addAttribute("orderData", orderData);
         model.addAttribute("selectedCouponId", selectedCouponId); // 傳遞當前選中的優惠券ID，用於前端 select 預選
 
         model.addAttribute("now", new java.util.Date()); // 如果 HTML 中日期判斷仍使用，需要保留
