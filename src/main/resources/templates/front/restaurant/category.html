@@ -113,6 +113,12 @@
     .favorite-btn i.fas.fa-heart {
         color: red;
     }
+    
+    .rating-stars i {
+    color: #FFD700; /* 金黃色星星 */
+    font-size: 1.2em;
+    margin-right: 2px;
+}
 </style>
 <body>
 <header class="app-header">
@@ -218,22 +224,30 @@
                                 • 炒飯 • 沙拉</p>
 
                             <!-- 評價星星開始 -->
-                            <div class="restaurant-rating"
-                                 th:with="
-									        reviews=${store.reviews != null ? store.reviews : 0},
-									        rating=${store.starNum != null ? store.starNum : 0},
-									        avg=${reviews > 0 ? rating / reviews : 0},
-									        staravg=${#numbers.formatDecimal(avg, 1, 1)}">
+            <div class="restaurant-rating"
+     th:with="reviews=${store.reviews != null ? store.reviews : 0},
+              rating=${store.starNum != null ? store.starNum : 0},
+              avg=${(reviews > 0) ? rating / reviews : 0},
+              staravg=${#numbers.formatDecimal(avg, 1, 1)}">
 
-									<span class="rating-stars"> <i
-                                            th:each="i : ${#numbers.sequence(1, 5)}"
-                                            th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
-									                           (${i - 1 < avg and i > avg} ? 'fas fa-star-half-alt' : 'far fa-star')">
-									</i>
-									</span> <span
-                                    th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
-										0，共 0 則評價 </span>
-                            </div>
+    <!-- 有評價才顯示星星 -->
+    <span class="rating-stars" th:if="${reviews > 0}">
+        <i th:each="i : ${#numbers.sequence(1, 5)}"
+           th:classappend="${i <= T(java.lang.Math).floor(avg)} ? 'fas fa-star' :
+                           (${i - 1 < avg and i > avg} ? 'fas fa-star-half-alt' : 'far fa-star')">
+        </i>
+    </span>
+
+    <!-- 評價文字 -->
+    <span th:if="${reviews > 0}"
+          th:text="|${#numbers.formatDecimal(avg, 1, 1)}（${reviews} 則評價）|">
+    </span>
+    <span th:if="${reviews == 0}">尚無評價</span>
+</div>
+
+<!-- 暫時顯示數值方便你 debug -->
+<p th:text="|Debug: rating=${rating}, reviews=${reviews}, avg=${avg}|"></p>
+
                             <!-- 評價星星結束 -->
                             <!-- 主頁按鈕列 -->
                             <div class="restaurant-actions"></div>

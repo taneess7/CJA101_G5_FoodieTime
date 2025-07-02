@@ -95,6 +95,13 @@ public class ProductCategoryController {
         model.addAttribute("storeList", storeList);
         model.addAttribute("categoryId", cateId);
 
+     // 🔍 加入這段 debug 印出星星總數與評價人數
+        for (StoreVO store : storeList) {
+            System.out.println("🟡 店家: " + store.getStorName() +
+                               ", starNum = " + store.getStarNum() +
+                               ", reviews = " + store.getReviews());
+        }
+        
         // 3. 根據店家撈商品
         List<ProductVO> allProducts = new ArrayList<>();
         for (StoreVO store : storeList) {
