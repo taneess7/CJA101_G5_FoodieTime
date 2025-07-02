@@ -20,6 +20,7 @@ import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageService;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.model.ReportPostVO;
+import com.foodietime.favoritepost.model.FavoritePostService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -39,6 +40,9 @@ public class ReportMessageController {
 	
 	@Autowired
 	private MessageService messageService;
+
+	@Autowired
+private FavoritePostService favoritePostService;
 
 	@GetMapping("/addReportMessage")
 	public String addReportMessage(ModelMap model) {
@@ -67,17 +71,28 @@ public class ReportMessageController {
 	    reportMessageVO.setMes(fullMessage);
 		
 	    if (result.hasErrors()) {
-			 // 查詢該貼文與留言
-	        PostVO postVO = postService.getOnePost(postId);
-	        model.addAttribute("postVO", postVO);
-	        List<MessageVO> messageList = messageService.getByPostId(postId);
-	        model.addAttribute("messageList", messageList);
-	        MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-	        model.addAttribute("loginMember", loginMember);
-	        model.addAttribute("messageVO", new MessageVO());
-	        // 回到單一貼文頁
-	        return "front/post/listOnePost";
-		}
+    // 查詢該貼文與留言
+    PostVO postVO = postService.getOnePost(postId);
+    model.addAttribute("postVO", postVO);
+    List<MessageVO> messageList = messageService.getByPostId(postId);
+    model.addAttribute("messageList", messageList);
+    MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+    model.addAttribute("loginMember", loginMember);
+    model.addAttribute("messageVO", new MessageVO());
+
+    // 補齊 liked 和 bookmarked
+    boolean liked = false; // 你有實作按讚功能再補正確判斷
+    model.addAttribute("liked", liked);
+    boolean bookmarked = false;
+    if (loginMember != null) {
+        // 這裡要注入 FavoritePostService
+        bookmarked = favoritePostService.findByPK(postVO.getPostId(), loginMember.getMemId()) != null;
+    }
+    model.addAttribute("bookmarked", bookmarked);
+
+    // 回到單一貼文頁
+    return "front/post/listOnePost";
+}
 		// 設定留言檢舉時間
 	    if (reportMessageVO.getRepMesDate() == null) {
 	        reportMessageVO.setRepMesDate(new java.sql.Timestamp(System.currentTimeMillis()));

@@ -98,4 +98,4 @@ document.getElementById('reportMessageModal').addEventListener('click', function
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeReportMessageModal();
 });
-document.getElementById('reportMessageModal').style.display = 'flex';
+// document.getElementById('reportMessageModal').style.display = 'flex';
