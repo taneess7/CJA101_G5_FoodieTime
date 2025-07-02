@@ -14,39 +14,8 @@
   <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
-<!-- 保持原有的header -->
-<header class="app-header">
-  <div class="header-container">
-    <div class="logo-container">
-      <a href="index.html" class="logo">
-        <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-        <span class="logo-text">FoodieTime 食刻</span>
-      </a>
-    </div>
-    <div class="search-container">
-      <div class="search-bar">
-        <i class="material-icons-outlined search-icon">search</i>
 
-          <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-
-        <i class="material-icons-outlined mic-icon">mic</i>
-        <i class="material-icons-outlined camera-icon">photo_camera</i>
-      </div>
-    </div>
-    <nav class="main-nav">
-      <ul class="nav-list">
-        <li class="nav-item"><a th:href="@{/front/map.html}" class="nav-link">地圖</a></li>
-        <li class="nav-item"><a th:href="@{/front/group-order.html}" class="nav-link">團購</a></li>
-        <li class="nav-item"><a th:href="@{/front/deals.html}" class="nav-link">優惠</a></li>
-        <li class="nav-item"><a th:href="@{/cart/cart}" class="nav-link active"><i class="material-icons-outlined">shopping_cart</i><span class="cart-count">0</span></a></li>
-        <li class="nav-item"><a th:href="@{/front/login.html}" class="nav-link login-btn">登入/註冊</a></li>
-      </ul>
-      <button class="menu-toggle" aria-label="開啟選單">
-        <i class="material-icons-outlined">menu</i>
-      </button>
-    </nav>
-  </div>
-</header>
+<header th:replace="~{front/common/header :: main-header}"></header>
 
 <main class="cart-page">
   <div class="container">
