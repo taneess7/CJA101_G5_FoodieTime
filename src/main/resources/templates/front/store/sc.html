@@ -11,6 +11,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5722">
     <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+<!--     <link rel="stylesheet" href="/css/front/store/sc.css"> -->
 
     <!-- WebSocket 相關 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -110,9 +111,7 @@
   	  height: 89vh;
 
     }
-    .form-group {
-      margin-bottom: 30px;
-    }
+	
     .form-input {
       width: 100%;
       padding: 16px;
@@ -322,7 +321,7 @@ main {
 }
 
 .section-title {
-	font-size: 36px;
+	font-size: 20px;
 	font-weight: 700;
 	color: #333;
 	margin-bottom: 10px;
@@ -838,6 +837,31 @@ select:disabled {
     object-fit: contain;  /* 保持比例顯示 */
     display: block;
     }
+    
+ /* 整體捲軸寬度 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* 捲軸軌道（背景） */
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+/* 捲軸本體（滑動條） */
+::-webkit-scrollbar-thumb {
+  background-color: #bd9977;  /* 這裡換成你想要的色號 */
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;  /* 外框空隙 */
+}
+
+/* 滑鼠懸停時的顏色 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a97e63;
+}
+
+
 </style>
 
 
@@ -863,14 +887,14 @@ select:disabled {
     <aside class="sidebar">
       <h2>商家管理</h2>
       <button class="tab-btn active" data-tab="store">編輯店家</button>
-      <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
-      <button class="tab-btn" data-tab="activity-view">查看活動</button>
       <button class="tab-btn" data-tab="product">上傳商品</button>
-      <button class="tab-btn" data-tab="product-view">查看商品</button>   
-      <button class="tab-btn" data-tab="act-product-view">活動商品</button>           
+      <button class="tab-btn" data-tab="product-view">查看商品</button>           
       <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
       <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
-
+      <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
+      <button class="tab-btn" data-tab="activity-view">查看活動</button>  
+      <button class="tab-btn" data-tab="act-product-view">活動商品</button>
+      
    
      
 
@@ -891,7 +915,7 @@ select:disabled {
     <section class="content-panel" id="tab-coupon">
       <iframe th:src="@{/store/editCoupon}" height="1000"></iframe>
     </section>
-    
+  
     
 <!-- 上傳商品 -->
     <section class="content-panel" id="tab-product">
@@ -903,18 +927,12 @@ select:disabled {
           <option value="group">團購商品</option>
         </select>
       </div>
-      <form id="productForm">
-        <div class="form-group" id="normalProductUpload">
-          <label>商品圖片</label>
-          <div class="image-upload-section" id="productImageUpload">
-            <i class="material-icons-outlined upload-icon">cloud_upload</i>
-            <div class="upload-text">點擊或拖拽上傳商品圖片</div>
-            <input type="file" id="product-image" accept="image/*" style="display: none;" />
-            <img id="productImagePreview" class="image-preview" alt="預覽圖片">
-          </div>
-        </div>
-        <button type="submit" class="btn" id="saveNormalProduct">儲存商品</button>
-      </form>
+
+
+        
+        <iframe id="normalProductUpload" th:src="@{/store/prod/prodEdit}" style="width:100%;height:900px;display:block;border:none;"></iframe> 
+        <button type="submit" class="btn" id="saveNormalProduct"  style="display:none;">儲存商品</button>
+
       <button type="button" class="btn" id="addGroupProductBtn" style="display:none;margin-top:20px;">新增團購商品</button>
       <iframe id="groupProdAddFrame" src="/store/group-prod-add" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
@@ -922,7 +940,7 @@ select:disabled {
 
 <!-- 查看商品 -->
     <section class="content-panel" id="tab-product-view">
-      <h2>已上傳商品</h2>
+      <h2 class="section-title">已上傳商品</h2>
       <div class="form-group">
         <label for="productViewType">商品類型</label>
         <select class="form-input" id="productViewType">
@@ -931,7 +949,7 @@ select:disabled {
         </select>
       </div>
      
-      <iframe id="normalProductList" class="product-list prod-img"  th:src="@{/store/listAllProds}" style="width:100%;height:900px;border:none;" ></iframe>
+      <iframe id="normalProductList" class="product-list prod-img"  th:src="@{/store/listAllProds}" style="width:100%;height:900px; margin-top:0; border:none;" ></iframe>
       
       <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
     </section>
@@ -965,58 +983,88 @@ select:disabled {
   
 
   <script>
+  //切換分頁
+//     document.querySelectorAll('.tab-btn').forEach(btn => {
+//       btn.addEventListener('click', () => {
+//         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+//         btn.classList.add('active');
+//         const tab = btn.dataset.tab;
+//         document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+//         document.getElementById('tab-' + tab).classList.add('active');
+//       });
+//     });
+    
+   //切換分頁強制刷新 
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const tab = btn.dataset.tab;
-        document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('tab-' + tab).classList.add('active');
-      });
-    });
-  
-    const productImageInput = document.getElementById('product-image');
-    const productImageUpload = document.getElementById('productImageUpload');
-    const productForm = document.getElementById('productForm');
-    const productList = document.getElementById('productList');
-    const previewContainer = document.createElement('div');
-    previewContainer.className = 'preview-container';
-    productImageUpload.appendChild(previewContainer);
-  
-    let products = [];
-  
-    productImageInput.setAttribute('multiple', true);
-  
-    productImageUpload.addEventListener('click', () => productImageInput.click());
-  
-    productImageInput.addEventListener('change', e => {
-      previewContainer.innerHTML = '';
-      [...e.target.files].forEach(file => {
-        if (file.size <= 3 * 1024 * 1024) {
-          const reader = new FileReader();
-          reader.onload = e => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'image-preview';
-            img.style.display = 'block';
-            previewContainer.appendChild(img);
-  
-            products.push({ name: '', imgSrc: e.target.result });
-          };
-          reader.readAsDataURL(file);
-        } else {
-          alert('圖片請小於 3MB');
+  btn.addEventListener('click', () => {
+    // 1. 切換按鈕樣式
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 2. 切換顯示面板
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+    const targetPanel = document.getElementById('tab-' + tab);
+    targetPanel.classList.add('active');
+
+    // 3. 多個特定分頁需要刷新 iframe
+    const tabsToReload = ['act-product-view', 'product-view']; // ⬅ 這裡加你要刷新 iframe 的 tab 名
+
+    if (tabsToReload.includes(tab)) {
+      const iframe = targetPanel.querySelector('iframe');
+      if (iframe) {
+        const originalSrc = iframe.getAttribute('src') || iframe.getAttribute('th:src');
+        if (originalSrc) {
+          iframe.src = originalSrc + '?ts=' + new Date().getTime(); // 防快取
         }
-      });
-    });
+      }
+    }
+  });
+});
+
   
-    productForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      renderProductList();
-      previewContainer.innerHTML = '';
-      this.reset();
-      alert("上傳完成！請至『查看商品』分頁進行編輯。");
-    });
+//     const productImageInput = document.getElementById('product-image');
+//     const productImageUpload = document.getElementById('productImageUpload');
+//     const productForm = document.getElementById('productForm');
+//     const productList = document.getElementById('productList');
+//     const previewContainer = document.createElement('div');
+//     previewContainer.className = 'preview-container';
+//     productImageUpload.appendChild(previewContainer);
+  
+//     let products = [];
+  
+//     productImageInput.setAttribute('multiple', true);
+  
+//     productImageUpload.addEventListener('click', () => productImageInput.click());
+  
+//     productImageInput.addEventListener('change', e => {
+//       previewContainer.innerHTML = '';
+//       [...e.target.files].forEach(file => {
+//         if (file.size <= 3 * 1024 * 1024) {
+//           const reader = new FileReader();
+//           reader.onload = e => {
+//             const img = document.createElement('img');
+//             img.src = e.target.result;
+//             img.className = 'image-preview';
+//             img.style.display = 'block';
+//             previewContainer.appendChild(img);
+  
+//             products.push({ name: '', imgSrc: e.target.result });
+//           };
+//           reader.readAsDataURL(file);
+//         } else {
+//           alert('圖片請小於 3MB');
+//         }
+//       });
+//     });
+  
+//     productForm.addEventListener('submit', function(e) {
+//       e.preventDefault();
+//       renderProductList();
+//       previewContainer.innerHTML = '';
+//       this.reset();
+//       alert("上傳完成！請至『查看商品』分頁進行編輯。");
+//     });
   
     function renderProductList() {
       productList.innerHTML = products.map((p, index) => `
@@ -1050,7 +1098,7 @@ select:disabled {
         document.getElementById('groupProdAddFrame').style.display = 'block';
       } else {
         document.getElementById('normalProductUpload').style.display = '';
-        document.getElementById('saveNormalProduct').style.display = '';
+        document.getElementById('saveNormalProduct').style.display = 'none';
         document.getElementById('addGroupProductBtn').style.display = 'none';
         document.getElementById('groupProdAddFrame').style.display = 'none';
       }

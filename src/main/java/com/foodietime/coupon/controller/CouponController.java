@@ -116,7 +116,7 @@ public class CouponController {
 		//如果驗證錯誤，補上 store 與優惠券下拉選單
 		if (result.hasErrors()) {
 			for (FieldError fe : result.getFieldErrors()) {
-				System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
+				//System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
 			}
 			// 若驗證失敗，要補上 store 進去（否則會是 null）
 			

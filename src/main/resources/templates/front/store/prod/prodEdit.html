@@ -15,16 +15,10 @@
 		
 	<main>
 		
-		<h1 class="section-title">編輯商品</h1>
+		<h1 class="section-title">新增一般商品</h1>
 		<p class="section-subtitle">填寫商品資訊以吸引顧客購買</p>
 
-		<!-- 顯示新增成功訊息（置中） -->
-		<div th:if="${successMessage}"
-		     id="successMessage"
-		     class="success-message"
-		     style="color: green; font-weight: bold;">
-		  <p th:text="${successMessage}"></p>
-		</div>
+		
 		
 		<!-- 顯示錯誤訊息（置中） -->
 		<ul th:if="${errorMessages}" style="color: red;">
@@ -82,7 +76,7 @@
 				
 				<!-- 店家照片上傳含預覽功能 ，頁面載入時可見-綁定th:src -->
 							<div class="form-group">
-								<label class="form-label">店家照片</label> <input type="file"
+								<label class="form-label">商品照片</label> <input type="file"
 									class="form-input" name="upFiles" id="store-image"
 									accept="image/*" onchange="previewImage(event)">
 								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
@@ -92,9 +86,6 @@
 
 							</div>
 				
-				
-				
-				
 			<!-- 上架狀態 -->
 				<div class="form-group">
 					<label class="form-label">上架狀態</label> <select
@@ -103,11 +94,18 @@
 							<option value="false">未上架</option>
 					</select>
 				</div>
-
+<!-- 顯示新增成功訊息（置中） -->
+		<div th:if="${successMessage}"
+		     id="successMessage"
+		     class="success-message"
+		     style="color: green; font-weight: bold;">
+		  <p th:text="${successMessage}"></p>
+		</div>
 				
 				<button type="submit">送出</button>
 			</form>
 	</main>
+	
 		<footer class="app-footer">
 		<div class="container">
 			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>

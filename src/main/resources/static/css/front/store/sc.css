@@ -528,32 +528,20 @@ select.form-input {
 	border-color: #adb5bd;
 }
 
-/* .sidebar { */
-/* 	display: flex; */
-/* 	flex-direction: column; */
-/* 	gap: 10px; */
-/* 	max-height: 80vh; */
-/*     width: 120px; */
-/*     background: white; */
-/*     border-radius: 16px; */
-/*     padding: 14px; */
-/*     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
-/*     text-align: center; */
-/* } */
-
 .sidebar {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	max-height: 86vh;           /* 高度限制在 86% 螢幕 */
-	overflow-y: auto;           /* ⭐ 加這行才會滾動 */
-	width: 120px;
-	background: white;
-	border-radius: 16px;
-	padding: 14px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-	text-align: center;
+	max-height: 80vh;
+    width: 120px;
+    background: white;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
 }
+
+
 
 .info-card {
 	background: white;

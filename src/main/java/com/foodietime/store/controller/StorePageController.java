@@ -374,15 +374,55 @@ public class StorePageController {
 //		</select>
 		
 		
-/***進入商品新增畫面***/
-		@GetMapping("/addProd")
-		public String addProd(Model model) {
-			ProductVO prodVO = new ProductVO();
-			model.addAttribute("prod", prodVO);//將actVO 傳給 HTML畫面使用
-			prodVO.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
-			prodVO.setProdLastUpdate(new Timestamp(System.currentTimeMillis()));
-			return "front/store/prod/prod_edit"; //Thymeleaf 會去找 /templates/admin/act/addAct.html
-		}
+/***進入商品新增或編輯畫面***/
+		@GetMapping("/prod/prodEdit")
+		public String showEditPage(@RequestParam(required = false) Integer prodId, 
+				HttpSession session, Model model) {
+			
+			//1.取得session 中的 loggedInStore，並檢查是否為StoreVO
+			Object obj = session.getAttribute("loggedInStore");
+			
+			if(!(obj instanceof StoreVO)) {
+			  System.out.println("⚠️ session 中的 loggedInStore 不是 StoreVO，而是：" + (obj == null ? "null" : obj.getClass().getSimpleName()));
+			  return "redirect:/front/member/login"; //導回登入頁
+			}
+			
+			StoreVO loggedInStore = (StoreVO) obj;
+			Integer storId = loggedInStore.getStorId();
+			
+			//新增空白表單
+			ProductVO prodVO;
+			if(prodId != null) {
+				prodVO = prodSvc.getProductById(prodId);//有商品id做修改功能，取得prodVO資料
+			}else {
+				prodVO = new ProductVO();//沒有商品id，新增商品
+				//手動填入欄位預設值(vo.mysql沒有設定自動設定時間)
+				prodVO.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
+				prodVO.setProdLastUpdate(new Timestamp(System.currentTimeMillis()));
+				
+				StoreVO storeVO = new StoreVO();
+				storeVO.setStorId(storId);//取得店家資料
+				prodVO.setStore(storeVO);
+			}
+			
+			//表單資料呈現，將prodVO 傳給 HTML畫面th:object=${prod}綁定vo			
+			model.addAttribute("prod", prodVO);
+			
+			//填入商品分類清單
+			model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
+			
+			//顯示預覽圖轉base64
+			if(prodVO.getProdPhoto()!=null) {
+				String base64Image = Base64.getEncoder().encodeToString(prodVO.getProdPhoto());
+				model.addAttribute("base64Image", base64Image);				
+			
+			}else {model.addAttribute("base64Image", 
+					"https://placehold.co/300x200/ffcc00/333?");//放預設圖片連結}
+			}
+			
+			return "front/store/prod/prodEdit"; //回到prodEdit.html頁面
+			}
+		
 		
 		//不讓 Spring 綁定TimeStamp欄位
 		@InitBinder
@@ -399,14 +439,19 @@ public class StorePageController {
 		}
 		
 		
-		/***商品新增功能:***/
-		@PostMapping("/insert")
-		public String insert( // , HttpServletRequest request
-				@Valid 
-				@ModelAttribute("prod") ProductVO prod, BindingResult result, HttpSession session, Model model,//@ModelAttribute("prod") 給 th:object="${prod}"用
-				RedirectAttributes redirectAttr) { //顯示新增成功訊息
-
-			System.out.println(">>> insert方法觸發");
+		/***查看商品列表選修改功能，按送出會進到這***/
+		@PostMapping("/prod/save")
+		public String insert( 
+						@Valid
+						@ModelAttribute("prod") ProductVO prod,BindingResult result, ModelMap model,//給th"object=${prod}用
+						@RequestParam("categoryId") Integer categoryId,//商品類別清單用
+						@RequestParam("upFiles") MultipartFile[] parts,//圖片用 + throws IOException
+						HttpSession session,
+						RedirectAttributes redirectAttr) throws IOException{  //顯示新增成功訊息 
+			
+			System.out.println(">>> save方法觸發");
+			//System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
+		    //System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
 
 			// 從 session 中取出店家資訊
 		    Object obj = session.getAttribute("loggedInStore");
@@ -418,35 +463,67 @@ public class StorePageController {
 
 		    StoreVO loggedInStore = (StoreVO) obj;
 		    Integer storId = loggedInStore.getStorId();
+		    
+		    //表單綁住分類，避免點修改ProductVO.getProductCategory()" is null
+		    if(prod.getProductCategory() == null) {
+		    	ProductCategoryVO category = new ProductCategoryVO();
+		    	category.setProdCateId(categoryId);
+		    	prod.setProductCategory(category);
+		    }
 
-			  
-			//如果驗證錯誤，補上 store 與優惠券下拉選單
+		    //圖片處理: 有上傳圖片就存入(新增或修改)
+			if(parts!=null && parts.length > 0 && !parts[0].isEmpty()) {
+				prod.setProdPhoto(parts[0].getBytes());
+			}
+			
+			//顯示圖片預覽(如果有圖)
+			if(prod.getProdPhoto()!=null) {
+				model.addAttribute("base64Image",
+						Base64.getEncoder().encodeToString(prod.getProdPhoto()));	
+			}else {
+				model.addAttribute("base64Image", 
+						"https://placehold.co/300x200/ffcc00/333?");
+			}
+			   
+			//如果驗證錯誤，回到表單
 			if (result.hasErrors()) {
 				for (FieldError fe : result.getFieldErrors()) {
-					System.out.println("欄位錯誤" + fe.getField() + "->" + fe.getDefaultMessage());
+					System.out.println("欄位錯誤" + fe.getField() + "->" + 
+				    fe.getDefaultMessage());
 				}
-				// 若驗證失敗，要補上 store 進去（否則會是 null）
-				
-		        if (prod.getStore() == null) {
-		            StoreVO storeVO = new StoreVO();
-		            storeVO.setStorId(storId);
-		            prod.setStore(storeVO);
+				// 驗證失敗，一定要再補一次（分類）下拉選單避免null
+		        if (prod.getProductCategory() == null) {
+		        	ProductCategoryVO category = new ProductCategoryVO();
+		        	category.setProdCateId(categoryId);
+		        	prod.setProductCategory(category);
 		        }
 		        
-		        //取得店家單一商 prod
-		        model.addAttribute("prod", prod); //單一商品資料（填表用）
+		        //補上 store
+		        if(prod.getStore() == null) {
+		        	StoreVO storeVO = new StoreVO();
+		        	storeVO.setStorId(storId);
+		        	prod.setStore(storeVO);
+		        }
 		        
-		        //取得該店家所有prods
+		        //取得店家單一商品prod
+		        model.addAttribute("prod", prod); //單一商品資料（填表用）
+		      
+		        
+		        //取得該店家所有prodCateList
+				List<ProductCategoryVO> prodCateList = prodCateSvcImpl.getAllCategories();
+				model.addAttribute("prodCateList", prodCateList);
+		        
+		        
+		        
+				 //取得該店家所有prods-html沒有用到
 				List<ProductVO> prods = prodSvc.findByStoreId(storId);
 				model.addAttribute("prods", prods);//所有商品（若前端有顯示商品列表）
 				
-				//下拉選單自動選中分類
-				Integer categoryId = prod.getProductCategory().getProdCateId();
-				model.addAttribute("prodCate", categoryId);//// 這可選填，若前端用 th:field 就不需要
+				//下拉選單自動選中分類-html沒有用到
+				//Integer categoryId = prod.getProductCategory() != null ? prod.getProductCategory().getProdCateId() : null;
+			//model.addAttribute("prodCate", categoryId);//// 這可選填，若前端用 th:field 就不需要
 				
-				//取得該店家所有prodCateList
-				List<ProductCategoryVO> prodCateList = prodCateSvcImpl.getAllCategories();
-				model.addAttribute("prodCateList", prodCateList);
+				
 				
 				//顯示驗證錯誤訊息:
 				List<String> errorMessages = result.getFieldErrors()
@@ -455,109 +532,82 @@ public class StorePageController {
 	                    .collect(Collectors.toList());
 
 			    model.addAttribute("errorMessages", errorMessages);
-				return "front/store/prod_edit";
+				return "front/store/prod/prodEdit"; //回到prodEdit.html
 			}
 
 			
 			
-			// 新增 or 修改分流（判斷是否有 prodId）
+			//驗證ok，分流: 新增 or 修改（判斷是否有 prodId）
 			if (prod.getProdId() == null) {
-				System.out.println(">>> 進行新增");
-				// 儲存商品
+				//System.out.println(">>> 進行新增");
+				// 補上分類資料（重要！）
+				if (prod.getProductCategory() == null) {
+			        ProductCategoryVO category = new ProductCategoryVO();
+			        category.setProdCateId(categoryId);
+			        prod.setProductCategory(category);
+			    }
+				prod.setStore(loggedInStore); //確保店家綁定正確
+				prod.setProdLastUpdate(new Timestamp(System.currentTimeMillis())); //補上非空值欄位
+				prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis())); //補上非空值欄位
 				prodSvc.addProduct(prod, prod.getProductCategory().getProdCateId());
 				//service: ProductVO addProduct(ProductVO vo, Integer categoryId);
+				
 				//提示新增成功
-				redirectAttr.addFlashAttribute("successMessage", "優惠券新增成功！");
-				return "redirect:/store/addProd"; // 儲存成功重新導向 GET /store/addProd 方法，，避免重複提交
+				redirectAttr.addFlashAttribute("successMessage", "商品新增成功！");
+				return "redirect:/store/prod/prodEdit";
 
 			} else {
-				System.out.println(">>> 進行修改，prodId: " + prod.getProdId());
-				//修改商品
+				//System.out.println(">>> 進行修改，prodId: " + prod.getProdId());
+				
+			
+				// 圖片非必填，去除圖片欄位驗證錯誤
+				result = removeFieldError(prod, result, "upFiles"); //<input type="file" name="upFiles"> removeFieldError 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
+							 // 處理圖片上傳
+
+				if (result.hasErrors()) { //如果其他欄位驗證格式錯誤，回到原頁面
+					return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();	
+				}
+				
+				// 處理商品圖片欄位（如果沒上傳新圖片，就保留原圖）
+				if (parts[0].isEmpty()) {
+				    byte[] originalPhoto = prodSvc.getProductById(prod.getProdId()).getProdPhoto(); // ← 取得原圖
+				    prod.setProdPhoto(originalPhoto);  // ← 設定為原圖
+				    System.out.println("圖片未更新，保留原圖");
+				} else {
+				    byte[] photo = parts[0].getBytes(); // ← 新圖轉 byte[]
+				    prod.setProdPhoto(photo);           // ← 設定新圖
+				    System.out.println("圖片更新成功");
+				}
+				prod.setProdLastUpdate(new Timestamp(System.currentTimeMillis())); //補上非空值欄位
+				prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis())); //補上非空值欄位
 				prodSvc.updateProduct(prod.getProdId(), prod, prod.getProductCategory().getProdCateId());
 				//service:  ProductVO updateProduct(Integer prodId, ProductVO newData, Integer categoryId);
-				redirectAttr.addFlashAttribute("successMessage", "優惠券修改成功！");
-				// 修改成功後回到該筆資料的編輯頁面
+				redirectAttr.addFlashAttribute("successMessage", "商品修改成功！");
+				
 				System.out.println("更新成功");
-	            return "redirect:/store/edit_prod?prodId=" + prod.getProdId();
 				
-
-				
-			}
-			
-		   }
-/***進入商品修改畫面***/		
-		//點選修改按鈕，進入後台修改畫面listOneProd.html
-		@PostMapping("/update_prod_input")
-		public String getOne_For_Update(@RequestParam("prodId") String prodId, ModelMap model) {
-			/***接收參數，進入進入修改畫面listOneProd.html，查詢prodId資料***/
-			ProductVO prodVO = prodSvc.getProductById(Integer.valueOf(prodId));
-			
-			/***查詢完成，轉交 update_prod_input.html***/
-			model.addAttribute("prodVO", prodVO);
-			return "front/store/prod/update_prod_input";
-		}
-
-/***進入單一商品修改畫面，***/			
-		//點選送出修改按鈕，檢查prodVO欄位格式
-		@PostMapping("update")
-		public String update(@Valid ProductVO prodVO, BindingResult result, ModelMap model,
-							 @RequestParam("upFiles") MultipartFile[] parts) throws IOException{
-			
-			// ✅ <<< 這裡加上 debug log
-					 System.out.println(">>> update 方法有觸發");
-					    System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
-					    System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
-					    for (FieldError fe : result.getFieldErrors()) {
-					        System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
-					    }
-					    
-					    
-			/**接收參數，驗證格式**/
-			//去除BindingResult中 upFiles欄位的FieldError紀錄
-					    /***接收請求參數，輸入格式錯誤處理***/
-						 // 去除圖片欄位驗證錯誤
-			result = removeFieldError(prodVO, result, "upFiles"); //<input type="file" name="upFiles"> removeFieldError 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
-						 // 處理圖片上傳
-			if (parts.length == 0 ||parts[0].isEmpty()) { //未選擇圖片，補驗證訊息
-				model.addAttribute("errorMessage", "商品照片: 請上傳照片"); //addProd.html th:utext="${errorMessage}" 	
-			} else {
-						for (MultipartFile multipartFile : parts) {
-							byte[] buf = multipartFile.getBytes(); //圖片轉byte[]
-							prodVO.setProdPhoto(buf);
-						}
-					}
-			if (result.hasErrors()) { //如果其他欄位驗證格式錯誤，回到原頁面
-				return "front/store/prod/update_prod_input";
-			}
-			/**格式驗證無誤，開始修改資料**/
-			Integer prodId = prodVO.getProdId();            // 從 prodVO 取得商品編號
-			Integer categoryId = prodVO.getProductCategory().getProdCateId(); // 從 prodVO 的關聯物件取得類別 ID
-
-			prodSvc.updateProduct(prodId, prodVO, categoryId);//servic ProductVO updateProduct(Integer prodId, ProductVO newData, Integer categoryId);
-
-			
-			
-			/**修改成功，回到listOneProd.html <label th:text="${success}"></label>**/
-			model.addAttribute("success", "- (修改成功)");
-			prodVO = prodSvc.getProductById(Integer.valueOf(prodVO.getProdId()));
-			model.addAttribute("prodVO", prodVO);
-			return "front/store/prod/listOneProd";
-		}
+//	            return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();	 //停在編輯頁面
+				return "redirect:/store/listAllProds";	 // 修改成功後回到該筆資料的listAll 
+			  }
 		
+			}
+			
+		 
+
 		// 去除 BindingResult 中某個欄位的 FieldError 紀錄（例如不想驗證圖片欄位）
-				// 傳入的參數：prodVO：驗證對象   result：原本的驗證結果（包含所有錯誤） removeFieldname：要移除錯誤的欄位名稱（如 "html name=upFile"）
-				private BindingResult removeFieldError(ProductVO prodVO, BindingResult result, String removeFieldname) {
-					
-					// 取得所有欄位的錯誤，但「過濾掉 removeFieldname 欄位」的錯誤  
-					List<FieldError> errorsListToKeep = result.getFieldErrors().stream()//將List轉為資料流
-							.filter(error -> !error.getField().equals(removeFieldname))//對每個FieldError做判斷，取得欄位名稱，如果這個欄位名稱不是 removeFieldname(傳入的是html name=upFile)，就保留（!equals()）
-							.collect(Collectors.toList());
-					result = new BeanPropertyBindingResult(prodVO, "prodVO");// 建立一個新的 BindingResult，並與原本 prodVO 綁定
-					for (FieldError fieldError : errorsListToKeep) { // 把「保留下來」的錯誤重新加入新的 BindingResult 中
-						result.addError(fieldError); // 回傳處理後的新 BindingResult（已移除指定欄位錯誤）
-					}
-					return result;
-				}
+		// 傳入的參數：prodVO：驗證對象   result：原本的驗證結果（包含所有錯誤） removeFieldname：要移除錯誤的欄位名稱（如 "html name=upFile"）
+		private BindingResult removeFieldError(ProductVO prodVO, BindingResult result, String removeFieldname) {
+			
+			// 取得所有欄位的錯誤，但「過濾掉 removeFieldname 欄位」的錯誤  
+			List<FieldError> errorsListToKeep = result.getFieldErrors().stream()//將List轉為資料流
+					.filter(error -> !error.getField().equals(removeFieldname))//對每個FieldError做判斷，取得欄位名稱，如果這個欄位名稱不是 removeFieldname(傳入的是html name=upFile)，就保留（!equals()）
+					.collect(Collectors.toList());
+			result = new BeanPropertyBindingResult(prodVO, "prodVO");// 建立一個新的 BindingResult，並與原本 prodVO 綁定
+			for (FieldError fieldError : errorsListToKeep) { // 把「保留下來」的錯誤重新加入新的 BindingResult 中
+				result.addError(fieldError); // 回傳處理後的新 BindingResult（已移除指定欄位錯誤）
+			}
+			return result;
+		}
 				
 				
 	//============================ListAllData顯示圖片================================================
