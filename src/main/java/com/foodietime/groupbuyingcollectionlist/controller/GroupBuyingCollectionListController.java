@@ -2,6 +2,7 @@ package com.foodietime.groupbuyingcollectionlist.controller;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListId;
@@ -18,6 +20,8 @@ import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListR
 import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListService;
 import com.foodietime.groupbuyingcollectionlist.model.GroupBuyingCollectionListVO;
 import com.foodietime.member.model.MemberVO;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/gblist")
@@ -97,5 +101,51 @@ public class GroupBuyingCollectionListController {
 //        return "groupBuyingCollectionList/deleted";
 //    }
 	
+// // 新增收藏團購（AJAX）
+//    @PostMapping("/addFavoriteGb")
+//    @ResponseBody
+//    public Object addFavoriteGb(@RequestParam Integer memId, @RequestParam Integer gbId) {
+//        HashMap<String, Object> result = new HashMap<>();
+//        try {
+//            groupBuyingCollectionListService.addToCollection(memId, gbId);
+//            result.put("success", true);
+//        } catch (Exception e) {
+//            result.put("success", false);
+//            result.put("error", e.getMessage());
+//        }
+//        return result;
+//    }
+//
+//    // 取消收藏團購（AJAX）
+//    @PostMapping("/removeFavoriteGb")
+//    @ResponseBody
+//    public Object removeFavoriteGb(@RequestParam Integer memId, @RequestParam Integer gbId) {
+//        HashMap<String, Object> result = new HashMap<>();
+//        boolean removed = groupBuyingCollectionListService.removeFromCollection(memId, gbId);
+//        result.put("success", removed);
+//        if (!removed) result.put("error", "未找到收藏紀錄");
+//        return result;
+//    }
+//
+//    // 查詢會員所有收藏團購（for 收藏團購頁面）
+//    @GetMapping("/myFavoriteGb")
+//    @ResponseBody
+//    public Object myFavoriteGb(@RequestParam Integer memId) {
+//        List<GroupBuyingCollectionListVO> list = groupBuyingCollectionListService.findByMemIdWithDetails(memId);
+//        return list;
+//    }
+
+ // 收藏團購頁面（資料庫查詢渲染）
+    @GetMapping("/myFavoriteGbPage")
+    public String myFavoriteGbPage(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "redirect:/login"; // 或導向登入頁
+        }
+        Integer memId = member.getMemId();
+        List<GroupBuyingCollectionListVO> list = groupBuyingCollectionListService.findByMemIdWithDetails(memId);
+        model.addAttribute("collectionList", list);
+        return "front/favoritelist/gb-favoritelist";
+    }
 }
 
