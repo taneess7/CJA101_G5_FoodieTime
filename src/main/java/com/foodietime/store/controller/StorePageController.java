@@ -521,6 +521,7 @@ public class StorePageController {
 		    }
 		}
 	
+		//把2的方法寫在這，方便維護
 		private void setCategory(ProductVO prod, Integer categoryId) {
 		    if (prod.getProductCategory() == null) {
 		        ProductCategoryVO category = new ProductCategoryVO();
