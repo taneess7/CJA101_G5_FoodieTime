@@ -165,4 +165,17 @@ public class GroupOrdersController {
         groupOrdersService.updateOrderField(gbOrId, field, newStatus);
         return "redirect:/gb/member/orders";
     }
+    
+    // 會員自己的團購訂單列表
+    @GetMapping("/member/orders")
+    public String memberGroupOrders(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+        if (member == null) {
+            return "front/member/login";
+        }
+        Integer memId = member.getMemId();
+        List<GroupOrdersVO> orders = groupOrdersService.getOrdersByMemberIsNotLeader(memId);
+        model.addAttribute("orders", orders);
+        return "front/memgborders/member-gborders";
+    }
 }
