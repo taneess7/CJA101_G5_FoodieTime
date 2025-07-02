@@ -275,7 +275,7 @@ public class StorePageController {
 		for (StoreVO store : swStores) {
 			List<CouponVO> coupons = couponSvc.getCouponsByStorId(store.getStorId());
 			storeCouponMap.put(store.getStorId(), coupons);
-			System.out.println("➡️ 優惠券數量：" + coupons.size());
+			//System.out.println("➡️ 優惠券數量：" + coupons.size());
 		}
 
 		model.addAttribute("storeCouponMap", storeCouponMap); // 傳給前端 HTML 使用
