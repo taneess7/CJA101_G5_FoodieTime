@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>收件夾 - 會員中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-br from-orange-100 to-rose-200 min-h-screen font-sans">
+
+    <!-- 整頁容器 -->
+   	<div class="max-w-6xl mx-auto flex items-start gap-8 px-4 py-8">
+
+        <!-- 左側側邊欄 -->
+       	<aside class="sticky top-8 h-fit self-start w-1/4 bg-white p-6 rounded-3xl shadow-lg flex flex-col">
+
+        <!-- 上半 avatar + nav -->
+        <div>
+            <!-- 頭像 / 名字 -->
+            <div class="member-profile mb-6 text-center">
+                <div class="member-avatar mb-4">
+                    <img th:src="${member.memAvatar != null} ? 
+                                 @{/front/member/avatar/{id}(id=${member.memId})} : 
+                                 @{/images/icons/logo.png}"  
+                         alt="會員頭像" class="w-24 h-24 rounded-full mx-auto">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name text-lg font-semibold text-gray-800" th:text="${member.memNickname}">王小明</h3>
+                </div>
+            </div>
+
+            <!-- menu 選單 -->
+            <nav class="member-nav flex flex-col space-y-3">
+                <a th:href="@{/front/member/member_center}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                    <i class="material-icons-outlined">person</i>
+                    <span>會員資料</span>
+                </a>
+                <div th:if="${session.loggedInStore != null}">
+                    <a th:href="@{/store/sc}" 
+                       class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                        <i class="material-icons-outlined">store</i>
+                        <span>店家後台</span>
+                    </a>
+                </div>
+                <a th:href="@{/member/orders}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                    <i class="material-icons-outlined">receipt_long</i>
+                    <span>訂單記錄</span>
+                </a>
+                <a th:href="@{/member/coupons}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                    <i class="material-icons-outlined">local_offer</i>
+                    <span>優惠券</span>
+                </a>
+                <a th:href="@{/favorite/member-favorites}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                    <i class="material-icons-outlined">favorite</i>
+                    <span>收藏餐廳</span>
+                </a>
+                <!-- 點數紀錄 -->
+                <a href="#" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                    <i class="material-icons-outlined">stars</i>
+                    <span>點數紀錄</span>
+                </a>
+                <!-- 收件夾（當前頁面） -->
+                <a th:href="@{/front/member/notifications}" class="member-nav-item active flex items-center space-x-2 text-orange-600 bg-orange-50 rounded-lg px-3 py-2">
+                    <i class="material-icons-outlined">inbox</i>
+                    <span>收件夾</span>
+                </a>
+               
+                <a th:href="@{/front/member/logout}" 
+                   class="flex items-center space-x-2 text-red-600 hover:text-red-800 pt-4 border-t border-gray-200 mt-3">
+                    <i class="material-icons-outlined">logout</i>
+                    <span>登出</span>
+                </a>
+            </nav>
+        </div>
+
+        </aside>
+
+        <!-- 右側收件夾內容 -->
+        <div class="flex-1 bg-white p-10 rounded-3xl shadow-2xl transition-all duration-300">
+            
+            <!-- 頁面標題 -->
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-4xl font-bold text-orange-700 tracking-wide">收件夾</h2>
+                <div class="text-sm text-gray-600">
+                    共 <span th:text="${#lists.size(notifications)}">0</span> 則通知
+                </div>
+            </div>
+
+            <!-- 通知篩選選項 -->
+            <div class="mb-6">
+                <div class="flex space-x-4">
+                    <button class="filter-btn active px-4 py-2 rounded-lg bg-orange-600 text-white font-medium transition" data-filter="all">
+                        全部通知
+                    </button>
+                    <button class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition" data-filter="violation">
+                        違規通知
+                    </button>
+                </div>
+            </div>
+
+            <!-- 通知列表 -->
+            <div class="notification-list space-y-4">
+                <!-- 無通知時的顯示 -->
+                <div th:if="${#lists.isEmpty(notifications)}" class="text-center py-12">
+                    <i class="material-icons-outlined text-6xl text-gray-300 mb-4">inbox</i>
+                    <p class="text-gray-500 text-lg">目前沒有任何通知</p>
+                    <p class="text-gray-400 text-sm mt-2">系統會在這裡顯示重要通知和檢舉處理結果</p>
+                </div>
+
+                <!-- 通知項目，只顯示違規通知 -->
+                <div th:each="notification : ${notifications}" 
+                     th:if="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')}"
+                     class="notification-item bg-gray-50 border-l-4 border-orange-500 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <!-- 通知標頭 -->
+                            <div class="flex items-center mb-3">
+                                <i class="material-icons-outlined text-orange-600 mr-2"
+                                   th:text="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除') ? 'warning' : 'info'}">warning</i>
+                                <span class="text-sm font-medium text-orange-600 px-2 py-1 bg-orange-100 rounded"
+                                      th:text="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除') ? '違規通知' : '系統訊息'}">
+                                    違規通知
+                                </span>
+                                <span class="ml-auto text-sm text-gray-500"
+                                      th:text="${#temporals.format(notification.messTime, 'yyyy-MM-dd HH:mm')}">
+                                    2024-01-15 14:30
+                                </span>
+                            </div>
+                            
+                            <!-- 通知內容 -->
+                            <div class="text-gray-800 leading-relaxed mb-3 bg-white p-4 rounded border-l-2 border-orange-200"
+                                 th:text="${notification.messContent}">
+                                【系統通知】您的貼文「這是測試貼文標題」因違反社群規範已被下架。如有疑問，請聯繫客服。
+                            </div>
+                            
+                            <!-- 通知來源 -->
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="material-icons-outlined text-xs mr-1">admin_panel_settings</i>
+                                <span>發送者：系統管理員</span>
+                                <span class="ml-4">
+                                    <i class="material-icons-outlined text-xs mr-1">schedule</i>
+                                    <span th:text="${#temporals.format(notification.messTime, 'yyyy年MM月dd日 HH:mm')}">2024年01月15日 14:30</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分頁 -->
+            <div th:if="${totalPages > 1}" class="mt-8 flex justify-center">
+                <nav class="flex space-x-2">
+                    <!-- 上一頁 -->
+                    <a th:if="${currentPage > 0}" 
+                       th:href="@{/front/member/notifications(page=${currentPage - 1})}"
+                       class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center">
+                        <i class="material-icons-outlined text-sm mr-1">chevron_left</i>
+                        上一頁
+                    </a>
+                    
+                    <!-- 頁碼 -->
+                    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                        <a th:href="@{/front/member/notifications(page=${i})}"
+                           th:text="${i + 1}"
+                           class="px-4 py-2 rounded-lg transition"
+                           th:classappend="${i == currentPage} ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'">
+                        </a>
+                    </span>
+                    
+                    <!-- 下一頁 -->
+                    <a th:if="${currentPage < totalPages - 1}" 
+                       th:href="@{/front/member/notifications(page=${currentPage + 1})}"
+                       class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center">
+                        下一頁
+                        <i class="material-icons-outlined text-sm ml-1">chevron_right</i>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- 返回按鈕 -->
+            <div class="mt-8 text-center">
+                <a th:href="@{/front/member/member_center}"
+                   class="inline-flex items-center bg-gray-300 text-gray-800 px-6 py-2 rounded-xl hover:bg-gray-400 transition duration-300 shadow">
+                    <i class="material-icons-outlined mr-2">arrow_back</i>
+                    返回會員中心
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 篩選功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const notificationItems = document.querySelectorAll('.notification-item');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.dataset.filter;
+                    
+                    // 更新按鈕狀態
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-orange-600', 'text-white');
+                        b.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    this.classList.add('active', 'bg-orange-600', 'text-white');
+                    this.classList.remove('bg-gray-200', 'text-gray-700');
+                    
+                    // 篩選通知
+                    notificationItems.forEach(item => {
+                        if (filter === 'all' || item.dataset.type === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

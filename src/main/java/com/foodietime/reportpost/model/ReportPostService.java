@@ -1,6 +1,7 @@
 package com.foodietime.reportpost.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.foodietime.directmessage.model.DirectMessageService;
+import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.message.model.MessageService;
 import com.foodietime.post.model.PostRepository;
@@ -24,6 +27,8 @@ import com.foodietime.reportmessage.model.ReportMessageService;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.controller.ReportPostMController.ResolveReportRequest;
 import com.foodietime.reportpost.dto.ForumReportDTO;
+import com.foodietime.smg.model.SmgService;
+import com.foodietime.smg.model.SmgVO;
 
 @Service("ReportPostService")
 public class ReportPostService {
@@ -42,6 +47,12 @@ public class ReportPostService {
 	
 	@Autowired
 	private ReportMessageRepository reportMessageRepository;
+	
+	@Autowired
+	private DirectMessageService directMessageService;
+	
+	@Autowired
+	private SmgService smgService;
 
 	public ReportPostVO save(ReportPostVO vo) {
 		return repository.save(vo);
@@ -165,17 +176,55 @@ public class ReportPostService {
 
 	@Transactional
 	public void resolveForumReport(ResolveReportRequest request) {
+		MemberVO targetMember = null; // 被檢舉內容的作者
+		String contentTitle = ""; // 被檢舉內容的標題或摘要
+		
 		if ("post".equals(request.getReportType())) {
+			// 取得被檢舉的貼文資訊
+			PostVO post = postService.getOnePost(request.getContentId());
+			if (post != null) {
+				targetMember = post.getMember();
+				contentTitle = post.getPostTitle();
+			}
 			// 貼文檢舉：下架貼文（狀態2）並標記檢舉為已回應（狀態1）
 			postService.updateStatus(request.getContentId(), (byte) 2); // contentId 是 postId
 			this.updateStatus(request.getRepPostId(), (byte) 1); // 'this' 指的是 ReportPostService 自身
 		} else if ("comment".equals(request.getReportType())) {
-			// 留言檢舉：直接刪除留言，標記檢舉為已回應（狀態1）
-			messageService.deleteMessage(request.getContentId()); // contentId 是 mesId
-			this.updateStatus(request.getRepPostId(), (byte) 1);
+			// 取得被檢舉的留言資訊
+			com.foodietime.message.model.MessageVO message = messageService.getOneMessage(request.getContentId());
+			if (message != null) {
+				targetMember = message.getMember();
+				contentTitle = message.getMesContent();
+				if (contentTitle.length() > 30) {
+					contentTitle = contentTitle.substring(0, 30) + "...";
+				}
+			}
+			
+			// 先檢查檢舉是否存在及其狀態
+			ReportMessageVO reportMessage = reportMessageRepository.findById(request.getRepPostId())
+				.orElseThrow(() -> new IllegalArgumentException("找不到指定的留言檢舉，ID: " + request.getRepPostId()));
+			
+			// 檢查檢舉是否已經被處理過
+			if (reportMessage.getRepMesStatus() != 0) {
+				throw new IllegalStateException("檢舉已經被處理過，無法重複處理。檢舉ID: " + request.getRepPostId());
+			}
+			
+			// 檢查留言是否還存在
+			if (messageService.getOneMessage(request.getContentId()) != null) {
+				// 留言存在，直接刪除
+				messageService.deleteMessage(request.getContentId()); // contentId 是 mesId
+			}
+			// 不論留言是否存在，都更新檢舉狀態為已處理
+			reportMessage.setRepMesStatus((byte) 1);
+			reportMessageRepository.save(reportMessage);
 		} else {
 			// 如果類型不對，拋出例外會讓 @Transactional 自動回復所有操作
 			throw new IllegalArgumentException("無效的檢舉類型: " + request.getReportType());
+		}
+		
+		// 發送通知給被檢舉內容的作者
+		if (targetMember != null) {
+			sendViolationNotification(targetMember, request.getReportType(), contentTitle);
 		}
 	}
 	
@@ -183,20 +232,69 @@ public class ReportPostService {
 	public int batchResolveForumReports(List<ResolveReportRequest> reports) {
 	    int successCount = 0;
 	    for (ResolveReportRequest request : reports) {
-	        if ("post".equals(request.getReportType())) {
-	            // 貼文檢舉：下架貼文（狀態2）並標記檢舉為已回應（狀態1）
-	            postService.updateStatus(request.getContentId(), (byte) 2);
-	            this.updateStatus(request.getRepPostId(), (byte) 1);
-	        } else if ("comment".equals(request.getReportType())) {
-	            // 留言檢舉：直接刪除留言，標記檢舉為已回應（狀態1）
-	            messageService.deleteMessage(request.getContentId());
-	            this.updateStatus(request.getRepPostId(), (byte) 1);
-	        } else {
-	            // 如果類型不對，可以選擇記錄日誌或拋出例外
-	            // 這裡選擇跳過無效類型
-	            continue;
+	        try {
+	            MemberVO targetMember = null;
+	            String contentTitle = "";
+	            
+	            if ("post".equals(request.getReportType())) {
+	                // 取得被檢舉的貼文資訊
+	                PostVO post = postService.getOnePost(request.getContentId());
+	                if (post != null) {
+	                    targetMember = post.getMember();
+	                    contentTitle = post.getPostTitle();
+	                }
+	                // 貼文檢舉：下架貼文（狀態2）並標記檢舉為已回應（狀態1）
+	                postService.updateStatus(request.getContentId(), (byte) 2);
+	                this.updateStatus(request.getRepPostId(), (byte) 1);
+	            } else if ("comment".equals(request.getReportType())) {
+	                // 取得被檢舉的留言資訊
+	                com.foodietime.message.model.MessageVO message = messageService.getOneMessage(request.getContentId());
+	                if (message != null) {
+	                    targetMember = message.getMember();
+	                    contentTitle = message.getMesContent();
+	                    if (contentTitle.length() > 30) {
+	                        contentTitle = contentTitle.substring(0, 30) + "...";
+	                    }
+	                }
+	                
+	                // 先檢查檢舉是否存在及其狀態
+	                ReportMessageVO reportMessage = reportMessageRepository.findById(request.getRepPostId())
+	                    .orElse(null);
+	                
+	                if (reportMessage == null) {
+	                    // 檢舉不存在，跳過此項
+	                    continue;
+	                }
+	                
+	                // 檢查檢舉是否已經被處理過
+	                if (reportMessage.getRepMesStatus() != 0) {
+	                    // 已經處理過，跳過此項
+	                    continue;
+	                }
+	                
+	                // 檢查留言是否還存在
+	                if (messageService.getOneMessage(request.getContentId()) != null) {
+	                    // 留言存在，直接刪除
+	                    messageService.deleteMessage(request.getContentId());
+	                }
+	                // 不論留言是否存在，都更新檢舉狀態為已處理
+	                reportMessage.setRepMesStatus((byte) 1);
+	                reportMessageRepository.save(reportMessage);
+	            } else {
+	                // 如果類型不對，跳過
+	                continue;
+	            }
+	            
+	            // 發送通知給被檢舉內容的作者
+	            if (targetMember != null) {
+	                sendViolationNotification(targetMember, request.getReportType(), contentTitle);
+	            }
+	            
+	            successCount++;
+	        } catch (Exception e) {
+	            // 記錄錯誤但繼續處理其他檢舉
+	            System.err.println("處理檢舉 ID " + request.getRepPostId() + " 時發生錯誤: " + e.getMessage());
 	        }
-	        successCount++;
 	    }
 	    return successCount;
 	}
@@ -217,6 +315,12 @@ public class ReportPostService {
 	        // 這是留言檢舉，更新 REPORT_MESSAGE 表
 	        ReportMessageVO reportMessage = reportMessageRepository.findById(reportId)
 	            .orElseThrow(() -> new IllegalArgumentException("找不到指定的留言檢舉，ID: " + reportId));
+	        
+	        // 檢查檢舉是否已經被處理過
+	        if (reportMessage.getRepMesStatus() != 0) {
+	            throw new IllegalStateException("檢舉已經被處理過，無法重複處理。檢舉ID: " + reportId);
+	        }
+	        
 	        reportMessage.setRepMesStatus(REJECTED_STATUS);
 	        reportMessageRepository.save(reportMessage);
 	    } else {
@@ -251,15 +355,22 @@ public class ReportPostService {
 	        affectedRows += this.batchUpdateStatus(postReportIds, REJECTED_STATUS);
 	    }
 
-	    // 批量更新留言檢舉
-	    if (!commentReportIds.isEmpty()) {
-	        List<ReportMessageVO> reportsToUpdate = reportMessageRepository.findAllById(commentReportIds);
-	        for (ReportMessageVO report : reportsToUpdate) {
-	            report.setRepMesStatus(REJECTED_STATUS);
-	        }
-	        reportMessageRepository.saveAll(reportsToUpdate);
-	        affectedRows += reportsToUpdate.size();
-	    }
+	        // 批量更新留言檢舉
+    if (!commentReportIds.isEmpty()) {
+        List<ReportMessageVO> reportsToUpdate = reportMessageRepository.findAllById(commentReportIds);
+        List<ReportMessageVO> validReports = new ArrayList<>();
+        for (ReportMessageVO report : reportsToUpdate) {
+            // 只更新未處理的檢舉
+            if (report.getRepMesStatus() == 0) {
+                report.setRepMesStatus(REJECTED_STATUS);
+                validReports.add(report);
+            }
+        }
+        if (!validReports.isEmpty()) {
+            reportMessageRepository.saveAll(validReports);
+            affectedRows += validReports.size();
+        }
+    }
 
 	    return affectedRows;
 	}
@@ -293,4 +404,45 @@ public class ReportPostService {
 		return isMemberBannedFromPosting(memberId, 5);
 	}
 
+
+	
+	/**
+	 * 發送違規通知給會員
+	 */
+	private void sendViolationNotification(MemberVO member, String reportType, String contentTitle) {
+		try {
+			// 取得系統管理員（假設 ID 為 1）
+			SmgVO systemAdmin = smgService.findById(1);
+			
+			// 建立通知訊息
+			DirectMessageVO notification = new DirectMessageVO();
+			notification.setMember(member);
+			notification.setSmgr(systemAdmin);
+			notification.setMessDirection(DirectMessageVO.MessageDirection.ADMIN_TO_MEMBER);
+			notification.setMessTime(LocalDateTime.now());
+			
+			// 根據檢舉類型設定不同的通知內容
+			String notificationContent;
+			if ("post".equals(reportType)) {
+				notificationContent = String.format(
+					"【系統通知】您的貼文「%s」因違反社群規範已被下架。如有疑問，請聯繫客服。",
+					contentTitle
+				);
+			} else {
+				notificationContent = String.format(
+					"【系統通知】您的留言「%s」因違反社群規範已被刪除。如有疑問，請聯繫客服。",
+					contentTitle
+				);
+			}
+			
+			notification.setMessContent(notificationContent);
+			
+			// 儲存通知
+			directMessageService.addMessage(notification);
+			
+		} catch (Exception e) {
+			// 記錄錯誤但不影響主要業務流程
+			System.err.println("發送違規通知失敗: " + e.getMessage());
+		}
+	}
 }
