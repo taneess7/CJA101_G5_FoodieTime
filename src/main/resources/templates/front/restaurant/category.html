@@ -121,50 +121,7 @@
 }
 </style>
 <body>
-<header class="app-header">
-    <div class="header-container">
-        <div class="logo-container">
-            <a th:href="@{/category/index}" class="logo"> <img
-                    th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻"
-                    class="logo-img"> <span class="logo-text">FoodieTime
-						食刻</span>
-            </a>
-        </div>
-        <div class="search-container">
-            <div class="search-bar">
-                <i class="material-icons-outlined search-icon">search</i> <input
-                    type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-            </div>
-        </div>
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li class="nav-item"><a href="/category/food-categories"
-                                        class="nav-link">地圖</a></li>
-                <li class="nav-item"><a href="/gb/gbindex" class="nav-link">團購</a></li>
-                <li class="nav-item"><a href="/act" class="nav-link">優惠</a></li>
-                <li class="nav-item">
-                    <div th:if="${session.loggedInMember == null}">
-                        <a th:href="@{/category/login}"
-                           class="btn btn-outline-secondary me-2"> <i
-                                class="bi bi-person"></i> 登入/註冊
-                        </a>
-
-                    </div>
-                    <div th:if="${session.loggedInMember != null}">
-							<span class="me-2"
-                                  th:text="'Hi, ' + ${session.loggedInMember.memName}">Hi,
-								使用者</span> <a th:href="@{/front/member/member_center}"
-                                                 class="btn btn-outline-success me-2">會員中心</a> <a
-                            th:href="@{/index}" class="btn btn-outline-danger">登出</a>
-                    </div>
-                </li>
-            </ul>
-            <button class="menu-toggle" aria-label="開啟選單">
-                <i class="material-icons-outlined">menu</i>
-            </button>
-        </nav>
-    </div>
-</header>
+<header th:replace="~{front/common/header :: main-header}"></header>
 
 <main>
     <section class="page-header">
@@ -400,11 +357,7 @@
     </div>
 </main>
 
-<footer class="app-footer">
-    <div class="container">
-        <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-    </div>
-</footer>
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 <!-- ==================== 商品燈箱 (Modal) 結構 ============================================================ -->
 <!-- ==================== 商品燈箱 (Modal) 結構 ============================================================ -->
 <div class="product-modal-overlay" id="productModalOverlay">
