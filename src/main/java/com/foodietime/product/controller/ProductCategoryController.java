@@ -94,13 +94,6 @@ public class ProductCategoryController {
         List<StoreVO> storeList = categoryService.getStoresByCategoryId(cateId);
         model.addAttribute("storeList", storeList);
         model.addAttribute("categoryId", cateId);
-
-     // 🔍 加入這段 debug 印出星星總數與評價人數
-        for (StoreVO store : storeList) {
-            System.out.println("🟡 店家: " + store.getStorName() +
-                               ", starNum = " + store.getStarNum() +
-                               ", reviews = " + store.getReviews());
-        }
         
         // 3. 根據店家撈商品
         List<ProductVO> allProducts = new ArrayList<>();
@@ -307,7 +300,7 @@ public class ProductCategoryController {
     
     //會員收藏清單(查看餐廳)
     @GetMapping("/store/{storeId}")
-    public String viewStoreDetail(@PathVariable Integer storeId, Model model) {
+    public String viewStoreDetail(@PathVariable Integer storeId, Model model, HttpSession session) {
         StoreVO store = storeService.getOneStore(storeId);
         List<ProductVO> productList = storeService.getProdsByStoreId(storeId);
         List<CouponVO> couponList = storeService.getCouponsByStore(storeId);
@@ -342,6 +335,16 @@ public class ProductCategoryController {
         );
         model.addAttribute("weekMap", weekMap);
 
+     // ✅ 收藏商品 ID 清單（要用於判斷哪些商品愛心亮起）
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO != null) {
+            List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
+            Set<Integer> favoriteProdIds = favorites.stream()
+                    .map(FavoriteListVO::getProdId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("favoriteProdIds", favoriteProdIds);
+        }
+        
         return "front/restaurant/category";
     }
     
