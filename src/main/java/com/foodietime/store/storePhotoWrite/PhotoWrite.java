@@ -13,8 +13,9 @@ class PhotoWrite {
 		String passwd = "123456";
 		String photos = "src/main/resources/static/images/store"; //測試用圖片已置於【專案錄徑】底下的【resources/DB_photos1】目錄內
 		String update = "update store set STOR_PHOTO =? where STOR_ID=?";
+		
 
-		int count = 1;
+		int count = 1; //從第幾筆開始新增
 		try {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(update);
