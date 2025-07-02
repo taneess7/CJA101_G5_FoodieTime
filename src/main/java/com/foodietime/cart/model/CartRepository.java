@@ -16,6 +16,9 @@ public interface CartRepository extends JpaRepository<CartVO, Integer> {
     // 查詢某會員的所有購物車商品
     List<CartVO> findByMember(MemberVO member);
 
+    // 計算某會員購物車內商品數量
+    Integer countByMember(MemberVO member);
+
     // 查詢某會員某商品是否已存在於購物車
     CartVO findByMemberAndProduct(MemberVO member, ProductVO product);
 

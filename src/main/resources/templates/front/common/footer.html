@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+</head>
+<body>
+<footer class="app-footer" th:fragment="main-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">功能</h4>
+                    <ul class="footer-nav-list">
+                        <li><a th:href="@{/front/map.html}">地圖搜尋</a></li>
+                        <li><a th:href="@{/front/group-order.html}">團購功能</a></li>
+                        <li><a th:href="@{/front/deals.html}">比價優惠</a></li>
+                        <li><a th:href="@{/front/collections.html}">收藏管理</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">關於我們</h4>
+                    <ul class="footer-nav-list">
+                        <li><a th:href="@{/front/about.html}">公司簡介</a></li>
+                        <li><a th:href="@{/front/team.html}">團隊成員</a></li>
+                        <li><a th:href="@{front/careers.html}">加入我們</a></li>
+                        <li><a th:href="@{/front/press.html}">媒體報導</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">幫助</h4>
+                    <ul class="footer-nav-list">
+                        <li><a th:href="@{/front/faq.html}">常見問題</a></li>
+                        <li><a th:href="@{/front/contact.html}">聯絡我們</a></li>
+                        <li><a th:href="@{/front/terms.html}">使用條款</a></li>
+                        <li><a th:href="@{/front/privacy.html}">隱私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,3 +1,100 @@
+/* --- 調整後的 Hero Section CSS --- */
+
+/* 適用於：<section class="hero-section">
+   這是整個區塊最大的容器。 */
+.hero-section {
+    /* min-height: 70vh;：
+       功能：設定元素的最小高度為 70% 的「視窗高度」(Viewport Height)。
+       外觀效果：確保這個區塊至少有螢幕 70% 的高度，即使內容不多也能撐開空間。
+       設計目的：給予影片背景足夠的垂直顯示空間，創造大氣的視覺效果。 */
+    min-height: 70vh;
+
+    /* position: relative;：
+       功能：設定為「相對定位」。
+       外觀效果：本身位置不變。
+       設計目的：建立一個「定位基準」，讓我們的前景內容 (.hero-content) 可以用絕對定位來疊在影片上方。 */
+    position: relative;
+
+    /* display: flex; align-items: center; justify-content: center;：
+       功能：使用 Flexbox 排版模型。
+       外觀效果：讓它的子元素（也就是 .hero-content）在垂直和水平方向上都置中。
+       設計目的：確保文字內容無論在什麼螢幕尺寸下，都能完美地顯示在區塊的正中央。 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* text-align: center;：
+       功能：設定內部文字的對齊方式為置中。
+       設計目的：讓 h1, p 等標籤內的文字都預設置中對齊。*/
+    text-align: center;
+
+    /* overflow: hidden;：
+       功能：隱藏超出此容器範圍的內容。
+       設計目的：防止影片因為長寬比問題稍微超出邊界時，產生不必要的滾動條。 */
+    overflow: hidden;
+}
+
+/* 適用於：<div class="video-background">
+   這是專門放影片的背景層。 */
+.video-background {
+    /* position: absolute;：
+       功能：設定為「絕對定位」。
+       外觀效果：脫離正常文件流，相對於最近的已定位祖先 (.hero-section) 進行定位。
+       設計目的：讓這個背景層可以自由地延展到填滿整個 .hero-section，且不會影響到前景內容的排版。 */
+    position: absolute;
+
+    /* top: 0; left: 0;：
+       功能：將元素的頂部和左側邊界對齊到父容器的左上角。
+       設計目的：確保影片背景從父容器的左上角開始鋪滿。 */
+    top: 0;
+    left: 0;
+
+    /* width: 100%; height: 100%;：
+       功能：設定寬度和高度為父容器 (.hero-section) 的 100%。
+       外觀效果：讓這個 div 完全填滿 .hero-section 的空間。
+       設計目的：為影片創造一個全尺寸的畫布。 */
+    width: 100%;
+    height: 100%;
+
+    /* z-index: -1;：
+       功能：設定元素的堆疊順序 (stacking context)。負值會讓它跑到其他同層級元素的後面。
+       設計目的：這是最關鍵的一步！讓影片背景層「沉」到前景內容 (.hero-content) 的下面，才不會蓋住文字。 */
+    z-index: -1;
+}
+
+/* 適用於：<video> 元素本身 */
+.video-background video {
+    /* width: 100%; height: 100%;：
+       功能：設定影片的寬度和高度為其父容器 (.video-background) 的 100%。
+       外觀效果：讓影片的尺寸延展，填滿 .video-background 容器。
+       設計目的：確保影片能填滿我們設定好的背景區域。 */
+    width: 100%;
+    height: 100%;
+
+    /* object-fit: cover;：
+       功能：這是一個超級重要的屬性！它會讓影片在「保持自身長寬比」的前提下，自動縮放直到「剛好填滿」整個容器。
+       外觀效果：影片會鋪滿整個背景，不會被壓扁或拉長。如果影片比例和容器不同，多出來的部分會被裁切掉，但這正是我們想要的全螢幕效果。
+       設計目的：無論螢幕寬窄，都能確保影片背景是滿版且不變形的。 */
+    object-fit: cover;
+}
+
+/* 適用於：<div class="hero-content container">
+   這是前景內容的容器，負責置中文字和按鈕。 */
+.hero-content {
+    /* z-index: 1; (可選)
+       功能：設定堆疊順序。正值會讓它疊在 z-index 為負或沒有設定的元素之上。
+       設計目的：明確地告訴瀏覽器，這層內容要顯示在最上面。雖然背景層已經是 z-index: -1，但加上這個可以讓層級關係更清晰。 */
+    z-index: 1;
+
+    /* color: white; (建議)
+       功能：設定文字顏色。
+       設計目的：如果你的影片背景比較深，建議將文字顏色改成淺色（如白色），以確保可讀性。你可以根據你的影片色調調整。 */
+    /* color: white; */
+}
+
+
+
+
 /* --- 1. 設計系統: 大地黏土風 (Earthen Claymorphism) --- */
 
 /* 1.1 色彩與字體變數 (Color & Typography Palette) */
@@ -116,7 +213,9 @@ body {
 header, footer {
     padding: 2rem 0;
 }
-
+header {
+    box-shadow: 0 20px 30px -5px #F0E5D8;
+}
 .main-nav .nav-link {
     font-weight: 700;
     padding: 0.5rem 1rem;
@@ -152,6 +251,7 @@ section {
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 1.5rem;
+    color: var(--shadow-light);
 }
 .hero-title .highlight {
     color: var(--accent-color-1);
@@ -160,7 +260,7 @@ section {
     font-size: 1.25rem;
     max-width: 600px;
     margin: 0 auto 2.5rem;
-    color: #8a6d5d;
+    color: var(--shadow-light);
 }
 
 /* Grid Layouts */

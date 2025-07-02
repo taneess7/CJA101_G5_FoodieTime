@@ -5,9 +5,9 @@
 
 /* ========== 基礎變數設定 ========== */
 :root {
-    --primary-color: #FF5722;
-    --primary-dark: #E64A19;
+    --primary-color: #C39B7B; /* 溫暖橘紅 */
     --primary-light: #FFCCBC;
+    --primary-dark: #B07D62;
     --accent-green: #4CAF50;
     --accent-blue: #2196F3;
     --error: #F44336;

@@ -3,9 +3,9 @@
     /* 變數定義 */
     :root {
         /* 主色調 */
-        --primary-color: #FF5722; /* 溫暖橘紅 */
+        --primary-color: #C39B7B; /* 溫暖橘紅 */
         --primary-light: #FFCCBC;
-        --primary-dark: #E64A19;
+        --primary-dark: #B07D62;
 
         /* 輔色 */
         --accent-green: #4CAF50; /* 清新綠 */
