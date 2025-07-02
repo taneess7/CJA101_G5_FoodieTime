@@ -313,10 +313,10 @@ public class SmgController {
         model.addAttribute("accrecList", accrecList);
         return "admin/smg/admin-groups-monthly"; 
     }
-    @GetMapping("/admin-orders-view")
-    public String adminordersview() {
-    	return "admin/smg/admin-orders-view"; 
-    }
+//    @GetMapping("/admin-orders-view")
+//    public String adminordersview() {
+//    	return "admin/smg/admin-orders-view";
+//    }
     @GetMapping("/admin-orders-payments")
     public String adminorderspayments() {
     	return "admin/smg/admin-orders-payments"; 

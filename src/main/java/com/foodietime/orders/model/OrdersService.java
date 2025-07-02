@@ -10,7 +10,6 @@ import com.foodietime.member.model.MemberVO;
 import com.foodietime.memcoupon.model.MemCouponRepository;
 import com.foodietime.memcoupon.model.MemCouponVO;
 import com.foodietime.orddet.dto.OrderDetailDTO;
-import com.foodietime.orddet.model.OrdDetRepository;
 import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.orders.dto.LinePayRequestDTO;
 import com.foodietime.orders.dto.LinePayResponseDTO;
@@ -18,18 +17,15 @@ import com.foodietime.orders.dto.NewOrderNotificationDTO;
 import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -606,4 +602,110 @@ public class OrdersService {
             throw new RuntimeException("產生 LINE Pay 簽章失敗", e);
         }
     }
+
+    //===============================================================================================
+    //        後臺方法
+    //===============================================================================================
+    /**
+     * 查詢所有訂單資料。
+     * 此方法返回資料庫中所有的訂單，主要用於後台管理頁面的主列表展示。
+     * 為維持查詢效能，此方法預設不會載入關聯的訂單明細(OrdDetVO)。
+     *
+     * @return 包含所有 OrdersVO 的 List 集合。
+     */
+    public List<OrdersVO> findAllOrders() {
+        // ==================== 1. 呼叫 Repository 進行查詢 ====================
+        return ordersRepo.findAll();
+    }
+
+    /**
+     * 根據訂單ID查詢單筆訂單的完整資料。
+     * 這個方法會一併載入該訂單下的所有訂單明細(OrdDetVO)，
+     * 以便在前端的「檢視訂單」彈出視窗中完整顯示，並避免 LazyInitializationException。
+     *
+     * @param ordId 要查詢的訂單ID (Integer)。
+     * @return 返回一個 Optional 物件，如果找到訂單則包含 OrdersVO，否則為空。
+     */
+    @Transactional(readOnly = true) // 查詢操作，設為 readOnly 可提升資料庫效能
+    public Optional<OrdersVO> findByIdWithDetails(Integer ordId) {
+        // ==================== 1. 根據 ID 查找訂單實體 ====================
+        Optional<OrdersVO> orderOpt = ordersRepo.findById(ordId);
+
+        // ==================== 2. 若訂單存在，則強制初始化關聯的明細集合 ====================
+        orderOpt.ifPresent(order -> {
+            // 透過存取集合的 size() 方法，可以觸發 Hibernate 載入 LAZY 關聯的訂單明細
+            order.getOrdDet().size();
+        });
+
+        return orderOpt;
+    }
+
+    /**
+     * 更新訂單的狀態。
+     * 此方法為一個交易操作，專門用於後台管理系統修改訂單的狀態，
+     * 例如：訂單狀態、付款狀態以及取消原因。
+     *
+     * @param ordId         要更新的訂單ID。
+     * @param orderStatus   新的訂單狀態碼 (參考前端頁面定義)。
+     * @param paymentStatus 新的付款狀態碼 (參考前端頁面定義)。
+     * @param cancelReason  取消原因 (僅在訂單狀態為「已取消」時有意義)。
+     * @return 更新成功後的 OrdersVO 物件。
+     * @throws RuntimeException 如果根據 ordId 找不到對應的訂單，則拋出例外。
+     */
+    @Transactional
+    public OrdersVO updateOrderStatus(Integer ordId, Integer orderStatus, Integer paymentStatus, String cancelReason) {
+        // ==================== 1. 查找訂單實體 ====================
+        // 使用 orElseThrow確保我們操作的是一個存在的訂單，若不存在則直接拋出例外中斷執行
+        OrdersVO order = ordersRepo.findById(ordId)
+                .orElseThrow(() -> new RuntimeException("更新失敗：找不到對應的訂單，ID: " + ordId));
+
+        // ==================== 2. 更新訂單屬性 ====================
+        order.setOrderStatus(orderStatus);
+        order.setPaymentStatus(paymentStatus);
+
+        // 根據前端設計，訂單狀態 5 為 "已取消"，只有在此狀態下才設定取消原因
+        if (orderStatus != null && orderStatus == 5) {
+            order.setCancelReason(cancelReason);
+        } else {
+            // 如果訂單不是取消狀態，應將取消原因清空，以保持資料一致性
+            order.setCancelReason(null);
+        }
+
+        // ==================== 3. 儲存變更至資料庫 ====================
+        // 在 @Transactional 方法中，JPA 會自動將變更的實體同步回資料庫，
+        // 但明確呼叫 save() 是個好習慣，能讓程式碼意圖更清晰。
+        return ordersRepo.save(order);
+    }
+
+    /**
+     * 儲存或更新一筆訂單資料。
+     * 如果傳入的 orderVO 物件沒有 ID，則為新增；如果有 ID，則為更新。
+     *
+     * @param orderVO 要儲存或更新的 OrdersVO 物件。
+     * @return 儲存或更新後的 OrdersVO 物件，其中可能包含由資料庫生成的 ID。
+     */
+    @Transactional
+    public OrdersVO save(OrdersVO orderVO) {
+        return ordersRepo.save(orderVO);
+    }
+
+    /**
+     * 根據訂單ID刪除一筆訂單。
+     * 注意：這會一併刪除與此訂單關聯的訂單明細 (因 OrdersVO 中設定了 orphanRemoval = true)。
+     *
+     * @param ordId 要刪除的訂單ID。
+     */
+    @Transactional
+    public void deleteById(Integer ordId) {
+        // 在刪除前可以先檢查是否存在，避免不存在的ID造成錯誤
+        if (ordersRepo.existsById(ordId)) {
+            ordersRepo.deleteById(ordId);
+        } else {
+            // 可以選擇拋出例外或記錄日誌
+            throw new RuntimeException("刪除失敗：找不到對應的訂單，ID: " + ordId);
+        }
+    }
+
+
+
 }
