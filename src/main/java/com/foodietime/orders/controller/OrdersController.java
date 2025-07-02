@@ -238,9 +238,7 @@ public class OrdersController {
                     String linePayUrl = ordersService.initiateLinePayPayment(pendingOrder);
 
                     // 3. 將訂單ID和支付連結存起來，重導向到付款處理頁面
-                    redirectAttributes.addAttribute("orderId", pendingOrder.getOrdId());
-                    session.setAttribute("linePayUrl", linePayUrl); // 實際應用中，URL可能很長，放session較佳
-                    return "redirect:/orders/payment";
+                    return "redirect:" + linePayUrl;
 
                 } else {
                     // --- 信用卡或貨到付款流程 (原有邏輯) ---
@@ -369,6 +367,35 @@ public class OrdersController {
         // 無論業務邏輯成功與否，只要成功接收並驗證了請求，就應回傳 200 OK。
         // 這是在告知 LINE Pay：「我收到你的通知了，請不用再發了。」
         return ResponseEntity.ok("OK");
+    }
+    // src/main/java/com/foodietime/orders/controller/OrdersController.java
+
+    /**
+     * 【新增】接收來自 LINE Pay 的成功付款重導向。
+     *
+     * @param orderId 從 URL 參數中獲取的訂單ID
+     * @param redirectAttributes 用於傳遞訊息到最終頁面
+     * @return 重導向到訂單確認頁面
+     */
+    @GetMapping("/linepay/confirm")
+    public String handleLinePayConfirm(@RequestParam String orderId, RedirectAttributes redirectAttributes) {
+        try {
+            Integer orderIdInt = Integer.parseInt(orderId);
+
+            // ★ 核心邏輯：直接在這裡更新訂單狀態 ★
+            ordersService.confirmPayment(orderIdInt);
+
+            redirectAttributes.addFlashAttribute("successMessage", "訂單已成功付款！");
+            // 將使用者導向最終的訂單確認頁
+            return "redirect:/orders/order-confirmation?orderId=" + orderIdInt;
+
+        } catch (NumberFormatException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "無效的訂單編號。");
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "確認付款時發生錯誤：" + e.getMessage());
+            return "redirect:/cart/cart";
+        }
     }
 
     /**
