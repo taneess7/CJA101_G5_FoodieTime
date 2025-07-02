@@ -196,6 +196,39 @@ body {
     background-color: var(--danger-color);
 }
 
+.btn-custom {
+    background-color: #ff6b6b;       /* 主題紅色 */
+    color: white;                   /* 文字白色 */
+    border: none;
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;             /* 圓角 */
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.4); /* 陰影 */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+}
+
+.btn-custom:hover {
+    background-color: #ff4b4b;      /* 懸停變深紅 */
+    box-shadow: 0 6px 12px rgba(255, 75, 75, 0.6);
+}
+
+.btn-custom:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.7); /* 聚焦時的光暈 */
+}
+
+.btn-custom:active {
+    background-color: #e64545;      /* 點擊時更深紅 */
+    box-shadow: 0 2px 4px rgba(230, 69, 69, 0.8);
+}
+
+
+
 /* Responsive */
 @media (max-width: 991.98px) {
     .sidebar {
