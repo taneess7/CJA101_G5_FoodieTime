@@ -541,223 +541,149 @@
                 // 清空之前的處理註記和選項
                 this.querySelector('#handleNote').value = '';
                 this.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            });
-            
-            // 通過檢舉按鈕點擊事件
-            document.getElementById('modalApproveBtn').addEventListener('click', function() {
-                const reportId = document.getElementById('reportId').textContent;
-                const handleNote = document.getElementById('handleNote').value;
-                const deleteContent = document.getElementById('deleteContent').checked;
-                const warnUser = document.getElementById('warnUser').checked;
-                const restrictUser = document.getElementById('restrictUser').checked;
-                const banUser = document.getElementById('banUser').checked;
                 
-                // 驗證處理註記
-                if (!handleNote) {
-                    alert('請輸入處理說明');
-                    return;
-                }
+                // 儲存當前檢舉的資料到 Modal 中，供按鈕使用
+                this.dataset.currentReportId = reportId;
+                this.dataset.currentReportType = typeText === '貼文' ? 'post' : 'comment';
                 
-                // 驗證至少選擇一個處理選項
-                if (!deleteContent && !warnUser && !restrictUser && !banUser) {
-                    alert('請至少選擇一個處理選項');
-                    return;
-                }
-                
-                // 這裡可以發送請求到後端
-                // 現在使用模擬示範
-                alert(`檢舉 ${reportId} 已成功通過`);
-                document.querySelector('#viewModal .btn-close').click();
-                
-                // 更新表格中狀態
-                const reportRows = document.querySelectorAll('tbody tr');
-                reportRows.forEach(row => {
-                    if (row.cells[1].textContent === reportId) {
-                        row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
-                        const approveBtn = row.querySelector('.approve-btn');
-                        const rejectBtn = row.querySelector('.reject-btn');
-                        approveBtn.disabled = true;
-                        rejectBtn.disabled = true;
-                    }
-                });
-            });
-            
-            // 駁回檢舉按鈕點擊事件
-            document.getElementById('modalRejectBtn').addEventListener('click', function() {
-                const reportId = document.getElementById('reportId').textContent;
-                const handleNote = document.getElementById('handleNote').value;
-                
-                // 驗證處理註記
-                if (!handleNote) {
-                    alert('請輸入處理說明');
-                    return;
-                }
-                
-                // 這裡可以發送請求到後端
-                // 現在使用模擬示範
-                alert(`檢舉 ${reportId} 已成功駁回`);
-                document.querySelector('#viewModal .btn-close').click();
-                
-                // 更新表格中狀態
-                const reportRows = document.querySelectorAll('tbody tr');
-                reportRows.forEach(row => {
-                    if (row.cells[1].textContent === reportId) {
-                        row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
-                        const approveBtn = row.querySelector('.approve-btn');
-                        const rejectBtn = row.querySelector('.reject-btn');
-                        approveBtn.disabled = true;
-                        rejectBtn.disabled = true;
-                    }
-                });
+                // 從觸發按鈕的同一行獲取 contentId
+                const triggerRow = button.closest('tr');
+                const approveBtn = triggerRow.querySelector('.approve-btn');
+                this.dataset.currentContentId = approveBtn ? approveBtn.dataset.contentId : '';
             });
             
             // 表格中通過按鈕點擊事件
-           document.querySelectorAll('.approve-btn').forEach(button => {
-    button.addEventListener('click', async function() {
-        const reportId = this.dataset.reportId;
-        const reportType = this.dataset.reportType;
-        const contentId = this.dataset.contentId;
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const reportId = this.dataset.reportId;
+                    const reportType = this.dataset.reportType;
+                    const contentId = this.dataset.contentId;
 
-        const actionText = reportType === 'post' 
-            ? "確定下架此貼文並標記檢舉為「已處理」？" 
-            : "確定刪除此留言並標記檢舉為「已處理」？";
+                    const actionText = reportType === 'post' 
+                        ? "確定下架此貼文並標記檢舉為「已處理」？" 
+                        : "確定刪除此留言並標記檢舉為「已處理」？";
 
-        if (confirm(actionText)) {
-        	 const rejectBtn = this.closest('tr').querySelector('.reject-btn');
-        	 const reportId = this.dataset.reportId;
-		        const reportType = this.dataset.reportType;
-		        const contentId = this.dataset.contentId;
-            try {
-                // 显示加载状态
-                this.disabled = true;
-                if (rejectBtn) rejectBtn.disabled = true;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                
-             // --- CSRF Token Handling ---
-                // 方案A: 嘗試從 meta 標籤獲取
-                let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
-                let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                    if (confirm(actionText)) {
+                        const rejectBtn = this.closest('tr').querySelector('.reject-btn');
+                        const originalIcon = this.innerHTML; // 記錄原始圖示
+                        try {
+                            // 显示加载状态
+                            this.disabled = true;
+                            if (rejectBtn) rejectBtn.disabled = true;
+                            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                            
+                            // CSRF Token Handling
+                            let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                            let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                            if (!token || !header) {
+                                const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                                if (match) {
+                                    token = match[2];
+                                    header = 'X-XSRF-TOKEN';
+                                }
+                            }
+                            const headers = { 'Content-Type': 'application/json' };
+                            if (token && header) headers[header] = token;
 
-                // 方案B: 如果 meta 標籤沒有，嘗試從 cookie 獲取 (另一種常見的 Spring Security 配置)
-                if (!token || !header) {
-                    const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
-                    if (match) {
-                        token = match[2];
-                        header = 'X-XSRF-TOKEN'; // Cookie 模式的標準 Header 名稱
+                            const response = await fetch('/smg/reports/resolve', {
+                                method: 'POST',
+                                headers: headers,
+                                body: JSON.stringify({
+                                    repPostId: reportId,
+                                    reportType: reportType,
+                                    contentId: contentId
+                                })
+                            });
+
+                            if (!response.ok) {
+                                const errorText = await response.text();
+                                console.error("伺服器錯誤回應:", errorText);
+                                throw new Error(`HTTP錯誤! 狀態碼: ${response.status}`);
+                            }
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                const row = this.closest('tr');
+                                row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
+                                this.innerHTML = '<i class="fas fa-check"></i>';
+                                this.disabled = true; // 操作成功後保持禁用
+                                if (rejectBtn) rejectBtn.disabled = true;
+                                alert("操作成功！");
+                            } else {
+                                throw new Error(result.message || "後端請求失敗");
+                            }
+                        } catch (error) {
+                            console.error("處理失敗:", error);
+                            alert("操作失敗: " + error.message);
+                            // 重置按钮状态
+                            this.disabled = false;
+                            if (rejectBtn) rejectBtn.disabled = false;
+                            this.innerHTML = originalIcon;
+                        }
                     }
-                }
-
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-             // 如果成功獲取到 token，就將其加入到請求標頭
-                if (token && header) {
-                    headers[header] = token;
-                } else {
-                    console.warn("CSRF Token not found. The request might be rejected by the server.");
-                }
-
-                // 回歸標準的 JSON 請求，並帶上 CSRF token
-                const response = await fetch('/smg/reports/resolve', {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({
-                        repPostId: reportId,
-                        reportType: reportType,
-                        contentId: contentId
-                    })
                 });
-
-
-                if (!response.ok) {
-                	const errorText = await response.text(); // 嘗試讀取錯誤的回應內容
-                    console.error("伺服器錯誤回應:", errorText);
-                    throw new Error(`HTTP錯誤! 狀態碼: ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                if (result.success) {
-                    const row = this.closest('tr');
-                    row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
-                    this.innerHTML = '<i class="fas fa-times"></i>';
-                    this.disabled = true; // 操作成功後保持禁用
-                    if (rejectBtn) rejectBtn.disabled = true;
-                    alert("操作成功！");
-                } else {
-                	throw new Error(result.message || "後端請求失敗");
-                }
-            } catch (error) {
-                console.error("處理失敗:", error);
-                alert("操作失敗: " + error.message);
-                // 重置按钮状态
-                this.disabled = false;
-                if (rejectBtn) rejectBtn.disabled = false;
-                this.innerHTML = originalIcon;
-            }
-        }
-    });
-});
+            });
             
             // 表格中的駁回按鈕點擊事件
             document.querySelectorAll('.reject-btn').forEach(button => {
-			    button.addEventListener('click', async function() {
-			        const reportId = this.dataset.reportId;
-			        const reportType = this.dataset.reportType;
-			        
-			        if (confirm(`確定要駁回檢舉 #${reportId}？此操作將標記檢舉為「已駁回」。`)) {
-			            const approveBtn = this.closest('tr').querySelector('.approve-btn');
-			            const originalText = this.innerHTML;
-			            try {
-			                this.disabled = true;
-			                if (approveBtn) approveBtn.disabled = true;
-			                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-			
-			                // CSRF Token Handling
-			                let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
-			                let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
-			                if (!token || !header) {
-			                    const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
-			                    if (match) {
-			                        token = match[2];
-			                        header = 'X-XSRF-TOKEN';
-			                    }
-			                }
-			                const headers = { 'Content-Type': 'application/json' };
-			                if (token && header) headers[header] = token;
-			
-			                const response = await fetch('/smg/reports/reject', {
-			                    method: 'POST',
-			                    headers: headers,
-			                    body: JSON.stringify({ repPostId: reportId, reportType: reportType }) // 將類型一起傳送
-			                });
-			
-			                if (!response.ok) {
-			                    const errorText = await response.text();
-			                    console.error("伺服器錯誤回應:", errorText);
-			                    throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
-			                }
-			                const result = await response.json();
-			
-			                if (result.success) {
-			                    alert(result.message || "操作成功！");
-			                    const row = this.closest('tr');
-			                    row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
-			                    this.innerHTML = '<i class="fas fa-check"></i>';
-			                    this.disabled = true;
-			                    if (approveBtn) approveBtn.disabled = true;
-			                } else {
-			                    throw new Error(result.message || "後端請求失敗");
-			                }
-			            } catch (error) {
-			                console.error("駁回失敗:", error);
-			                alert("操作失敗: " + error.message);
-			                this.disabled = false;
-			                if (approveBtn) approveBtn.disabled = false;
-			                this.innerHTML = originalText;
-			            }
-			        }
-			    });
+                button.addEventListener('click', async function() {
+                    const reportId = this.dataset.reportId;
+                    const reportType = this.dataset.reportType;
+                    
+                    if (confirm(`確定要駁回檢舉 #${reportId}？此操作將標記檢舉為「已駁回」。`)) {
+                        const approveBtn = this.closest('tr').querySelector('.approve-btn');
+                        const originalText = this.innerHTML;
+                        try {
+                            this.disabled = true;
+                            if (approveBtn) approveBtn.disabled = true;
+                            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                            // CSRF Token Handling
+                            let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                            let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                            if (!token || !header) {
+                                const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                                if (match) {
+                                    token = match[2];
+                                    header = 'X-XSRF-TOKEN';
+                                }
+                            }
+                            const headers = { 'Content-Type': 'application/json' };
+                            if (token && header) headers[header] = token;
+
+                            const response = await fetch('/smg/reports/reject', {
+                                method: 'POST',
+                                headers: headers,
+                                body: JSON.stringify({ repPostId: reportId, reportType: reportType })
+                            });
+
+                            if (!response.ok) {
+                                const errorText = await response.text();
+                                console.error("伺服器錯誤回應:", errorText);
+                                throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+                            }
+                            const result = await response.json();
+
+                            if (result.success) {
+                                alert(result.message || "操作成功！");
+                                const row = this.closest('tr');
+                                row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
+                                this.innerHTML = '<i class="fas fa-check"></i>';
+                                this.disabled = true;
+                                if (approveBtn) approveBtn.disabled = true;
+                            } else {
+                                throw new Error(result.message || "後端請求失敗");
+                            }
+                        } catch (error) {
+                            console.error("駁回失敗:", error);
+                            alert("操作失敗: " + error.message);
+                            this.disabled = false;
+                            if (approveBtn) approveBtn.disabled = false;
+                            this.innerHTML = originalText;
+                        }
+                    }
+                });
             });
             
             // 批量通過按鈕點擊事件
@@ -796,11 +722,7 @@
                          const response = await fetch('/smg/reports/batch-resolve', {
                              method: 'POST',
                              headers: headers,
-                             body: JSON.stringify({
-			                        repPostId: reportId,
-			                        reportType: reportType,
-			                        contentId: contentId
-			                    })
+                             body: JSON.stringify({ reports: reports })
                          });
 
                          const result = await response.json();

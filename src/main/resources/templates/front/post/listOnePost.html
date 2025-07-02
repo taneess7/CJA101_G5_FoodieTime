@@ -8,43 +8,13 @@
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 <link rel="stylesheet" th:href="@{/css/front/post/selectOnePost.css}">
+<link rel="stylesheet" th:href="@{/css/common/style.css}">
 </head>
 <body>
 	<!-- 頁首 -->
 
 	<!--     Header -->
-	<header class="app-header">
-		<div class="header-container">
-			<div class="logo-container">
-				<a th:href="@{/index}" class="logo">
-					<div
-						class="logo-img bg-orange-500 text-white flex items-center justify-center text-lg font-bold">
-						🍽️</div> <span class="logo-text">FoodieTime 食刻</span>
-				</a>
-			</div>
-			<div class="search-container">
-				<div class="search-bar">
-					<i class="material-icons-outlined search-icon">search</i> <input
-						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-					<i class="material-icons-outlined mic-icon">mic</i> <i
-						class="material-icons-outlined camera-icon">photo_camera</i>
-				</div>
-			</div>
-			<nav class="main-nav">
-				<ul class="nav-list">
-					<li class="nav-item"><a th:href="@{/map}" class="nav-link">地圖</a></li>
-					<li class="nav-item"><a th:href="@{/group-order}"
-						class="nav-link">團購</a></li>
-					<li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
-					<li class="nav-item"><a th:href="@{/login}"
-						class="nav-link login-btn">登入/註冊</a></li>
-				</ul>
-				<button class="menu-toggle" aria-label="開啟選單">
-					<i class="material-icons-outlined">menu</i>
-				</button>
-			</nav>
-		</div>
-	</header>
+	<header th:replace="~{front/common/header :: main-header}"></header>
 
 	<section class="breadcrumb">
 		<div class="container">
@@ -265,6 +235,7 @@
 			</div>
 		</section>
 	</main>
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 </body>
 <script th:src="@{/js/front/post/selectOnePost.js}"></script>
 

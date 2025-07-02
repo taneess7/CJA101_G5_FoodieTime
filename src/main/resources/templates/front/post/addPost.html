@@ -6,41 +6,11 @@
 <title>新增貼文 - FoodieTime 食刻</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" th:href="@{/css/front/post/addPost.css}">
+<link rel="stylesheet" th:href="@{/css/common/style.css}">
 </head>
 <body class="min-h-screen bg-gray-100">
 	<!--     Header -->
-	<header class="app-header">
-		<div class="header-container">
-			<div class="logo-container">
-				<a th:href="@{/index}" class="logo">
-					<div
-						class="logo-img bg-orange-500 text-white flex items-center justify-center text-lg font-bold">
-						🍽️</div> <span class="logo-text">FoodieTime 食刻</span>
-				</a>
-			</div>
-			<div class="search-container">
-				<div class="search-bar">
-					<i class="material-icons-outlined search-icon">search</i> <input
-						type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
-					<i class="material-icons-outlined mic-icon">mic</i> <i
-						class="material-icons-outlined camera-icon">photo_camera</i>
-				</div>
-			</div>
-			<nav class="main-nav">
-				<ul class="nav-list">
-					<li class="nav-item"><a th:href="@{/map}" class="nav-link">地圖</a></li>
-					<li class="nav-item"><a th:href="@{/group-order}"
-						class="nav-link">團購</a></li>
-					<li class="nav-item"><a th:href="@{/deals}" class="nav-link">優惠</a></li>
-					<li class="nav-item"><a th:href="@{/login}"
-						class="nav-link login-btn">登入/註冊</a></li>
-				</ul>
-				<button class="menu-toggle" aria-label="開啟選單">
-					<i class="material-icons-outlined">menu</i>
-				</button>
-			</nav>
-		</div>
-	</header>
+	<header th:replace="~{front/common/header :: main-header}"></header>
 
 	<!-- 麵包屑 -->
 	<section class="breadcrumb">
@@ -56,6 +26,8 @@
 			class="container max-w-xl mx-auto bg-white rounded shadow p-8 mt-8">
 			<h2 class="text-2xl font-bold mb-6 text-orange-600">新增貼文</h2>
 			<form th:action="@{/post/insert}" method="post" th:object="${postVO}">
+				
+				
 				<!-- 分類 -->
 				<div class="mb-4">
 					<label class="block mb-1 font-medium text-gray-700">分類</label> <select
@@ -93,6 +65,7 @@
 			</form>
 		</div>
 	</main>
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 	<script>
     document.addEventListener('DOMContentLoaded', function() {
         const titleInput = document.querySelector('input[name="postTitle"]');
