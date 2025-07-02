@@ -34,7 +34,7 @@
 </head>
 
 <body class="bg-gradient-to-br from-orange-100 to-rose-200 min-h-screen font-sans">
-
+	<header th:replace="~{front/common/header :: main-header}"></header>
     <!-- 整頁容器（padding 不要包 flex） -->
    	<div class="max-w-6xl mx-auto flex items-start gap-8 px-4 py-8">
 
@@ -61,10 +61,13 @@
 
         <!-- menu 選單 -->
         <nav class="member-nav flex flex-col space-y-3">
-            <a th:href="@{/front/member/member_center}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">person</i>
-                <span>會員資料</span>
-            </a>
+            <a th:href="@{/front/member/member_center}" 
+			   th:class="'member-nav-item flex items-center space-x-2 ' +
+			             (${currentPage} == 'member_center' ? 'text-orange-600 font-bold' : 'text-gray-700 hover:text-orange-600')">
+			    <i class="material-icons-outlined">person</i>
+			    <span>會員資料</span>
+			</a>
+
             <div th:if="${session.loggedInStore != null}">
 		        <a th:href="@{/store/sc}" 
 		           class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
@@ -193,6 +196,7 @@
         </div> <!-- 右側內容 -->
 
     </div> <!-- max-w-6xl flex -->
-
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 </body>
+
 </html>

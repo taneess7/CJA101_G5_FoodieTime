@@ -348,10 +348,16 @@ public class MemberController {
             session.setAttribute("loggedInStore", store); // ✅ 把 StoreVO 放入 Session
             
             return "redirect:/store/sc";         // 導向店家頁面
-        } else {
-            session.setAttribute("loginRole", "member"); // 設定身份為一般會員
-            return "redirect:/front/member/member_center";              // 導向會員頁面
+        } 
+        
+        // ✅ ✅ ✅ 檢查是否有記錄登入前的頁面
+        String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+        if (redirectUrl != null) {
+            session.removeAttribute("redirectAfterLogin");
+            return "redirect:" + redirectUrl;
         }
+
+        return "redirect:/front/member/member_center"; // 預設頁面
     }
 
 
@@ -441,6 +447,7 @@ public class MemberController {
             return "redirect:/front/member/login";
         }
         model.addAttribute("member", member);
+        model.addAttribute("currentPage", "member_center");
         return "front/member/member_center"; // 要有這個 HTML
     }
     
