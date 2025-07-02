@@ -217,6 +217,6 @@ public class StoreVO implements Serializable {
 		// 關鍵：返回一個固定的值，這個值對於同一個類的所有實例都是一樣的。
 		// 這可以確保在物件被持久化前後（ID從null變為有值），雜湊碼保持不變。
 		// 這避免了在 HashMap 或 HashSet 中找不到物件的問題。
-		return getClass().hashCode();
+		return Objects.hash(storId);
 	}
 }
