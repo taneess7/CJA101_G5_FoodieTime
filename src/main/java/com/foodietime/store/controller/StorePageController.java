@@ -375,6 +375,12 @@ public class StorePageController {
 		
 		
 /***進入商品新增或編輯畫面***/
+		 @GetMapping("/prod/success")
+		    public String prodAddSuccess() {
+			 System.out.println("進入成功頁");
+		        return "front/store/prod/success"; 
+		    }
+		 
 		@GetMapping("/prod/prodEdit")
 		public String showEditPage(@RequestParam(required = false) Integer prodId, 
 				HttpSession session, Model model) {
@@ -412,12 +418,11 @@ public class StorePageController {
 			model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
 			
 			//顯示預覽圖轉base64
-			if(prodVO.getProdPhoto()!=null) {
-				String base64Image = Base64.getEncoder().encodeToString(prodVO.getProdPhoto());
-				model.addAttribute("base64Image", base64Image);				
-			
-			}else {model.addAttribute("base64Image", 
-					"https://placehold.co/300x200/ffcc00/333?");//放預設圖片連結}
+			if (prodVO.getProdPhoto() != null) {
+			    String base64 = Base64.getEncoder().encodeToString(prodVO.getProdPhoto());
+			    model.addAttribute("base64Image", "data:image/jpeg;base64," + base64); // ✅這裡就加好
+			} else {
+			    model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333"); // ✅直接是URL
 			}
 			
 			return "front/store/prod/prodEdit"; //回到prodEdit.html頁面
@@ -495,7 +500,7 @@ public class StorePageController {
 		        prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
 		        prodSvc.addProduct(prod, categoryId);
 		        redirectAttr.addFlashAttribute("successMessage", "商品新增成功！");
-		        return "redirect:/store/prod/prodEdit";
+		        return "redirect:/store/prod/success";  //需重導其他名子的GetMapping，避免重複新增出現空白頁
 		    } else {
 		        // ✏️ 修改商品
 		        result = removeFieldError(prod, result, "upFiles");
