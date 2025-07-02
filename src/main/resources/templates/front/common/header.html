@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+</head>
+<body>
+<!--
+    th:fragment="main-header"：
+    定義了一個名為 "main-header" 的程式碼片段。
+    其他頁面將會透過這個名稱來引用它。
+-->
+<header class="app-header" th:fragment="main-header">
+  <div class="header-container">
+    <div class="logo-container">
+      <a href="index.html" class="logo">
+        <img th:src="@{/images/icons/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+        <span class="logo-text">FoodieTime 食刻</span>
+      </a>
+    </div>
+    <div class="search-container">
+      <div class="search-bar">
+        <i class="material-icons-outlined search-icon">search</i>
+
+        <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+
+        <i class="material-icons-outlined mic-icon">mic</i>
+        <i class="material-icons-outlined camera-icon">photo_camera</i>
+      </div>
+    </div>
+    <!-- 導覽列 nav.main-nav 的部分 -->
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <!-- 其他導覽連結不變 -->
+        <li class="nav-item"><a th:href="@{/map.html}" class="nav-link">地圖</a></li>
+        <li class="nav-item"><a th:href="@{/group-order.html}" class="nav-link">團購</a></li>
+        <li class="nav-item"><a th:href="@{/deals.html}" class="nav-link">優惠</a></li>
+
+        <!-- 未登入狀態 -->
+        <th:block th:if="${loginMember == null}">
+          <li class="nav-item">
+            <a th:href="@{/cart/cart}" class="nav-link active">
+              <i class="material-icons-outlined">shopping_cart</i>
+              <span class="cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/member/login}" class="nav-link login-btn">登入/註冊</a>
+          </li>
+        </th:block>
+
+        <!-- 已登入狀態 -->
+        <th:block th:if="${loginMember != null}">
+          <li class="nav-item">
+            <a th:href="@{/cart/cart}" class="nav-link active">
+              <i class="material-icons-outlined">shopping_cart</i>
+              <!-- 直接使用 model 中的 cartItemCount -->
+              <span class="cart-count" th:text="${cartItemCount ?: '0'}">0</span>
+            </a>
+          </li>
+          <li class="nav-item nav-user-greeting">
+            <!-- 直接使用 model 中的 loginMember 物件 -->
+            <a th:href="@{/member/profile}" class="nav-link"
+               th:if="${loginMember != null}"
+               th:text="'你好, ' + ${loginMember.memName}">你好, 會員</a>
+          </li>
+          <li class="nav-item">
+            <form th:action="@{/member/logout}" method="post" class="logout-form">
+              <button type="submit" class="nav-link login-btn">登出</button>
+            </form>
+          </li>
+        </th:block>
+      </ul>
+      <button class="menu-toggle" aria-label="開啟選單">
+        <i class="material-icons-outlined">menu</i>
+      </button>
+    </nav>
+
+  </div>
+</header>
+</body>
+</html>

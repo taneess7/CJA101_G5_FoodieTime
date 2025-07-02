@@ -172,4 +172,25 @@ public class CartService {
         repo.deleteByMemberAndProducts(member, products);
     }
 
+    /**
+     * 根據會員實體，計算該會員購物車中的【商品項目總數】。
+     * <p>
+     * 注意：此方法計算的是購物車中有幾筆不同的商品記錄，而非所有商品的總數量加總。
+     * 這個方法專為 Header 購物車圖標上的計數顯示而設計，效能經過最佳化。
+     *
+     * @param memId 欲查詢的會員實體 (從 GlobalControllerAdvice 或 Session 傳入)
+     * @return Integer 購物車中的商品項目數量。如果會員為 null，則返回 0。
+     */
+    public Integer getTotalItemCountByMemberId(Integer  memId) {
+        MemberVO member = memberRepo.findById(memId)
+                .orElseThrow(() -> new RuntimeException("會員不存在"));
+
+        // ==================== 1. 參數檢查 ====================
+        // 確保傳入的會員物件不是 null，避免後續發生 NullPointerException
+        if (member == null) {
+            return 0;
+        }
+        // ==================== 2. 呼叫 Repository 執行高效計數 ====================
+        return repo.countByMember(member);
+    }
 }
