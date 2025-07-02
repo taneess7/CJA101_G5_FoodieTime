@@ -300,7 +300,7 @@ public class ProductCategoryController {
     
     //會員收藏清單(查看餐廳)
     @GetMapping("/store/{storeId}")
-    public String viewStoreDetail(@PathVariable Integer storeId, Model model) {
+    public String viewStoreDetail(@PathVariable Integer storeId, Model model, HttpSession session) {
         StoreVO store = storeService.getOneStore(storeId);
         List<ProductVO> productList = storeService.getProdsByStoreId(storeId);
         List<CouponVO> couponList = storeService.getCouponsByStore(storeId);
@@ -335,6 +335,16 @@ public class ProductCategoryController {
         );
         model.addAttribute("weekMap", weekMap);
 
+     // ✅ 收藏商品 ID 清單（要用於判斷哪些商品愛心亮起）
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO != null) {
+            List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
+            Set<Integer> favoriteProdIds = favorites.stream()
+                    .map(FavoriteListVO::getProdId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("favoriteProdIds", favoriteProdIds);
+        }
+        
         return "front/restaurant/category";
     }
     
