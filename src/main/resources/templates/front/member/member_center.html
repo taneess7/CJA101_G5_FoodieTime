@@ -33,6 +33,7 @@
             }
         });
     </script>
+    <script th:src="@{/js/common/main.js}"></script>
     <style>
  
   .app-header {
@@ -128,12 +129,15 @@
                 <i class="material-icons-outlined">favorite</i>
                 <span>收藏餐廳</span>
             </a>
-           
-            <a th:href="@{/front/member/logout}" 
-           class="flex items-center space-x-2 text-red-600 hover:text-red-800 pt-4 border-t border-gray-200 mt-3">
-            <i class="material-icons-outlined">logout</i>
-            <span>登出</span>
-        </a>
+           <a th:href="@{/front/member/notifications}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+                <i class="material-icons-outlined">inbox</i>
+                <span>收件夾</span>
+                <!-- 未讀通知數量 -->
+                <span th:if="${unreadCount != null and unreadCount > 0}" 
+                class="bg-red-500 text-white text-xs rounded-full px-2 py-1 ml-auto"
+                th:text="${unreadCount}">3</span>
+            </a>
+            
         </nav>
     </div>
 
@@ -247,8 +251,8 @@
 
     </div>
     </div> <!-- max-w-6xl flex -->
-	<footer id="footer" th:replace="~{front/common/footer :: main-footer}"></footer>
-	<script th:src="@{/js/common/main.js}"></script>
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+	
 
 
 
