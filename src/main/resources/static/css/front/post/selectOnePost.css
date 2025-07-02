@@ -794,7 +794,6 @@ body {
 	background: rgba(139, 115, 85, 0.10);
 	backdrop-filter: blur(2px);
 	/* 關鍵：加上 flex 讓內容真正置中 */
-	display: flex;
 	align-items: center;
 	justify-content: center;
 }
@@ -810,7 +809,6 @@ body {
 	position: relative;
 	font-family: inherit;
 	animation: fadeIn 0.3s;
-	display: flex;
 	flex-direction: column;
 	gap: 16px;
 }
