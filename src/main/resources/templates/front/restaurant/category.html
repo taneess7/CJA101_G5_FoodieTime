@@ -60,12 +60,21 @@
     }
 
     .menu-item img {
-        width: 100px;
-        height: 100%; /* ✅ 統一高度 */
-        object-fit: cover; /* ✅ 填滿並裁切多餘部分 */
-        border-radius: 8px;
-        margin-bottom: 10px;
+    width: 120px;            /* ✅ 你可以調整這邊大小 */
+    height: 120px;
+    object-fit: cover;       /* ✅ 裁切填滿但不變形 */
+    border-radius: 8px;
+    display: block;
     }
+
+.modal-product-image {
+	width: 265px;           /* ✅ 固定寬度 */
+	height: 275px;          /* ✅ 固定高度：正方形 */
+	object-fit: cover;      /* ✅ 裁切但不變形 */
+	border-radius: 8px;
+	display: block;
+	margin: 0 auto;         /* ✅ 水平置中 */
+}
 
     .menu-item-info {
         text-align: center;
@@ -281,8 +290,10 @@
                                          data-prod-desc=${prod.prodDesc},
                                          data-prod-price=${prod.prodPrice} "><!--,-->
 <!--                                         data-prod-photo-url=@{/product/image/{prodId}(prodId=${prod.prodId})}">-->
-                                        <img th:src="@{/images/restaurant/placeholder.svg}" alt=""
-                                             class="menu-item-image">
+                                        <img th:src="@{/product/image/{prodId}(prodId=${prod.prodId})}"
+     th:alt="${prod.prodName}"
+     class="menu-item-image"
+     onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
                                         <div class="menu-item-info">
                                             <h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
                                             <p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
@@ -581,8 +592,12 @@
             currentProdId = parseInt(productData.prodId, 10);
             currentProductPrice = parseFloat(productData.prodPrice);
 
-            modalImage.src = '/images/restaurant/placeholder.svg';
+            modalImage.src = `/product/image/${productData.prodId}`;
             modalImage.alt = productData.prodName;
+         // 加上 fallback：若圖片失敗就改顯示預設圖
+            modalImage.onerror = () => {
+                modalImage.src = '/images/restaurant/placeholder.svg';
+            };
             modalName.textContent = productData.prodName;
             modalDesc.textContent = productData.prodDesc;
             modalPrice.textContent = `NT$ ${currentProductPrice}`;
