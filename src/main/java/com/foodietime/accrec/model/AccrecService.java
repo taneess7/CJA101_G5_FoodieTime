@@ -27,4 +27,52 @@ public class AccrecService {
     	accrecRepository.deleteById(commPayoutID);
     }
 
+    public void payoutAllPending() {
+        List<AccrecVO> accrecList = findAllAccrec();
+        String thisMonth = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM"));
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        for (AccrecVO acc : accrecList) {
+            boolean updated = false;
+            if (acc.getPayoutStatus() != null && acc.getPayoutStatus() == 0) {
+                acc.setPayoutMonth(thisMonth);
+                acc.setPayoutTime(now);
+                acc.setPayoutStatus((byte)1);
+                updated = true;
+            }
+            if (acc.getCommissionStatus() != null && acc.getCommissionStatus() == 0) {
+                acc.setPayoutMonth(thisMonth);
+                acc.setPayoutTime(now);
+                acc.setCommissionStatus((byte)1);
+                updated = true;
+            }
+            if (updated) {
+                save(acc);
+            }
+        }
+    }
+
+    public void payoutOne(Integer commPayoutID) {
+        AccrecVO acc = findById(commPayoutID);
+        if (acc != null) {
+            String thisMonth = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM"));
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            boolean updated = false;
+            if (acc.getPayoutStatus() != null && acc.getPayoutStatus() == 0) {
+                acc.setPayoutMonth(thisMonth);
+                acc.setPayoutTime(now);
+                acc.setPayoutStatus((byte)1);
+                updated = true;
+            }
+            if (acc.getCommissionStatus() != null && acc.getCommissionStatus() == 0) {
+                acc.setPayoutMonth(thisMonth);
+                acc.setPayoutTime(now);
+                acc.setCommissionStatus((byte)1);
+                updated = true;
+            }
+            if (updated) {
+                save(acc);
+            }
+        }
+    }
+
 }

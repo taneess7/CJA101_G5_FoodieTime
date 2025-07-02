@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.foodietime.grouporders.model.GroupOrdersService;
 import com.foodietime.grouporders.model.GroupOrdersVO;
@@ -26,6 +28,9 @@ import com.foodietime.smgauth.model.SmgauthVO;
 import com.foodietime.smgauth.model.SmgauthId;
 import com.foodietime.grouppurchasereport.model.GroupPurchaseReportService;
 import com.foodietime.grouppurchasereport.model.GroupPurchaseReportVO;
+import com.foodietime.accrec.model.AccrecService;
+import com.foodietime.accrec.model.AccrecVO;
+import com.foodietime.smg.AccrecPayoutScheduler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -44,6 +49,10 @@ public class SmgController {
 	GroupOrdersService groupOrdersService;
 	@Autowired
 	private GroupPurchaseReportService groupPurchaseReportService;
+	@Autowired
+	private AccrecService accrecService;
+	@Autowired
+	private AccrecPayoutScheduler accrecPayoutScheduler;
 	@GetMapping("/login")
 	public String showLoginPage() {
 	    return "admin/smg/admin-login"; // 對應到你的 Thymeleaf 登入頁面
@@ -299,8 +308,10 @@ public class SmgController {
         return "admin/smg/admin-groups-refunds"; 
     }
     @GetMapping("/admin-groups-monthly")
-    public String admingroupsmonthly() {
-    	return "admin/smg/admin-groups-monthly"; 
+    public String admingroupsmonthly(Model model) {
+        List<AccrecVO> accrecList = accrecService.findAllAccrec();
+        model.addAttribute("accrecList", accrecList);
+        return "admin/smg/admin-groups-monthly"; 
     }
     @GetMapping("/admin-orders-view")
     public String adminordersview() {
@@ -310,5 +321,16 @@ public class SmgController {
     public String adminorderspayments() {
     	return "admin/smg/admin-orders-payments"; 
     }
-
+    @PostMapping("/admin-groups-monthly/payout-all")
+    public String manualPayoutAll(Model model) {
+        accrecPayoutScheduler.payoutAllPending();
+        model.addAttribute("msg", "批次撥款已完成！");
+        return "redirect:/smg/admin-groups-monthly";
+    }
+    @PostMapping("/admin-groups-monthly/payout-one/{id}")
+    @ResponseBody
+    public String manualPayoutOne(@PathVariable("id") Integer id) {
+        accrecPayoutScheduler.payoutOne(id);
+        return "OK";
+    }
 }
