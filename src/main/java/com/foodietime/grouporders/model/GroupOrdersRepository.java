@@ -51,4 +51,12 @@ public interface GroupOrdersRepository extends JpaRepository<GroupOrdersVO, Inte
 
 //    // 查詢已經付款的團購訂單
 //    List<GroupOrdersVO> findByPaymentStatusAndOrderStatus(Byte paymentStatus, Byte orderStatus);
+    
+    //查詢團員參加的團購訂單
+    @Query("SELECT o FROM GroupOrdersVO o " +
+            "JOIN o.groupBuyingCase gbc " +
+            "JOIN gbc.participants p " +
+            "WHERE p.member.memId = :memId AND p.leader = 1")
+     List<GroupOrdersVO> findOrdersByMemberIsNotLeader(Integer memId);
+
 }

@@ -64,13 +64,7 @@ public class GroupBuyingCasesServlet {
         
     }
 	
-	@GetMapping("/mem-gborders")
-    public String memgborders(){
-		
-		
-        return "front/memgborders/member-gborders";
-        
-    }
+	
 	
 
 }
