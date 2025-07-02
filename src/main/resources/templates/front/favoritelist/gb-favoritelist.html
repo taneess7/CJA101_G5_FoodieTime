@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
+<<<<<<< Upstream, based on branch 'master' of https://github.com/taneess7/CJA101_G5_FoodieTime
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>收藏團購 - FoodieTime 食刻</title>
@@ -84,6 +85,119 @@ function filterGbFavorites() {
     });
 }
 
+=======
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的收藏團購 - FoodieTime 食刻</title>
+<link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
+<link rel="stylesheet" th:href="@{/css/front/favoritelist/member-favorites.css}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<meta name="theme-color" content="#FF5722">
+<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+</head>
+<body>
+<header class="app-header">
+    <!-- ...同收藏餐廳... -->
+</header>
+<main class="main-content">
+    <div class="member-section">
+        <aside class="member-sidebar">
+            <!-- ...同收藏餐廳... -->
+        </aside>
+        <div class="member-content">
+            <div class="member-content-header">
+                <h1 class="member-content-title">我的收藏團購</h1>
+                <div class="category-filter">
+                    <select id="gbCategorySelect" onchange="filterGbFavorites()">
+                        <option value="all">全部</option>
+                        <option th:each="cate : ${gbCategories}" th:value="${cate.gbCateName}" th:text="${cate.gbCateName}">分類</option>
+                    </select>
+                </div>
+            </div>
+            <div class="restaurants-container" id="gb-container">
+                <div class="restaurant-card" th:each="item : ${collectionList}" th:attr="data-category=${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">
+                    <div class="restaurant-details">
+                        <h3 class="restaurant-name" th:text="${item.groupBuyingCase.gbTitle}">團購標題</h3>
+                        <div class="restaurant-category">
+                            <span class="cuisine-tag" th:text="${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">分類</span>
+                        </div>
+                        <div class="product-list">
+                            <div class="product-block-row">
+                                <div class="product-img-col">
+                                    <img class="product-image"
+                                         th:if="${item.groupBuyingCase.gbProd.gbProdPhoto != null}"
+                                         th:src="@{'/gb/gbproduct/image/' + ${item.groupBuyingCase.gbProd.gbProdId}}" alt="商品圖片" />
+                                    <img class="product-image"
+                                         th:unless="${item.groupBuyingCase.gbProd.gbProdPhoto != null}"
+                                         th:src="@{/images/restaurant/placeholder.svg}" alt="預設圖片" />
+                                </div>
+                                <div class="product-info-col">
+                                    <p class="product-name" th:text="${item.groupBuyingCase.gbProd.gbProdName}">商品名稱</p>
+                                    <button class="action-btn favorite-btn active"
+                                            th:attr="data-gbid=${item.groupBuyingCase.gbId},data-memid=${item.member.memId}" aria-label="取消收藏">
+                                        <i class="material-icons-outlined">favorite</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="restaurant-info">
+                            <div class="info-item">
+                                <i class="material-icons-outlined">store</i>
+                                <span th:text="${item.groupBuyingCase.store.storName}">店家名稱</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="material-icons-outlined">access_time</i>
+                                <span th:text="${#temporals.format(item.groupBuyingCase.gbStartTime, 'yyyy-MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(item.groupBuyingCase.gbEndTime, 'yyyy-MM-dd HH:mm')}">團購期間</span>
+                            </div>
+                        </div>
+                        <div class="restaurant-actions-bottom">
+                            <a th:href="@{'/gb/detail/' + ${item.groupBuyingCase.gbId}}" class="view-btn">查看團購</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="app-footer">
+    <div class="container">
+        <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+function filterGbFavorites() {
+    const selected = document.getElementById("gbCategorySelect").value;
+    const cards = document.querySelectorAll(".restaurant-card");
+    cards.forEach(card => {
+        const category = card.getAttribute("data-category");
+        card.style.display = (selected === "all" || category === selected) ? "block" : "none";
+    });
+}
+// 收藏取消功能
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const gbId = this.dataset.gbid;
+            const memId = this.dataset.memid;
+            fetch('/gb-favorite/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gbId, memId })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("移除失敗");
+                return res.json();
+            })
+            .then(data => {
+                alert("已取消收藏");
+                location.reload();
+            })
+            .catch(err => alert(err.message));
+        });
+    });
+});
+>>>>>>> 8d63e85 chore：新增團購收藏頁面
 </script>
 </body>
 </html>
