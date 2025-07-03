@@ -220,13 +220,68 @@ body {
 	font-size: 1rem;
 }
 
-/* 貼文內容 */
+/* 貼文內容 - 增強版 */
 .post-content {
 	padding: var(--space-6);
 	font-size: 1.1rem;
 	line-height: 1.8;
 	color: var(--text-primary);
 	background: rgba(255, 255, 255, 0.5);
+	/* 新增：處理超長文字 */
+	word-wrap: break-word !important;
+	overflow-wrap: break-word !important;
+	hyphens: auto !important;
+	max-width: 100% !important;
+}
+
+/* 新增：專門處理貼文文字內容 */
+.post-text-content {
+	white-space: pre-wrap !important;
+	word-wrap: break-word !important;
+	overflow-wrap: break-word !important;
+	word-break: break-word !important;
+	hyphens: auto !important;
+	line-height: 1.8 !important;
+	font-size: 1rem !important;
+	color: var(--text-primary) !important;
+	padding: var(--space-4) !important;
+	background: rgba(255, 255, 255, 0.5) !important;
+	border-radius: var(--radius-lg) !important;
+	margin: var(--space-3) 0 !important;
+	/* 處理超長內容 */
+	max-width: 100% !important;
+	overflow-x: auto !important;
+	overflow-y: auto !important;
+	max-height: 600px !important;
+}
+
+/* 處理特殊符號和超長單字 */
+.post-text-content {
+	/* 強制換行處理 */
+	word-break: break-all !important;
+	/* 處理連續符號 */
+	overflow-wrap: anywhere !important;
+	/* 防止水平滾動 */
+	overflow-x: hidden !important;
+}
+
+/* 針對特定符號的處理 */
+.post-text-content {
+	/* 處理連續的點號、破折號等 */
+	word-spacing: normal !important;
+	letter-spacing: normal !important;
+}
+
+/* 手機版特殊處理 */
+@media (max-width: 768px) {
+	.post-text-content {
+		font-size: 0.95rem !important;
+		padding: var(--space-3) !important;
+		line-height: 1.7 !important;
+		/* 手機版更嚴格的換行 */
+		word-break: break-all !important;
+		overflow-wrap: anywhere !important;
+	}
 }
 
 /* 貼文操作按鈕 */

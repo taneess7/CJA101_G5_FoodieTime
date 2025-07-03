@@ -50,7 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			alert('請輸入關鍵字');
 			return;
 		}
-		window.location.href = '/post/search?title=' + encodeURIComponent(keyword);
+		// 檢查是否在收藏頁面
+		const isFavoritePage = window.location.pathname.includes('/FavoritePost/');
+		const searchUrl = isFavoritePage ? '/FavoritePost/search?title=' : '/post/search?title=';
+		window.location.href = searchUrl + encodeURIComponent(keyword);
 	});
 
 	// 搜尋功能（按 Enter）

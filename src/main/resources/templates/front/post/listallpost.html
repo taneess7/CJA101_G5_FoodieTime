@@ -34,11 +34,12 @@
 		<div class="bg-white border-b border-gray-200">
 			<div class="flex space-x-4 px-4 py-2">
 				<!-- 查詢所有分類 -->
-				<a class="btn btn-ghost" th:href="@{/post/}"
+				<a class="btn btn-ghost" 
+					th:href="${isFavoritePage} ? @{/FavoritePost/my} : @{/post/}"
 					th:classappend="${currentCategory == null} ? 'btn-primary' : ''">全部</a>
 				<!-- 其他分類 -->
 				<a th:each="cat : ${category}" class="btn btn-ghost"
-					th:href="@{/post/category(categoryId=${cat.postCateId})}"
+					th:href="${isFavoritePage} ? @{/FavoritePost/my/category(categoryId=${cat.postCateId})} : @{/post/category(categoryId=${cat.postCateId})}"
 					th:text="${cat.postCate}"
 					th:classappend="${currentCategory == cat.postCateId} ? 'btn-primary' : ''"></a>
 			</div>
@@ -62,7 +63,7 @@
 		<div class="flex items-center justify-between px-4 py-3">
 			<div class="flex items-center space-x-4">
 				<div class="relative inline-block w-48">
-					<form id="sortForm" method="get" th:action="@{/post/}">
+					<form id="sortForm" method="get" th:action="${isFavoritePage} ? @{/FavoritePost/my} : @{/post/}">
 						<input type="hidden" name="categoryId"
 							th:value="${currentCategory}"> <input type="hidden"
 							name="title" th:value="${currentKeyword}"> <select
