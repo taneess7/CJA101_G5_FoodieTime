@@ -694,8 +694,18 @@
     });
 
     function showLoginPrompt() {
+        // 儲存當前網址
+        sessionStorage.setItem('redirectAfterLogin', window.location.href);
         document.getElementById('login-prompt-modal').style.display = 'flex';
     }
+    
+ // 未登入時提示登入，並記住目前頁面
+    function showLoginModal() {
+        const currentUrl = window.location.pathname + window.location.search;
+        sessionStorage.setItem("redirectAfterLogin", currentUrl); // ✅ 記住目前頁面
+        window.location.href = "/front/member/login";
+    }
+
 
     function closeLoginPrompt() {
         document.getElementById('login-prompt-modal').style.display = 'none';
