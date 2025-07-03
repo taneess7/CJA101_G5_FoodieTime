@@ -354,3 +354,21 @@ section {
 	font-size: 0.9rem;
 	margin-top: 10px;
 }
+
+.material-icons-outlined {
+    margin-right: 8px;
+    color: #495057;
+}
+
+.nav-link {
+    color: var(--text-primary);
+    font-weight: 500;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+}
+
+.nav-link:hover {
+    background-color: var(--neutral-100);
+    color: var(--primary-color);
+}

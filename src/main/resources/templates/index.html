@@ -96,10 +96,44 @@
 				FoodieTime<span style="color: var(--accent-color-1);">食刻</span>
 			</a>
 			<nav class="main-nav">
-				<a th:href="@{/cart/cart}" class="clay clay-button clay-convex">購物車</a>
+<!--				<a th:href="@{/cart/cart}" class="clay clay-button clay-convex">購物車</a>-->
 
-				<a th:href="@{/login}" class="clay clay-button clay-convex">登入 /
-					註冊</a>
+<!--				<a th:href="@{/login}" class="clay clay-button clay-convex">登入 /-->
+<!--					註冊</a>-->
+
+				<!-- 未登入狀態 -->
+				<th:block th:if="${loginMember == null}">
+
+						<a th:href="@{/cart/cart}" class="clay clay-button clay-convex">
+							<i>購物車</i>
+
+						</a>
+
+
+						<a th:href="@{/front/member/login}" class="clay clay-button clay-convex">登入/註冊</a>
+
+				</th:block>
+
+				<!-- 已登入狀態 -->
+				<th:block th:if="${loginMember != null}">
+
+						<a th:href="@{/cart/cart}" class="clay clay-button clay-convex">
+							<i>購物車：</i>
+							<!-- 直接使用 model 中的 cartItemCount -->
+							<span class="cart-count" th:text="${cartItemCount ?: '0'}">0</span>
+							<i>商品</i>
+						</a>
+
+
+						<!-- 直接使用 model 中的 loginMember 物件 -->
+						<a th:href="@{/front/member/member_center}" class="clay clay-button clay-convex"
+						   th:if="${loginMember != null}"
+						   th:text="'你好, ' + ${loginMember.memName}">你好, 會員</a>
+
+
+						<a th:href="@{/front/member/logout}" class="clay clay-button clay-convex">登出</a>
+
+				</th:block>
 			</nav>
 		</div>
 	</header>
