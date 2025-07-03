@@ -13,7 +13,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SmgLoginInterceptor())
                 .addPathPatterns("/smg/**")     // 需要登入的路徑
-                .excludePathPatterns("/smg/login"); // 不攔截登入頁面
+                .excludePathPatterns(
+                    "/smg/login",
+                    "/smg/admin/login",
+                    "/smg/logout",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**"
+                ); // 不攔截登入頁面、登出、靜態資源
         
         // 會員頁 禁止快取
         registry.addInterceptor(new NoCacheInterceptor())

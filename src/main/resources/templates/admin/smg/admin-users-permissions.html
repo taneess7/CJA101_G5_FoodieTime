@@ -17,9 +17,7 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo text-center">
-            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
-        </div>
+        
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-dashboard}">
@@ -188,11 +186,9 @@
                 <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
 				   	role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
 				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-				    <span class="user-name" th:text="${session.loggedInSmg.smgrName}">系統管理員</span>
+				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
 				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -231,7 +227,7 @@
             <div class="card mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold">管理員列表</h6>
-                    <a href="admin-users-add.html" class="btn btn-sm btn-primary">
+                    <a href="/smg/admin-users-add" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> 新增管理員
                     </a>
                 </div>

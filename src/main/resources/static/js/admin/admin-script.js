@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 清除 sessionStorage 中的 adminInfo
             sessionStorage.removeItem('adminInfo');
             sessionStorage.removeItem('loginRedirectedFromLoginPage');
-            window.location.href = 'admin-login.html';
+            window.location.href = '/smg/logout';
         });
     }
 });

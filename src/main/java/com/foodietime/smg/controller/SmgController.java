@@ -68,7 +68,7 @@ public class SmgController {
         if (smg != null) {
         	if( smgSvc.checkAccountStatus(smg)) {
             	session.setAttribute("loggedInSmg", smg); // 儲存商家資訊於 session
-            	return "admin/smg/admin-dashboard";
+            	return "redirect:/smg/admin-dashboard";
             }else {
             	model.addAttribute("error", "帳號狀態無啟用");
                 return "admin/smg/admin-login"; // 返回登入頁面
@@ -83,7 +83,7 @@ public class SmgController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/smg/login";
+        return "redirect:/smg/admin/login";
     }
 	
     @GetMapping("/admin/login")
