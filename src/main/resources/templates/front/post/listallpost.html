@@ -18,7 +18,14 @@
 </head>
 <body class="min-h-screen bg-gray-100">
 
-
+<script>
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted || window.performance.navigation.type === 2) {
+      // 如果來自快取的 back-forward 行為，就強制重新整理
+      window.location.reload();
+    }
+  });
+</script>
 	<!--     Header -->
 	<header th:replace="~{front/common/header :: main-header}"></header>
 
@@ -27,11 +34,12 @@
 		<div class="bg-white border-b border-gray-200">
 			<div class="flex space-x-4 px-4 py-2">
 				<!-- 查詢所有分類 -->
-				<a class="btn btn-ghost" th:href="@{/post/}"
+				<a class="btn btn-ghost" 
+					th:href="${isFavoritePage} ? @{/FavoritePost/my} : @{/post/}"
 					th:classappend="${currentCategory == null} ? 'btn-primary' : ''">全部</a>
 				<!-- 其他分類 -->
 				<a th:each="cat : ${category}" class="btn btn-ghost"
-					th:href="@{/post/category(categoryId=${cat.postCateId})}"
+					th:href="${isFavoritePage} ? @{/FavoritePost/my/category(categoryId=${cat.postCateId})} : @{/post/category(categoryId=${cat.postCateId})}"
 					th:text="${cat.postCate}"
 					th:classappend="${currentCategory == cat.postCateId} ? 'btn-primary' : ''"></a>
 			</div>
@@ -55,7 +63,7 @@
 		<div class="flex items-center justify-between px-4 py-3">
 			<div class="flex items-center space-x-4">
 				<div class="relative inline-block w-48">
-					<form id="sortForm" method="get" th:action="@{/post/}">
+					<form id="sortForm" method="get" th:action="${isFavoritePage} ? @{/FavoritePost/my} : @{/post/}">
 						<input type="hidden" name="categoryId"
 							th:value="${currentCategory}"> <input type="hidden"
 							name="title" th:value="${currentKeyword}"> <select
@@ -97,13 +105,7 @@
 	</div>
 
 
-	<!-- 成功訊息顯示區域 -->
-	<div th:if="${success}" class="max-w-7xl mx-auto px-4 py-2">
-		<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-			<strong class="font-bold">成功！</strong>
-			<span class="block sm:inline" th:text="${success}"></span>
-		</div>
-	</div>
+	
 
 	<!-- 討論串列表 -->
 	<div>

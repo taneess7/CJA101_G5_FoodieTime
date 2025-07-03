@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>新增貼文 - FoodieTime 食刻</title>
+<title>建立活躍社群：線上討論區頁面設計與功能</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" th:href="@{/css/front/post/addPost.css}">
 <link rel="stylesheet" th:href="@{/css/common/style.css}">
+<link rel="stylesheet" th:href="@{/css/front/post/addPost.css?v=2}">
+<link rel="stylesheet" th:href="@{/css/front/post/style.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<!-- PWA 設定 -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#FF5722">
+<link rel="apple-touch-icon" th:href="@{/images/icons/icon-192x192.png}">
 </head>
 <body class="min-h-screen bg-gray-100">
+
+
 	<!--     Header -->
 	<header th:replace="~{front/common/header :: main-header}"></header>
 
-	<!-- 麵包屑 -->
-	<section class="breadcrumb">
-		<div class="container">
-			<a th:href="@{/post/}" class="breadcrumb-link">討論區</a> <span
-				class="breadcrumb-separator">/</span> <span class="breadcrumb-current">新增貼文</span>
-		</div>
-	</section>
 
-	<!-- 新增貼文表單 -->
-	<main class="main-content">
-		<div
-			class="container max-w-xl mx-auto bg-white rounded shadow p-8 mt-8">
+	
+		<!-- 麵包屑 -->
+		<section class="breadcrumb">
+			<div class="container">
+				<a th:href="@{/post/}" class="breadcrumb-link">討論區</a> <span
+					class="breadcrumb-separator">/</span> <span class="breadcrumb-current">新增貼文</span>
+			</div>
+		</section>
+
+		<!-- 新增貼文表單 -->
+		<main class="main-content">
+			<div
+				class="container max-w-xl mx-auto bg-white rounded shadow p-8 mt-8">
 			<h2 class="text-2xl font-bold mb-6 text-orange-600">新增貼文</h2>
 			<form th:action="@{/post/insert}" method="post" th:object="${postVO}">
 				
@@ -57,19 +70,23 @@
 				<div class="flex justify-end space-x-4">
 					<!-- 按鈕 1: 儲存草稿 -->
 					<button type="submit" name="action" value="draft"
-						class="btn btn-secondary bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">儲存草稿</button>
+						class="btn-custom btn-draft" 
+						style="width: 120px !important; height: 44px !important; font-size: 16px !important; font-weight: 600 !important;">儲存草稿</button>
 					<!-- 按鈕 2: 發佈貼文 -->
 					<button type="submit" name="action" value="publish"
-						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">發佈貼文</button>
+						class="btn-custom btn-publish" 
+						style="width: 120px !important; height: 44px !important; font-size: 16px !important; font-weight: 600 !important;">發佈貼文</button>
 				</div>
 			</form>
-		</div>
-	</main>
+			</div>
+		</main>
+	
 	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 	<script>
     document.addEventListener('DOMContentLoaded', function() {
         const titleInput = document.querySelector('input[name="postTitle"]');
         const titleCountSpan = document.getElementById('titleCount');
+		const contentTextarea = document.querySelector('textarea[name="postContent"]');
 
         function updateTitleCount() {
             titleCountSpan.textContent = titleInput.value.length;
@@ -81,6 +98,49 @@
         // Update count on input
         titleInput.addEventListener('input', updateTitleCount);
     });
+	document.addEventListener('DOMContentLoaded', function() {
+    // 標題
+    const titleInput = document.querySelector('input[name="postTitle"]');
+    const titleCountSpan = document.getElementById('titleCount');
+    // 內容
+    const contentTextarea = document.querySelector('textarea[name="postContent"]');
+
+    // 讀取 localStorage
+    if (titleInput && localStorage.getItem('postTitle')) {
+        titleInput.value = localStorage.getItem('postTitle');
+    }
+    if (contentTextarea && localStorage.getItem('postContent')) {
+        contentTextarea.value = localStorage.getItem('postContent');
+    }
+
+    // 標題字數顯示
+    function updateTitleCount() {
+        titleCountSpan.textContent = titleInput.value.length;
+    }
+    updateTitleCount();
+
+    // 監聽輸入事件，存到 localStorage
+    if (titleInput) {
+        titleInput.addEventListener('input', function() {
+            updateTitleCount();
+            localStorage.setItem('postTitle', titleInput.value);
+        });
+    }
+    if (contentTextarea) {
+        contentTextarea.addEventListener('input', function() {
+            localStorage.setItem('postContent', contentTextarea.value);
+        });
+    }
+
+    // 送出表單時清除 localStorage
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            localStorage.removeItem('postTitle');
+            localStorage.removeItem('postContent');
+        });
+    }
+});
 </script>
 </body>
 </html>

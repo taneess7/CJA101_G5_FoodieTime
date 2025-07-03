@@ -353,7 +353,7 @@
     targetPanel.classList.add('active');
 
     // 3. 多個特定分頁需要刷新 iframe
-    const tabsToReload = ['act-product-view', 'product-view']; // ⬅ 這裡加你要刷新 iframe 的 tab 名
+    const tabsToReload = ['act-product-view', 'product-view', 'product']; // ⬅ 這裡加你要刷新 iframe 的 tab 名
 
     if (tabsToReload.includes(tab)) {
       const iframe = targetPanel.querySelector('iframe');

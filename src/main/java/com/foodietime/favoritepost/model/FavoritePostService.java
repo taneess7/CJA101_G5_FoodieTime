@@ -65,5 +65,7 @@ public class FavoritePostService {
           .where(cb.equal(favoriteRoot.get("member").get("memId"), memId));
         return entityManager.createQuery(cq).getResultList();
     }
+    
+
 
 }
