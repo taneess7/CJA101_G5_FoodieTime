@@ -148,7 +148,8 @@
                             th:value="${memCoupon.memCouId}"
                             th:text="${memCoupon.coupon.couName} + ' (-' + ${memCoupon.coupon.couDiscount} + '元，低消' + ${memCoupon.coupon.couMinOrd} + '元)'"
                             th:attr="data-discount=${memCoupon.coupon.couDiscount}, data-min-spend=${memCoupon.coupon.couMinOrd}"
-                            th:selected="${memCoupon.memCouId == selectedCouponId}">
+                            th:selected="${memCoupon.memCouId == selectedCouponId}"
+                            th:disabled="${totalAmount < memCoupon.coupon.couMinOrd}">
                     </option>
                   </th:block>
                 </select>
