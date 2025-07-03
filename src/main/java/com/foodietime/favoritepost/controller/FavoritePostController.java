@@ -46,15 +46,11 @@ public class FavoritePostController {
 	@PostMapping("/insert")
 	public String insert(@RequestParam("postId") Integer postId, HttpSession session) {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		// 取得貼文ID
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 	    if (loginMember == null) {
-	        return "redirect:/login";
+	        return "redirect:/front/member/login";
 	    }
 	    PostVO post = postservice.getOnePost(postId);
 	    favoritePostService.addFavoritePost(post, loginMember);// 這裡組合複合主鍵
@@ -72,15 +68,11 @@ public class FavoritePostController {
 	@PostMapping("/delete")
 	public String delete(@RequestParam("postId") Integer postId, HttpSession session) {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		// 取得貼文ID
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 	    if (loginMember == null) {
-	        return "redirect:/login";
+	        return "redirect:/front/member/login";
 	    }
 	    favoritePostService.deleteFavoritePost(postId, loginMember.getMemId());
 	    session.setAttribute("reportSuccess", "已取消收藏！");
@@ -89,14 +81,10 @@ public class FavoritePostController {
 
 	@RequestMapping("/my")
 	public String myFavoritePosts(ModelMap model, HttpSession session,HttpServletRequest request) {
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 		if (loginMember == null) {
-			return "redirect:/login";
+			return "redirect:/front/member/login";
 		}
 		// 用 Criteria 查詢
 		List<PostVO> favoritePosts = favoritePostService.findFavoritePostsByMemberIdCriteria(loginMember.getMemId());

@@ -18,7 +18,14 @@
 </head>
 <body class="min-h-screen bg-gray-100">
 
-
+<script>
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted || window.performance.navigation.type === 2) {
+      // 如果來自快取的 back-forward 行為，就強制重新整理
+      window.location.reload();
+    }
+  });
+</script>
 	<!--     Header -->
 	<header th:replace="~{front/common/header :: main-header}"></header>
 
@@ -97,13 +104,7 @@
 	</div>
 
 
-	<!-- 成功訊息顯示區域 -->
-	<div th:if="${success}" class="max-w-7xl mx-auto px-4 py-2">
-		<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-			<strong class="font-bold">成功！</strong>
-			<span class="block sm:inline" th:text="${success}"></span>
-		</div>
-	</div>
+	
 
 	<!-- 討論串列表 -->
 	<div>

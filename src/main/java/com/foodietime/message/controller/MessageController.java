@@ -44,20 +44,30 @@ public class MessageController {
 	public String insert(@Valid MessageVO messageVO, BindingResult result, ModelMap model, HttpSession session,
 			@RequestParam("action") String action) {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		// 取得貼文ID
 		Integer postId = messageVO.getPost().getPostId();
+		
+		// 檢查貼文狀態，防止對已下架的貼文留言
+		PostVO postVO = postservice.getOnePost(postId);
+		if (postVO == null) {
+			// 貼文不存在
+			session.setAttribute("errorMessage", "貼文不存在！");
+			return "redirect:/post/one?postId=" + postId;
+		}
+		
+		if (postVO.getPostStatus() == 2) {
+			// 貼文已下架，不允許留言
+			session.setAttribute("errorMessage", "此貼文已下架，無法留言！");
+			return "redirect:/post/one?postId=" + postId;
+		}
+		
 		if (result.hasErrors()) {
 	        // 重新查詢該貼文與留言
-	        PostVO postVO = postservice.getOnePost(postId);
 	        model.addAttribute("postVO", postVO);
 	        List<MessageVO> messageList = messageService.getByPostId(postId);
 	        model.addAttribute("messageList", messageList);
-	        MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+	        MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 	        model.addAttribute("loginMember", loginMember);
 	        model.addAttribute("messageVO", messageVO);
 	        // 回到單一貼文頁
@@ -70,7 +80,7 @@ public class MessageController {
 		/*************************** 2.開始新增資料 *****************************************/
 		messageService.save(messageVO);
 		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 		List<MessageVO> list = messageService.getAll();
 		model.addAttribute("mesListData", list);
 		
@@ -78,5 +88,25 @@ public class MessageController {
 	    session.setAttribute("reportSuccess", "留言成功，感謝您的協助！");
 
 	    return "redirect:/post/one?postId=" + postId;
+	}
+	
+	/**
+	 * 清除session中的訊息
+	 */
+	@PostMapping("/clear-session-message")
+	public String clearSessionMessage(HttpSession session, @RequestParam("type") String type, 
+			@RequestParam(value = "postId", required = false) Integer postId) {
+		if ("success".equals(type)) {
+			session.removeAttribute("reportSuccess");
+		} else if ("error".equals(type)) {
+			session.removeAttribute("errorMessage");
+		}
+		
+		// 如果有postId，重定向到該貼文頁面，否則重定向到貼文列表
+		if (postId != null) {
+			return "redirect:/post/one?postId=" + postId;
+		} else {
+			return "redirect:/post/";
+		}
 	}
 }

@@ -18,13 +18,13 @@ import jakarta.servlet.http.HttpSession;
 
 
 @Controller
-@RequestMapping("/admin/post")
+@RequestMapping("/front/member")
 public class PostMController {
 	
 	@Autowired
     private DirectMessageService dmService;
 	
-	@GetMapping("/notifications")
+	@GetMapping("/post/notifications")
 	public String showNotifications(HttpSession session, Model model,
 	                               @RequestParam(defaultValue = "0") int page,
 	                               @RequestParam(defaultValue = "10") int size) {
@@ -33,12 +33,16 @@ public class PostMController {
 	        return "redirect:/front/member/login";
 	    }
 	    
+	    
+	    
 	    // 取得所有系統通知（管理員發送的訊息）
 	    List<DirectMessageDTO> allNotifications = dmService.getMessagesDtoByMemberId(member.getMemId())
 	        .stream()
 	        .filter(msg -> msg.getMessDirection() == 1) // 只取管理員發送的訊息
 	        .sorted((a, b) -> b.getMessTime().compareTo(a.getMessTime())) // 依時間降序排列
 	        .collect(Collectors.toList());
+	    
+	    
 	    
 	    // 手動分頁
 	    int totalNotifications = allNotifications.size();
@@ -49,6 +53,8 @@ public class PostMController {
 	    List<DirectMessageDTO> pageNotifications = totalNotifications > 0 ? 
 	        allNotifications.subList(startIndex, endIndex) : new ArrayList<>();
 	    
+	    
+	    
 	    model.addAttribute("member", member);
 	    model.addAttribute("notifications", pageNotifications);
 	    model.addAttribute("currentPage", page);
@@ -57,6 +63,4 @@ public class PostMController {
 	    
 	    return "front/member/notifications";
 	}
-
-    
 }
