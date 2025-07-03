@@ -307,15 +307,12 @@ public class MemberController {
 
         // ==================== ★★★【邏輯修改處】★★★ ====================
         // 1. 記錄登入前的來源頁面 (Referer)
-//        String referer = request.getHeader("Referer");
-//
-//        // 2. 檢查 Referer 是否有效，並排除登入/註冊相關頁面以避免循環
-//        if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/activate")) {
-//            session.setAttribute("redirectAfterLogin", referer);
-//        } else {
-//            // 如果是直接訪問登入頁或從不相關頁面來，就清除舊的紀錄
-//            session.removeAttribute("redirectAfterLogin");
-//        }
+        String referer = request.getHeader("Referer");
+
+        // 2. 檢查 Referer 是否有效，並排除登入/註冊相關頁面以避免循環
+        if (referer != null && referer.endsWith("/index") && session.getAttribute("redirectAfterLogin") == null) {
+            session.setAttribute("redirectAfterLogin", "/index");
+        }
         // ==============================================================
 
         // ✅ 告訴瀏覽器不要快取登入頁
