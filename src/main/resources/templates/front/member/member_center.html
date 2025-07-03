@@ -129,7 +129,7 @@
                 <i class="material-icons-outlined">favorite</i>
                 <span>收藏餐廳</span>
             </a>
-           <a th:href="@{/front/member/notifications}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+           <a th:href="@{/member/notifications}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
                 <i class="material-icons-outlined">inbox</i>
                 <span>收件夾</span>
                 <!-- 未讀通知數量 -->
@@ -153,7 +153,10 @@
 
 
             <h2 class="text-4xl font-bold text-orange-700 mb-8 text-center tracking-wide">會員資料</h2>
-
+			<div th:if="${success}" class="bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded mb-4 text-center">
+			    <p th:text="${success}"></p>
+			</div>
+			
             <!-- 大頭貼 -->
             <div class="flex flex-col items-center mb-10 space-y-2">
                 <img th:src="${member.memAvatar != null} ? 
