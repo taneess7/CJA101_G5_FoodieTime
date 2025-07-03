@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" >
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -398,25 +398,46 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({prodId})
                 })
-                    .then(res => {
-                        if (!res.ok) return res.json().then(err => {
-                            throw new Error(err.error);
-                        });
-                        return res.json();
-                    })
-                    .then(data => {
-                        icon.classList.toggle('fas', !isFavorited);
-                        icon.classList.toggle('far', isFavorited);
-                        icon.style.color = isFavorited ? '' : 'red';
-                        showToast(isFavorited ? '已取消收藏' : '已加入收藏');
-                    })
-                    .catch(err => {
-                        if (err.message === "請先登入會員") {
-                            showLoginPrompt();
-                        } else {
-                            alert("錯誤：" + err.message);
-                        }
-                    });
+                .then(async res => {
+                    const contentType = res.headers.get('content-type') || "";
+
+                 // 🔐 偵測未登入導向的 HTML 頁面
+                 if (res.status === 401 || contentType.includes("text/html") || res.url.includes("/login")) {
+                   showLoginPrompt();
+                   throw new Error("未登入");
+                 }
+
+                 // 如果格式不是 JSON，就警告
+                 if (!contentType.includes("application/json")) {
+                   throw new Error("伺服器回傳格式錯誤");
+                 }
+
+                 // 錯誤情況下，解析 JSON 後丟錯
+                 if (!res.ok) {
+                   const err = await res.json();
+                   throw new Error(err.error || "加入收藏失敗");
+                 }
+
+
+                    if (!contentType.includes("application/json")) {
+                        throw new Error("伺服器回傳格式錯誤");
+                    }
+
+                    return res.json();
+                })
+                .then(data => {
+                    icon.classList.toggle('fas', !isFavorited);
+                    icon.classList.toggle('far', isFavorited);
+                    icon.style.color = isFavorited ? '' : 'red';
+                    showToast(isFavorited ? '已取消收藏' : '已加入收藏');
+                })
+                .catch(err => {
+                    if (err.message !== "未登入") {
+                        alert("錯誤：" + err.message);
+                    }
+                });
+
+
             });
         });
 
@@ -693,8 +714,7 @@
 			<h3>⚠️ 請先登入會員</h3>
 			<p style="margin: 1em 0;">您必須登入會員才能加入收藏清單。</p>
 			<div style="margin-top: 1em;">
-				<button onclick="location.href='/category/login'"
-					style="margin-right: 10px;">立即登入</button>
+				<button onclick="location.href='/front/member/login'">立即登入</button>
 				<button onclick="closeLoginPrompt()">取消</button>
 			</div>
 		</div>
