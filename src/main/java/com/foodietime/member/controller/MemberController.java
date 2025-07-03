@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -296,15 +297,28 @@ public class MemberController {
         return "front/member/activation_success";
     }
 
-    
+
     @GetMapping("/login")
-    public String showLoginForm(HttpSession session,HttpServletResponse response,Model model) {
-    	   // 如果已經登入，直接回會員中心
+    public String showLoginForm(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
+        // 如果已經登入，直接回會員中心
         if (session.getAttribute("loggedInMember") != null) {
             return "redirect:/front/member/member_center";
         }
-        
-     // ✅ 告訴瀏覽器不要快取登入頁
+
+        // ==================== ★★★【邏輯修改處】★★★ ====================
+        // 1. 記錄登入前的來源頁面 (Referer)
+        String referer = request.getHeader("Referer");
+
+        // 2. 檢查 Referer 是否有效，並排除登入/註冊相關頁面以避免循環
+        if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/activate")) {
+            session.setAttribute("redirectAfterLogin", referer);
+        } else {
+            // 如果是直接訪問登入頁或從不相關頁面來，就清除舊的紀錄
+            session.removeAttribute("redirectAfterLogin");
+        }
+        // ==============================================================
+
+        // ✅ 告訴瀏覽器不要快取登入頁
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
