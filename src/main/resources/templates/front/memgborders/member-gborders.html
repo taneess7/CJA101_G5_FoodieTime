@@ -21,49 +21,7 @@
 </head>
 <body>
 <!-- 導覽列（與購物車頁面完全一致） -->
-<header class="app-header">
-    <div class="header-container">
-        <!-- Logo 區域 -->
-        <div class="logo-container">
-            <a th:href="@{/index}" class="logo">
-                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </a>
-        </div>
-
-        <!-- 搜尋區域 -->
-        <div class="search-container">
-            <div class="search-bar">
-                <i class="search-icon material-icons-outlined">search</i>
-                <input type="text" class="search-input" placeholder="搜尋餐廳、料理或地址...">
-                <button class="mic-icon" aria-label="語音搜尋">
-                    <i class="material-icons-outlined">mic</i>
-                </button>
-                <button class="camera-icon" aria-label="拍照搜尋">
-                    <i class="material-icons-outlined">photo_camera</i>
-                </button>
-            </div>
-        </div>
-
-        <!-- 導覽選單 -->
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li class="nav-item">
-                    <a th:href="@{/map}" class="nav-link">地圖</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/group-order.html}" class="nav-link">團購</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/deals.html}" class="nav-link">優惠</a>
-                </li>
-                <li class="nav-item">
-                    <button class="login-btn"><a th:href="@{/login}">登入/註冊</a></button>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
+<header th:replace="~{front/common/header :: main-header}"></header>
 <main class="main-content">
     <div class="content-container">
         <div class="member-section">          
@@ -186,54 +144,7 @@
         </div>
     </div>
 </main>
-<footer class="app-footer">
-    <div class="footer-container">
-        <div class="footer-top">
-            <div class="footer-logo">
-                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </div>
-            <div class="footer-nav">
-                <div class="footer-nav-group">
-                    <h4 class="footer-nav-title">功能</h4>
-                    <ul class="footer-nav-list">
-                        <li><a href="map.html">地圖搜尋</a></li>
-                        <li><a href="group-order.html">團購功能</a></li>
-                        <li><a href="deals.html">比價優惠</a></li>
-                        <li><a href="collections.html">收藏管理</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-group">
-                    <h4 class="footer-nav-title">關於我們</h4>
-                    <ul class="footer-nav-list">
-                        <li><a href="about.html">公司簡介</a></li>
-                        <li><a href="team.html">團隊成員</a></li>
-                        <li><a href="careers.html">加入我們</a></li>
-                        <li><a href="press.html">媒體報導</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-group">
-                    <h4 class="footer-nav-title">幫助</h4>
-                    <ul class="footer-nav-list">
-                        <li><a href="faq.html">常見問題</a></li>
-                        <li><a href="contact.html">聯絡我們</a></li>
-                        <li><a href="terms.html">使用條款</a></li>
-                        <li><a href="privacy.html">隱私政策</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
-            <div class="social-links">
-                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
-                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
-                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
-                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
-            </div>
-        </div>
-    </div>
-</footer>
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 

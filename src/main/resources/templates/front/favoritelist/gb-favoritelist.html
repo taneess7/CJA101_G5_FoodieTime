@@ -11,50 +11,7 @@
 	<meta name="theme-color" content="#FF5722">
 	<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
-<body>
-<header class="app-header">
-    <div class="header-container">
-        <!-- Logo 區域 -->
-        <div class="logo-container">
-            <a th:href="@{/index}" class="logo">
-                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </a>
-        </div>
-
-        <!-- 搜尋區域 -->
-        <div class="search-container">
-            <div class="search-bar">
-                <i class="search-icon material-icons-outlined">search</i>
-                <input type="text" class="search-input" placeholder="搜尋餐廳、料理或地址...">
-                <button class="mic-icon" aria-label="語音搜尋">
-                    <i class="material-icons-outlined">mic</i>
-                </button>
-                <button class="camera-icon" aria-label="拍照搜尋">
-                    <i class="material-icons-outlined">photo_camera</i>
-                </button>
-            </div>
-        </div>
-
-        <!-- 導覽選單 -->
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li class="nav-item">
-                    <a th:href="@{/map}" class="nav-link">地圖</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/group-order.html}" class="nav-link">團購</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/deals.html}" class="nav-link">優惠</a>
-                </li>
-                <li class="nav-item">
-                    <button class="login-btn"><a th:href="@{/login}">登入/註冊</a></button>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
+<header th:replace="~{front/common/header :: main-header}"></header>
 <main class="main-content">
     <div class="content-container">
         <div class="member-section">
@@ -116,11 +73,7 @@
         </div>
     </div>
 </main>
-<footer class="app-footer">
-    <div class="container">
-        <p>&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-    </div>
-</footer>
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 <script>
 function filterGbFavorites() {
     const selected = document.getElementById("gbCategorySelect").value;

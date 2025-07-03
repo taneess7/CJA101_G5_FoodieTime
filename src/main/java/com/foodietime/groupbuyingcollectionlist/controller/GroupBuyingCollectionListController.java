@@ -71,15 +71,16 @@ public class GroupBuyingCollectionListController {
     public String addGroupBuyingCollection(@RequestParam @NotNull Integer memId,
                                             @RequestParam @NotNull Integer gbId,
                                             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
-        try {
+    	System.out.println("Received memId: " + memId + ", gbId: " + gbId);
+    	try {
             groupBuyingCollectionListService.addToCollection(memId, gbId);
-            return "redirect:/gb/gb-favoritelist";
+            return "/front/favoritelist/gb-favoritelist";
         } catch (DataIntegrityViolationException e) {
             redirectAttributes.addFlashAttribute("error", "資料完整性違規：可能已經收藏過該項目。");
-            return "redirect:/gb/gb-favoritelist";
+            return "redirect:/front/favoritelist/gb-favoritelist";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/gb/gb-favoritelist";
+            return "redirect:/front/favoritelist/gb-favoritelist";
         }
     }
 
@@ -116,7 +117,7 @@ public class GroupBuyingCollectionListController {
         if (!success) {
             redirectAttributes.addFlashAttribute("error", "移除失敗或不存在");
         }
-        return "redirect:/gb/gbfavoritelist";
+        return "redirect:front/favoritelist/gb-favoritelist";
     }
 }
 
