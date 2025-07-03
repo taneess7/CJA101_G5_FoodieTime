@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" >
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -481,57 +481,58 @@
 
         // 領取優惠券按鈕功能
         document.querySelectorAll('.favorite-coupon-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const couponId = this.dataset.couid; // 獲取優惠券 ID
-                const button = this; // 儲存按鈕的引用，以便後續修改其狀態
+    btn.addEventListener('click', function () {
+        const couponId = this.dataset.couid;
+        const button = this;
 
-                // 發送 POST 請求到後端
-                fetch('/member/coupons/claim', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // 如果有 CSRF 保護，需要加入 token
-                    },
-                    body: JSON.stringify({couponId: couponId})
-                })
-                    .then(response => {
-                        // 檢查 HTTP 響應狀態碼
-                        if (response.status === 401) {
-   					    showLoginPrompt(); 
-                        throw new Error('User not logged in');
-                        }
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.message || '領取失敗');
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert('優惠券領取成功！');
-                            // 成功領取後，可以禁用按鈕或改變其文字
-                            button.disabled = true;
-                            button.innerHTML = '<i class="fas fa-check-circle"></i> 已領取';
-                            button.classList.add('claimed'); // 添加一個樣式來表示已領取
-                        } else {
-                            alert(data.message || '領取失敗，請稍後再試。');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('領取優惠券時發生錯誤:', error);
-                        if (error.message !== 'User not logged in') {
-                            alert('領取優惠券時發生錯誤，請檢查網路或稍後再試。');
-                        }
-                    });
-            });
-        });
+        fetch('/member/coupons/claim', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ couponId })
+        })
+            .then(async res => {
+                const contentType = res.headers.get('content-type') || "";
 
-        document.querySelectorAll('.claimed').forEach(btn => {
-            btn.addEventListener('click', function () {
-                alert('您已經領取過此優惠券！');
+                // 未登入導向登入頁的情況
+                if (res.status === 401 || contentType.includes("text/html") || res.url.includes("/login")) {
+                    showLoginPrompt();
+                    throw new Error("未登入");
+                }
+
+                // 伺服器不是回傳 JSON
+                if (!contentType.includes("application/json")) {
+                    throw new Error("伺服器回傳格式錯誤");
+                }
+
+                // 狀態不是 OK，取錯誤訊息
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || "領取失敗");
+                }
+
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('優惠券領取成功！');
+                    button.disabled = true;
+                    button.innerHTML = '<i class="fas fa-check-circle"></i> 已領取';
+                    button.classList.add('claimed');
+                } else {
+                    alert(data.message || '領取失敗，請稍後再試。');
+                }
+            })
+            .catch(error => {
+                console.error('領取優惠券時發生錯誤:', error);
+                if (error.message !== '未登入') {
+                    alert('領取優惠券時發生錯誤，請檢查網路或稍後再試。');
+                }
             });
-        });
+    });
+});
+
 
             // =================================================================
             // ==================== 商品燈箱 (Modal) 核心邏輯 ====================
