@@ -207,21 +207,21 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-users me-2"></i>會員查詢與篩選</h5>
-                            <button class="btn btn-primary" onclick="exportMembers()">
-                                <i class="fas fa-download me-1"></i>匯出資料
-                            </button>
+                            <h5 class="mb-0"><i class="fas fa-users me-2"></i>會員查詢與篩選</h5>                           
                         </div>
                         <div class="card-body">
                             <!-- Advanced Search Form -->
 								<form class="row g-3 mb-4" method="get" th:action="@{/smg/admin-members-search}">
+									<input type="hidden" name="page" id="pageInput" value="1">
 								    <input type="text" class="form-control" name="keyword" th:value="${keyword}">
 								
 								    <select class="form-select" name="status">
-								        <option value="">全部狀態</option>
-								        <option value="active" th:selected="${status == 'active'}">啟用</option>
-								        <option value="suspended" th:selected="${status == 'suspended'}">停用</option>
-								    </select>
+									    <option value="">全部狀態</option>
+									    <option value="active" th:selected="${status == 'active'}">啟用</option>
+									    <option value="inactive" th:selected="${status == 'inactive'}">尚未啟用</option>
+									    <option value="disabled" th:selected="${status == 'disabled'}">停權</option>
+									</select>
+
 								
 								    <select class="form-select" name="gender">
 								        <option value="">全部性別</option>
@@ -236,7 +236,8 @@
 								    <input type="number" class="form-control" name="orderCountMin" th:value="${orderCountMin}">
 								    <input type="number" class="form-control" name="totalSpentMin" th:value="${totalSpentMin}">
 								
-								    <button type="submit" class="btn btn-primary">查詢</button>
+								    <button type="submit" class="btn btn-primary" onclick="document.getElementById('pageInput').value = 1">查詢</button>
+
 								    
 								   
 								    
@@ -345,7 +346,12 @@
 							            </td>
 							            <td th:text="${member.memName}"></td>
 							            <td th:text="${member.memEmail}"></td>
-							            <td th:text="${member.memStatus == 1 ? '啟用' : '停用'}"></td>
+							            <td th:switch="${member.memStatus}">
+										    <span th:case="0">尚未啟用</span>
+										    <span th:case="1">啟用</span>
+										    <span th:case="2">停權</span>
+										    <span th:case="*">未知</span>
+										</td>
 							            <td th:text="${member.memGender == 0 ? '男性' : (member.memGender == 1 ? '女性' : '不透露')}"></td>
 							            <td th:text="${member.memTime}"></td>
 							            <td th:text="${member.orderCount}"></td>
@@ -361,10 +367,7 @@
                                 <div>
                                     <button class="btn btn-info me-2" onclick="batchMessage()">
                                         <i class="fas fa-envelope me-1"></i>批量發送訊息
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="batchExport()">
-                                        <i class="fas fa-download me-1"></i>批量匯出
-                                    </button>
+                                    </button>                                    
                                 </div>
                                 
                                 <!-- Pagination -->
@@ -516,27 +519,6 @@
 
         // View Member Function
         function viewMember(memberId) {
-            // 模擬資料
-            const memberData = {
-                'M001': {
-                    name: '王小美',
-                    id: 'M001',
-                    email: 'wang@example.com',
-                    phone: '0912-345-678',
-                    gender: '女性',
-                    age: '28歲',
-                    level: '銅牌會員',
-                    regDate: '2023-05-15',
-                    lastLogin: '2024-01-14',
-                    status: '啟用',
-                    orders: '25',
-                    spent: 'NT$ 45,600',
-                    avgOrder: 'NT$ 1,824',
-                    lastOrder: '2024-01-10',
-                    avatar: 'https://randomuser.me/api/portraits/women/1.jpg'
-                }
-            };
-
             const data = memberData[memberId];
             if (data) {
                 document.getElementById('modalMemberName').textContent = data.name;
@@ -548,7 +530,19 @@
                 document.getElementById('modalMemberLevel').textContent = data.level;
                 document.getElementById('modalMemberRegDate').textContent = data.regDate;
                 document.getElementById('modalMemberLastLogin').textContent = data.lastLogin;
-                document.getElementById('modalMemberStatus').textContent = data.status;
+                let statusText = '未知';
+                switch (data.memStatus) {
+                    case 0:
+                        statusText = '尚未啟用';
+                        break;
+                    case 1:
+                        statusText = '啟用';
+                        break;
+                    case 2:
+                        statusText = '停權';
+                        break;
+                }
+                document.getElementById('modalMemberStatus').textContent = statusText;
                 document.getElementById('modalMemberOrders').textContent = data.orders;
                 document.getElementById('modalMemberSpent').textContent = data.spent;
                 document.getElementById('modalMemberAvgOrder').textContent = data.avgOrder;
@@ -587,11 +581,7 @@
 		    document.querySelector('input[name="totalSpentMin"]').value = '';
 		}
 
-        // Export Members Function
-        function exportMembers() {
-            alert('匯出會員資料功能開發中...');
-        }
-
+      
 	
 
         // Batch Message Function

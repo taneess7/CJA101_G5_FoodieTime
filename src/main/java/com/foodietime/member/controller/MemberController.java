@@ -309,12 +309,14 @@ public class MemberController {
         // 1. 記錄登入前的來源頁面 (Referer)
         String referer = request.getHeader("Referer");
 
-        // 2. 檢查 Referer 是否有效，並排除登入/註冊相關頁面以避免循環
-        if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/activate")) {
-            session.setAttribute("redirectAfterLogin", referer);
-        } else {
-            // 如果是直接訪問登入頁或從不相關頁面來，就清除舊的紀錄
-            session.removeAttribute("redirectAfterLogin");
+        if (session.getAttribute("redirectAfterLogin") == null && referer != null) {
+            if (!referer.contains("/front/member/login")
+                    && !referer.contains("/front/member/register")
+                    && !referer.contains("/front/member/activate")
+                    && !referer.contains("/front/member/verify")
+            		&& !referer.contains("/favorite/")) {
+                session.setAttribute("redirectAfterLogin", referer);
+            }
         }
         // ==============================================================
 
@@ -340,10 +342,19 @@ public class MemberController {
             return "front/member/login";
         }
         
-        if (member.getMemStatus() != MemberVO.MemberStatus.ACTIVE) {
+        switch (member.getMemStatus()) {
+        case INACTIVE -> {
             model.addAttribute("error", "帳號尚未啟用，請至信箱啟用！");
             return "front/member/login";
         }
+        case DISABLED -> {
+            model.addAttribute("error", "您的帳號已被停用，如有疑問請聯絡客服！");
+            return "front/member/login";
+        }
+        case ACTIVE -> {
+            // 通過檢查，繼續登入流程
+        }
+    }
 
         // 登入成功，儲存會員資訊
         session.setAttribute("loggedInMember", member);
@@ -498,6 +509,14 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("NOT_LOGGED_IN");
     }
     
+    @PostMapping("/saveRedirectAfterLogin")
+    @ResponseBody
+    public void saveRedirectAfterLogin(@RequestParam("url") String url, HttpSession session) {
+        if (url != null && !url.isBlank()) {
+            session.setAttribute("redirectAfterLogin", url);
+        }
+    }
+
 
 
 }

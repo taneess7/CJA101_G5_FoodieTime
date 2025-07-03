@@ -89,8 +89,14 @@
 		
 		    // 僅在登入成功且沒有錯誤訊息時才自動跳轉
 		    if (isLoggedIn && !hasError) {
-		        window.location.href = '/front/member/member_center';
-		    }
+	        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+	        if (redirectUrl) {
+	            sessionStorage.removeItem('redirectAfterLogin');
+	            window.location.href = redirectUrl;
+	        } else {
+	            window.location.href = '/front/member/member_center';
+	        }
+    }
 		/*]]>*/
 		</script>
 		
@@ -120,7 +126,24 @@
 		            localStorage.removeItem('rememberMe');
 		        }
 		    });
+		    
+		    
 		</script>
+		<script th:inline="javascript">
+			document.addEventListener('DOMContentLoaded', function () {
+			    const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+			    if (redirectUrl) {
+			        fetch('/front/member/saveRedirectAfterLogin', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			            body: new URLSearchParams({ url: redirectUrl })
+			        }).then(() => {
+			            sessionStorage.removeItem('redirectAfterLogin');
+			        });
+			    }
+			});
+		</script>
+		
 		
   
 </body>
