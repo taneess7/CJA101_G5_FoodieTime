@@ -114,13 +114,8 @@
 <!--	</div>-->
 
 	<main>
-		<!-- Hero Section -->
-		<!-- 適用於：整個 Hero 區塊的 <section>
-     我把 class="container" 從這裡移除了，這樣這個 section 才會是 100% 的寬度，
-     才能當作我們滿版影片背景的畫布。 -->
+
 		<section class="hero-section">
-			<!-- 適用於：影片的容器 <div>
-                 這是我們專門用來放影片的容器，它會被 CSS 設定成滿版。 -->
 			<div class="video-background">
 				<video
 						th:src="@{/videos/background.mp4}"
@@ -129,11 +124,6 @@
 						loop>
 				</video>
 			</div>
-
-			<!-- 適用於：前景內容的容器 <div>
-                 我把原本的文字、按鈕內容都放進這個新的 div 中，
-                 並把 class="container" 加到這裡。
-                 這樣一來，只有文字內容會被限制寬度並置中，而影片背景則不受影響。 -->
 			<div class="hero-content container">
 				<h1 class="hero-title">
 					用<span class="highlight">溫暖</span>的方式，<br>探索每一口<span
@@ -142,8 +132,8 @@
 				<p class="hero-subtitle">告別冰冷的選擇，FoodieTime
 					用大地般的溫厚，為您捧上最貼心的美食推薦。省錢、省時，更省心。</p>
 				<div style="display: flex; justify-content: center; gap: 1rem;">
-					<a th:href="@{/map.html}" class="clay clay-button clay-convex">開始探索</a>
-					<a th:href="@{/group-order}" class="clay clay-button clay-convex">發起團購</a>
+					<a th:href="@{category/food-categories}" class="clay clay-button clay-convex">開始探索</a>
+					<a th:href="@{/gb/gbindex}" class="clay clay-button clay-convex">開始團購</a>
 					<a th:href="@{/post}" class="clay clay-button clay-convex">加入討論</a>
 				</div>
 			</div>
