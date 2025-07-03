@@ -98,82 +98,7 @@ body.min-h-screen.bg-gray-100 {
 	line-height: var(--line-height-normal) !important;
 }
 
-/* Header 樣式（比照 style.css） */
-.app-header {
-    background: #fff;
-    box-shadow: 0 2px 8px 0 rgba(139, 115, 85, 0.06), 0 1.5px 0 0 rgba(139, 115, 85, 0.08);
-    border-bottom: 1.5px solid #f3e5ab;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
 
-.header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 64px;
-}
-
-.logo-container .logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--text-primary);
-}
-
-.logo-img.bg-orange-500.text-white.flex.items-center.justify-center.text-lg.font-bold {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--warm-orange), var(--warm-terracotta));
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: 700;
-    margin-right: 12px;
-    box-shadow: 0 2px 8px 0 rgba(255, 112, 67, 0.10);
-}
-
-.logo-text {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--warm-brown);
-}
-
-.main-nav .nav-list {
-    display: flex;
-    list-style: none;
-    gap: 32px;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-link {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 500;
-    transition: color 0.25s;
-}
-
-.nav-link:hover {
-    color: var(--warm-orange);
-}
-
-.login-btn {
-    background: linear-gradient(135deg, var(--warm-orange), var(--warm-terracotta));
-    color: #fff !important;
-    padding: 8px 20px;
-    border-radius: 12px;
-    font-weight: 600;
-    box-shadow: 0 2px 8px 0 rgba(255, 112, 67, 0.10);
-    border: none;
-}
 /* 麵包屑樣式 */
 .breadcrumb {
 	background: rgba(255, 255, 255, 0.6) !important;
@@ -366,49 +291,87 @@ textarea.w-full.border.rounded.px-3.py-2:focus {
 	overflow: hidden !important;
 }
 
-/* 次要按鈕樣式 */
-.btn.btn-secondary.bg-gray-500.text-white.px-6.py-2.rounded.hover\:bg-gray-600 {
-	background: linear-gradient(135deg, var(--neutral-600), var(--neutral-700)) !important;
-	color: var(--text-white) !important;
-	padding: var(--space-4) var(--space-6) !important;
-	border-radius: var(--radius-lg) !important;
-	box-shadow: var(--shadow-2) !important;
+/* 按鈕共用基礎樣式 - 強制覆蓋所有可能的樣式 */
+.btn-custom {
+	/* 重置所有可能的樣式 */
+	all: unset !important;
+	
+	/* 尺寸和間距 - 完全固定 */
+	width: 120px !important;
+	height: 44px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	
+	/* 文字樣式 */
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+	font-size: 16px !important;
+	font-weight: 600 !important;
+	color: white !important;
+	text-align: center !important;
+	line-height: 44px !important;
+	
+	/* 外觀 */
+	border: none !important;
+	border-radius: 8px !important;
+	cursor: pointer !important;
+	outline: none !important;
+	
+	/* 排版 */
+	display: inline-block !important;
+	vertical-align: middle !important;
+	
+	/* 背景重置 */
+	background-image: none !important;
+	background-repeat: no-repeat !important;
+	background-position: center !important;
+	background-size: cover !important;
+	
+	/* 動畫 */
+	transition: all 0.25s ease !important;
+	
+	/* 其他 */
+	text-decoration: none !important;
+	box-sizing: border-box !important;
+	position: relative !important;
+	overflow: hidden !important;
+	
+	/* 強制覆蓋任何可能的 Tailwind 或其他 CSS */
+	flex: none !important;
+	flex-grow: 0 !important;
+	flex-shrink: 0 !important;
+	flex-basis: auto !important;
 }
 
-.btn.btn-secondary.bg-gray-500.text-white.px-6.py-2.rounded.hover\:bg-gray-600:hover {
-	background: linear-gradient(135deg, var(--neutral-700), var(--neutral-800)) !important;
-	box-shadow: var(--shadow-3) !important;
+/* 儲存草稿按鈕顏色 */
+.btn-draft {
+	background: #6B7280 !important;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-draft:hover {
+	background: #4B5563 !important;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 	transform: translateY(-1px) !important;
 }
 
-/* 主要按鈕樣式 */
-.btn.btn-primary.bg-orange-600.text-white.px-6.py-2.rounded.hover\:bg-orange-700 {
-	background: linear-gradient(135deg, var(--warm-orange), var(--warm-terracotta)) !important;
-	color: var(--text-white) !important;
-	padding: var(--space-4) var(--space-6) !important;
-	border-radius: var(--radius-lg) !important;
-	box-shadow: 
-		var(--shadow-2),
-		0 4px 12px rgba(255, 112, 67, 0.3) !important;
+/* 發佈貼文按鈕顏色 */
+.btn-publish {
+	background: #EA580C !important;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-.btn.btn-primary.bg-orange-600.text-white.px-6.py-2.rounded.hover\:bg-orange-700:hover {
-	background: linear-gradient(135deg, var(--warm-terracotta), var(--primary-dark)) !important;
-	box-shadow: 
-		var(--shadow-3),
-		0 6px 16px rgba(255, 112, 67, 0.4) !important;
+.btn-publish:hover {
+	background: #C2410C !important;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 	transform: translateY(-1px) !important;
 }
 
-.btn.btn-primary.bg-orange-600.text-white.px-6.py-2.rounded.hover\:bg-orange-700:active {
-	transform: translateY(0) !important;
-	box-shadow: 
-		var(--shadow-1),
-		0 2px 8px rgba(255, 112, 67, 0.3) !important;
-}
+
 
 /* 按鈕點擊效果 */
-.btn:active {
+.btn:active,
+button:active,
+.btn-custom:active {
 	transform: translateY(1px) !important;
 }
 
@@ -422,7 +385,8 @@ input:valid, select:valid, textarea:valid {
 }
 
 /* 載入狀態 */
-.btn:disabled {
+.btn:disabled,
+button:disabled {
 	opacity: 0.6 !important;
 	cursor: not-allowed !important;
 	transform: none !important;
@@ -430,6 +394,7 @@ input:valid, select:valid, textarea:valid {
 
 /* 聚焦時的視覺回饋 */
 .btn:focus,
+button:focus,
 input:focus,
 select:focus,
 textarea:focus {

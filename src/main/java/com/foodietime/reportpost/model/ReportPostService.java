@@ -411,8 +411,15 @@ public class ReportPostService {
 	 */
 	private void sendViolationNotification(MemberVO member, String reportType, String contentTitle) {
 		try {
+			
+			
 			// 取得系統管理員（假設 ID 為 1）
 			SmgVO systemAdmin = smgService.findById(1);
+			if (systemAdmin == null) {
+				System.err.println("❌ 找不到系統管理員 (ID: 1)");
+				return;
+			}
+			
 			
 			// 建立通知訊息
 			DirectMessageVO notification = new DirectMessageVO();
@@ -437,12 +444,15 @@ public class ReportPostService {
 			
 			notification.setMessContent(notificationContent);
 			
+			
 			// 儲存通知
-			directMessageService.addMessage(notification);
+			DirectMessageVO savedNotification = directMessageService.addMessage(notification);
+			
 			
 		} catch (Exception e) {
 			// 記錄錯誤但不影響主要業務流程
-			System.err.println("發送違規通知失敗: " + e.getMessage());
+			
+			e.printStackTrace();
 		}
 	}
 }

@@ -61,11 +61,14 @@ public class PostController {
 	@GetMapping("/addPost")
 	public String addPost(@RequestParam(value = "postId", required = false) Integer postId, ModelMap model,
 			HttpSession session) {
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(2); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
+		// 檢查登入狀態
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
+		if (loginMember == null) {
+			// 未登入用戶，重導到登入頁面
+			return "redirect:/front/member/login";
+		}
+		
 		PostVO postVO;
 		if (postId != null) {
 			return "redirect:/post/update?postId=" + postId; // 如果有 postId，重定向到 update 頁面
@@ -74,7 +77,6 @@ public class PostController {
 		}
 		List<PostCategoryVO> category = postCategoryservice.getAll();
 		model.addAttribute("category", category);
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("postVO", postVO);
 		return "front/post/addPost";
@@ -82,20 +84,25 @@ public class PostController {
 
 	@PostMapping("/insert")
 	public String insert(@Valid PostVO postVO, BindingResult result, ModelMap model, HttpSession session,
-			@RequestParam("action") String action, RedirectAttributes redirectAttributes) {
+			@RequestParam("action") String action, @RequestParam(value = "additionalNotes", required = false) String additionalNotes,
+			RedirectAttributes redirectAttributes) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(2); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		// 1. 先補上會員（登入或匿名）
-		MemberVO member = (MemberVO) session.getAttribute("loginMember");
+		MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
 		if (member == null) {
-			member = memservice.getById(1); // 匿名會員
+			// 未登入用戶，重導到登入頁面
+			return "redirect:/front/member/login";
 		}
 		postVO.setMember(member);
+		
+		// 2. 處理額外備註 - 存儲到 session 中
+		if (additionalNotes != null && !additionalNotes.trim().isEmpty()) {
+			session.setAttribute("additionalNotes", additionalNotes.trim());
+		} else {
+			session.removeAttribute("additionalNotes");
+		}
 
 		// 2. 檢查會員是否因檢舉過多而被禁止發文
 		if (reportPostService.isMemberBannedFromPosting(member.getMemId())) {
@@ -148,19 +155,26 @@ public class PostController {
 
 	@GetMapping("/update")
 	public String updatePost(@RequestParam("postId") Integer postId, ModelMap model, HttpSession session) {
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(2); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
+		// 檢查登入狀態
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
+		if (loginMember == null) {
+			// 未登入用戶，重導到登入頁面
+			return "redirect:/front/member/login";
+		}
+		
 		PostVO postVO = postservice.getOnePost(postId);
 		if (postVO == null) {
 			model.addAttribute("errorMessage", "找不到指定的貼文");
 			return "redirect:/post/";
 		}
+		
+		if (postVO.getMember() == null) {
+			// 從 session 或其他方式補上
+			postVO.setMember(loginMember);
+		}
 		List<PostCategoryVO> category = postCategoryservice.getAll();
 		model.addAttribute("category", category);
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 		model.addAttribute("postVO", postVO);
 		return "front/post/updatePost";
@@ -168,14 +182,18 @@ public class PostController {
 
 	@PostMapping("/updatePost")
 	public String update(@Valid PostVO postVO, BindingResult result, ModelMap model,
-			@RequestParam("action") String action, RedirectAttributes redirectAttributes, HttpSession session) {
+			@RequestParam("action") String action, @RequestParam(value = "additionalNotes", required = false) String additionalNotes,
+			RedirectAttributes redirectAttributes, HttpSession session) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(2); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
+		// 處理額外備註 - 存儲到 session 中
+		if (additionalNotes != null && !additionalNotes.trim().isEmpty()) {
+			session.setAttribute("additionalNotes", additionalNotes.trim());
+		} else {
+			session.removeAttribute("additionalNotes");
+		}
+		
 		// 檢查會員是否因檢舉過多而被禁止發文
 		if (reportPostService.isMemberBannedFromPosting(postVO.getMember().getMemId())) {
 			model.addAttribute("errorMessage", "您的帳號因多次違規已被禁止發文，如有疑問請聯繫客服。");
@@ -183,7 +201,7 @@ public class PostController {
 			model.addAttribute("category", category);
 			model.addAttribute("postVO", postVO);
 			// 重新加入 loginMember
-			MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+			MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 			model.addAttribute("loginMember", loginMember);
 			return "front/post/updatePost";
 		}
@@ -193,7 +211,7 @@ public class PostController {
 			List<PostCategoryVO> category = postCategoryservice.getAll();
 			model.addAttribute("category", category);
 			// 重新加入 loginMember
-			MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+			MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 			model.addAttribute("loginMember", loginMember);
 			return "front/post/updatePost";
 		}
@@ -236,13 +254,9 @@ public class PostController {
 	public String delete(@RequestParam("postId") String postId, ModelMap model, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(2); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		// 取得目前登入會員
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 		if (loginMember == null) {
 			model.addAttribute("errorMessage", "請先登入");
 			return "redirect:/login";
@@ -272,11 +286,14 @@ public class PostController {
 	public String getOne_For_Display(@RequestParam("postId") String postId, ModelMap model, HttpSession session) {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
+		// 檢查登入狀態
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
+		if (loginMember == null) {
+			// 未登入用戶，重導到登入頁面
+			return "redirect:/front/member/login";
+		}
+		
 		Integer id = null;
 		try {
 			id = Integer.valueOf(postId);
@@ -297,7 +314,6 @@ public class PostController {
 			model.addAttribute("errorMessage", "查無資料");
 			return "front/post/listOnePost";
 		}
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
@@ -314,11 +330,14 @@ public class PostController {
 
 	@GetMapping("/one")
 	public String getOnePost(@RequestParam("postId") Integer postId, ModelMap model, HttpSession session) {
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
+		// 檢查登入狀態
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
+		if (loginMember == null) {
+			// 未登入用戶，重導到登入頁面
+			return "redirect:/front/member/login";
+		}
+		
 		PostVO postVO = postservice.getOnePost(postId);
 
 		// 瀏覽數+1 並存回資料庫
@@ -330,16 +349,35 @@ public class PostController {
 		model.addAttribute("postVO", postVO);
 
 		// 加這行
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		model.addAttribute("loginMember", loginMember);
 
 		List<MessageVO> messageList = messageService.getByPostId(postId);
 		model.addAttribute("messageList", messageList);
 		model.addAttribute("messageVO", new MessageVO());
 		model.addAttribute("liked"); // boolean
-		// 假設你有 loginMember 和 postVO
-		boolean bookmarked = favoritePostService.findByPK(postVO.getPostId(), loginMember.getMemId()) != null;
+		
+		// 檢查收藏狀態，需要先判斷是否登入
+		boolean bookmarked = false;
+		if (loginMember != null) {
+			bookmarked = favoritePostService.findByPK(postVO.getPostId(), loginMember.getMemId()) != null;
+		}
 		model.addAttribute("bookmarked", bookmarked);
+		
+		// 將session訊息傳遞給model，然後清除session中的訊息
+		// 這樣可以避免刷新頁面時重複顯示訊息
+		Object reportSuccess = session.getAttribute("reportSuccess");
+		Object errorMessage = session.getAttribute("errorMessage");
+		
+		if (reportSuccess != null) {
+			model.addAttribute("reportSuccess", reportSuccess);
+			session.removeAttribute("reportSuccess");
+		}
+		
+		if (errorMessage != null) {
+			model.addAttribute("errorMessage", errorMessage);
+			session.removeAttribute("errorMessage");
+		}
+		
 		return "front/post/listOnePost";
 	}
 
@@ -388,7 +426,7 @@ public class PostController {
 		model.addAttribute("currentSort", sort);
 
 		// 判斷是否登入
-		boolean loggedIn = session.getAttribute("loginMember") != null;
+		boolean loggedIn = session.getAttribute("loggedInMember") != null;
 		model.addAttribute("loggedIn", loggedIn);
 		return "front/post/listallpost";
 	}
@@ -409,9 +447,9 @@ public class PostController {
 	@PostMapping("/like")
 	public String likePost(@RequestParam("postId") Integer postId, HttpSession session,
 			RedirectAttributes redirectAttributes) {
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 		if (loginMember == null) {
-			return "redirect:/login";
+			return "redirect:/front/member/login";
 		}
 		// 你可以限制只能對自己的貼文按讚，也可以允許所有人按讚
 		PostVO post = postservice.getOnePost(postId);
@@ -456,7 +494,7 @@ public class PostController {
 		model.addAttribute("searchResults", true);
 		model.addAttribute("searchCount", list.size());
 
-		boolean loggedIn = session.getAttribute("loginMember") != null;
+		boolean loggedIn = session.getAttribute("loggedInMember") != null;
 		model.addAttribute("loggedIn", loggedIn);
 
 		return "front/post/listallpost";
@@ -480,7 +518,7 @@ public class PostController {
 		model.addAttribute("currentCategory", categoryId);
 		model.addAttribute("currentCategoryName", currentCategoryName);
 
-		boolean loggedIn = session.getAttribute("loginMember") != null;
+		boolean loggedIn = session.getAttribute("loggedInMember") != null;
 		model.addAttribute("loggedIn", loggedIn);
 
 		return "front/post/listallpost";
@@ -488,19 +526,12 @@ public class PostController {
 
 	@GetMapping("/myPosts")
 	public String myPosts(ModelMap model, HttpSession session) {
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		// 1. 檢查登入狀態
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 		if (loginMember == null) {
-			// 為了方便測試，如果未登入，先用假會員ID
-			loginMember = memservice.getById(1);
-			session.setAttribute("loginMember", loginMember);
-			// 在正式環境中，應該重導向到登入頁面
-			// return "redirect:/login";
+			// 未登入用戶，重導到登入頁面
+			return "redirect:/front/member/login";
 		}
 
 		// 2. 根據會員ID查詢其所有貼文（包含草稿）
