@@ -13,6 +13,7 @@ import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +43,26 @@ public class ProductCategoryController {
 
     // 查全部
     @GetMapping("/food-categories")
-    public String listAll() {      
+    public String listAll(HttpServletResponse response) {   
+    	
+    	//禁止快取
+    	response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         return "/front/restaurant/food-categories";
     }
     
     //跳回首頁
     @GetMapping("/index")
-    public String listindex() {
+    public String listindex(HttpServletResponse response) {
+    	
+    	//禁止快取
+    	response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
+        
     	return "/index";
     }
     
@@ -61,8 +75,14 @@ public class ProductCategoryController {
     @GetMapping("/{cateId}")
     public String showCategoryPage(@PathVariable Integer cateId,
                                    HttpSession session,
+                                   HttpServletResponse response,
                                    Model model) {
 
+    	// 禁止快取
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
         if (memberVO != null) {
             model.addAttribute("member", memberVO);
@@ -151,8 +171,13 @@ public class ProductCategoryController {
     //模糊搜尋	
     @GetMapping("")
     public String searchCategory(@RequestParam(required = false) String keyword,
-                                 Model model, HttpSession session) {
+                                 Model model, HttpServletResponse response,HttpSession session) {
 
+    	// 禁止快取
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
         if (memberVO != null) {
             List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
@@ -226,8 +251,14 @@ public class ProductCategoryController {
     @GetMapping("/search")
     public String searchByKeyword(@RequestParam String keyword,
                                   Model model,
+                                  HttpServletResponse response,
                                   HttpSession session) {
 
+    	// 禁止快取
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
         if (memberVO != null) {
             model.addAttribute("member", memberVO);
@@ -300,7 +331,13 @@ public class ProductCategoryController {
     
     //會員收藏清單(查看餐廳)
     @GetMapping("/store/{storeId}")
-    public String viewStoreDetail(@PathVariable Integer storeId, Model model, HttpSession session) {
+    public String viewStoreDetail(@PathVariable Integer storeId, Model model, HttpServletResponse response,HttpSession session) {
+    	
+    	// 禁止快取
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         StoreVO store = storeService.getOneStore(storeId);
         List<ProductVO> productList = storeService.getProdsByStoreId(storeId);
         List<CouponVO> couponList = storeService.getCouponsByStore(storeId);
