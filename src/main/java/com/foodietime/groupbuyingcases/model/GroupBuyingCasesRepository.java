@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCasesVO, Integer>{
 
-	// 查詢某會員參加的所有團購案（根據 MemberVO.memId）
+	// 查詢某會員參加的所有團購案（根據 MemberVO.memId） 
     List<GroupBuyingCasesVO> findByMember_MemId(Integer memId);
  
     // 查詢某會員開設且是團主的團購案（根據會員ID查詢，並且該會員是團主）
