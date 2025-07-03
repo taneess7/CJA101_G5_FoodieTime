@@ -341,10 +341,19 @@ public class MemberController {
             return "front/member/login";
         }
         
-        if (member.getMemStatus() != MemberVO.MemberStatus.ACTIVE) {
+        switch (member.getMemStatus()) {
+        case INACTIVE -> {
             model.addAttribute("error", "帳號尚未啟用，請至信箱啟用！");
             return "front/member/login";
         }
+        case DISABLED -> {
+            model.addAttribute("error", "您的帳號已被停用，如有疑問請聯絡客服！");
+            return "front/member/login";
+        }
+        case ACTIVE -> {
+            // 通過檢查，繼續登入流程
+        }
+    }
 
         // 登入成功，儲存會員資訊
         session.setAttribute("loggedInMember", member);

@@ -209,10 +209,9 @@
                                 <label for="memberStatus" class="form-label">會員狀態</label>
                                 <select class="form-select" id="memberStatus"  name="status" th:value="${param.keyword}">
                                     <option value="">全部狀態</option>
-                                    <option value="active">啟用</option>
-                                    <option value="suspended">停用</option>
-                                    <option value="banned">封鎖</option>
-                                    <option value="pending">待審核</option>
+								    <option value="active">啟用</option>
+								    <option value="inactive">尚未啟用</option>
+								    <option value="disabled">停權</option>
                                 </select>
                             </div>
                             
@@ -273,9 +272,11 @@
     </td>
     <td th:text="${member.memTime}">註冊日期</td>
     <td>
-        <span th:classappend="${member.memStatus == 1} ? 'badge bg-success' : 'badge bg-danger'">
-            <span th:text="${member.memStatus == 1} ? '啟用' : '停用'"></span>
-        </span>
+        <span th:switch="${member.memStatus}">
+		    <span th:case="0" class="badge bg-secondary">尚未啟用</span>
+		    <span th:case="1" class="badge bg-success">啟用</span>
+		    <span th:case="2" class="badge bg-danger">停權</span>
+		</span>
     </td>
     <td>
         <div th:text="${member.lastModifiedDate}"></div>
@@ -307,6 +308,9 @@
 					        <button class="btn btn-secondary me-2" onclick="batchChangeStatus(0)">
 					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「停用」
 					        </button>
+					        <button class="btn btn-danger me-2" onclick="batchChangeStatus(2)">
+							    <i class="fas fa-user-slash me-1"></i> 批量變更狀態為「停權」
+							</button>
 		    			</div>
 
 
@@ -386,8 +390,9 @@
                                 <div class="mb-3">
                                     <label for="memStatus" class="form-label">會員狀態</label>
                                    		<select class="form-select" id="memStatus" name="memStatus">
+										    <option value="0">尚未啟用</option>
 										    <option value="1">啟用</option>
-										    <option value="0">停用</option>
+										    <option value="2">停權</option>
 										</select>
                                 </div>
 
@@ -720,7 +725,11 @@
                     document.getElementById('modalMemberId').textContent = "ID: " + data.memId;
                     document.getElementById('modalMemberEmail').textContent = data.memEmail;
                     document.getElementById('modalMemberRegDate').textContent = data.memTime ? data.memTime.substring(0, 10) : '-';
-                    document.getElementById('modalMemberStatus').textContent = (data.memStatus == 1) ? '啟用' : '停用';
+                    let statusText = '未知';
+                    if (data.memStatus == 0) statusText = '尚未啟用';
+                    else if (data.memStatus == 1) statusText = '啟用';
+                    else if (data.memStatus == 2) statusText = '停權';
+                    document.getElementById('modalMemberStatus').textContent = statusText;
 					
                     const avatarImg = document.getElementById('modalMemberAvatar');
 
@@ -908,12 +917,15 @@
 
                     // 狀態 badge
                     const statusSpan = row.querySelector('td:nth-child(5) span');
-                    if (data.memStatus == 1) {
+                    if (data.memStatus == 0) {
+                        statusSpan.className = 'badge bg-secondary';
+                        statusSpan.textContent = '尚未啟用';
+                    } else if (data.memStatus == 1) {
                         statusSpan.className = 'badge bg-success';
                         statusSpan.textContent = '啟用';
-                    } else {
+                    } else if (data.memStatus == 2) {
                         statusSpan.className = 'badge bg-danger';
-                        statusSpan.textContent = '停用';
+                        statusSpan.textContent = '停權';
                     }
 
                     // 最後修改

@@ -54,9 +54,15 @@ import com.foodietime.member.model.MemService;
 	                }
 
 	                if (status != null && !status.isBlank()) {
-	                    int targetStatus = status.equals("active") ? 1 : 0;
+	                    int targetStatus = switch (status) {
+	                        case "active" -> 1;
+	                        case "inactive" -> 0;
+	                        case "disabled" -> 2;
+	                        default -> -1;
+	                    };
 	                    match = match && (member.getMemStatus().ordinal() == targetStatus);
 	                }
+
 
 	                if (lastModified != null && !lastModified.isBlank()) {
 	                    LocalDate now = LocalDate.now();
