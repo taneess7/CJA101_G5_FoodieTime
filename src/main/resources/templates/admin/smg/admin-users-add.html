@@ -15,9 +15,7 @@
     
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo text-center">
-            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
-        </div>
+        
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-dashboard}">
@@ -188,8 +186,6 @@
 				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
 				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
                 </ul>

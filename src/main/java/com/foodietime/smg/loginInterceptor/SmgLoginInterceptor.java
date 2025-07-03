@@ -11,6 +11,10 @@ import jakarta.servlet.http.HttpSession;
 public class SmgLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 加上 no-cache 標頭，避免快取
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
         HttpSession session = request.getSession();
         SmgVO smg = (SmgVO) session.getAttribute("loggedInSmg");
         if (smg == null) {

@@ -310,8 +310,11 @@ public class MemberController {
         String referer = request.getHeader("Referer");
 
         // 2. 檢查 Referer 是否有效，並排除登入/註冊相關頁面以避免循環
-        if (referer != null && referer.endsWith("/index") && session.getAttribute("redirectAfterLogin") == null) {
-            session.setAttribute("redirectAfterLogin", "/index");
+        if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/activate")) {
+            session.setAttribute("redirectAfterLogin", referer);
+        } else {
+            // 如果是直接訪問登入頁或從不相關頁面來，就清除舊的紀錄
+            session.removeAttribute("redirectAfterLogin");
         }
         // ==============================================================
 
@@ -380,49 +383,39 @@ public class MemberController {
         if (member == null) {
             return "redirect:/front/member/login";
         }
-        
 
-        model.addAttribute("member", member);
-        model.addAttribute("currentPage", "member_center");
-        
-        
-        // ✅ 顯示成功訊息（一次性）
-        String successMessage = (String) session.getAttribute("updateSuccess");
-        if (successMessage != null) {	
-            model.addAttribute("success", successMessage);
-            session.removeAttribute("updateSuccess");
-        }
-        
-        return "front/member/edit_profile";
+        // 重新查詢最新資料（保險做法）
+        MemberVO fullMember = memService.getById(member.getMemId());
+        model.addAttribute("member", fullMember);
+        return "front/member/edit_profile"; 
     }
 
     // ✅ 接收表單送出更新
     @PostMapping("/update")
     public String updateMember(
-    		@Valid @ModelAttribute("member") MemberVO formMember,
-    		BindingResult result,
+            @RequestParam("mem_id") Integer memId,
+            @RequestParam("mem_nickname") String nickname,
+            @RequestParam("mem_name") String name,
+            @RequestParam("mem_phone") String phone,
+            @RequestParam("mem_city") String city,
+            @RequestParam("mem_cityarea") String cityarea,
+            @RequestParam("mem_address") String address,
             @RequestParam("mem_avatar") MultipartFile avatarFile,
             HttpSession session,
             Model model) {
-    	if (result.hasErrors()) {
-    		System.out.println("驗證錯誤: " + result.hasErrors());
-    		System.out.println("錯誤內容：" + result.getAllErrors());
-            return "front/member/edit_profile";  // 回原頁並顯示錯誤
-        }
 
-    	MemberVO member = memService.getById(formMember.getMemId());
+        MemberVO member = memService.getById(memId);
         if (member == null) {
             model.addAttribute("error", "查無會員資料");
             return "front/member/edit_profile";
         }
 
-        // ✅ 將欄位更新（不直接使用 formMember 覆蓋，避免不安全欄位）
-        member.setMemNickname(formMember.getMemNickname());
-        member.setMemName(formMember.getMemName());
-        member.setMemPhone(formMember.getMemPhone());
-        member.setMemCity(formMember.getMemCity());
-        member.setMemCityarea(formMember.getMemCityarea());
-        member.setMemAddress(formMember.getMemAddress());
+        member.setMemNickname(nickname);
+        member.setMemName(name);
+        member.setMemPhone(phone);
+        member.setMemCity(city);
+        member.setMemCityarea(cityarea);
+        member.setMemAddress(address);
         
         // ✅ 處理大頭照（如果有上傳
         if (avatarFile != null && !avatarFile.isEmpty()) {
@@ -435,15 +428,12 @@ public class MemberController {
             }
         }
 
-        memService.save(member);
+        memService.save(member); // 儲存更新
 
-        // ✅ ❗重點：重新撈出來更新 session，避免 stale data
-        MemberVO updated = memService.getById(member.getMemId());
-        session.setAttribute("loggedInMember", updated);
-
-        session.setAttribute("updateSuccess", "更新成功！");
-        return "redirect:/front/member/member_center";
-  
+        session.setAttribute("loggedInMember", member); // 更新 session 中資料
+        model.addAttribute("member", member);
+        model.addAttribute("success", "資料已更新");
+        return "front/member/member_center";
     }
     
     @GetMapping("/avatar/{memId}")
@@ -469,13 +459,6 @@ public class MemberController {
         MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
         if (member == null) {
             return "redirect:/front/member/login";
-        }
-        
-        // ✅ 顯示資料已更新訊息
-        String successMessage = (String) session.getAttribute("updateSuccess");
-        if (successMessage != null) {
-            model.addAttribute("success", successMessage);
-            session.removeAttribute("updateSuccess");
         }
         model.addAttribute("member", member);
         model.addAttribute("currentPage", "member_center");

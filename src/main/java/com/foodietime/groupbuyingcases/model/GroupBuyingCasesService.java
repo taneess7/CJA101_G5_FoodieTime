@@ -225,6 +225,14 @@ public class GroupBuyingCasesService {
         groupBuyingCasesRepository.save(gbCase);
     }
 
-            
+    // 將所有已到期且狀態為招募中的團購案 gbStatus=1 改為 gbStatus=4
+    @Transactional
+    public void updateEndedRecruitingCasesToClosed() {
+        List<GroupBuyingCasesVO> endedRecruitingCases = groupBuyingCasesRepository.findAllEndedRecruiting();
+        for (GroupBuyingCasesVO gbCase : endedRecruitingCases) {
+            gbCase.setGbStatus((byte)4); // 4: 已截止
+            groupBuyingCasesRepository.save(gbCase);
+        }
+    }
 
 }
