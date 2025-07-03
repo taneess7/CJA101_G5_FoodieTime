@@ -308,10 +308,14 @@ public class MemberController {
         // ==================== ★★★【邏輯修改處】★★★ ====================
         // 1. 記錄登入前的來源頁面 (Referer)
         String referer = request.getHeader("Referer");
-
-        // 2. 檢查 Referer 是否有效，並排除登入/註冊相關頁面以避免循環
-        if (referer != null && referer.endsWith("/index") && session.getAttribute("redirectAfterLogin") == null) {
-            session.setAttribute("redirectAfterLogin", "/index");
+        if (session.getAttribute("redirectAfterLogin") == null && referer != null) {
+            if (!referer.contains("/front/member/login")
+                    && !referer.contains("/front/member/register")
+                    && !referer.contains("/front/member/activate")
+                    && !referer.contains("/front/member/verify")
+            		&& !referer.contains("/favorite/")) {
+                session.setAttribute("redirectAfterLogin", referer);
+            }
         }
         // ==============================================================
 
@@ -515,6 +519,14 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("NOT_LOGGED_IN");
     }
     
+    @PostMapping("/saveRedirectAfterLogin")
+    @ResponseBody
+    public void saveRedirectAfterLogin(@RequestParam("url") String url, HttpSession session) {
+        if (url != null && !url.isBlank()) {
+            session.setAttribute("redirectAfterLogin", url);
+        }
+    }
+
 
 
 }

@@ -29,7 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
                     "/member/orders/**",
                     "/cart/**",
                     "/favorite/**",
-                    "/category/**",
                     "/post/**"
                     
                 )
@@ -39,7 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
                     "/front/member/verify",
                     "/front/member/activate",
                     "/front/member/logout",
-                    "/front/member/storeregister"
+                    "/front/member/storeregister"	
                 );
         // 店家 Interceptor
         registry.addInterceptor(new StoreLoginInterceptor())
@@ -48,6 +47,11 @@ public class WebConfig implements WebMvcConfigurer {
                     "/store/desert2",         // 公開瀏覽的頁面不要攔
                     "/store/DBGifReader"      // 顯示圖片 endpoint 不應攔截
                 );
+        
+        // 🔺記錄登入前頁面，供登入成功後導回
+        registry.addInterceptor(new RecordRefererInterceptor())
+                .addPathPatterns("/category/**");  // 只記錄這些公開分類頁
+
 
     }   
 }	
