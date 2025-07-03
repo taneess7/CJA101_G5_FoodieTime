@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購訂單 - FoodieTime 食刻</title>
+    <meta name="description" content="FoodieTime 食刻購物車 - 輕鬆結帳、安全支付，享受美食無負擔。">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/memgborders/member-gborders.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <!-- PWA 支援 -->
+    <link rel="manifest" th:href="@{/manifest.json}">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+    <style>
+        /* 讓所有表格標題置左 */
+        th {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<!-- 導覽列（與購物車頁面完全一致） -->
+<header class="app-header">
+    <div class="header-container">
+        <!-- Logo 區域 -->
+        <div class="logo-container">
+            <a th:href="@{/index}" class="logo">
+                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </a>
+        </div>
+
+        <!-- 搜尋區域 -->
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="search-icon material-icons-outlined">search</i>
+                <input type="text" class="search-input" placeholder="搜尋餐廳、料理或地址...">
+                <button class="mic-icon" aria-label="語音搜尋">
+                    <i class="material-icons-outlined">mic</i>
+                </button>
+                <button class="camera-icon" aria-label="拍照搜尋">
+                    <i class="material-icons-outlined">photo_camera</i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 導覽選單 -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a th:href="@{/map}" class="nav-link">地圖</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/group-order.html}" class="nav-link">團購</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/deals.html}" class="nav-link">優惠</a>
+                </li>
+                <li class="nav-item">
+                    <button class="login-btn"><a th:href="@{/login}">登入/註冊</a></button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header><main class="main-content">
+    <div class="content-container">
+        <div class="member-section">
+            
+            <!-- 主內容區 -->
+            <section class="member-content">
+			    <div class="member-content-header d-flex justify-content-between align-items-center">
+                    <h1 class="member-content-title mb-0">我的團購訂單</h1>
+                    <div class="d-flex align-items-center" style="gap: 10px;">
+                        <select id="filterPaymentStatus" class="form-select form-select-sm" style="width: 120px;">
+                            <option value="">付款狀態(全部)</option>
+                            <option value="0">未付款</option>
+                            <option value="1">已付款</option>
+                        </select>
+                        <select id="filterShippingStatus" class="form-select form-select-sm" style="width: 120px;">
+                            <option value="">出貨狀態(全部)</option>
+                            <option value="0">未出貨</option>
+                            <option value="1">已出貨</option>
+                        </select>
+                        <select id="filterOrderStatus" class="form-select form-select-sm" style="width: 140px;">
+                            <option value="">訂單狀態(全部)</option>
+                            <option value="1">已接單</option>
+                            <option value="2">已完成</option>
+                            <option value="3">開團失敗</option>
+                            <option value="4">團主取消</option>
+                        </select>
+                    </div>
+			    </div>
+			    <div class="order-list-container">
+			        <div id="noDataMessage" class="empty-state" th:if="${#lists.isEmpty(orders)}">
+			            <i class="material-icons-outlined">shopping_basket</i>
+			            <p>目前無任何團購訂單</p>
+			        </div>
+			        <div class="card mb-4" id="orderTableCard" th:if="${!#lists.isEmpty(orders)}">
+			            <div class="card-body table-responsive">
+			                <table class="table table-bordered" width="100%" cellspacing="0">
+			                    <thead>
+			                        <tr>
+			                            <th>訂單編號</th>
+			                            <th>團購標題</th>
+			                            <th>商品名稱</th>
+			                            <th>數量</th>
+			                            <th>總金額</th>
+			                            <th>付款方式</th>
+			                            <th>付款狀態</th>
+			                            <th>出貨狀態</th>
+			                            <th>訂單狀態</th>
+			                            <th>操作</th>
+			                        </tr>
+			                    </thead>
+			                    <tbody id="ordersTbody">
+			                        <tr th:each="order : ${orders}"
+			                            th:with="gbcase=${order.groupBuyingCase},
+			                                     prod=${gbcase.gbProd},
+			                                     isActive=${gbcase.gbStatus == 1 or gbcase.gbStatus == 3},
+			                                     isFailed=${gbcase.gbStatus == 6},
+			                                     isCanceled=${gbcase.gbStatus == 5},
+			                                     isEnded=${gbcase.gbStatus == 4}">
+			                            <td th:text="${order.gbOrId}">訂單編號</td>
+			                            <td th:text="${gbcase.gbTitle}">團購標題</td>
+			                            <td th:text="${prod != null ? prod.gbProdName : '商品'}">商品名稱</td>
+			                            <td th:text="${order.quantity}">數量</td>
+			                            <td th:text="${order.amount}">總金額</td>
+			                            <td>
+			                                <span th:switch="${order.payMethod}">
+			                                    <span th:case="0">信用卡</span>
+			                                    <span th:case="1">現金</span>
+			                                    <span th:case="2">第三方</span>
+			                                    <span th:case="*">未知</span>
+			                                </span>
+			                            </td>
+			                            <td>
+			                                <span th:switch="${order.paymentStatus}">
+			                                    <span th:case="0">未付款</span>
+			                                    <span th:case="1">已付款</span>
+			                                    <span th:case="*">未知</span>
+			                                </span>
+			                            </td>
+			                            <td>
+			                                <span th:switch="${order.shippingStatus}">
+			                                    <span th:case="0">未出貨</span>
+			                                    <span th:case="1">已出貨</span>
+			                                    <span th:case="*">未知</span>
+			                                </span>
+			                            </td>
+			                            <td th:switch="${order.orderStatus}" th:attr="data-status=${order.orderStatus}">
+			                                <span th:case="0">未接單</span>
+			                                <span th:case="1">已接單</span>
+			                                <span th:case="2">已完成</span>
+			                                <span th:case="3">開團失敗</span>
+			                                <span th:case="4">團主取消</span>
+			                                <span th:case="*">未知</span>
+			                            </td>
+			                            <td>
+			                                <form th:action="@{'/gb/update/' + ${order.gbOrId}}" method="post" th:if="${order.orderStatus != 2}">
+			                                    <input type="hidden" name="field" value="orderStatus" />
+			                                    <input type="hidden" name="newStatus" value="2" />
+			                                    <button type="submit" class="btn btn-xs btn-primary">完成訂單</button>
+			                                </form>
+			                                <button class="btn btn-xs btn-secondary" disabled th:if="${order.orderStatus == 2}">已完成</button>
+			                            </td>
+			                        </tr>
+			                    </tbody>
+			                </table>
+			                <nav aria-label="Page navigation" class="mt-4">
+			                    <ul class="pagination justify-content-center" id="pagination"></ul>
+			                </nav>
+			                <div class="d-flex justify-content-between align-items-center mt-3">
+							    <span>
+							        第 <span id="startRecord">0</span>-<span id="endRecord">0</span> 筆，共
+							        <span id="totalRecords" class="fw-bold">0</span> 筆
+							    </span>
+							</div>
+                            <div>
+                                <button class="btn btn-secondary" onclick="window.history.back();">返回</button>
+                            </div>
+			            </div>
+			        </div>
+			    </div>
+			</section>
+        </div>
+    </div>
+</main>
+<footer class="app-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
+                <span class="logo-text">FoodieTime 食刻</span>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">功能</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="map.html">地圖搜尋</a></li>
+                        <li><a href="group-order.html">團購功能</a></li>
+                        <li><a href="deals.html">比價優惠</a></li>
+                        <li><a href="collections.html">收藏管理</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">關於我們</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="about.html">公司簡介</a></li>
+                        <li><a href="team.html">團隊成員</a></li>
+                        <li><a href="careers.html">加入我們</a></li>
+                        <li><a href="press.html">媒體報導</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-group">
+                    <h4 class="footer-nav-title">幫助</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="faq.html">常見問題</a></li>
+                        <li><a href="contact.html">聯絡我們</a></li>
+                        <li><a href="terms.html">使用條款</a></li>
+                        <li><a href="privacy.html">隱私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
+                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<!-- 分頁 -->
+<script>
+  const ITEMS_PER_PAGE = 5;
+  let currentPage = 1;
+  let allItems = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initItems();
+    showPage(1);
+    updatePagination();
+  });
+
+  function initItems() {
+    const rows = Array.from(document.querySelectorAll('#ordersTbody tr'));
+    allItems = rows.filter(tr =>
+      !tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
+    );
+  }
+
+  function getCurrentItemsToUse() {
+    return allItems;
+  }
+
+  function showPage(page) {
+    currentPage = page;
+    const itemsToUse = getCurrentItemsToUse();
+    if (itemsToUse.length === 0) {
+      allItems.forEach(tr => tr.style.display = 'none');
+      updatePaginationInfo(0, 0, 0);
+      updateNoDataMessage();
+      return;
+    }
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    itemsToUse.forEach((tr, idx) => {
+      tr.style.display = (idx >= start && idx < end) ? '' : 'none';
+    });
+    updatePaginationInfo(start, end, itemsToUse.length);
+    updateNoDataMessage();
+  }
+
+  function updatePaginationInfo(startIndex, endIndex, total) {
+    const startRecord = total === 0 ? 0 : startIndex + 1;
+    const endRecord = Math.min(endIndex, total);
+    document.getElementById('startRecord').textContent = startRecord;
+    document.getElementById('endRecord').textContent = endRecord;
+    document.getElementById('totalRecords').textContent = total;
+  }
+
+  function updatePagination() {
+    const itemsToUse = getCurrentItemsToUse();
+    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+    const container = document.getElementById('pagination');
+    container.innerHTML = '';
+    if (itemsToUse.length === 0 || totalPages === 1) {
+      container.style.display = 'none';
+      return;
+    } else {
+      container.style.display = 'flex';
+    }
+    // 上一頁
+    const prevLi = document.createElement('li');
+    prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
+    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
+    container.appendChild(prevLi);
+    // 頁碼
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.className = i === currentPage ? 'page-item active' : 'page-item';
+      li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
+      container.appendChild(li);
+    }
+    // 下一頁
+    const nextLi = document.createElement('li');
+    nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
+    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
+    container.appendChild(nextLi);
+  }
+
+  window.changePage = function(page) {
+    const itemsToUse = getCurrentItemsToUse();
+    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
+    if (page < 1 || page > totalPages) return;
+    showPage(page);
+    updatePagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  function updateNoDataMessage() {
+    const itemsToUse = getCurrentItemsToUse();
+    const visibleCount = itemsToUse.filter(tr => tr.style.display !== 'none').length;
+    const noDataMsg = document.getElementById('noDataMessage');
+    const orderTableCard = document.getElementById('orderTableCard');
+    if (noDataMsg) noDataMsg.style.display = visibleCount === 0 ? '' : 'none';
+    if (orderTableCard) orderTableCard.style.display = visibleCount === 0 ? 'none' : '';
+  }
+//篩選功能
+  function applyFilters() {
+    const payVal = document.getElementById('filterPaymentStatus').value;
+    const shipVal = document.getElementById('filterShippingStatus').value;
+    const orderVal = document.getElementById('filterOrderStatus').value;
+    let visibleCount = 0;
+    allItems.forEach(tr => {
+      // 直接抓顯示文字
+      const paymentText = tr.querySelector('td:nth-child(7)')?.innerText.trim();
+      const shippingText = tr.querySelector('td:nth-child(8)')?.innerText.trim();
+      const orderStatusAttr = tr.querySelector('td:nth-child(9)')?.getAttribute('data-status') || '';
+      let show = true;
+      if (payVal !== '') {
+        if ((payVal === '0' && paymentText !== '未付款') 
+            (payVal === '1' && paymentText !== '已付款')) show = false;
+      }
+      if (shipVal !== '') {
+        if ((shipVal === '0' && shippingText !== '未出貨') ||
+            (shipVal === '1' && shippingText !== '已出貨')) show = false;
+      }
+      if (orderVal !== '' && orderStatusAttr !== orderVal) show = false;
+      tr.style.display = show ? '' : 'none';
+      if (show) visibleCount++;
+    });
+    updatePagination();
+    showPage(1);
+    updateNoDataMessage();
+  }
+  document.getElementById('filterPaymentStatus').addEventListener('change', applyFilters);
+  document.getElementById('filterShippingStatus').addEventListener('change', applyFilters);
+  document.getElementById('filterOrderStatus').addEventListener('change', applyFilters);
+</script>
+</body>
+</html>

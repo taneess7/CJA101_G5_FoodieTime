@@ -91,7 +91,7 @@ public class GroupOrdersService {
         return groupOrdersRepository.findById(gbOrId);
     }
 
- // 新增或修改團購訂單
+    // 新增或修改團購訂單
     public GroupOrdersVO save(GroupOrdersVO groupOrdersVO) {
         // 若是新訂單，預設狀態設為 1（接單）
         if (groupOrdersVO.getGbOrId() == null) {
@@ -145,5 +145,10 @@ public class GroupOrdersService {
     // 查詢全部團購訂單
     public List<GroupOrdersVO> findAll() {
         return groupOrdersRepository.findAll();
+    }
+    
+    //查詢團員參加的團購訂單
+    public List<GroupOrdersVO> getOrdersByMemberIsNotLeader(Integer memId) {
+        return groupOrdersRepository.findOrdersByMemberIsNotLeader(memId);
     }
 }

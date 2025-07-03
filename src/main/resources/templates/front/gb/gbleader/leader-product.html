@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -426,7 +426,7 @@
     <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" th:href="@{/gb/leaderindex}">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -532,7 +532,7 @@
                     <!-- 商品價格區塊 -->
                     <div>
                         <span class="product-price" th:text="${product.gbpromotionList[0] != null && product.gbpromotionList[0].gbProdSales != null ? 'NT$' + #numbers.formatInteger(product.gbpromotionList[0].gbProdSales, 0) : '-'}">NT$0</span>
-                        <span class="product-original-price" th:text="${product.gbpromotionList[0] != null && product.gbpromotionList[0].gbProdSpe != null ? 'NT$' + #numbers.formatInteger(product.gbpromotionList[0].gbProdSpe, 0) : '-'}">NT$0</span>
+                       <!--  <span class="product-original-price" th:text="${product.gbpromotionList[0] != null && product.gbpromotionList[0].gbProdSpe != null ? 'NT$' + #numbers.formatInteger(product.gbpromotionList[0].gbProdSpe, 0) : '-'}">NT$0</span> -->
                     </div>
                     <div class="organizer-info">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="團長頭像" class="organizer-avatar">
@@ -563,12 +563,42 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">最低成團數量</label>
-                                <input type="number" class="form-control" name="gbMinQty" min="1" required>
+                                <input type="number" class="form-control" name="gbMinQty" th:value="${gbMinQty}" min="1" readonly required>
+                                <input type="hidden" name="gbMinQty" th:value="${gbMinQty}" />
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">結束時間</label>
-                                <input type="datetime-local" class="form-control" name="endTime" required>
+                                <input type="datetime-local" class="form-control" name="endTime" required
+                                       th:min="${promotStart}" th:max="${promotEnd}" id="endTimeInput">
                             </div>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var endTimeInput = document.getElementById('endTimeInput');
+                                    var promotMin = /*[[${promotStart}]]*/ '';
+                                    var max = /*[[${promotEnd}]]*/ '';
+                                    // 取得當前時間（格式 yyyy-MM-ddTHH:mm）
+                                    function getNowLocalDatetime() {
+                                        var now = new Date();
+                                        now.setSeconds(0, 0); // 去除秒數
+                                        var offset = now.getTimezoneOffset();
+                                        var local = new Date(now.getTime() - offset * 60000);
+                                        return local.toISOString().slice(0,16);
+                                    }
+                                    var nowStr = getNowLocalDatetime();
+                                    // 取較晚者作為min
+                                    var min = promotMin > nowStr ? promotMin : nowStr;
+                                    if (endTimeInput) {
+                                        endTimeInput.setAttribute('min', min);
+                                        endTimeInput.setAttribute('max', max);
+                                        endTimeInput.addEventListener('input', function() {
+                                            if (endTimeInput.value < min) endTimeInput.value = min;
+                                            if (endTimeInput.value > max) endTimeInput.value = max;
+                                        });
+                                    }
+                                });
+                                /*]]>*/
+                            </script>
                             <button type="submit" class="btn btn-primary">開啟團購</button>
                         </form>
                     </div>

@@ -21,13 +21,6 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader";
     }
 	
-//	@GetMapping("/leader-address")
-//    public String leaderaddress(HttpSession session){
-//		if(session.getAttribute("loggedInMember") == null) {
-//			return "front/member/login";
-//		}
-//        return "front/gb/gbleader/leader-address";
-//    }
 	
 	@GetMapping("/leader-cashflow")
     public String leadercashflow(HttpSession session){
@@ -37,22 +30,6 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader-cashflow";
     }
 	
-//	@GetMapping("/leader-groups")
-//    public String leadergroups(HttpSession session){
-//		if(session.getAttribute("loggedInMember") == null) {
-//			return "front/member/login";
-//		}
-//        return "front/gb/gbleader/leader-groups";
-//    }
-		
-//	@GetMapping("/leaderindex")
-//	public String leaderindex(HttpSession session){
-//		if(session.getAttribute("loggedInMember") == null) {
-//			return "front/member/login";
-//		}
-//        return "front/gb/gbleader/leaderindex";
-//    }
-	
 	@GetMapping("/leader-notifications")
     public String leadernotifications(HttpSession session){
 		if(session.getAttribute("loggedInMember") == null) {
@@ -61,13 +38,7 @@ public class GroupBuyingCasesServlet {
         return "front/gb/gbleader/leader-notifications";
     }
 	
-//	@GetMapping("/leader-orders")
-//    public String leaderorders(HttpSession session){
-//		if(session.getAttribute("loggedInMember") == null) {
-//			return "front/member/login";
-//		}
-//        return "front/gb/gbleader/leader-orders";
-//    }
+
 	
 	@GetMapping("/leader-product")
     public String leaderproduct(HttpSession session){
@@ -93,19 +64,7 @@ public class GroupBuyingCasesServlet {
         
     }
 	
-//	@GetMapping("/leader-gbdetail")
-//    public String leadergbdetail(HttpSession session){
-//		if(session.getAttribute("loggedInMember") == null) {
-//			return "front/member/login";
-//		}
-//        return "front/gb/gbleader/leader-gbdetail";
-//    }
 	
-//	@GetMapping("/leader-groups-edit")
-//    public String leadergroupsedit(HttpSession session){
-//		if(session.getAttribute("loggedInMember") == null) {
-//			return "front/member/login";
-//		}
-//        return "front/gb/gbleader/leader-groups-edit";
-//    }
+	
+
 }

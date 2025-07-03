@@ -167,11 +167,11 @@ public class GroupBuyingCasesService {
         // 3. 用 switch-case 對應訂單狀態
         Byte orderStatus = null;
         switch (newStatus != null ? newStatus.intValue() : -1) {
-            case 3:
-            case 4:
-            case 5: // 5 也要設為取消
-            case 6:
-                orderStatus = 3; // 取消
+            case 5: // 5: 已取消（團主手動取消）
+                orderStatus = 3; // 3: 訂單已取消
+                break;
+            case 6: // 6: 開團失敗（未達標自動失敗）
+                orderStatus = 4; // 4: 訂單開團失敗
                 break;
             default:
                 // 其他狀態不處理
@@ -196,27 +196,35 @@ public class GroupBuyingCasesService {
               }
           }
     
-   	//根據結束日期與累積購買數量自動判斷團購狀態*/@Transactional
+  //根據結束日期與累積購買數量自動判斷團購狀態*/@Transactional
+    @Transactional
     public void autoUpdateGroupStatus(Integer gbId) {
         GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId).orElseThrow(() -> new RuntimeException("找不到團購案"));
         LocalDateTime now = LocalDateTime.now();
         if (gbCase.getGbStatus() == 5) {
-        	// 已取消不自動變更
-        	return;
+            // 已取消不自動變更
+            return;
         }
         if (gbCase.getGbEndTime().isAfter(now)) {
-        	// 結束日期未到，狀態設為招募中
-            gbCase.setGbStatus((byte)1);
-            } else {
-            	// 結束日期已到
+            // 結束時間未到，狀態設為招募中
+            gbCase.setGbStatus((byte)1); // 1: 招募中
+        } else {
+            // 結束時間已到
             if (gbCase.getCumulativePurchaseQuantity() >= gbCase.getGbMinProductQuantity()) {
-                gbCase.setGbStatus((byte)4); // 已截止（成團）
-                } else {
-                	gbCase.setGbStatus((byte)5); // 已取消（未成團）
-                } 
+                gbCase.setGbStatus((byte)4); // 4: 已截止（成團）
+            } else {
+                gbCase.setGbStatus((byte)6); // 6: 開團失敗
+                // 將所有訂單設為 4（開團失敗）
+                java.util.List<com.foodietime.grouporders.model.GroupOrdersVO> orders = groupOrdersRepository.findByGroupBuyingCase_GbId(gbId);
+                for (com.foodietime.grouporders.model.GroupOrdersVO order : orders) {
+                    order.setOrderStatus((byte)4); // 4: 訂單開團失敗
+                    groupOrdersRepository.save(order);
+                }
             }
-        groupBuyingCasesRepository.save(gbCase);
         }
+        groupBuyingCasesRepository.save(gbCase);
+    }
+
             
 
 }

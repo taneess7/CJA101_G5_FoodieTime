@@ -100,6 +100,23 @@ public class gbleaderservlet {
                 return "error/404";
             }
             model.addAttribute("product", product);
+         // 取得promotion最低成團數量與開始/結束時間
+            Integer gbMinQty = null;
+            String promotStart = null;
+            String promotEnd = null;
+            if (product.getGbpromotionList() != null && !product.getGbpromotionList().isEmpty()) {
+                var promo = product.getGbpromotionList().get(0);
+                gbMinQty = promo.getGbMinQty();
+                if (promo.getPromotStart() != null) {
+                    promotStart = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(promo.getPromotStart());
+                }
+                if (promo.getPromotEnd() != null) {
+                    promotEnd = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(promo.getPromotEnd());
+                }
+            }
+            model.addAttribute("gbMinQty", gbMinQty);
+            model.addAttribute("promotStart", promotStart);
+            model.addAttribute("promotEnd", promotEnd);
             return "front/gb/gbleader/leader-product";
         }
 	    
