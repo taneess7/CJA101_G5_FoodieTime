@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>聯絡我們</title>
+    <link rel="stylesheet" th:href="@{/css/common/index.css}">
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body
-    class="relative bg-gradient-to-br from-red-100 via-yellow-100 to-orange-200 min-h-screen flex items-center justify-center">
-
+<body class="bg-gradient-to-br from-orange-100 to-rose-200 min-h-screen flex flex-col font-sans">
+<main class="flex-grow pt-8 sm:pt-12">
     <!-- 背景裝飾 -->
     <img src="https://cdn-icons-png.flaticon.com/512/414/414927.png" alt="cloud"
         class="absolute top-10 left-10 w-16 opacity-20">
@@ -19,7 +20,8 @@
 
 
     <div
-        class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-xl transition-transform duration-300 transform hover:scale-[1.01]">
+    class="mx-auto mt-4 bg-white p-10 rounded-2xl shadow-2xl w-full max-w-xl transition-transform duration-300 transform hover:scale-[1.01]">
+
         <!-- 可選 logo -->
         <div class="flex justify-center mb-4">
             <img th:src="@{/images/icons/logo.png}" alt="Logo" class="h-20 w-20 rounded-full shadow-md">
@@ -45,7 +47,8 @@
         </form>
     </div>
 
-    
+    </main>
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 
 </body>
 
