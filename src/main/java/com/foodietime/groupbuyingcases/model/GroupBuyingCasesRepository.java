@@ -51,4 +51,8 @@ public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCas
     List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus);
 
     List<GroupBuyingCasesVO> findByGbStatusAndSettled(Byte gbStatus, Boolean settled);
+
+    // 查詢所有已到期且狀態為招募中的團購案
+    @Query("SELECT gbc FROM GroupBuyingCasesVO gbc WHERE gbc.gbStatus = 1 AND gbc.gbEndTime <= CURRENT_TIMESTAMP")
+    List<GroupBuyingCasesVO> findAllEndedRecruiting();
 }
