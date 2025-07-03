@@ -36,7 +36,13 @@ public class FavoriteListController {
 	}
 	
 	@GetMapping("/member-favorites")
-	public String showMemberFavorites(HttpSession session, Model model) {
+	public String showMemberFavorites(HttpSession session, HttpServletResponse response,Model model) {
+		
+		// 禁止快取
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
 	    MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
 	    if (member == null) {
 	        return "redirect:/category/login";
@@ -108,13 +114,16 @@ public class FavoriteListController {
 	}
 	
 	@GetMapping("/logout")
-    public String logout(HttpSession session,HttpServletResponse response) {
-        session.invalidate();
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
-        return "redirect:/index";
-    }
+	public String logout(HttpSession session, HttpServletResponse response) {
+	    session.invalidate(); // 清除登入資訊
+
+	    // 禁止快取
+	    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+	    response.setHeader("Pragma", "no-cache");
+	    response.setDateHeader("Expires", 0);
+
+	    return "redirect:/category"; // 登出後返回首頁或分類頁
+	}
 //	// 主頁
 //    @GetMapping("/select_page")
 //    public String index() {

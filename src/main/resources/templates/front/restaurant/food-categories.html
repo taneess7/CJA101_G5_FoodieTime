@@ -15,6 +15,10 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5722">
     <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 </head>
 <body>
     <header class="app-header">
@@ -39,9 +43,10 @@
                     <li class="nav-item"><a href="/act" class="nav-link">優惠</a></li>
                     <li class="nav-item">
 						<div th:if="${session.loggedInMember == null}">
-							<a th:href="@{/category/login}"
-								class="btn btn-outline-secondary me-2"> <i
-								class="bi bi-person"></i> 登入/註冊
+							<a href="/category/login"
+  								 class="btn btn-outline-secondary me-2"
+  								 onclick="sessionStorage.setItem('redirectAfterLogin', window.location.pathname)">
+   								<i class="bi bi-person"></i> 登入/註冊
 							</a>
 
 						</div>
