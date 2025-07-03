@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ================== 【核心功能】動態更新優惠券折扣與總金額 (偵錯版) ==================
-    console.log("【偵錯】checkout.js 已載入。"); // 檢查 JS 是否有被執行
+    // ================== 【核心功能】動態更新優惠券折扣與總金額 ==================
+    console.log("【偵錯】checkout.js 已載入。");
 
     const couponSelect = document.getElementById('coupon-select');
     const hiddenCouponInput = document.getElementById('selected-coupon-id-input');
-
     const subtotalElem = document.getElementById('checkout-subtotal');
     const shippingElem = document.getElementById('checkout-shipping');
     const discountDisplayElem = document.getElementById('dynamic-discount-display');
@@ -19,8 +18,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalShipping = parseInt(shippingElem.textContent.replace(/[^0-9]/g, '')) || 0;
         console.log(`【偵錯】讀取到的原始金額 -> 小計: ${originalSubtotal}, 運費: ${originalShipping}`);
 
+        // ★★★ 存取 originalSubtotal ★★★
+        function updateCouponAvailability() {
+            const options = couponSelect.querySelectorAll('option');
+            options.forEach(option => {
+                const minSpend = parseInt(option.getAttribute('data-min-spend')) || 0;
+                if (minSpend > 0 && originalSubtotal < minSpend) {
+                    option.disabled = true;
+                    // 避免重複添加提示文字
+                    if (!option.textContent.includes('(未達低消)')) {
+                        option.textContent = option.textContent + ' (未達低消)';
+                    }
+                } else {
+                    option.disabled = false;
+                    // 移除提示文字
+                    option.textContent = option.textContent.replace(' (未達低消)', '');
+                }
+            });
+        }
+
         function updatePrice() {
-            console.log("【偵錯】updatePrice 函數被呼叫。"); // 檢查事件是否有觸發
+            console.log("【偵錯】updatePrice 函數被呼叫。");
 
             const selectedOption = couponSelect.options[couponSelect.selectedIndex];
             const discountAmount = parseInt(selectedOption.getAttribute('data-discount')) || 0;
@@ -46,33 +64,49 @@ document.addEventListener('DOMContentLoaded', function() {
                     discountTextElem.style.borderRadius = '4px';
                     discountTextElem.style.fontWeight = 'bold';
                 } else {
-                    console.log("【偵錯】條件不符，顯示提示訊息。");
+                    console.log("【偵錯】條件不符，自動重置為不使用優惠券。");
+
+                    // ★★★ 【核心邏輯】自動重置為「不使用優惠券」★★★
+                    couponSelect.value = "0";
+
+                    // 顯示友善的提示訊息
                     discountDisplayElem.innerHTML = `
                         <span></span>
-                        <span class="dynamic-error-text">未達最低消費 NT$ ${minSpendAmount}</span>
+                        <span class="dynamic-warning-text">此優惠券需消費滿 NT$ ${minSpendAmount}，已自動取消選擇</span>
                     `;
-                    const errorTextElem = discountDisplayElem.querySelector('.dynamic-error-text');
-                    errorTextElem.style.color = 'red';
-                    errorTextElem.style.fontSize = '0.9em';
+                    const warningTextElem = discountDisplayElem.querySelector('.dynamic-warning-text');
+                    warningTextElem.style.color = '#ff9800';
+                    warningTextElem.style.fontSize = '0.9em';
+                    warningTextElem.style.fontWeight = 'bold';
+
+                    // 3秒後清除警告訊息
+                    setTimeout(() => {
+                        discountDisplayElem.innerHTML = '';
+                    }, 3000);
                 }
             } else {
                 console.log("【偵錯】未選擇優惠券或折扣為 0。");
             }
 
+            // 更新隱藏輸入框的值
             hiddenCouponInput.value = couponSelect.value;
             const newTotal = originalSubtotal + originalShipping - finalDiscount;
             totalElem.textContent = `NT$ ${newTotal >= 0 ? newTotal : 0}`;
             console.log(`【偵錯】更新後總金額為: ${newTotal}`);
         }
 
+        // 初始化優惠券可用性
+        updateCouponAvailability();
+
+        // 綁定事件監聽器
         couponSelect.addEventListener('change', updatePrice);
+
+        // 初始化價格顯示
         updatePrice();
+
     } else {
-        // 如果有元素找不到，這裡會告訴我們是哪個
         console.error("【錯誤】找不到必要的 HTML 元素！請檢查以下 ID 是否存在: 'coupon-select', 'selected-coupon-id-input', 'checkout-subtotal', 'checkout-shipping', 'dynamic-discount-display', 'checkout-total'");
     }
-    // ================================================================
-
 
     // ================== 處理付款方式切換 ==================
     const paymentMethodRadios = document.querySelectorAll('input[name="payMethod"]');
@@ -91,11 +125,8 @@ document.addEventListener('DOMContentLoaded', function() {
         paymentMethodRadios.forEach(radio => {
             radio.addEventListener('change', toggleCreditCardDetails);
         });
-        // 初始化顯示狀態
         toggleCreditCardDetails();
     }
-    // ================================================================
-
 
     // ================== 處理信用卡驗證 ==================
     const ccNumberInput = document.getElementById('cc-number');
@@ -114,43 +145,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    // ================================================================
-    /**
-     * 處理「一鍵帶入會員地址」按鈕的點擊事件。
-     * 使用 data 屬性方案：從按鈕的 data-* 屬性讀取會員資料。
-     */
+
+    // ================== 處理會員地址帶入 ==================
     const fillAddressBtn = document.getElementById('fill-member-address-btn');
     const ordAddrInput = document.getElementById('ordAddr');
 
     if (fillAddressBtn) {
         fillAddressBtn.addEventListener('click', function() {
-
-            // ★★★ 【核心邏輯】★★★
-            // 從按鈕的 data 屬性讀取會員資料
-            // this.dataset 會自動將 data-city 轉換為 dataset.city
             const city = this.dataset.city;
-            const cityArea = this.dataset.cityarea;  // data-cityarea -> dataset.cityarea
+            const cityArea = this.dataset.cityarea;
             const address = this.dataset.address;
 
-            // 檢查會員地址資料是否都存在且不為空
             if (city && cityArea && address &&
                 city.trim() !== '' && cityArea.trim() !== '' && address.trim() !== '') {
 
-                // 組合完整的地址字串
                 const fullAddress = `${city}${cityArea}${address}`;
-
-                // 將組合好的地址填入 "外送地址" 輸入框
                 ordAddrInput.value = fullAddress;
-
-                // 可選：給使用者一個成功的視覺回饋
                 console.log('✅ 成功帶入會員地址:', fullAddress);
-
             } else {
                 alert('無法獲取會員資料，請確認您已登入。');
                 console.warn('❌ 會員資料不完整:', { city, cityArea, address });
             }
         });
     }
-    // ====================================================================
 });
-
