@@ -39,7 +39,7 @@
 				
 				 <div>
 				        <label>商品類別<span class="required">*</span></label>
-				        <select name="categoryId"><!-- 處理lazy 改成name, 及selected取類別值 -->
+				        <select name="categoryId" required><!-- 處理lazy 改成name, 及selected取類別值 -->
 						    <option value="" disabled selected>請選擇類別</option>
 						    <option th:each="cat : ${prodCateList}"
 						            th:value="${cat.prodCateId}"

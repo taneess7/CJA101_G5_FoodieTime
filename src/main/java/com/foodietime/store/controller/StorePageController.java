@@ -471,7 +471,11 @@ public class StorePageController {
 		    Model model,
 		    RedirectAttributes redirectAttr
 		) throws IOException {
-
+			System.out.println("圖片數量 = " + parts.length);
+			System.out.println("圖片是否空 = " + (parts[0].isEmpty()));
+			System.out.println("分類 id = " + categoryId);
+			System.out.println("驗證錯誤？" + result.hasErrors());
+			result.getAllErrors().forEach(e -> System.out.println("❗錯誤：" + e.getDefaultMessage()));
 		    // 1️ 確認登入店家身份
 		    StoreVO loggedInStore = (StoreVO) session.getAttribute("loggedInStore");
 		    if (loggedInStore == null) {
@@ -544,9 +548,14 @@ public class StorePageController {
 		}
 
 		private void handleImage(ProductVO prod, MultipartFile[] parts, Model model) throws IOException {
-		    if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
-		        prod.setProdPhoto(parts[0].getBytes());
+			try {
+		        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
+		            prod.setProdPhoto(parts[0].getBytes());
+		        }
+		    } catch (IOException e) {
+		        model.addAttribute("imageError", "圖片上傳失敗：" + e.getMessage());
 		    }
+		
 		    if (prod.getProdPhoto() != null) {
 		        model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
 		    } else {
