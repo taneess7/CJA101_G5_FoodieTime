@@ -29,6 +29,7 @@ import com.foodietime.act.model.ActParticipationService;
 import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActService;
 import com.foodietime.act.model.ActVO;
+import com.foodietime.act.model.StoreSimpleDTO;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.annotation.PostConstruct;
@@ -38,7 +39,7 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController //每個方法回傳物件 Spring自動轉JSON
 @RequestMapping("/api") //URL 前綴 GET /api/updateAllActPhotos
-public class ApiController {
+public class ActApiController {
 	
 	@Autowired
 	private ActService actSvc;
@@ -64,12 +65,54 @@ public class ApiController {
 
 	//進入可參加活動畫面 /api/allActs   http://localhost:8080/api/allActs 回傳所有api
 	// 所有活動文字 Spring Boot 會自動轉成 JSON 並包裝為 200 OK
-	@GetMapping("/allActs")
-    public List<ActVO> getAllActs() {
-        return actSvc.getAllActs(); 
-    }
 	
-	//前端載入更新過的活動列表
+	/**取得所有活動**/
+//	@GetMapping("/allActs")
+//    public List<ActVO> getAllActs() {
+//        return actSvc.getAllActs();      
+//    }
+	
+	/**取得所有活動及圖片**/
+	@GetMapping("/allActs")
+	public List<Map<String, Object>> getAllActs() {
+	    List<ActVO> acts = actSvc.getAllActs();
+	    List<Map<String, Object>> result = new ArrayList<>();
+
+	    for (ActVO act : acts) {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("actId", act.getActId());
+	        map.put("actName", act.getActName());
+	        map.put("actContent", act.getActContent());
+	        map.put("actStartTime", act.getActStartTime());
+	        map.put("actEndTime", act.getActEndTime());
+	        map.put("actDiscountType", act.getActDiscount());
+	        map.put("actDiscountValue", act.getActDiscValue());
+
+	        // ✅ 新增圖片網址（重點） api路徑要對,圖片才不會error
+	        map.put("actPhoto", "/api/actpic/" + act.getActId());
+
+	        result.add(map);
+	    }
+
+	    return result;
+	}
+	
+	/**參與活動的店家**/
+	@GetMapping("/act/{actId}/stores")
+	@ResponseBody
+	public List<StoreSimpleDTO> getStoresDTOsByActId(@PathVariable Integer actId){ //GET http://localhost:8080/act/5/stores : ，Integer actId = 5 
+	
+		 List<ActParticipationVO> list = actPartSvc.findStoresByActId(actId);
+		    return list.stream()
+		               .map(part -> new StoreSimpleDTO(
+		                     part.getStore().getStorId(),
+		                     part.getStore().getStorName()
+		               ))
+		               .collect(Collectors.toList());
+		}
+	
+
+	//前端載入更新過的活動列表提供給店家(需登入店家)
 		@GetMapping("/store/activities")
 		public List<Map<String, Object>> getActivitiesWithJoinStatus(HttpSession session) {
 		    StoreVO store = (StoreVO) session.getAttribute("loggedInStore");
@@ -100,9 +143,9 @@ public class ApiController {
 		    return result;
 		}
 	
-	//載入圖片 的 doGet("/bookpic/{id}")
-	//Spring 抓出3,傳參數id，網址請求 url: /api/actpic/3 , @GetMapping("actpic/{id})，變數綁定 @PathVariable 3
 	
+	//Spring 抓出3,傳參數id，網址請求 url: /api/actpic/3 , @GetMapping("actpic/{id})，變數綁定 @PathVariable 3
+	/**載入圖片**/
 	@GetMapping("/actpic/{id}")                
 	public ResponseEntity<byte[]> getActPic(@PathVariable Integer id){
 		byte[] picture = actSvc.getPhotoById(id);
@@ -183,5 +226,6 @@ public class ApiController {
 	        return ResponseEntity.ok(" ");//"您已取消參加活動！"
 	    }
 	}
-
+	
+	
 }

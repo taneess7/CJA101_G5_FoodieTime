@@ -90,7 +90,7 @@ public class AddUpdateController {
 	// 新增功能
 	@PostMapping("/insert")
 	public String insert(@Valid ActVO actVO, BindingResult result, ModelMap model,
-//			@RequestParam("storeCateId") Integer storeCateId,
+			@RequestParam("storeCateId") Integer storeCateId,
 			@RequestParam("upFiles") MultipartFile[] parts, RedirectAttributes redirectAttrs,
 			HttpServletRequest request) throws IOException {
 
@@ -103,8 +103,8 @@ public class AddUpdateController {
 		}
 
 //		/**使用storeCateId 查相關店家 **/
-//		List<StoreVO> stores = storeSvc.findByCateId(storeCateId);
-//		
+		List<StoreVO> stores = storeSvc.findByCateId(storeCateId);
+		
 
 		/*** 接收請求參數，輸入格式錯誤處理 ***/
 		// 去除圖片欄位驗證錯誤
@@ -359,7 +359,7 @@ public class AddUpdateController {
 		return "redirect:/act";
 	}
 
-	// ===========================列出店家參加的活動========================================
+	// ===========================列出店家參加的活動及商品折扣========================================
 	@GetMapping("/myActs")
 	public String getMyJoinedActs(HttpSession session, Model model) {
 

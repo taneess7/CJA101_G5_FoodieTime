@@ -25,6 +25,8 @@ public interface ActParticipationRepository extends JpaRepository<ActParticipati
 	
 	 
 	 List<ActParticipationVO> findByStore_StorId(Integer storId); // 透過 StorId 查詢所有該店家的活動參與資料
+
+	List<ActParticipationVO> findByAct_ActId(Integer actId);
 	 
 
 }
