@@ -54,14 +54,26 @@
 
             <!-- 收件資訊 - 對應 OrdersVO 的 ordAddr -->
             <div class="form-section">
-              <h2 class="section-title">收件資訊</h2>
+
+                <h2 class="section-title">收件資訊</h2>
+
               <div class="form-group">
                 <label for="ordAddr">外送地址</label>
-                <!-- 【修改點 2】: 使用 th:field="*{ordAddr}" 取代 name="ordAddr" -->
-                <!-- th:field 會自動生成 id="ordAddr", name="ordAddr" 和 value="..." -->
+                <div>
                 <input type="text" id="ordAddr" th:field="*{ordAddr}" placeholder="請輸入完整外送地址" required>
+                <!-- 【核心修改】在按鈕上加入 data 屬性來存放會員資料 -->
+                <button  type="button"
+                        id="fill-member-address-btn"
+                        class="btn btn-sm btn-outline-primary"
+                        th:data-city="${loggedInMember?.memCity}"
+                        th:data-cityarea="${loggedInMember?.memCityarea}"
+                        th:data-address="${loggedInMember?.memAddress}">
+                  帶入地址
+                </button>
+                </div>
               </div>
             </div>
+
 
             <!-- 付款方式 - 對應 OrdersVO 的 payMethod -->
             <div class="form-section">

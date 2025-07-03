@@ -110,7 +110,9 @@ public class OrdersController {
         if (memberVO == null) {
             return "redirect:/cart/login";
         }
-
+        if (memberVO != null) {
+            model.addAttribute("loggedInMember", memberVO);
+        }
         // 1. 計算商品總金額 (小計)
         Integer subtotalAmount = checkoutItems.stream().mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN()).sum();
         model.addAttribute("totalAmount", subtotalAmount); // 將小計金額傳給前端
@@ -150,7 +152,7 @@ public class OrdersController {
 
         model.addAttribute("couponDiscount", couponDiscount); // 將預期的優惠券折扣傳給前端
         model.addAttribute("finalTotal", Math.max(0, finalTotal)); // 確保總計不為負數
-
+        model.addAttribute("orderData", new OrdersVO());
         model.addAttribute("checkoutItems", checkoutItems); // 傳遞購物車商品列表
         OrdersVO orderData = new OrdersVO();
         orderData.setPayMethod(0); // 預設選中 "信用卡" (value=0)

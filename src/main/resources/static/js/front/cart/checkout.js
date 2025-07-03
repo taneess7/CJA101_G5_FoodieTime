@@ -115,6 +115,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     // ================================================================
+    /**
+     * 處理「一鍵帶入會員地址」按鈕的點擊事件。
+     * 使用 data 屬性方案：從按鈕的 data-* 屬性讀取會員資料。
+     */
+    const fillAddressBtn = document.getElementById('fill-member-address-btn');
+    const ordAddrInput = document.getElementById('ordAddr');
 
+    if (fillAddressBtn) {
+        fillAddressBtn.addEventListener('click', function() {
+
+            // ★★★ 【核心邏輯】★★★
+            // 從按鈕的 data 屬性讀取會員資料
+            // this.dataset 會自動將 data-city 轉換為 dataset.city
+            const city = this.dataset.city;
+            const cityArea = this.dataset.cityarea;  // data-cityarea -> dataset.cityarea
+            const address = this.dataset.address;
+
+            // 檢查會員地址資料是否都存在且不為空
+            if (city && cityArea && address &&
+                city.trim() !== '' && cityArea.trim() !== '' && address.trim() !== '') {
+
+                // 組合完整的地址字串
+                const fullAddress = `${city}${cityArea}${address}`;
+
+                // 將組合好的地址填入 "外送地址" 輸入框
+                ordAddrInput.value = fullAddress;
+
+                // 可選：給使用者一個成功的視覺回饋
+                console.log('✅ 成功帶入會員地址:', fullAddress);
+
+            } else {
+                alert('無法獲取會員資料，請確認您已登入。');
+                console.warn('❌ 會員資料不完整:', { city, cityArea, address });
+            }
+        });
+    }
+    // ====================================================================
 });
 
