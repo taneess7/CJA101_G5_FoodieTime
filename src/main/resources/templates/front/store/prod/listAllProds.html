@@ -51,9 +51,9 @@ body{
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    padding: 32px 28px 24px 28px;
+    padding: 10px 28px 0px 28px;
     margin: 32px auto 0 auto;
-    max-width: 98vw;
+    max-width: 90vw;
 }
 .prod-card-title {
     color: #ff7f50;
@@ -63,7 +63,7 @@ body{
     text-align: center;
 }
 #example {
-  font-size: 14px;
+  font-size: 18px;
 }
 #example th, #example td {
   padding: 4px 8px !important;
@@ -80,6 +80,8 @@ body{
 .table-responsive {
   padding: 0 4px;
 }
+
+
 </style>
 
 <body>
@@ -88,7 +90,7 @@ body{
 	 <div align="center"></div>
 </nav>
 <div class="prod-card">
-  <h2 class="prod-card-title">一般商品列表</h2>
+  <h2 class="prod-card-title" style="margin:0 auto">一般商品列表</h2>
   <div class="table-responsive">
     <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
       <thead >
@@ -124,7 +126,8 @@ body{
 			<td>
 			  <form method="get" th:action="@{/store/prod/prodEdit}" style="margin-bottom: 0px;">
 			     <input type="hidden" name="prodId" th:value="${prodVO.prodId}">
-			     <input type="submit" value="修改">
+			         <button style="text-align:center; vertical-align:middle;" type="submit">修改</button>
+<!-- 			     <input type="submit" value="修改">  -->
 			  </form>
 			
 			</td>
@@ -141,6 +144,6 @@ body{
     </table>
   </div>
 </div>
-
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 </body>
 </html>

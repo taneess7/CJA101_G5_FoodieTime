@@ -7,9 +7,7 @@
 <meta name="description" content="FoodieTime 食刻美食地圖平台 - 編輯店家資訊">
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-<link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" th:href="@{/css/front/store/store_edit2.css}">
-<link rel="stylesheet" href="css/responsive.css">
 <meta name="theme-color" content="#FF5722">
 
 
@@ -222,13 +220,11 @@
 				
 	</main>
 
-	<footer class="app-footer">
-		<div class="container">
-			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-		</div>
-	</footer>
 	
-<!-- 	</div> -->
+
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+	
+
 	<script>
 
 /*店家照片預覽*/

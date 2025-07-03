@@ -39,7 +39,7 @@
 				
 				 <div>
 				        <label>商品類別<span class="required">*</span></label>
-				        <select name="categoryId"><!-- 處理lazy 改成name, 及selected取類別值 -->
+				        <select name="categoryId" required><!-- 處理lazy 改成name, 及selected取類別值 -->
 						    <option value="" disabled selected>請選擇類別</option>
 						    <option th:each="cat : ${prodCateList}"
 						            th:value="${cat.prodCateId}"
@@ -81,7 +81,7 @@
 									accept="image/*" onchange="previewImage(event)">
 								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
 								<img id="imagePreview"
-									th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="預覽圖片"
+									th:src="${base64Image}" alt="預覽圖片"
 									style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
 
 							</div>
@@ -106,11 +106,7 @@
 			</form>
 	</main>
 	
-		<footer class="app-footer">
-		<div class="container">
-			<p>&nbsp;&nbsp;&copy; 2024 FoodieTime 食刻. All rights reserved.</p>
-		</div>
-	</footer>
+		<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 <script>
   
 

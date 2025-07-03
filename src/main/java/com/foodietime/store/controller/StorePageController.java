@@ -375,6 +375,12 @@ public class StorePageController {
 		
 		
 /***進入商品新增或編輯畫面***/
+		 @GetMapping("/prod/success")
+		    public String prodAddSuccess() {
+			 System.out.println("進入成功頁");
+		        return "front/store/prod/success"; 
+		    }
+		 
 		@GetMapping("/prod/prodEdit")
 		public String showEditPage(@RequestParam(required = false) Integer prodId, 
 				HttpSession session, Model model) {
@@ -412,12 +418,11 @@ public class StorePageController {
 			model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
 			
 			//顯示預覽圖轉base64
-			if(prodVO.getProdPhoto()!=null) {
-				String base64Image = Base64.getEncoder().encodeToString(prodVO.getProdPhoto());
-				model.addAttribute("base64Image", base64Image);				
-			
-			}else {model.addAttribute("base64Image", 
-					"https://placehold.co/300x200/ffcc00/333?");//放預設圖片連結}
+			if (prodVO.getProdPhoto() != null) {
+			    String base64 = Base64.getEncoder().encodeToString(prodVO.getProdPhoto());
+			    model.addAttribute("base64Image", "data:image/jpeg;base64," + base64); // ✅這裡就加好
+			} else {
+			    model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333"); // ✅直接是URL
 			}
 			
 			return "front/store/prod/prodEdit"; //回到prodEdit.html頁面
@@ -466,7 +471,11 @@ public class StorePageController {
 		    Model model,
 		    RedirectAttributes redirectAttr
 		) throws IOException {
-
+			System.out.println("圖片數量 = " + parts.length);
+			System.out.println("圖片是否空 = " + (parts[0].isEmpty()));
+			System.out.println("分類 id = " + categoryId);
+			System.out.println("驗證錯誤？" + result.hasErrors());
+			result.getAllErrors().forEach(e -> System.out.println("❗錯誤：" + e.getDefaultMessage()));
 		    // 1️ 確認登入店家身份
 		    StoreVO loggedInStore = (StoreVO) session.getAttribute("loggedInStore");
 		    if (loggedInStore == null) {
@@ -495,7 +504,7 @@ public class StorePageController {
 		        prod.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
 		        prodSvc.addProduct(prod, categoryId);
 		        redirectAttr.addFlashAttribute("successMessage", "商品新增成功！");
-		        return "redirect:/store/prod/prodEdit";
+		        return "redirect:/store/prod/success";  //需重導其他名子的GetMapping，避免重複新增出現空白頁
 		    } else {
 		        // ✏️ 修改商品
 		        result = removeFieldError(prod, result, "upFiles");
@@ -539,9 +548,14 @@ public class StorePageController {
 		}
 
 		private void handleImage(ProductVO prod, MultipartFile[] parts, Model model) throws IOException {
-		    if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
-		        prod.setProdPhoto(parts[0].getBytes());
+			try {
+		        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
+		            prod.setProdPhoto(parts[0].getBytes());
+		        }
+		    } catch (IOException e) {
+		        model.addAttribute("imageError", "圖片上傳失敗：" + e.getMessage());
 		    }
+		
 		    if (prod.getProdPhoto() != null) {
 		        model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
 		    } else {
