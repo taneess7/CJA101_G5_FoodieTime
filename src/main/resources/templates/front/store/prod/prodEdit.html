@@ -53,13 +53,13 @@
 				
 				<div>
 					<label>商品名稱<span class="required">*</span></label> 
-					<input type="text" th:field="*{prodName}" placeholder="描述餐點名稱，40字以內" maxlength="45" required/>
+					<input type="text" th:field="*{prodName}" placeholder="描述餐點名稱，40字以內" maxlength="45" />
 					 <div style="color:red;" th:if="${#fields.hasErrors('prodName')}" th:errors="*{prodName}"></div>
 				</div>
 				
 				<div>
 					<label>商品描述<span class="required">*</span></label> 
-					<input type="text" th:field="*{prodDesc}" placeholder="描述餐點的特色，40字以內" maxlength="45" required/>
+					<input type="text" th:field="*{prodDesc}" placeholder="描述餐點的特色，40字以內" maxlength="45" />
 					<div style="color:red;" th:if="${#fields.hasErrors('prodDesc')}" th:errors="*{prodDesc}"></div>
 				</div>
 				
