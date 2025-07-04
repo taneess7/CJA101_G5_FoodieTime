@@ -191,10 +191,14 @@
 									class="form-input" name="upFiles" id="store-image"
 									accept="image/*" onchange="previewImage(event)">
 								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
-								<img id="imagePreview"
-									th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="預覽圖片"
-									style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
-
+<!-- 								<img id="imagePreview" -->
+<!-- 									th:src="'data:image/jpeg;base64,' + ${base64Image}" alt="預覽圖片" -->
+<!-- 									style="max-width: 200px; margin-top: 10px; border-radius: 16px" /> -->
+                                 <img id="imagePreview"
+     									 th:src="@{'/store/photo/' + ${storeVO.storId}}"
+									     alt="預覽圖片"
+									     
+									     style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
 							</div>
 							
 							<div style="text-align: right;">

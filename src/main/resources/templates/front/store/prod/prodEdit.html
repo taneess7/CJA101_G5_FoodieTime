@@ -81,11 +81,12 @@
 									accept="image/*" onchange="previewImage(event)">
 								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
 								<img id="imagePreview"
-									th:src="${base64Image}" alt="預覽圖片"
+									th:src="${base64Image}" alt="預覽圖片" 
 									style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
 
 							</div>
-				
+<!-- 							th:src="@{'/store/prod/photo/' +  *{prodId}}"  alt="預覽圖片" -->
+
 			<!-- 上架狀態 -->
 				<div class="form-group">
 					<label class="form-label">上架狀態</label> <select

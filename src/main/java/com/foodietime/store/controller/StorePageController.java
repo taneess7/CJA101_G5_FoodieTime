@@ -1,6 +1,7 @@
 package com.foodietime.store.controller;
 
 import java.beans.PropertyEditorSupport;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Time;
@@ -13,14 +14,22 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -32,6 +41,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -129,19 +139,23 @@ public class StorePageController {
 	    // 放進 model 以供 Thymeleaf 表單綁定使用
 		model.addAttribute("storeVO", storeVO); // 這一行必不可少！
 		model.addAttribute("storCatNameList", storeCateSvc.getAll());
-		// 顯示預覽圖//
-		if (storeVO.getStorPhoto() != null) {
-			String base64Image = Base64.getEncoder().encodeToString(storeVO.getStorPhoto());
-			model.addAttribute("base64Image", base64Image);
-		} else {
-			model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?"); // 或放預設圖片連結
-		}
+		
+		
+//		// Base64顯示預覽圖太慢，改用專門回傳圖片的Controller//
+//		if (storeVO.getStorPhoto() != null) {
+//			String base64Image = Base64.getEncoder().encodeToString(storeVO.getStorPhoto());
+//			model.addAttribute("base64Image", base64Image);
+//		} else {
+//			model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?"); // 或放預設圖片連結
+//		}
 
 		// 撈取資料後回到原頁面//
 		return "front/store/store_edit2"; // 找 templates/store_edit2 測試thymleaf 、圖片預覽、地址轉經緯度功能
 	}
+	
+	
 
-	// 更新store全部欄位
+	//====================更新store全部欄位=========================//
 	@PostMapping("/updateAll")
 	public String updateStore(@Valid @ModelAttribute("storeVO") StoreVO storeVO, BindingResult result, Model model,
 			@RequestParam("upFiles") MultipartFile[] parts, @RequestParam("storWeeklyOffDay") String[] offDays // 公休日欄位：多選
@@ -607,7 +621,85 @@ public class StorePageController {
 			return "front/store/listAllProds";
 			
 		}
+		//====================專門回傳圖片的 Controller=========================//
+		@GetMapping("/photo/{storId}") //店家照片
+		public ResponseEntity<byte[]> getStorePhoto(@PathVariable Integer storId) {
+			
+		    byte[] photo = storeSvc.findById(storId).getStorPhoto();
+		    if (photo == null) {
+		        return ResponseEntity.notFound().build();
+		    }
+
+		    HttpHeaders headers = new HttpHeaders();
+		    
+		    //自動判斷圖片格式
+		    String format = "jpeg"; //預設
+		    
+		    try {
+		    	ByteArrayInputStream bais = new ByteArrayInputStream(photo);
+		    	Iterator<ImageReader> readers = ImageIO.getImageReaders(ImageIO.createImageInputStream(bais));
+		    	if (readers.hasNext()) {
+		    		format = readers.next().getFormatName().toLowerCase();//可能為 jpeg, png, gif...
+		    	}
+		    } catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+		    //根據格式設定 Content-Type
+		    switch(format) {
+		    case "png":
+		    	headers.setContentType(MediaType.IMAGE_PNG);
+		    	break;
+		    case "gif":
+		    	headers.setContentType(MediaType.IMAGE_GIF);
+		    	break;
+		    default:
+		    	headers.setContentType(MediaType.IMAGE_JPEG);
+		    	break;
+		    }
+		    
+		   
+		    return new ResponseEntity<>(photo, headers, HttpStatus.OK);
+		}
 		
+		
+		@GetMapping("/prod/photo/{prodId}")  //商品圖片
+		public ResponseEntity<byte[]> getProdPhoto(@PathVariable Integer prodId) {
+			
+		    byte[] photo = prodSvc.getProductById(prodId).getProdPhoto();
+		    if (photo == null) {
+		        return ResponseEntity.notFound().build();
+		    }
+
+		    HttpHeaders headers = new HttpHeaders();
+		    
+		    //自動判斷圖片格式
+		    String format = "jpeg"; //預設
+		    
+		    try {
+		    	ByteArrayInputStream bais = new ByteArrayInputStream(photo);
+		    	Iterator<ImageReader> readers = ImageIO.getImageReaders(ImageIO.createImageInputStream(bais));
+		    	if (readers.hasNext()) {
+		    		format = readers.next().getFormatName().toLowerCase();//可能為 jpeg, png, gif...
+		    	}
+		    } catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+		    //根據格式設定 Content-Type
+		    switch(format) {
+		    case "png":
+		    	headers.setContentType(MediaType.IMAGE_PNG);
+		    	break;
+		    case "gif":
+		    	headers.setContentType(MediaType.IMAGE_GIF);
+		    	break;
+		    default:
+		    	headers.setContentType(MediaType.IMAGE_JPEG);
+		    	break;
+		    }
+		    
+		   
+		    return new ResponseEntity<>(photo, headers, HttpStatus.OK);
+		}
 		//===========================進入商品列表，撈出所有店家的商品=======================================
 		
 //		@GetMapping("/listAllStoreProds")
