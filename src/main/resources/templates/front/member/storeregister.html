@@ -17,7 +17,7 @@
             <!-- 店家名稱 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">店家名稱</label>
-                <input type="text" th:field="*{storName}" required class="w-full border rounded-lg px-3 py-2">
+                <input type="text" th:field="*{storName}" class="w-full border rounded-lg px-3 py-2">
                  <div th:if="${#fields.hasErrors('storName')}" class="text-red-500 text-sm mt-1">
                 	<p th:errors="*{storName}"></p>
             	</div>
@@ -40,7 +40,7 @@
             <!-- 店家電話 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">電話</label>
-                <input type="text" th:field="*{storPhone}" required class="w-full border rounded-lg px-3 py-2">
+                <input type="text" th:field="*{storPhone}" class="w-full border rounded-lg px-3 py-2">
                 <div th:if="${#fields.hasErrors('storPhone')}" class="text-red-500 text-sm mt-1">
                 	<p th:errors="*{storPhone}"></p>
             	</div>
@@ -49,7 +49,7 @@
             <!-- 地址 -->
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">地址</label>
-                <input type="text" th:field="*{storAddr}" required class="w-full border rounded-lg px-3 py-2">
+                <input type="text" th:field="*{storAddr}" class="w-full border rounded-lg px-3 py-2">
                 <div th:if="${#fields.hasErrors('storAddr')}" class="text-red-500 text-sm mt-1">
                 	<p th:errors="*{storAddr}"></p>
             	</div>
@@ -74,14 +74,14 @@
             <!-- 營業時間 -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">開店時間</label>
-                <input type="time" th:field="*{storOnTime}" required class="w-full border rounded-lg px-3 py-2">
+                <input type="time" th:field="*{storOnTime}" class="w-full border rounded-lg px-3 py-2">
                 <div th:if="${#fields.hasErrors('storOnTime')}" class="text-red-500 text-sm mt-1">
                 	<p th:errors="*{storOnTime}"></p>
             	</div>
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">關店時間</label>
-                <input type="time" th:field="*{storOffTime}" required class="w-full border rounded-lg px-3 py-2">
+                <input type="time" th:field="*{storOffTime}" class="w-full border rounded-lg px-3 py-2">
                 <div th:if="${#fields.hasErrors('storOffTime')}" class="text-red-500 text-sm mt-1">
 	                <p th:errors="*{storOffTime}"></p>
 	            </div>
