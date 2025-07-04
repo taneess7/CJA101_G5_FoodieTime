@@ -344,7 +344,7 @@ public class StorePageController {
 		}
 		
 		// 僅供下拉選單使用
-		@ModelAttribute("prodListOptionList")
+//		@ModelAttribute("prodListOptionList")
 		protected List<ProductVO> referenceListData_Prod(){
 			return prodSvc.getAllProducts();
 		}
@@ -354,7 +354,7 @@ public class StorePageController {
 //		</select>
 		
 		//所有店家的清單（for 下拉選單）
-		@ModelAttribute("storeListData")
+//		@ModelAttribute("storeListData")
 		protected List<StoreVO> referenceListData_Store(Model model){
 			model.addAttribute("storeVO", new StoreVO());
 			return storeSvc.getAll();
@@ -417,7 +417,12 @@ public class StorePageController {
 			
 			//填入商品分類清單
 			model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
-			
+			// 1. 載入所有店家的列表
+			model.addAttribute("storeListData", storeSvc.getAll());
+			// 2. 載入所有商品的列表 (如果您的表單需要)
+			model.addAttribute("prodListOptionList", prodSvc.getAllProducts());
+			// 3. 載入所有商品分類的列表
+			model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
 			//顯示預覽圖轉base64
 			if (prodVO.getProdPhoto() != null) {
 			    String base64 = Base64.getEncoder().encodeToString(prodVO.getProdPhoto());
