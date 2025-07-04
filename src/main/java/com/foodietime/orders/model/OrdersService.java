@@ -446,59 +446,106 @@ public class OrdersService {
     }
 
     /**
-     * 呼叫 LINE Pay Request API 以取得真實支付 URL，並使用 HMAC 簽章認證。
+     * 呼叫 LINE Pay Request API 以取得真實支付 URL。
+     *
+     * @param order 包含所有訂單資訊的「待付款」訂單物件
+     * @return 可供使用者點擊前往付款的 LINE Pay URL
+     * @throws RuntimeException 當 API 請求失敗或簽章產生錯誤時拋出
      */
     public String initiateLinePayPayment(OrdersVO order) {
         String nonce = UUID.randomUUID().toString();
         String requestBodyJson;
 
-        // ==================== 1. 組裝請求主體 (Request Body) ====================
+        // ==================== 1. 精確計算並建立商品列表 (★★ 核心修正點 ★★) ====================
+        // 1a. 建立一個 List 來收集所有要傳給 LINE Pay 的項目
+        List<LinePayRequestDTO.Product> linePayProducts = new ArrayList<>();
+
+        // 1b. 將訂單中的所有實際商品加入列表
+        // 註：在金融計算中，強烈建議使用 BigDecimal 以避免精度問題。
+        //     此處為符合您現有 VO 的 Integer/long 型別，暫用 long 進行計算。
+        for (OrdDetVO det : order.getOrdDet()) {
+            linePayProducts.add(LinePayRequestDTO.Product.builder()
+                    .name(det.getProduct().getProdName())
+                    .quantity(det.getProdQty())
+                    .price(det.getProdPrice().longValue())
+                    .build());
+        }
+
+        // 1c. 如果有運費，將運費作為一個獨立的商品加入
+        if (order.getShippingFee() != null && order.getShippingFee() > 0) {
+            linePayProducts.add(LinePayRequestDTO.Product.builder()
+                    .name("運費")
+                    .quantity(1)
+                    .price(order.getShippingFee().longValue())
+                    .build());
+        }
+
+        // 1d. 如果有優惠券折扣，將折扣作為一個獨立的商品加入 (使用負值)
+        // 注意：支付閘道 API 普遍接受負值價格來表示訂單層級的折扣。
+        if (order.getCouponDiscount() != null && order.getCouponDiscount() > 0) {
+            linePayProducts.add(LinePayRequestDTO.Product.builder()
+                    .name("優惠券折扣")
+                    .quantity(1)
+                    .price(-order.getCouponDiscount().longValue()) // 價格設為負數
+                    .build());
+        }
+
+        // 1e. 如果有其他活動折扣，也一併加入 (保留未來擴充性)
+        if (order.getPromoDiscount() != null && order.getPromoDiscount() > 0) {
+            linePayProducts.add(LinePayRequestDTO.Product.builder()
+                    .name("活動折扣")
+                    .quantity(1)
+                    .price(-order.getPromoDiscount().longValue())
+                    .build());
+        }
+
+        // ==================== 2. 計算校驗後的總金額 ====================
+        // 重新計算一次列表內所有項目的總和，此總額應等於 `order.getActualPayment()`
+        long totalAmount = linePayProducts.stream()
+                .mapToLong(p -> p.getPrice() * p.getQuantity())
+                .sum();
+
+        // 安全校驗：如果計算出的總額與訂單的實付金額不符，拋出例外，防止送出錯誤請求
+        if (totalAmount != order.getActualPayment()) {
+            log.error("LINE Pay 金額計算校驗失敗！訂單ID: {}, 計算總額: {}, 預期實付: {}",
+                    order.getOrdId(), totalAmount, order.getActualPayment());
+            throw new IllegalStateException("LINE Pay 金額計算錯誤，請聯繫系統管理員。");
+        }
+
+
+        // ==================== 3. 組裝請求主體 (Request Body) ====================
+        LinePayRequestDTO.Package linePayPackage = LinePayRequestDTO.Package.builder()
+                .id("package-" + order.getOrdId())
+                .amount(totalAmount) // ★ 使用我們剛計算出的總額
+                .products(linePayProducts) // ★ 使用我們剛建立的、包含所有項目的列表
+                .build();
+
         LinePayRequestDTO requestDTO = LinePayRequestDTO.builder()
-                // ... (此處的 builder 邏輯與您附件中的版本完全相同，保持不變) ...
-                .amount(order.getActualPayment().longValue())
+                .amount(totalAmount) // ★ 總金額也使用我們計算出的總額
                 .currency("TWD")
                 .orderId(order.getOrdId().toString())
-                .packages(List.of(
-                        LinePayRequestDTO.Package.builder()
-                                .id("package-" + order.getOrdId())
-                                .amount(order.getActualPayment().longValue())
-                                .products(order.getOrdDet().stream().map(det ->
-                                        LinePayRequestDTO.Product.builder()
-                                                .name(det.getProduct().getProdName())
-                                                .quantity(det.getProdQty())
-                                                .price(det.getProdPrice().longValue())
-                                                .build()
-                                ).collect(Collectors.toList()))
-                                .build()
-                ))
+                .packages(List.of(linePayPackage))
                 .redirectUrls(LinePayRequestDTO.RedirectUrls.builder()
-                        // 修改點：將使用者導向我們新的確認端點
                         .confirmUrl("http://localhost:8080/orders/linepay/confirm?orderId=" + order.getOrdId())
-                        .cancelUrl("http://localhost:8080/cart/cart") // 取消時導回購物車
+                        .cancelUrl("http://localhost:8080/cart/cart")
                         .build())
                 .build();
 
         try {
-            // 將 DTO 物件序列化為 JSON 字串，用於產生簽章和發送請求
             requestBodyJson = objectMapper.writeValueAsString(requestDTO);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("序列化 LINE Pay 請求失敗", e);
         }
 
-        // ==================== 2. 產生簽章 ====================
+        // ==================== 4. 產生簽章與發送請求 (此部分邏輯不變) ====================
         String signature = createHmacSignature(linePayChannelSecret, linePayApiUri, requestBodyJson, nonce);
 
-        // ==================== 3. 組裝請求標頭 (Headers) - ★★★ 這是核心修改點 ★★★ ====================
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-LINE-ChannelId", linePayChannelId);
         headers.set("X-LINE-Authorization-Nonce", nonce);
-        // 【重點】使用計算出的簽章，放入 X-LINE-Authorization 標頭
         headers.set("X-LINE-Authorization", signature);
-        // 【移除】不再需要直接傳送 ChannelSecret
-        // headers.set("X-LINE-ChannelSecret", linePayChannelSecret); // <-- 移除此行
 
-        // ==================== 4. 發送請求 ====================
         HttpEntity<String> entity = new HttpEntity<>(requestBodyJson, headers);
 
         try {
@@ -509,13 +556,17 @@ public class OrdersService {
                 if ("0000".equals(responseBody.getReturnCode())) {
                     return responseBody.getInfo().getPaymentUrl().getWeb();
                 } else {
+                    log.error("LINE Pay API 返回錯誤。訂單ID: {}, Code: {}, Message: {}",
+                            order.getOrdId(), responseBody.getReturnCode(), responseBody.getReturnMessage());
                     throw new RuntimeException("LINE Pay 請求失敗: " + responseBody.getReturnMessage());
                 }
             } else {
-                throw new RuntimeException("LINE Pay 請求失敗，伺服器無回應。");
+                throw new RuntimeException("LINE Pay 請求失敗，伺服器無回應或回應體為空。");
             }
         } catch (HttpClientErrorException e) {
-            throw new RuntimeException("LINE Pay API 請求錯誤: " + e.getStatusCode() + " " + e.getResponseBodyAsString());
+            log.error("LINE Pay API 請求發生錯誤。訂單ID: {}, Status: {}, Body: {}",
+                    order.getOrdId(), e.getStatusCode(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("LINE Pay API 請求錯誤: " + e.getResponseBodyAsString());
         }
     }
     /**
