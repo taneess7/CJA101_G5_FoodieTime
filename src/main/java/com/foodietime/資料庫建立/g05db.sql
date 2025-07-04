@@ -587,29 +587,30 @@ CREATE TABLE ORDERS
     PROMO_DISCOUNT  INT,
     COUPON_DISCOUNT INT,
     ACTUAL_PAYMENT  INT,
-    ORD_ADDR        VARCHAR(255)
+    ORD_ADDR        VARCHAR(255),
+    SHIPPING_FEE    INT
 );
 
 INSERT INTO ORDERS (MEM_ID, STOR_ID, ORD_DATE, ORD_SUM, PAYMENT_STATUS, PAY_METHOD, DELIVER, ORDER_STATUS, ACT_ID,
-                    COU_ID, CANCEL_REASON, COMMENT, RATING, PROMO_DISCOUNT, COUPON_DISCOUNT, ACTUAL_PAYMENT, ORD_ADDR)
+                    COU_ID, CANCEL_REASON, COMMENT, RATING, PROMO_DISCOUNT, COUPON_DISCOUNT, ACTUAL_PAYMENT, ORD_ADDR, SHIPPING_FEE)
 VALUES (1, 1, '2025-05-18 12:00:00', 120, 1, 0, 1, 2, NULL, 1, NULL, '好吃', 5, 10, 20, 90,
-        '台北市大安區和平東路1段1號'),
+        '台北市大安區和平東路1段1號',60),
        (2, 2, '2025-05-18 13:00:00', 100, 1, 1, 0, 2, NULL, 2, NULL, '便宜又好吃', 4, 0, 10, 90,
-        '新北市板橋區文化路1段200號'),
+        '新北市板橋區文化路1段200號',60),
        (3, 3, '2025-05-18 14:00:00', 180, 1, 2, 1, 2, NULL, 3, NULL, '湯頭濃郁', 5, 20, 0, 160,
-        '台中市西區公益路300號'),
-       (4, 4, '2025-05-18 15:00:00', 120, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+        '台中市西區公益路300號',60),
+       (4, 4, '2025-05-18 15:00:00', 120, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,60),
        (5, 5, '2025-05-18 16:00:00', 70, 1, 1, 0, 2, NULL, 1, NULL, '冰沙很棒', 5, 10, 0, 60,
-        '台南市中西區民生路2段50號'),
+        '台南市中西區民生路2段50號',60),
        (6, 6, '2025-05-18 17:00:00', 150, 1, 2, 1, 2, NULL, 2, NULL, '健康美味', 4, 0, 10, 140,
-        '高雄市左營區自由路88號'),
-       (7, 7, '2025-05-18 18:00:00', 90, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+        '高雄市左營區自由路88號',60),
+       (7, 7, '2025-05-18 18:00:00', 90, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,60),
        (8, 8, '2025-05-18 19:00:00', 200, 1, 1, 0, 2, NULL, 3, NULL, '披薩好吃', 5, 20, 0, 180,
-        '桃園市中壢區中正路100號'),
+        '桃園市中壢區中正路100號',60),
        (9, 9, '2025-05-18 20:00:00', 100, 1, 2, 1, 2, NULL, 1, NULL, '烤肉很香', 4, 10, 0, 90,
-        '台北市信義區松仁路20號'),
+        '台北市信義區松仁路20號',60),
        (10, 10, '2025-05-18 21:00:00', 250, 1, 0, 1, 2, NULL, 2, NULL, '火鍋湯底棒', 5, 0, 10, 240,
-        '台中市北區學士路10號');
+        '台中市北區學士路10號',60);
 
 -- =========================
 -- 10. 訂單明細
