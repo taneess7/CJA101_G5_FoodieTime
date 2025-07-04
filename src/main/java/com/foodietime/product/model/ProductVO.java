@@ -21,6 +21,8 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Entity
@@ -45,9 +47,11 @@ public class ProductVO implements Serializable{
 	@JoinColumn(name ="prod_cate_id",nullable = false) // 外鍵，連到 product_category.prod_cate_id
 	private ProductCategoryVO productCategory;
 	
+	@NotBlank(message = "商品名稱: 請勿空白")
 	@Column(name ="prod_name",nullable = false,length = 45)
 	private String prodName;
 	
+	@NotBlank(message = "商品說明: 請勿空白")
 	@Column(name = "prod_desc",nullable = false,length = 45)
 	private String prodDesc;
 	

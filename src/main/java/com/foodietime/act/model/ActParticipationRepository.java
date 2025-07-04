@@ -2,10 +2,8 @@ package com.foodietime.act.model;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.foodietime.store.model.StoreVO;
 
 public interface ActParticipationRepository extends JpaRepository<ActParticipationVO, Integer>{
