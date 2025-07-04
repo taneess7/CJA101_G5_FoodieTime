@@ -47,43 +47,6 @@
                 </a>
             </li>
             
-            <li class="nav-item section-title">商家管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
-                    <i class="fas fa-check-circle"></i>
-                    <span>審核商家</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
-                    <i class="fas fa-store-alt"></i>
-                    <span>商家帳號查詢/編輯</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
-                    <i class="fas fa-flag"></i>
-                    <span>檢舉功能</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
-                    <i class="fas fa-ban"></i>
-                    <span>黑名單管理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
-                    <i class="fas fa-times-circle"></i>
-                    <span>下架商品</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
-                    <i class="fas fa-key"></i>
-                    <span>權限變更</span>
-                </a>
-            </li>
             
             <li class="nav-item section-title">會員管理</li>
             <li class="nav-item">
@@ -106,30 +69,14 @@
                     <span>檢舉審核管理</span>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
-                    <i class="fas fa-toggle-on"></i>
-                    <span>啟用/停用</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                <a class="nav-link" th:href="@{/smg/admin-groups-orders}">
                     <i class="fas fa-clipboard-list"></i>
                     <span>訂單詳情檢視</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
-                    <i class="fas fa-undo"></i>
-                    <span>退款</span>
-                </a>
-            </li>
+
             <li class="nav-item">
                 <a class="nav-link active" th:href="@{/smg/admin-groups-monthly}">
                     <i class="fas fa-calendar-alt"></i>
@@ -144,12 +91,6 @@
                     <span>訂單詳情檢視</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
-                    <i class="fas fa-credit-card"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
             
             <li class="nav-item section-title">客服管理</li>
             <li class="nav-item">
@@ -159,7 +100,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link logout-btn" href="#">
+                <a class="nav-link logout-btn" th:href="@{/smg/logout}">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>登出</span>
                 </a>
