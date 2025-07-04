@@ -60,6 +60,11 @@
 			    ⚠️ 您的帳號已被停權，請聯絡客服人員！
 			</div>
 
+            <!-- 重設成功提示 -->
+			<div th:if="${param.resetSuccess}" 
+			     class="bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded text-sm text-center mb-4">
+			    ✅ 密碼已重設成功，請使用新密碼登入
+			</div>
             	
 
             <!-- 錯誤提示 -->
@@ -74,6 +79,13 @@
                     🔐 登入
                 </button>
             </div>
+            <div class="text-sm text-center mt-2">
+			    忘記密碼了？
+			    <a href="/front/member/forgot-password" class="text-orange-600 hover:underline font-medium">
+			        點此重設
+			    </a>
+			</div>
+            
 
             <!-- 註冊連結 -->
             <div class="text-sm text-center mt-2">
