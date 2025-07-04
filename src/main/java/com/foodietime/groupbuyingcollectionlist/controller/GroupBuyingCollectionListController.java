@@ -147,5 +147,18 @@ public class GroupBuyingCollectionListController {
         model.addAttribute("collectionList", list);
         return "front/favoritelist/gb-favoritelist";
     }
+
+    
+    @PostMapping("/remove")
+    public String removeGroupBuyingCollection(@RequestParam Integer memId,
+                                              @RequestParam Integer gbId,
+                                              org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        boolean success = groupBuyingCollectionListService.removeFromCollection(memId, gbId);
+        if (!success) {
+            redirectAttributes.addFlashAttribute("error", "移除失敗或不存在");
+        }
+        return "redirect:/gb/gbfavoritelist";
+    }
+
 }
 
