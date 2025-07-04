@@ -13,7 +13,7 @@
 
 </head>
 <body>
-    <!-- Sidebar -->    
+    <!-- Sidebar -->
     <div class="sidebar">
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -45,43 +45,6 @@
                 </a>
             </li>
             
-            <li class="nav-item section-title">商家管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
-                    <i class="fas fa-check-circle"></i>
-                    <span>審核商家</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
-                    <i class="fas fa-store-alt"></i>
-                    <span>商家帳號查詢/編輯</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
-                    <i class="fas fa-flag"></i>
-                    <span>檢舉功能</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
-                    <i class="fas fa-ban"></i>
-                    <span>黑名單管理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
-                    <i class="fas fa-times-circle"></i>
-                    <span>下架商品</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
-                    <i class="fas fa-key"></i>
-                    <span>權限變更</span>
-                </a>
-            </li>
             
             <li class="nav-item section-title">會員管理</li>
             <li class="nav-item">
@@ -104,30 +67,14 @@
                     <span>檢舉審核管理</span>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
-                    <i class="fas fa-toggle-on"></i>
-                    <span>啟用/停用</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                <a class="nav-link" th:href="@{/smg/admin-groups-orders}">
                     <i class="fas fa-clipboard-list"></i>
                     <span>訂單詳情檢視</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
-                    <i class="fas fa-undo"></i>
-                    <span>退款</span>
-                </a>
-            </li>
+
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
                     <i class="fas fa-calendar-alt"></i>
@@ -142,12 +89,6 @@
                     <span>訂單詳情檢視</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
-                    <i class="fas fa-credit-card"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
             
             <li class="nav-item section-title">客服管理</li>
             <li class="nav-item">
@@ -157,7 +98,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link logout-btn" href="#">
+                <a class="nav-link logout-btn" th:href="@{/smg/logout}">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>登出</span>
                 </a>
@@ -186,7 +127,7 @@
 				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
 				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                    <li><a class="dropdown-item logout-btn" th:href="@{/smg/logout}"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
                 </ul>
             </div>
         </div>
@@ -230,7 +171,6 @@
                                             <td class="fw-bold" th:text="${report.reportId}"></td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/40x40?text=團購" alt="團購" class="rounded me-2" style="width: 40px; height: 40px;">
                                                     <div>
                                                         <div class="fw-bold" th:text="${report.groupBuyingCase.gbTitle}"></div>
                                                         <small class="text-muted" th:text="${'ID: ' + report.groupBuyingCase.gbId + ' | ' + report.groupBuyingCase.store.storName}"></small>
@@ -257,16 +197,32 @@
                                             </td>
                                             <td>-</td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-success me-1" th:onclick="|processReport('${report.reportId}')|">
+                                                <button class="btn btn-sm btn-outline-success me-1" 
+                                                        th:onclick="|processReport('${report.reportId}')|"
+                                                        th:disabled="${report.reportStatus != 0}"
+                                                        th:title="${report.reportStatus != 0 ? '此檢舉已處理' : '通過審核'}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" th:onclick="|rejectReport('${report.reportId}')|">
+                                                <button class="btn btn-sm btn-outline-danger" 
+                                                        th:onclick="|rejectReport('${report.reportId}')|"
+                                                        th:disabled="${report.reportStatus != 0}"
+                                                        th:title="${report.reportStatus != 0 ? '此檢舉已處理' : '駁回檢舉'}">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <!-- Batch Actions -->
+                            <div class="d-flex justify-content-start align-items-center mt-3">
+                                <button id="batchApproveBtn" class="btn btn-success me-2">
+                                    <i class="fas fa-check me-1"></i>批量通過
+                                </button>
+                                <button id="batchRejectBtn" class="btn btn-danger me-2">
+                                    <i class="fas fa-times me-1"></i>批量駁回
+                                </button>
                             </div>
 
                             
@@ -297,6 +253,15 @@
             checkboxes.forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
+        });
+
+        // Batch Action Buttons
+        document.getElementById('batchApproveBtn').addEventListener('click', function() {
+            batchApprove();
+        });
+
+        document.getElementById('batchRejectBtn').addEventListener('click', function() {
+            batchReject();
         });
 
         // View Report Function
@@ -349,63 +314,62 @@
             }
         }
 
-        // Process Report Function
+        // Process Report Function - 審核通過
         function processReport(reportId) {
-            const modal = new bootstrap.Modal(document.getElementById('processReportModal'));
-            modal.show();
+            if (confirm('確定要通過此檢舉嗎？')) {
+                fetch(`/smg/admin-groups-reports/approve/${reportId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(result => {
+                    if (result === 'SUCCESS') {
+                        alert('檢舉已通過審核');
+                        location.reload();
+                    } else if (result === 'FAILED') {
+                        alert('處理失敗，請稍後再試');
+                    } else {
+                        alert('系統錯誤，請稍後再試');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('處理失敗，請稍後再試');
+                });
+            }
         }
 
-        // Reject Report Function
+        // Reject Report Function - 審核未通過
         function rejectReport(reportId) {
             const reason = prompt('請輸入駁回原因：');
             if (reason && reason.trim()) {
                 if (confirm('確定要駁回此檢舉嗎？')) {
-                    alert('檢舉已駁回');
-                    location.reload();
+                    fetch(`/smg/admin-groups-reports/reject/${reportId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        if (result === 'SUCCESS') {
+                            alert('檢舉已駁回');
+                            location.reload();
+                        } else if (result === 'FAILED') {
+                            alert('處理失敗，請稍後再試');
+                        } else {
+                            alert('系統錯誤，請稍後再試');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('處理失敗，請稍後再試');
+                    });
                 }
             }
         }
-
-        // Process Report from Modal
-        function processReportFromModal() {
-            bootstrap.Modal.getInstance(document.getElementById('viewReportModal')).hide();
-            setTimeout(() => {
-                const modal = new bootstrap.Modal(document.getElementById('processReportModal'));
-                modal.show();
-            }, 300);
-        }
-
-        // Reject Report from Modal
-        function rejectReportFromModal() {
-            const reason = prompt('請輸入駁回原因：');
-            if (reason && reason.trim()) {
-                if (confirm('確定要駁回此檢舉嗎？')) {
-                    alert('檢舉已駁回');
-                    bootstrap.Modal.getInstance(document.getElementById('viewReportModal')).hide();
-                    location.reload();
-                }
-            }
-        }
-
-        // Confirm Process Report
-        function confirmProcessReport() {
-            const action = document.getElementById('processAction').value;
-            const note = document.getElementById('processNote').value;
-            
-            if (!note.trim()) {
-                alert('請輸入處理說明');
-                return;
-            }
-            
-            if (confirm('確定要執行此處理動作嗎？')) {
-                alert('檢舉處理完成');
-                bootstrap.Modal.getInstance(document.getElementById('processReportModal')).hide();
-                location.reload();
-            }
-        }
-
-        // View Resolution Function
-       
 
         // Batch Approve Function
         function batchApprove() {
@@ -415,9 +379,48 @@
                 return;
             }
             
-            if (confirm(`確定要批量處理 ${selectedReports.length} 個檢舉嗎？`)) {
-                alert('批量處理完成');
-                location.reload();
+            // 過濾出待處理狀態的檢舉
+            const pendingReports = Array.from(selectedReports).filter(checkbox => {
+                const row = checkbox.closest('tr');
+                const statusCell = row.querySelector('td:nth-child(8) .badge');
+                return statusCell && statusCell.textContent.trim() === '待處理';
+            });
+            
+            if (pendingReports.length === 0) {
+                alert('所選檢舉都已處理完成，無需重複處理');
+                return;
+            }
+            
+            if (confirm(`確定要批量通過 ${pendingReports.length} 個待處理檢舉嗎？`)) {
+                const reportIds = pendingReports.map(checkbox => 
+                    parseInt(checkbox.getAttribute('data-report-id'))
+                );
+                
+                fetch('/smg/admin-groups-reports/batch-approve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(reportIds)
+                })
+                .then(response => response.text())
+                .then(result => {
+                    if (result.startsWith('SUCCESS:')) {
+                        const parts = result.split(':');
+                        const counts = parts[1].split('/');
+                        alert(`批量處理完成！成功處理 ${counts[0]} 個檢舉，共 ${counts[1]} 個`);
+                        location.reload();
+                    } else if (result === 'ERROR') {
+                        alert('系統錯誤，請稍後再試');
+                    } else {
+                        alert('處理失敗，請稍後再試');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('處理失敗，請稍後再試');
+                });
             }
         }
 
@@ -429,31 +432,54 @@
                 return;
             }
             
-            const reason = prompt('請輸入批量駁回原因：');
-            if (reason && reason.trim()) {
-                if (confirm(`確定要批量駁回 ${selectedReports.length} 個檢舉嗎？`)) {
-                    alert('批量駁回完成');
-                    location.reload();
-                }
-            }
-        }
-
-        // Batch Assign Function
-        function batchAssign() {
-            const selectedReports = document.querySelectorAll('.report-checkbox:checked');
-            if (selectedReports.length === 0) {
-                alert('請選擇要指派的檢舉');
+            // 過濾出待處理狀態的檢舉
+            const pendingReports = Array.from(selectedReports).filter(checkbox => {
+                const row = checkbox.closest('tr');
+                const statusCell = row.querySelector('td:nth-child(8) .badge');
+                return statusCell && statusCell.textContent.trim() === '待處理';
+            });
+            
+            if (pendingReports.length === 0) {
+                alert('所選檢舉都已處理完成，無需重複處理');
                 return;
             }
             
-            const assignee = prompt('請輸入指派給處理人員：');
-            if (assignee && assignee.trim()) {
-                if (confirm(`確定要將 ${selectedReports.length} 個檢舉指派給 ${assignee} 嗎？`)) {
-                    alert('批量指派完成');
-                    location.reload();
+            const reason = prompt('請輸入批量駁回原因：');
+            if (reason && reason.trim()) {
+                if (confirm(`確定要批量駁回 ${pendingReports.length} 個待處理檢舉嗎？`)) {
+                    const reportIds = pendingReports.map(checkbox => 
+                        parseInt(checkbox.getAttribute('data-report-id'))
+                    );
+                    
+                    fetch('/smg/admin-groups-reports/batch-reject', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(reportIds)
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        if (result.startsWith('SUCCESS:')) {
+                            const parts = result.split(':');
+                            const counts = parts[1].split('/');
+                            alert(`批量駁回完成！成功處理 ${counts[0]} 個檢舉，共 ${counts[1]} 個`);
+                            location.reload();
+                        } else if (result === 'ERROR') {
+                            alert('系統錯誤，請稍後再試');
+                        } else {
+                            alert('處理失敗，請稍後再試');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('處理失敗，請稍後再試');
+                    });
                 }
             }
         }
     </script>
 </body>
+</html>
 </html>

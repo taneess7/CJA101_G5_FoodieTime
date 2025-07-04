@@ -51,6 +51,9 @@ public class OrdersVO implements Serializable{
 	@Column(name="ORDER_STATUS")
 	private Integer orderStatus;     // 訂單狀態
 
+	@Column(name="SHIPPING_FEE")
+	private Integer shippingFee;     // 運費
+
 	@ManyToOne
 	@EqualsAndHashCode.Exclude
 	@JoinColumn(name = "ACT_ID",referencedColumnName = "ACT_ID")

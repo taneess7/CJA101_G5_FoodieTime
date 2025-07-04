@@ -18,7 +18,7 @@
       <div class="search-bar">
         <i class="material-icons-outlined search-icon">search</i>
 
-        <input type="text" placeholder="搜尋餐廳、料理或地址..." class="search-input">
+        <input type="text" id="searchInput" placeholder="搜尋餐廳、料理或地址..." class="search-input">
         
       </div>
     </div>
@@ -70,5 +70,22 @@
 
   </div>
 </header>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+
+    if (searchInput) {
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          const keyword = this.value.trim();
+          if (keyword !== "") {
+            window.location.href = `/category/search?keyword=${encodeURIComponent(keyword)}`;
+          }
+        }
+      });
+    }
+  });
+</script>
+
 </body>
 </html>

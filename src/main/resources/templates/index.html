@@ -279,9 +279,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const btn = document.getElementById("roulette-btn");
     const result = document.getElementById("roulette-result");
 
+    if (!btn || !result) return; // 防止頁面沒這兩個元素時出錯
+    
     btn.addEventListener("click", function () {
         btn.classList.add("spin");
-        result.innerHTML = "正在尋找美味中... 🍜";
+        result.innerHTML = `<span class="bold-text">正在尋找美味中... 🍜</span>`;
 
         setTimeout(() => {
             fetch("/product/roulette")

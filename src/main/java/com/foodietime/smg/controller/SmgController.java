@@ -333,4 +333,72 @@ public class SmgController {
         accrecPayoutScheduler.payoutOne(id);
         return "OK";
     }
+    
+    // 處理檢舉 - 審核通過
+    @PostMapping("/admin-groups-reports/approve/{reportId}")
+    @ResponseBody
+    public String approveReport(@PathVariable("reportId") Integer reportId) {
+        try {
+            boolean success = groupPurchaseReportService.updateReportStatus(reportId, (byte) 1);
+            if (success) {
+                return "SUCCESS";
+            } else {
+                return "FAILED";
+            }
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
+    
+    // 處理檢舉 - 審核未通過
+    @PostMapping("/admin-groups-reports/reject/{reportId}")
+    @ResponseBody
+    public String rejectReport(@PathVariable("reportId") Integer reportId) {
+        try {
+            boolean success = groupPurchaseReportService.updateReportStatus(reportId, (byte) 2);
+            if (success) {
+                return "SUCCESS";
+            } else {
+                return "FAILED";
+            }
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
+    
+    // 批次處理檢舉 - 審核通過
+    @PostMapping("/admin-groups-reports/batch-approve")
+    @ResponseBody
+    public String batchApproveReports(@RequestBody List<Integer> reportIds) {
+        try {
+            int successCount = 0;
+            for (Integer reportId : reportIds) {
+                boolean success = groupPurchaseReportService.updateReportStatus(reportId, (byte) 1);
+                if (success) {
+                    successCount++;
+                }
+            }
+            return "SUCCESS:" + successCount + "/" + reportIds.size();
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
+    
+    // 批次處理檢舉 - 審核未通過
+    @PostMapping("/admin-groups-reports/batch-reject")
+    @ResponseBody
+    public String batchRejectReports(@RequestBody List<Integer> reportIds) {
+        try {
+            int successCount = 0;
+            for (Integer reportId : reportIds) {
+                boolean success = groupPurchaseReportService.updateReportStatus(reportId, (byte) 2);
+                if (success) {
+                    successCount++;
+                }
+            }
+            return "SUCCESS:" + successCount + "/" + reportIds.size();
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
 }

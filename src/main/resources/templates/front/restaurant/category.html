@@ -387,341 +387,227 @@
 	<!-- ==================== /商品燈箱 (Modal) 結構 ============================================================ -->
 	<!-- ==================== /商品燈箱 (Modal) 結構 ============================================================ -->
 	<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // 收藏商品功能
-        document.querySelectorAll('.favorite-product-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const prodId = this.dataset.prodid;
-                const icon = this.querySelector('i');
-                const isFavorited = icon.classList.contains('fas');
-                const url = isFavorited ? '/favorite/remove' : '/favorite/add';
+		document.addEventListener('DOMContentLoaded', function () {
+			// 收藏商品功能
+			document.querySelectorAll('.favorite-product-btn').forEach(btn => {
+				btn.addEventListener('click', function (e) {
+					e.stopPropagation(); // 防止觸發父層的商品點擊事件
+					const prodId = this.dataset.prodid;
+					const icon = this.querySelector('i');
+					const isFavorited = icon.classList.contains('fas');
+					const url = isFavorited ? '/favorite/remove' : '/favorite/add';
 
-                fetch(url, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({prodId})
-                })
-                .then(async res => {
-                    const contentType = res.headers.get('content-type') || "";
+					fetch(url, {
+						method: 'POST',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({prodId})
+					})
+							.then(async res => {
+								// 直接檢查 URL 是否被重導向到登入頁
+								if (res.url.includes("/front/member/login")) {
+									showLoginPrompt();
+									throw new Error("未登入(收藏)");
+								}
+								if (!res.ok) {
+									const err = await res.json().catch(() => ({ error: "加入收藏失敗" }));
+									throw new Error(err.error);
+								}
+								return res.json();
+							})
+							.then(data => {
+								icon.classList.toggle('fas', !isFavorited);
+								icon.classList.toggle('far', isFavorited);
+								icon.style.color = isFavorited ? '' : 'red';
+								showToast(isFavorited ? '已取消收藏' : '已加入收藏');
+							})
+							.catch(err => {
+								if (err.message && !err.message.includes("未登入")) {
+									alert("錯誤：" + err.message);
+								}
+							});
+				});
+			});
 
-                 // 🔐 偵測未登入導向的 HTML 頁面
-                 if (res.status === 401 || contentType.includes("text/html") || res.url.includes("/login")) {
-                   showLoginPrompt();
-                   throw new Error("未登入");
-                 }
+			// 領取優惠券功能
+			document.querySelectorAll('.favorite-coupon-btn').forEach(btn => {
+				btn.addEventListener('click', function () {
+					const couponId = this.dataset.couid;
+					const button = this;
 
-                 // 如果格式不是 JSON，就警告
-                 if (!contentType.includes("application/json")) {
-                   throw new Error("伺服器回傳格式錯誤");
-                 }
+					fetch('/member/coupons/claim', {
+						method: 'POST',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({ couponId })
+					})
+							.then(async res => {
+								if (res.url.includes("/front/member/login")) {
+									showLoginPrompt();
+									throw new Error("未登入(領券)");
+								}
+								const data = await res.json();
+								if (!res.ok) {
+									throw new Error(data.message || "領取失敗");
+								}
+								return data;
+							})
+							.then(data => {
+								if (data.success) {
+									showToast('優惠券領取成功！');
+									button.disabled = true;
+									button.innerHTML = '<i class="fas fa-check-circle"></i> 已領取';
+									button.classList.add('claimed');
+								} else {
+									showToast(data.message || '領取失敗，請稍後再試。');
+								}
+							})
+							.catch(error => {
+								if (error.message && !error.message.includes("未登入")) {
+									console.error('領取優惠券時發生錯誤:', error);
+									alert('錯誤：' + error.message);
+								}
+							});
+				});
+			});
 
-                 // 錯誤情況下，解析 JSON 後丟錯
-                 if (!res.ok) {
-                   const err = await res.json();
-                   throw new Error(err.error || "加入收藏失敗");
-                 }
+			// Tab 切換功能
+			document.querySelectorAll('.restaurant-detail').forEach(restaurantCard => {
+				restaurantCard.querySelectorAll('.tab-btn').forEach(btn => {
+					btn.addEventListener('click', function () {
+						const storeId = this.dataset.storeid;
+						const tab = this.dataset.tab;
+						restaurantCard.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+						restaurantCard.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+						this.classList.add('active');
+						const contentId = `${tab}-content-${storeId}`;
+						const newContent = restaurantCard.querySelector(`#${contentId}`);
+						if (newContent) newContent.classList.add('active');
+					});
+				});
+			});
 
+			// 商品燈箱 (Modal) 相關邏輯
+			const modalOverlay = document.getElementById('productModalOverlay');
+			const modalCloseBtn = document.getElementById('modalCloseBtn');
+			const modalImage = document.getElementById('modalProductImage');
+			const modalName = document.getElementById('modalProductName');
+			const modalDesc = document.getElementById('modalProductDesc');
+			const modalPrice = document.getElementById('modalProductPrice');
+			const quantityInput = document.getElementById('quantityInput');
+			const quantityDecrement = document.getElementById('quantityDecrement');
+			const quantityIncrement = document.getElementById('quantityIncrement');
+			const addToCartBtn = document.getElementById('addToCartBtn');
+			let currentProductPrice = 0;
+			let currentProdId = null;
 
-                    if (!contentType.includes("application/json")) {
-                        throw new Error("伺服器回傳格式錯誤");
-                    }
+			document.querySelector('.restaurant-list').addEventListener('click', e => {
+				const productCard = e.target.closest('.product-clickable');
+				if (productCard) {
+					e.preventDefault();
+					openProductModal(productCard);
+				}
+			});
 
-                    return res.json();
-                })
-                .then(data => {
-                    icon.classList.toggle('fas', !isFavorited);
-                    icon.classList.toggle('far', isFavorited);
-                    icon.style.color = isFavorited ? '' : 'red';
-                    showToast(isFavorited ? '已取消收藏' : '已加入收藏');
-                })
-                .catch(err => {
-                    if (err.message !== "未登入") {
-                        alert("錯誤：" + err.message);
-                    }
-                });
+			function openProductModal(productCard) {
+				const data = productCard.dataset;
+				currentProdId = parseInt(data.prodId, 10);
+				currentProductPrice = parseFloat(data.prodPrice);
+				modalImage.src = `/product/image/${data.prodId}`;
+				modalImage.alt = data.prodName;
+				modalImage.onerror = () => { modalImage.src = '/images/restaurant/placeholder.svg'; };
+				modalName.textContent = data.prodName;
+				modalDesc.textContent = data.prodDesc;
+				modalPrice.textContent = `NT$ ${currentProductPrice}`;
+				quantityInput.value = 1;
+				updateAddToCartButton();
+				modalOverlay.classList.add('active');
+			}
 
+			function closeProductModal() { modalOverlay.classList.remove('active'); }
 
-            });
-        });
+			function updateAddToCartButton() {
+				const quantity = parseInt(quantityInput.value, 10);
+				const totalPrice = currentProductPrice * quantity;
+				addToCartBtn.querySelector('span').textContent = `加入購物車 - NT$ ${totalPrice}`;
+			}
 
-        //🔍 搜尋輸入框按 Enter 時跳轉搜尋
-        document.querySelector('.search-input').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                const keyword = e.target.value.trim();
-                if (keyword.length > 0) {
-                    window.location.href = '/category?keyword=' + encodeURIComponent(keyword);
-                }
-            }
-        });
+			modalCloseBtn.addEventListener('click', closeProductModal);
+			modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeProductModal(); });
+			quantityIncrement.addEventListener('click', () => {
+				let val = parseInt(quantityInput.value, 10);
+				if (val < 99) { quantityInput.value = val + 1; updateAddToCartButton(); }
+			});
+			quantityDecrement.addEventListener('click', () => {
+				let val = parseInt(quantityInput.value, 10);
+				if (val > 1) { quantityInput.value = val - 1; updateAddToCartButton(); }
+			});
 
-        // Tab 切換功能
-        document.querySelectorAll('.restaurant-detail').forEach(function (restaurantCard) {
-            const tabBtns = restaurantCard.querySelectorAll('.tab-btn');
+			// ==================== 「加入購物車」的 fetch 邏輯 ====================
+			addToCartBtn.addEventListener('click', function() {
+				const formData = new URLSearchParams();
+				formData.append('prodId', currentProdId);
+				formData.append('quantity', quantityInput.value);
 
-            tabBtns.forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    const storeId = this.dataset.storeid;
-                    const tab = this.dataset.tab;
+				fetch('/cart/api/add', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: formData
+				})
+						.then(async response => {
+							// ★★★ 核心修正：直接檢查最終的 response.url 是否包含登入頁的路徑 ★★★
+							if (response.url.includes("/front/member/login")) {
+								showLoginPromptForBuy();
+								throw new Error('User not logged in (buy)'); // 拋出特定錯誤，中止 .then 鏈
+							}
 
-                    restaurantCard.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    restaurantCard.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+							const data = await response.json(); // 只有在非重導向時才嘗試解析 JSON
 
-                    this.classList.add('active');
+							if (!response.ok) {
+								// 如果後端回傳了 JSON 格式的錯誤訊息
+								throw new Error(data.message || '加入購物車失敗');
+							}
+							return data;
+						})
+						.then(data => {
+							closeProductModal();
+							showToast(data.message || '成功加入購物車');
+						})
+						.catch(error => {
+							// 只處理非「未登入」的錯誤，避免重複提示
+							if (error.message && !error.message.includes('User not logged in')) {
+								console.error('加入購物車時發生錯誤:', error);
+								alert(error.message);
+							}
+						});
+			});
 
-                    const contentId = `${tab}-content-${storeId}`;
-                    const newContent = restaurantCard.querySelector(`#${contentId}`);
-                    if (newContent) {
-                        newContent.classList.add('active');
-                    } else {
-                        console.warn('找不到內容區塊:', contentId);
-                    }
-                });
-            });
-        });
+			// 登入提示框相關函式
+			function showLoginPrompt() {
+				sessionStorage.setItem('redirectAfterLogin', window.location.href);
+				document.getElementById('login-prompt-modal').style.display = 'flex';
+			}
 
-        /**============================================================================== */
-        /**============================================================================== */
+			function closeLoginPrompt() {
+				document.getElementById('login-prompt-modal').style.display = 'none';
+			}
 
-        // 領取優惠券按鈕功能
-        document.querySelectorAll('.favorite-coupon-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-        const couponId = this.dataset.couid;
-        const button = this;
+			function showLoginPromptForBuy() {
+				closeProductModal();
+				sessionStorage.setItem('redirectAfterLogin', window.location.href);
+				document.getElementById('login-prompt-modal-buy').style.display = 'flex';
+			}
 
-        fetch('/member/coupons/claim', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ couponId })
-        })
-            .then(async res => {
-                const contentType = res.headers.get('content-type') || "";
+			function closeLoginPromptForBuy() {
+				document.getElementById('login-prompt-modal-buy').style.display = 'none';
+			}
 
-                // 未登入導向登入頁的情況
-                if (res.status === 401 || contentType.includes("text/html") || res.url.includes("/login")) {
-                    showLoginPrompt();
-                    throw new Error("未登入");
-                }
-
-                // 伺服器不是回傳 JSON
-                if (!contentType.includes("application/json")) {
-                    throw new Error("伺服器回傳格式錯誤");
-                }
-
-                // 狀態不是 OK，取錯誤訊息
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.message || "領取失敗");
-                }
-
-                return res.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert('優惠券領取成功！');
-                    button.disabled = true;
-                    button.innerHTML = '<i class="fas fa-check-circle"></i> 已領取';
-                    button.classList.add('claimed');
-                } else {
-                    alert(data.message || '領取失敗，請稍後再試。');
-                }
-            })
-            .catch(error => {
-                console.error('領取優惠券時發生錯誤:', error);
-                if (error.message !== '未登入') {
-                    alert('領取優惠券時發生錯誤，請檢查網路或稍後再試。');
-                }
-            });
-    });
-});
-
-
-            // =================================================================
-            // ==================== 商品燈箱 (Modal) 核心邏輯 ====================
-            // =================================================================
-
-            // 1. 獲取所有需要的 DOM 元素
-        const modalOverlay = document.getElementById('productModalOverlay');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalImage = document.getElementById('modalProductImage');
-        const modalName = document.getElementById('modalProductName');
-        const modalDesc = document.getElementById('modalProductDesc');
-        const modalPrice = document.getElementById('modalProductPrice');
-        const quantityInput = document.getElementById('quantityInput');
-        const quantityDecrement = document.getElementById('quantityDecrement');
-        const quantityIncrement = document.getElementById('quantityIncrement');
-        const addToCartBtn = document.getElementById('addToCartBtn');
-
-        let currentProductPrice = 0;
-        let currentProdId = null;
-
-        // 2. 使用事件委派，監聽整個餐廳列表的點擊事件，提高效能
-        document.querySelector('.restaurant-list').addEventListener('click', function(e) {
-            // 找到被點擊的、帶有 .product-clickable class 的父元素
-            const productCard = e.target.closest('.product-clickable');
-
-            if (productCard) {
-                e.preventDefault(); // 防止可能的默認行為
-                openProductModal(productCard);
-            }
-        });
-
-
-        /**
-         * 開啟並填充商品燈箱
-         * @param {HTMLElement} productCard - 被點擊的商品卡片元素
-         */
-        function openProductModal(productCard) {
-
-            const productData = productCard.dataset;
-            currentProdId = parseInt(productData.prodId, 10);
-            currentProductPrice = parseFloat(productData.prodPrice);
-
-            modalImage.src = `/product/image/${productData.prodId}`;
-            modalImage.alt = productData.prodName;
-         // 加上 fallback：若圖片失敗就改顯示預設圖
-            modalImage.onerror = () => {
-                modalImage.src = '/images/restaurant/placeholder.svg';
-            };
-            modalName.textContent = productData.prodName;
-            modalDesc.textContent = productData.prodDesc;
-            modalPrice.textContent = `NT$ ${currentProductPrice}`;
-
-            quantityInput.value = 1;
-            updateAddToCartButton();
-
-            // 顯示燈箱
-            modalOverlay.classList.add('active');
-        }
-
-        /**
-         * 關閉商品燈箱
-         */
-        function closeProductModal() {
-            modalOverlay.classList.remove('active');
-        }
-
-        /**
-         * 更新「加入購物車」按鈕上的文字和總價
-         */
-        function updateAddToCartButton() {
-            const quantity = parseInt(quantityInput.value, 10);
-            const totalPrice = currentProductPrice * quantity;
-            addToCartBtn.querySelector('span').textContent = `加入購物車 - NT$ ${totalPrice}`;
-        }
-
-        // 3. 綁定燈箱內的事件監聽器
-        // 關閉按鈕
-        modalCloseBtn.addEventListener('click', closeProductModal);
-        // 點擊背景遮罩關閉
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) {
-                closeProductModal();
-            }
-        });
-
-        // 數量增加
-        quantityIncrement.addEventListener('click', () => {
-            let currentVal = parseInt(quantityInput.value, 10);
-            if (currentVal < 99) {
-                quantityInput.value = currentVal + 1;
-                updateAddToCartButton();
-            }
-        });
-
-        // 數量減少
-        quantityDecrement.addEventListener('click', () => {
-            let currentVal = parseInt(quantityInput.value, 10);
-            if (currentVal > 1) {
-                quantityInput.value = currentVal - 1;
-                updateAddToCartButton();
-            }
-        });
-
-        // 「加入購物車」按鈕點擊事件
-        addToCartBtn.addEventListener('click', function() {
-            const quantity = parseInt(quantityInput.value, 10);
-
-            // 準備要發送到後端的資料
-            const formData = new URLSearchParams();
-            formData.append('prodId', currentProdId);
-            formData.append('quantity', quantity);
-
-            // 發送異步請求
-            fetch('/cart/api/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    // 如果有 CSRF token，也需要加在這裡
-                },
-                body: formData
-            })
-                .then(response => {
-                    if (response.status === 401) {
-                        // 處理未登入的情況
-                        showLoginPrompt(); // 調用您現有的登入提示框
-                        return Promise.reject('User not logged in'); // 中斷 then 鏈
-                    }
-                    if (!response.ok) {
-                        // 處理其他伺服器錯誤
-                        return response.json().then(err => Promise.reject(err.message || '伺服器錯誤'));
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        closeProductModal();
-                        showToast(data.message); // 調用您現有的提示訊息框
-                        // (可選) 更新頁首購物車圖標的數字
-                        // const cartCountElement = document.querySelector('.cart-count');
-                        // if (cartCountElement && data.cartItemCount !== undefined) {
-                        //     cartCountElement.textContent = data.cartItemCount;
-                        // }
-                    } else {
-                        alert('錯誤：' + data.message);
-                    }
-                })
-                .catch(error => {
-                    if (error !== 'User not logged in') {
-                        console.error('加入購物車失敗:', error);
-                        alert('加入購物車時發生未知錯誤，請查看控制台。');
-                    }
-                });
-        });
-
-    });
-
-    function showLoginPrompt() {
-        // 儲存當前網址
-        sessionStorage.setItem('redirectAfterLogin', window.location.href);
-        document.getElementById('login-prompt-modal').style.display = 'flex';
-    }
-    
- // 未登入時提示登入，並記住目前頁面
-    function showLoginModal() {
-        const currentUrl = window.location.pathname + window.location.search;
-        sessionStorage.setItem("redirectAfterLogin", currentUrl); // ✅ 記住目前頁面
-        window.location.href = "/front/member/login";
-    }
-
-
-    function closeLoginPrompt() {
-        document.getElementById('login-prompt-modal').style.display = 'none';
-    }
-
-    function showToast(message) {
-        const toast = document.getElementById('toast-message');
-        toast.textContent = message;
-        toast.style.display = 'block';
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, 2000);
-    }
-
-
-</script>
+			function showToast(message) {
+				const toast = document.getElementById('toast-message');
+				toast.textContent = message;
+				toast.style.display = 'block';
+				setTimeout(() => { toast.style.display = 'none'; }, 2000);
+			}
+		});
+	</script>
 	<div id="login-prompt-modal"
 		style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
 		<div
@@ -731,6 +617,20 @@
 			<div style="margin-top: 1em;">
 				<button onclick="location.href='/front/member/login'">立即登入</button>
 				<button onclick="closeLoginPrompt()">取消</button>
+			</div>
+		</div>
+	</div>
+	<!-- 加入購物車用的提示燈箱 -->
+	<div id="login-prompt-modal-buy"
+		 style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
+		<div style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+			<h3>⚠️ 請先登入會員</h3>
+			<!-- ★★★ 修正提示文字 ★★★ -->
+			<p style="margin: 1em 0;">您必須登入會員才能將商品加入購物車。</p>
+			<div style="margin-top: 1em;">
+				<button onclick="location.href='/front/member/login'">立即登入</button>
+				<!-- ★★★ 修正關閉函式呼叫 ★★★ -->
+				<button onclick="closeLoginPromptForBuy()">取消</button>
 			</div>
 		</div>
 	</div>
