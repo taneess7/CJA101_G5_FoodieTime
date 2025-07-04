@@ -809,7 +809,7 @@ INSERT INTO GROUP_BUYING_CASES (STOR_ID, GB_PROD_ID, MEM_ID, GB_START_TIME, GB_E
                                 GB_STATUS, GB_CREATE_AT, GB_MIN_PRODUCT_QUANTITY, CANCEL_REASON,
                                 CUMULATIVE_PURCHASE_QUANTITY)
 VALUES (1, 1, 1, '2025-06-20 10:00:00', '2025-07-25 22:00:00', '飲料團購', '揪團喝珍奶', 1, '2025-05-18 09:00:00', 10,
-        NULL, 5),
+        NULL, 11),
        (2, 2, 2, '2025-06-21 11:00:00', '2025-07-26 20:00:00', '甜點團購', '草莓蛋糕限時團', 1, '2025-05-18 09:30:00',
         8, NULL, 3),
        (3, 3, 3, '2025-06-22 12:00:00', '2025-07-27 21:00:00', '便當團購', '午餐便當團', 1, '2025-05-18 10:00:00', 6,
