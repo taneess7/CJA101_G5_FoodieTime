@@ -137,7 +137,8 @@ public class MemService {
     public MemberVO getByMemCode(String code) {
         return memberRepository.findByMemCode(code);
     }
-
+    
+    @Async
     public void sendActivationEmail(String to, String link) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -149,6 +150,19 @@ public class MemService {
     public MemberVO getByMemEmail(String email) {
         return memberRepository.findByMemEmail(email);
     }
+    
+    @Async
+    public void sendResetPasswordEmail(String to, String link) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("【FoodieTime】重設密碼連結");
+        message.setText("您好，請點擊以下連結以重設您的密碼：\n\n" +
+                link +
+                "\n\n如果您沒有申請重設密碼，請忽略這封信件。");
+
+        mailSender.send(message);
+    }
+
 
 
 
