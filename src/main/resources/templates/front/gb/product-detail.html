@@ -329,32 +329,32 @@
             margin-left: 5px;
         }
         
-        .footer {
-            background-color: #343a40;
+        footer {
+            background-color: black;
             color: white;
             padding: 40px 0 20px;
             margin-top: 50px;
         }
-        
+
         .footer-title {
             font-weight: bold;
             margin-bottom: 20px;
         }
-        
+
         .footer-links {
             list-style: none;
             padding: 0;
         }
-        
+
         .footer-links li {
             margin-bottom: 10px;
         }
-        
+
         .footer-links a {
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
         }
-        
+
         .footer-links a:hover {
             color: white;
         }
@@ -1209,7 +1209,8 @@
                     <div class="d-grid gap-2">
                         <button th:if="${session.loggedInMember != null}" class="btn btn-primary btn-lg join-btn" onclick="joinGroup()">立即參團</button>
                         <button th:unless="${session.loggedInMember != null}" class="btn btn-primary btn-lg join-btn" onclick="showLoginModal()">立即參團</button>
-                        <button class="btn btn-outline-primary">加入收藏</button>
+                        <button th:if="${session.loggedInMember != null}" class="btn btn-outline-primary" onclick="addToFavorite()">加入收藏</button>
+                        <button th:unless="${session.loggedInMember != null}" class="btn btn-outline-primary" onclick="showLoginModal()">加入收藏</button>
                     </div>
                     
                     <div class="mt-4">
@@ -1491,51 +1492,8 @@
     </div>
 
     <!-- 頁腳 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <h5 class="footer-title">團購樂</h5>
-                    <p>團購樂是一個專業的團購平台，提供各種優質商品的團購服務，讓您與朋友一起購買，享受更多折扣。</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="bi bi-facebook"></i></a>
-                        <a href="#"><i class="bi bi-instagram"></i></a>
-                        <a href="#"><i class="bi bi-line"></i></a>
-                        <a href="#"><i class="bi bi-youtube"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5 class="footer-title">快速連結</h5>
-                    <ul class="footer-links">
-                        <li><a href="gbindex.html">首頁</a></li>
-                        <li><a href="#">熱門團購</a></li>
-                        <li><a href="#">最新上架</a></li>
-                        <li><a href="#">即將結束</a></li>
-                        <li><a href="#">我要開團</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5 class="footer-title">幫助中心</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">常見問題</a></li>
-                        <li><a href="#">如何參團</a></li>
-                        <li><a href="#">付款方式</a></li>
-                        <li><a href="#">配送方式</a></li>
-                        <li><a href="#">退換貨政策</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <h5 class="footer-title">訂閱電子報</h5>
-                    <p>訂閱我們的電子報，獲取最新優惠和團購資訊。</p>
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="您的電子郵件" aria-label="您的電子郵件">
-                        <button class="btn btn-outline-light" type="button">訂閱</button>
-                    </div>
-                    <p class="small mt-3">© 2023 團購樂. 版權所有.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1550,7 +1508,7 @@
     </script>
 
     <!-- 自定義 JavaScript -->
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化主要輪播
             const mainSwiper = new Swiper('.main-swiper', {
@@ -1831,6 +1789,59 @@
             var reviewCount = document.getElementById('review-count');
             if(tabCount && reviewCount) tabCount.textContent = reviewCount.textContent;
         });
+       
+        //加入收藏
+		function addToFavorite() {
+        	
+        	           	       	
+		    // 假設您已經有方法來提取 gbId（團購ID）
+		    const gbId = /*[[${productDetail.gbId}]]*/ null;
+		
+		    if (!gbId) {
+		        alert('無法獲取團購ID，請重新整理頁面。');
+		        return;
+		    }
+		
+		    // 假設有方法來獲取用戶的 memId
+		    const memId = /*[[${session.loggedInMember != null ? session.loggedInMember.memId : 'default_value'}]]*/ null;
+		    if (!memId) {
+		        alert('請先登入會員再進行此操作。');
+		        showLoginModal();
+		        return;
+		    }
+		
+		    // 構建要發送的請求資料
+		    const favoriteData = {
+		        memId: memId,
+		        gbId: gbId
+		    };
+		    fetch('/gb/add-favorite', {
+		        method: 'POST',
+		        headers: {
+		            'Content-Type': 'application/json'
+		        },
+		        body: JSON.stringify(favoriteData)
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        if (data.status === 'success') {
+		            alert('成功加入收藏！');
+		            // 更新按鈕顯示
+		            const button = document.querySelector('.btn-outline-primary');
+		            button.innerHTML = '已加入收藏';
+		         } else {
+		            alert('加入收藏失敗，請稍後再試。');
+		         }
+		    })
+		    .catch(error => {
+		        console.error('錯誤：', error);
+		        alert('發生錯誤，請稍後再試。');
+		    });
+		}
+
+
+
+
     </script>
 </body>
 </html>

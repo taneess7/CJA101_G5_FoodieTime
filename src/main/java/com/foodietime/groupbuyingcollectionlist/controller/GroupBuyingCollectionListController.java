@@ -4,12 +4,16 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,7 +28,7 @@ import com.foodietime.member.model.MemberVO;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/gblist")
+@RequestMapping("/gb")
 public class GroupBuyingCollectionListController {
     
          
@@ -64,20 +68,26 @@ public class GroupBuyingCollectionListController {
         return "groupBuyingCollectionList/addGroupBuyingCollection";
     }
 
-    // 新增收藏
-    @PostMapping("/add")
-    public String addGroupBuyingCollection(@RequestParam Integer memId,
-                                         @RequestParam Integer gbId,
-                                         Model model) {
+    @PostMapping("/add-favorite")
+    @ResponseBody
+    public ResponseEntity<?> addGroupBuyingCollection(@RequestBody Map<String, Integer> payload, HttpSession session) {
+        
+       
+
+        Integer memId = payload.get("memId");
+        Integer gbId = payload.get("gbId");
+        if (memId == null || gbId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "無效的參數"));
+        }
         try {
-            GroupBuyingCollectionListVO result = groupBuyingCollectionListService.addToCollection(memId, gbId);
-            model.addAttribute("groupBuyingCollectionListVO", result);
-            return "groupBuyingCollectionList/listOneGroupBuyingCollection";
+            // 假設 groupBuyingCollectionListService.addToCollection() 方法能夠正確處理添加收藏
+            groupBuyingCollectionListService.addToCollection(memId, gbId,session );
+            return ResponseEntity.ok(Map.of("status", "success"));
         } catch (RuntimeException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "error";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "加入收藏失敗"));
         }
     }
+
 
 
     // 查詢所有團購收藏
@@ -136,7 +146,7 @@ public class GroupBuyingCollectionListController {
 //    }
 
  // 收藏團購頁面（資料庫查詢渲染）
-    @GetMapping("/myFavoriteGbPage")
+    @GetMapping("/gbfavoritelist")
     public String myFavoriteGbPage(HttpSession session, Model model) {
         MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
         if (member == null) {

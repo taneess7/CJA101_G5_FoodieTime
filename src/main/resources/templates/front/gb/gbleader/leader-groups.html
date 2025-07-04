@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>團購管理 - 團購樂</title>
+<title>團購管理 - FoodieTime 食刻</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
 	rel="stylesheet">
@@ -173,7 +173,7 @@ body {
 	padding: 0.2rem 0.4rem;
 }
 
-.footer {
+footer {
 	background-color: #343a40;
 	color: white;
 	padding: 40px 0 20px;
@@ -214,7 +214,7 @@ body {
 <!-- 導航欄 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" th:href="@{/gb/gbindex}">團購樂</a>
+            <a class="navbar-brand" th:href="@{/gb/gbindex}">FoodieTime 食刻</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -555,49 +555,8 @@ body {
   </div>
 </div>  
 	<!-- 頁腳 -->
-	<footer class="footer">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-4 col-md-6 mb-4">
-					<h5 class="footer-title">團購樂</h5>
-					<p>團購樂是一個專業的團購平台，提供各種優質商品的團購服務，讓您與朋友一起購買，享受更多折扣。</p>
-					<div class="social-icons">
-						<a href="#"><i class="bi bi-facebook"></i></a> <a href="#"><i
-							class="bi bi-instagram"></i></a> <a href="#"><i
-							class="bi bi-line"></i></a> <a href="#"><i class="bi bi-youtube"></i></a>
-					</div>
-				</div>
-				<div class="col-lg-2 col-md-6 mb-4">
-					<h5 class="footer-title">快速連結</h5>
-					<ul class="footer-links">
-						<li><a href="../gp/loginindex.html">首頁</a></li>
-						<li><a href="#">熱門團購</a></li>
-						<li><a href="#">最新上架</a></li>
-						<li><a href="#">即將結束</a></li>
-					</ul>
-				</div>
-				<div class="col-lg-2 col-md-6 mb-4">
-					<h5 class="footer-title">幫助中心</h5>
-					<ul class="footer-links">
-						<li><a href="#">常見問題</a></li>
-						<li><a href="#">如何參團</a></li>
-						<li><a href="#">付款方式</a></li>
-						<li><a href="#">配送方式</a></li>
-						<li><a href="#">退換貨政策</a></li>
-					</ul>
-				</div>
-				<div class="col-lg-4 col-md-6 mb-4">
-					<h5 class="footer-title">聯絡我們</h5>
-					<ul class="footer-links">
-						<li><i class="bi bi-envelope me-2"></i> service@groupbuy.com</li>
-						<li><i class="bi bi-telephone me-2"></i> (02) 2345-6789</li>
-						<li><i class="bi bi-geo-alt me-2"></i> 台北市信義區松高路1號</li>
-					</ul>
-					<p class="small mt-3">© 2023 團購樂. 版權所有.</p>
-				</div>
-			</div>
-		</div>
-	</footer>
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+
 
 
 
