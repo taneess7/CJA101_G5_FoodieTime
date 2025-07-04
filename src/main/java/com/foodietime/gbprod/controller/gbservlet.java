@@ -243,10 +243,7 @@ public class gbservlet {
         participant.setParPurchaseQuantity(req.getQuantity());
         participant.setPaymentStatus((byte)0); // 未付款
         participantsService.save(participant);
-        // 4. 更新累計購買數量
-        int currentQuantity = groupCase.getCumulativePurchaseQuantity() != null ? groupCase.getCumulativePurchaseQuantity() : 0;
-        groupCase.setCumulativePurchaseQuantity(currentQuantity + req.getQuantity());
-        groupBuyingCasesService.saveGroupBuyingCase(groupCase);
+        // 4. 不要在這裡更新累計購買數量，僅在付款成功時加總
         return ResponseEntity.ok("參團成功");
     }
     
