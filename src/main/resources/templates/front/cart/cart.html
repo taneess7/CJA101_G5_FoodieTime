@@ -47,7 +47,7 @@
                     <div class="empty-cart-message" th:if="${groupedCartData == null or #maps.isEmpty(groupedCartData)}">
                         <i class="material-icons-outlined empty-cart-icon">shopping_cart</i>
                         <h2>您的購物車是空的</h2>
-                        <a th:href="@{/index}" class="btn btn-primary">開始探索</a>
+                        <a th:href="@{/category/food-categories}" class="btn btn-primary">開始探索</a>
                     </div>
 
                     <!-- 外層循環：遍歷店家 -->

@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const container = document.querySelector('.cart-items-container');
             const sidebar = document.querySelector('.cart-sidebar');
             if (container) {
-                container.innerHTML = `<div class="empty-cart-message"><i class="material-icons-outlined empty-cart-icon">shopping_cart</i><h2>您的購物車是空的</h2><a href="/index" class="btn btn-primary">開始探索</a></div>`;
+                container.innerHTML = `<div class="empty-cart-message"><i class="material-icons-outlined empty-cart-icon">shopping_cart</i><h2>您的購物車是空的</h2><a href="/category/food-categories" class="btn btn-primary">開始探索</a></div>`;
             }
             if (sidebar) sidebar.style.display = 'none';
             return;
