@@ -6,6 +6,7 @@ import com.foodietime.member.model.MemberVO;
 import com.foodietime.memcoupon.model.MemCouponService;
 import com.foodietime.memfavlist.model.FavoriteListService;
 import com.foodietime.memfavlist.model.FavoriteListVO;
+import com.foodietime.product.dto.ProductCardDTO;
 import com.foodietime.product.model.ProductCategoryService;
 import com.foodietime.product.model.ProductCategoryVO;
 import com.foodietime.product.model.ProductService;
@@ -71,102 +72,87 @@ public class ProductCategoryController {
     public String listlogin() {
     	return "/front/member/login";
     }
-    
+
     @GetMapping("/{cateId}")
     public String showCategoryPage(@PathVariable Integer cateId,
                                    HttpSession session,
                                    HttpServletResponse response,
                                    Model model) {
 
-    	// 禁止快取
+        // ==================== 1. 前置作業 (維持不變) ====================
+        // 禁止快取
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
-        
+
+        // 處理會員登入狀態、收藏、已領取優惠券等資訊
         MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
         if (memberVO != null) {
             model.addAttribute("member", memberVO);
-            
-         // 加上會員的商品收藏清單
             List<FavoriteListVO> favorites = favoriteListService.getFavoritesByMemId(memberVO.getMemId());
             Set<Integer> favoriteProdIds = favorites.stream()
                     .map(FavoriteListVO::getProdId)
                     .collect(Collectors.toSet());
             model.addAttribute("favoriteProdIds", favoriteProdIds);
-        }
-        // ======================================== 優惠券 =============================================
-        Set<Integer> claimedCouponIds;
-        if (memberVO != null) {
-            // 調用 MemCouponService 中新增的方法
-            claimedCouponIds = memCouponService.getClaimedCouponIdsByMemberId(memberVO.getMemId());
+
+            Set<Integer> claimedCouponIds = memCouponService.getClaimedCouponIdsByMemberId(memberVO.getMemId());
+            model.addAttribute("claimedCouponIds", claimedCouponIds);
         } else {
-            // 未登入，給一個空集合
-            claimedCouponIds = Collections.emptySet();
+            model.addAttribute("claimedCouponIds", Collections.emptySet());
         }
-        // 將已領取的優惠券 ID 集合傳遞給前端
-        model.addAttribute("claimedCouponIds", claimedCouponIds);
-        // ===========================================================================================
-        // 1. 找出分類名稱
+
+        // ==================== 2. 獲取分類與店家基礎資料 (維持不變) ====================
         ProductCategoryVO categoryVO = categoryService.findById(cateId);
         model.addAttribute("categoryName", categoryVO.getProdCate());
-        
-        // 2. 找出該分類的店家
+
         List<StoreVO> storeList = categoryService.getStoresByCategoryId(cateId);
         model.addAttribute("storeList", storeList);
         model.addAttribute("categoryId", cateId);
-        
-        // 3. 根據店家撈商品
-        List<ProductVO> allProducts = new ArrayList<>();
-        for (StoreVO store : storeList) {
-            List<ProductVO> products = productService.findByStoreId(store.getStorId());
-            allProducts.addAll(products);
-        }
-        model.addAttribute("productList", allProducts);
 
-        // storeProductMap，讓每個 storeId 對應商品清單
-        Map<Integer, List<ProductVO>> storeProductMap = new HashMap<>();
-        for (StoreVO store : storeList) {
-            List<ProductVO> products = productService.findByStoreId(store.getStorId());
-            storeProductMap.put(store.getStorId(), products);
-        }
-        model.addAttribute("storeProductMap", storeProductMap);
-        
-        // 店家圖片轉 Base64
+
+        // ==================== 3. ★★★【核心重構】高效能資料整合 ★★★ ====================
+        // 建立三個 Map，用於存放按店家ID分類的 DTO、圖片和優惠券
+        Map<Integer, List<ProductCardDTO>> storeProductCardMap = new HashMap<>();
         Map<Integer, String> storeImageMap = new HashMap<>();
+        Map<Integer, List<CouponVO>> storeCouponMap = new HashMap<>();
+
+        // 【優化】使用單一迴圈處理所有與店家相關的資料查詢
         for (StoreVO store : storeList) {
-            byte[] imageBytes = store.getStorPhoto(); // 假設是 byte[]
+            Integer storeId = store.getStorId();
+
+            // a. 【高效能】呼叫新的 DTO 查詢方法，獲取輕量級商品資料
+            List<ProductCardDTO> productCards = productService.getProductCardsByStoreId(storeId);
+            storeProductCardMap.put(storeId, productCards);
+
+            // b. 處理店家圖片
+            byte[] imageBytes = store.getStorPhoto();
             if (imageBytes != null && imageBytes.length > 0) {
-                String base64 = Base64.getEncoder().encodeToString(imageBytes);
-                storeImageMap.put(store.getStorId(), base64);
+                storeImageMap.put(storeId, Base64.getEncoder().encodeToString(imageBytes));
             }
+
+            // c. 處理店家優惠券
+            List<CouponVO> coupons = couponService.getCouponsByStorId(storeId);
+            storeCouponMap.put(storeId, coupons);
         }
+
+        // 將整合好的 Map 傳遞給前端
+        model.addAttribute("storeProductCardMap", storeProductCardMap);
         model.addAttribute("storeImageMap", storeImageMap);
-        
-        // 加入星期對照表
+        model.addAttribute("storeCouponMap", storeCouponMap);
+
+        // 【移除】不再需要傳遞沉重的、未經組織的 ProductVO 列表
+        // model.addAttribute("productList", allProducts);
+
+
+        // ==================== 4. 其他輔助資料 (維持不變) ====================
         Map<String, String> weekMap = Map.of(
-        		"0", "週日",
-        	    "1", "週一",
-        	    "2", "週二",
-        	    "3", "週三",
-        	    "4", "週四",
-        	    "5", "週五",
-        	    "6", "週六"
+                "0", "週日", "1", "週一", "2", "週二", "3", "週三",
+                "4", "週四", "5", "週五", "6", "週六"
         );
         model.addAttribute("weekMap", weekMap);
         model.addAttribute("serverTime", new java.sql.Timestamp(System.currentTimeMillis()));
-        
-     // 優惠券Map<店家ID, List<CouponVO>>
-      		Map<Integer, List<CouponVO>> storeCouponMap = new HashMap<>();
-      		for (StoreVO store : storeList) {
-      			List<CouponVO> coupons = couponService.getCouponsByStorId(store.getStorId());
-      			storeCouponMap.put(store.getStorId(), coupons);
-      			System.out.println("➡️ 優惠券數量：" + coupons.size());
-      		}
 
-      		model.addAttribute("storeCouponMap", storeCouponMap); // 傳給前端 HTML 使用
-//        Integer memId= memberVO.getMemId();
-        
-        return "front/restaurant/category"; // 共用模板
+        return "front/restaurant/category";
     }
     
     //模糊搜尋	

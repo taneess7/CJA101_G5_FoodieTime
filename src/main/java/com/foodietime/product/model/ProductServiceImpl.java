@@ -3,6 +3,7 @@ package com.foodietime.product.model;
 import java.util.List;
 import java.util.Random;
 
+import com.foodietime.product.dto.ProductCardDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,11 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<ProductVO> findByStoreId(Integer storeId) {
         return productRepo.findByStore_StorId(storeId);
+    }
+    // ✅ 取得店家所有商品
+    @Override
+    public List<ProductCardDTO> getProductCardsByStoreId(Integer storeId) {
+        return productRepo.findProductCardsByStoreId(storeId);
     }
 
     // ✅ 新增商品
