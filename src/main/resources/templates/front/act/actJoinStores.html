@@ -14,7 +14,7 @@
     /* act.css */
 
 .act-card {
-  width: 320px;
+  width: 400px;
   border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
@@ -63,14 +63,12 @@
 
 .act-item {
   display: flex;
-  background: #fff;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   overflow: hidden;
   align-items: center;
-  padding: 1rem;
   gap: 1rem;
-  width: 400px;          /* ✅ 固定寬度 */
+  width: 450px;          /* ✅ 固定寬度 */
   flex-shrink: 0;        /* ✅ 避免縮小變形 */
 }
 
@@ -78,7 +76,7 @@
 .act-item:hover {
   transform: translateY(-5px); /* 上浮 5px */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 加強陰影 */
-  background-color: #fffaf0;  /* 淡灰背景，可改其他色 */
+  
 }
 
 .act-item img {
@@ -116,21 +114,6 @@
   white-space: nowrap;
 }
 
-.btn {
-  display: inline-block;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-  background-color: #FF5722;
-  border: none;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-.btn:hover {
-  background-color: #e64a19;
-}
 .btn-secondary {
   background-color: #666;
 }
@@ -163,6 +146,62 @@
   
   body {
   background-color: #fdf4f1;
+  }
+ table {
+  width: 100%;
+  }
+
+#store-modal {
+  max-width: 350px;           /* 限制寬度 */
+  max-height: 500px;          /* 限制高度 */
+  overflow-y: auto;           /* 垂直方向出現滾動條 */
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.card {
+  display: flex;
+  background-color: white;   /* 右側白底 */
+  border-radius: 12px;
+  overflow: hidden;            /* 關鍵：讓圓角與內部分區生效 */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  
+}
+
+.card-left {
+  background-color: #A86F60;      /* 左半白底 */
+  padding: 10px;
+  flex: 0 0 40%;               /* 固定左邊 40% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-left img {
+  width: 100%;
+  height: auto;
+}
+
+.card-right {
+ width: 320px;
+  padding: 10px;
+  flex: 1;                     /* 右側自動填滿 */
+}
+
+
+#modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色 */
+  z-index: 999; /* 蓋在內容上，但低於 modal */
+}
+#store-modal {
+  z-index: 1000; /* 確保彈窗在遮罩上 */
 }
 
   </style>
@@ -171,16 +210,17 @@
 </head>
 <body>
  <header th:replace="~{front/common/header :: main-header}"></header> 
- 
-<div id="acts-container" class="acts-list">
+ <div id="modal-overlay" style="display:none;"></div>
 
+<div id="acts-container" class="acts-list">
+ 
 <!-- 活動卡片插入這裡 -->
 <!-- Modal：查看參與店家，會跳出店家提示窗 -->
 	<div id="store-modal" style="display:none; position:fixed; top:10%; left:50%; transform:translateX(-50%);
 	    background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.3); z-index:1000;">
 	  <h3 style="margin-bottom:10px;">參與店家</h3>
 	  <ul id="store-list" style="padding-left: 1rem; line-height: 1.6;"></ul>
-	  <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="document.getElementById('store-modal').style.display='none'">關閉</button>
+	  <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="closeModal()">關閉</button>
 	</div>
 </div>	
 
@@ -203,20 +243,25 @@ fetch('/api/allActs')
 			item.className = 'act-item';
 			
 			item.innerHTML = `
-				  <img src="${act.actPhoto}" 
-				       alt="${act.actName}" 
-				       onerror="this.onerror=null; this.src='/images/act/default.png'"
-				       style="width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
-				  
-				  <div class="act-details">
-				    <div class="act-name">${act.actName}</div>
-				    <div class="act-content">${act.actContent.replace(/\n/g, '<br>')}</div>
-				    <div class="act-dates">
-				      活動開始時間: ${formatDateTime(act.actStartTime)}<br>
-				      活動結束時間: ${formatDateTime(act.actEndTime)}<br>
-				    </div>
-				    <a href="#" class="view-stores-link" data-actid="${act.actId}">＜查看參與店家＞</a>
-				  </div>
+				<div class="card">
+					  <div class="card-left">
+					  <img src="${act.actPhoto}" 
+					       alt="${act.actName}" 
+					       onerror="this.onerror=null; this.src='/images/act/default.png'"
+					       style="width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+					  </div>
+					  <div class="card-right">
+					  <div class="act-details">
+					    <div class="act-name">${act.actName}</div>
+					    <div class="act-content">${act.actContent.replace(/\n/g, '<br>')}</div>
+					    <div class="act-dates">
+					      活動開始時間: ${formatDateTime(act.actStartTime)}<br>
+					      活動結束時間: ${formatDateTime(act.actEndTime)}<br>
+					    </div>
+					    <a href="#" class="view-stores-link" data-actid="${act.actId}">＜查看參與店家＞</a>
+					  </div>
+					  </div>
+			   </div>
 
 				`;
 			container.appendChild(item);
@@ -236,11 +281,48 @@ document.addEventListener('click', function (e) {
 	        list.innerHTML = '';
 	        if (data.length === 0) {
 	          list.innerHTML = '<li>目前尚無參與店家</li>';
+	          // 顯示彈窗與遮罩
+              document.getElementById('store-modal').style.display = 'block';
+        	  document.getElementById('modal-overlay').style.display = 'block';
 	        } else {
-	          data.forEach(store => {  //迴圈
+	          data.forEach(store => {  //迴圈加資料
+	        	  
 	            const li = document.createElement('li');
-	            li.textContent = store.storName; // 根據你的 StoreVO 設定
+	         // 建立店家名稱
+	            const storeName = document.createElement('strong');
+	            storeName.textContent = store.storName;
+	            storeName.style.color = '#4A90E2';
+
+	            li.appendChild(storeName);
+	           
+
+	            // 如果有商品，加入商品表格
+	            if (store.products && store.products.length > 0) {
+	              const table = document.createElement('table');
+	              table.style.marginTop = '8px';
+	              table.innerHTML = `
+	                <thead>
+	                  <tr><th>商品名稱</th><th style=" text-align:right;">原價</th><th style=" text-align:right;">折扣價</th></tr>
+	                </thead>
+	                <tbody>
+	                  ${store.products.map(prod => `
+	                    <tr>
+	                      <td>${prod.prodName}</td>
+	                      <td style=" text-align:right;">${prod.prodPrice}</td>
+	                      <td style="color:red; text-align:right;">${prod.discountedPrice}</td>
+	                    </tr>
+	                  `).join('')}
+	                </tbody>
+	                <hr>
+	                <div style="margin-bottom: 1em;"></div>
+	              `;
+	              li.appendChild(table);
+	            }
+	              //加入到清單
 	            list.appendChild(li);
+	         // 顯示彈窗與遮罩
+	        	  document.getElementById('store-modal').style.display = 'block';
+	        	  document.getElementById('modal-overlay').style.display = 'block';
 	          });
 	        }
 	        document.getElementById('store-modal').style.display = 'block';
@@ -263,6 +345,19 @@ function formatDateTime(dateString) {
     const ss = String(date.getSeconds()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
 }
+
+
+//點空白處關閉彈窗：
+document.getElementById('modal-overlay').addEventListener('click', () => {
+	  document.getElementById('store-modal').style.display = 'none';
+	  document.getElementById('modal-overlay').style.display = 'none';
+	});
+	
+	
+function closeModal() {
+	  document.getElementById('store-modal').style.display = 'none';
+	  document.getElementById('modal-overlay').style.display = 'none';
+	}
 	
 /*測試用假資料*/
 // 	acts.forEach(act => {

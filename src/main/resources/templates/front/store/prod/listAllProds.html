@@ -81,6 +81,14 @@ body{
   padding: 0 4px;
 }
 
+.prod-desc-ellipsis{
+    width: 250px;
+    max-width: 250px;
+    white-space: nowrap;      /* 不換行 */
+    overflow: hidden;         /* 超出隱藏 */
+    text-overflow: ellipsis;  /* 超出顯示「...」 */
+}
+
 
 </style>
 
@@ -100,7 +108,7 @@ body{
 <!-- 			<th>店家編號</th> -->
 			<th>類別</th>
 			<th>商品名稱</th>
-			<th>商品描述</th>
+			<th style="width:250px;" >商品描述</th>
 			<th>價格</th>
 			<th>商品圖片</th>
 			<th>狀態</th>
@@ -117,7 +125,7 @@ body{
 <!-- 				<td th:text="${prodVO.prodId}"></td> -->
 				<td class="white-nowrap" th:text="${prodVO.productCategory.prodCate}"></td>
 				<td th:text="${prodVO.prodName}"></td>
-				<td class="prod-desc-ellipsis"  th:text="${prodVO.prodDesc}"></td>
+				<td style="width:250px;" class="prod-desc-ellipsis"  th:text="${prodVO.prodDesc}"></td>
 				<td th:text="${prodVO.prodPrice}"></td>
 				<td><img class="prod-img" style="border: 2px dotted blue;width:50px; height:50px; background-color: white;" th:src="@{/store/DBGifReader} + '?prodId=' + ${prodVO.prodId}" width="50px"></td>
 				<td th:text="${prodVO.prodStatus} ? '上架' : '下架'"></td>

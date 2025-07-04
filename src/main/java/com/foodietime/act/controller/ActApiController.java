@@ -25,11 +25,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodietime.act.model.ActCategoryEnum;
 import com.foodietime.act.model.ActParticipationService;
 import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActService;
 import com.foodietime.act.model.ActVO;
 import com.foodietime.act.model.StoreSimpleDTO;
+import com.foodietime.act.model.StoreWithDiscountedProductsDTO;
+import com.foodietime.act.model.StoreWithDiscountedProductsDTO.ProductDiscountDTO;
+import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.annotation.PostConstruct;
@@ -46,6 +50,9 @@ public class ActApiController {
 	
 	@Autowired
 	private ActParticipationService actPartSvc;
+	
+	@Autowired
+	private StoreService storeSvc;
 	
 	//確認是否有啟動api
 //	@PostConstruct
@@ -97,21 +104,46 @@ public class ActApiController {
 	    return result;
 	}
 	
-	/**參與活動的店家**/
+//	/**參與活動的店家**/
+//	@GetMapping("/act/{actId}/stores")
+//	@ResponseBody
+//	public List<StoreSimpleDTO> getStoresDTOsByActId(@PathVariable Integer actId){ //GET http://localhost:8080/act/5/stores : ，Integer actId = 5 
+//	
+//		 List<ActParticipationVO> list = actPartSvc.findStoresByActId(actId);
+//		    return list.stream()
+//		               .map(part -> new StoreSimpleDTO(
+//		                     part.getStore().getStorId(),
+//		                     part.getStore().getStorName()
+//		               ))
+//		               .collect(Collectors.toList());
+//		}
+//	
 	@GetMapping("/act/{actId}/stores")
 	@ResponseBody
-	public List<StoreSimpleDTO> getStoresDTOsByActId(@PathVariable Integer actId){ //GET http://localhost:8080/act/5/stores : ，Integer actId = 5 
-	
-		 List<ActParticipationVO> list = actPartSvc.findStoresByActId(actId);
-		    return list.stream()
-		               .map(part -> new StoreSimpleDTO(
-		                     part.getStore().getStorId(),
-		                     part.getStore().getStorName()
-		               ))
-		               .collect(Collectors.toList());
-		}
-	
+	public List<StoreWithDiscountedProductsDTO> getStoresWithDiscountedProducts(@PathVariable Integer actId) {
+	    ActVO act = actSvc.getOneAct(actId);
+	    ActCategoryEnum cate = ActCategoryEnum.from(act.getActCate());
+	    if (cate == null) return List.of();
 
+	    List<ActParticipationVO> participants = actPartSvc.findStoresByActId(actId);
+
+	    return participants.stream()
+	        .map(part -> {
+	            StoreVO store = storeSvc.getStoreWithProducts(part.getStore().getStorId());
+
+	            List<ProductDiscountDTO> discounted = store.getProduct().stream()
+	                .filter(p -> cate.calculate(p, act) < p.getProdPrice())
+	                .map(p -> new ProductDiscountDTO(
+	                        p.getProdName(),
+	                        p.getProdPrice(),
+	                        cate.calculate(p, act)
+	                )).toList();
+
+	            return new StoreWithDiscountedProductsDTO(store.getStorName(), discounted);
+	        })
+	        .filter(dto -> !dto.getProducts().isEmpty()) // 只回傳有折扣商品的店家
+	        .toList();
+	}
 	//前端載入更新過的活動列表提供給店家(需登入店家)
 		@GetMapping("/store/activities")
 		public List<Map<String, Object>> getActivitiesWithJoinStatus(HttpSession session) {

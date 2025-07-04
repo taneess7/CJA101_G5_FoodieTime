@@ -3,6 +3,7 @@ package com.foodietime.act.model;
 
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 
@@ -12,7 +13,7 @@ import com.foodietime.product.model.ProductVO;
 public enum ActCategoryEnum {
 	
 
-    // 類型 1: 商品名稱符合，List.of複數選項，避免無法解析活動
+    // 類型 1: 商品類別或名稱符合，List.of複數選項，避免無法解析活動
     NEW_PRODUCT(List.of("新品上市", "草莓優惠"), (prod, act) ->
         prod.getProdName().contains("草莓")
             ? (int)(prod.getProdPrice() * act.getActDiscValue())
@@ -20,27 +21,34 @@ public enum ActCategoryEnum {
     ),
 
     ITALIAN_FEST(List.of("義式美食節"), (prod, act) ->
-        prod.getProdName().contains("義")
+    (prod.getProductCategory().getProdCate().contains("義式")||prod.getProdName().contains("義大利麵"))
             ? (int)(prod.getProdPrice() * act.getActDiscValue())
             : prod.getProdPrice()
     ),
 
     BBQ_DAY(List.of("燒烤日"), (prod, act) ->
-        prod.getProdName().contains("烤")
+    (prod.getProductCategory().getProdCate().contains("素")||prod.getProdName().contains("烤"))
             ? (int)(prod.getProdPrice() * act.getActDiscValue())
             : prod.getProdPrice()
     ),
 
-    HOT_POT(List.of("火鍋季"), (prod, act) ->
-        prod.getProdName().contains("鍋")
-            ? (int)(prod.getProdPrice() * act.getActDiscValue())
-            : prod.getProdPrice()
+    HOT_POT(List.of("火鍋季", "火鍋套餐"), (prod, act) ->
+    (Optional.ofNullable(prod.getProductCategory().getProdCate()).orElse("").contains("火鍋") ||
+     Optional.ofNullable(prod.getProdName()).orElse("").contains("鍋"))
+    ? (int)(prod.getProdPrice() * act.getActDiscValue())
+    : prod.getProdPrice()
     ),
     
     VEG_PROD(List.of("素食推廣"), (prod, act) -> 
-        prod.getProductCategory().getProdCate().contains("素")
+        (prod.getProductCategory().getProdCate().contains("素")||prod.getProdName().contains("素"))
         ? (int)(prod.getProdPrice() * act.getActDiscValue())
         : prod.getProdPrice()
+    ),
+    
+    FASTFOOD(List.of("速食優惠"), (prod, act) -> 
+    (prod.getProductCategory().getProdCate().contains("美式")||prod.getProdName().contains("炸"))
+    ? (int)(prod.getProdPrice() * act.getActDiscValue())
+    : prod.getProdPrice()
     ),
 
  // 類型 2: 店家分類符合
