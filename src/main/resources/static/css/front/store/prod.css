@@ -204,3 +204,8 @@ table.dataTable {
   font-family: 'Noto Sans TC', sans-serif;
   font-size: 1rem;
 }
+
+ .img-rounded {
+    max-height: 150px;
+    border-radius: 10%;
+  }

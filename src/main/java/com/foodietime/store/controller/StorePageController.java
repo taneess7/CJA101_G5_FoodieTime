@@ -275,7 +275,7 @@ public class StorePageController {
 					String base64Image = Base64.getEncoder().encodeToString(prod.getProdPhoto());
 					prodImageMap.put(prod.getProdId(), base64Image);
 				} else {
-					prodImageMap.put(prod.getProdId(), ""); // 預設圖
+					prodImageMap.put(prod.getProdId(), "https://placehold.co/200x200/eeeeee/999"); // 預設圖
 				}
 			}
 			storeProdImageMap.put(storId, prodImageMap); // 商品圖片 base64 map
@@ -497,17 +497,31 @@ public class StorePageController {
 		    }
 		    Integer storId = loggedInStore.getStorId();
 
-		    // 2️⃣ 預處理分類與圖片欄位
+		    // 2️ 預處理分類與圖片欄位
 		    setCategory(prod, categoryId);
 		    setStore(prod, storId);
-		    handleImage(prod, parts, model);
-
+		 // !要在錯誤驗證前就設定圖片（呼叫你的方法），避免prod.getProdPhoto() 還是空的，導致圖片消失
+	        handleImage(prod, parts, model);
+	    
+		    
 		    // 3️ 驗證錯誤：回表單
 		    if (result.hasErrors()) {
 		        logValidationErrors(result);
 		        model.addAttribute("prod", prod);
 		        model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
 		        model.addAttribute("errorMessages", extractErrorMessages(result));
+		        
+		        //設定圖片
+		        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
+		            prod.setProdPhoto(parts[0].getBytes()); // 用新圖取代
+		            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+		        } else if (prod.getProdPhoto() != null) {
+		            // 否則顯示原圖
+		            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+		        } else {
+		            // 若沒有圖片，給預設
+		            model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?text=No+Image");
+		        }
 		        return "front/store/prod/prodEdit";
 		    }
 
@@ -523,7 +537,30 @@ public class StorePageController {
 		        // ✏️ 修改商品
 		        result = removeFieldError(prod, result, "upFiles");
 		        if (result.hasErrors()) {
-		            return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();
+		        	
+		        	 //設定圖片
+			        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
+			        	
+			            prod.setProdPhoto(parts[0].getBytes()); // 用新圖取代
+			            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+			        } else if (prod.getProdPhoto() != null) {
+			            // 否則顯示原圖
+			            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+			        } else {
+			            // 若沒有圖片，給預設
+			            model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?text=No+Image");
+			        }
+		        	   
+		        	 System.out.println("使用上傳圖片");
+		        	
+		        	
+		        	model.addAttribute("prod", prod);
+		        	model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
+		        	model.addAttribute("errorMessages", extractErrorMessages(result));
+
+		        	
+		        	return "front/store/prod/prodEdit"; 
+		            //return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();
 		        }
 		        
 		     // 處理商品圖片欄位（如果沒上傳新圖片，就保留原圖）
@@ -562,18 +599,24 @@ public class StorePageController {
 		}
 
 		private void handleImage(ProductVO prod, MultipartFile[] parts, Model model) throws IOException {
-			try {
+		    try {
 		        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
-		            prod.setProdPhoto(parts[0].getBytes());
+		            prod.setProdPhoto(parts[0].getBytes());  // ✅ 使用上傳新圖
+		            System.out.println("使用上傳圖片");
+		        } else if (prod.getProdPhoto() == null && prod.getProdId() != null) {
+		            // 若沒有上傳新圖，且prod內也沒有圖→ 撈原圖
+		            byte[] originalPhoto = prodSvc.getProductById(prod.getProdId()).getProdPhoto();
+		            prod.setProdPhoto(originalPhoto);
+		            System.out.println("沒上傳圖片，使用原圖");
 		        }
 		    } catch (IOException e) {
 		        model.addAttribute("imageError", "圖片上傳失敗：" + e.getMessage());
 		    }
-		
+
 		    if (prod.getProdPhoto() != null) {
 		        model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
 		    } else {
-		        model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?");
+		        model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?text=No+Image");
 		    }
 		}
 
@@ -664,11 +707,12 @@ public class StorePageController {
 		
 		@GetMapping("/prod/photo/{prodId}")  //商品圖片
 		public ResponseEntity<byte[]> getProdPhoto(@PathVariable Integer prodId) {
-			
-		    byte[] photo = prodSvc.getProductById(prodId).getProdPhoto();
-		    if (photo == null) {
-		        return ResponseEntity.notFound().build();
-		    }
+			ProductVO prod = prodSvc.getProductById(prodId);
+			 if (prod == null || prod.getProdPhoto() == null) {
+			        return ResponseEntity.notFound().build();
+			    }
+
+		    byte[] photo = prod.getProdPhoto();
 
 		    HttpHeaders headers = new HttpHeaders();
 		    
