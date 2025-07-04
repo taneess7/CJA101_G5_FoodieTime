@@ -283,7 +283,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     btn.addEventListener("click", function () {
         btn.classList.add("spin");
-        result.innerHTML = "正在尋找美味中... 🍜";
+        result.innerHTML = `<span class="bold-text">正在尋找美味中... 🍜</span>`;
 
         setTimeout(() => {
             fetch("/product/roulette")

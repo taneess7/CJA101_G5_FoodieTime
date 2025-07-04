@@ -333,7 +333,7 @@ section {
 	position: absolute; /* fixed */
 	top: 100px;
 	right: 50px;
-	width: 200px;
+	width: 225px;
 	text-align: center;
 	z-index: 9999;
 	/* 👇 讓背景完全透明，移除白底 */
@@ -348,13 +348,28 @@ section {
 	cursor: pointer;
 }
 
-#floating-roulette p,
-#roulette-result {
-	color: #333;
-	font-size: 0.9rem;
-	margin-top: 10px;
+.bold-text {
+  font-weight: bold;
+}
+/* 結果區塊圖片設定 */
+#roulette-result img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
+/* 結果區塊與說明文字樣式 */
+#floating-roulette p,
+#roulette-result {
+	color: rgb(255, 255, 255);
+	font-size: 1rem;
+    font-weight: bold;
+	margin-top: 10px;
+	
+}
+
+/* ============================ */
 .material-icons-outlined {
     margin-right: 8px;
     color: #495057;
