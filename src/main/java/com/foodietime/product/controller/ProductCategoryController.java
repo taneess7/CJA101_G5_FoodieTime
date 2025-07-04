@@ -153,6 +153,7 @@ public class ProductCategoryController {
         	    "6", "週六"
         );
         model.addAttribute("weekMap", weekMap);
+        model.addAttribute("serverTime", new java.sql.Timestamp(System.currentTimeMillis()));
         
      // 優惠券Map<店家ID, List<CouponVO>>
       		Map<Integer, List<CouponVO>> storeCouponMap = new HashMap<>();
