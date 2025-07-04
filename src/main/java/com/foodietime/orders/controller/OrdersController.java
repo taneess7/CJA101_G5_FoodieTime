@@ -196,10 +196,10 @@ public class OrdersController {
         OrdersVO order = orderOptional.get();
         model.addAttribute("order", order);
 
-        // ================== 步驟3：計算運費 (因為 OrdersVO 中沒有單獨的運費欄位，需推導) ==================
-        // 運費 = 實付金額 - 商品總金額 + 活動優惠金額 + 優惠券優惠金額
-        Integer shippingFee = order.getActualPayment() - order.getOrdSum() + order.getPromoDiscount() + order.getCouponDiscount();
-        model.addAttribute("shippingFee", shippingFee);
+        // ================== 步驟3：直接讀取運費 ==============================
+        // 因為 OrdersVO 已經有 shippingFee 欄位，直接從 order 物件中獲取即可。
+        // 這確保了顯示的運費和資料庫中儲存的運費完全一致。
+        model.addAttribute("shippingFee", order.getShippingFee());
 
         // ================== 步驟4：返回訂單確認頁面的視圖名稱 ==================
         return "/front/cart/order-confirmation";
@@ -220,7 +220,7 @@ public class OrdersController {
                                  @RequestParam(name = "selectedCouponId", required = false) Integer selectedCouponId,
                                  RedirectAttributes redirectAttributes,
                                  HttpSession session) {
-
+            // ==================== 1. 獲取基本資訊 (維持不變) ====================
             MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
             if (memberVO == null) {
                 return "redirect:/cart/login";
@@ -230,24 +230,29 @@ public class OrdersController {
                 redirectAttributes.addFlashAttribute("errorMessage", "結帳已逾時或無商品，請重新操作。");
                 return "redirect:/cart/cart";
             }
+            // ==================== 2. 後端重新計算金額，確保資料正確性 ====================
+            // 重新計算商品小計，不能信任任何前端傳來的金額
+            Integer subtotalAmount = checkoutItems.stream()
+                    .mapToInt(item -> item.getProduct().getProdPrice() * item.getProdN())
+                    .sum();
+
+            // 重新計算運費，規則必須與 showCheckoutPage 方法中的一致
+            Integer shippingFee = (subtotalAmount >= 500) ? 0 : 60;
+
 
             try {
-                // ==================== 根據付款方式分流 ====================
-                // PayMethod: 0:信用卡, 1:貨到付款, 2:LINE Pay
-                if (newOrderData.getPayMethod() == 2) { // 假設 2 是 LINE Pay
-                    // --- LINE Pay 流程 ---
-                    // 1. 建立一筆「待付款」的訂單
-                    OrdersVO pendingOrder = ordersService.createPendingOrder(memberVO.getMemId(), newOrderData, checkoutItems, selectedCouponId);
+                // ==================== 3. 根據付款方式分流 (將計算好的金額傳入 Service) ====================
+                if (newOrderData.getPayMethod() == 2) { // LINE Pay 流程
+                    // ★★★ 將 subtotalAmount 和 shippingFee 傳遞給 Service ★★★
+                    OrdersVO pendingOrder = ordersService.createPendingOrder(memberVO.getMemId(), newOrderData, checkoutItems, selectedCouponId, subtotalAmount, shippingFee);
 
-                    // 2. (模擬) 呼叫 LINE Pay API 取得支付連結
                     String linePayUrl = ordersService.initiateLinePayPayment(pendingOrder);
-
-                    // 3. 將訂單ID和支付連結存起來，重導向到付款處理頁面
                     return "redirect:" + linePayUrl;
 
-                } else {
-                    // --- 信用卡或貨到付款流程 (原有邏輯) ---
-                    OrdersVO createdOrder = ordersService.createOrderFromCart(memberVO.getMemId(), newOrderData, checkoutItems, selectedCouponId);
+                } else { // 信用卡或貨到付款流程
+                    // ★★★ 將 subtotalAmount 和 shippingFee 傳遞給 Service ★★★
+                    OrdersVO createdOrder = ordersService.createOrderFromCart(memberVO.getMemId(), newOrderData, checkoutItems, selectedCouponId, subtotalAmount, shippingFee);
+
                     session.removeAttribute("checkoutItems");
                     redirectAttributes.addFlashAttribute("successMessage", "訂單已成功建立！");
                     redirectAttributes.addAttribute("orderId", createdOrder.getOrdId());

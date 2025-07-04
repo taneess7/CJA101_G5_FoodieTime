@@ -87,46 +87,42 @@ public class OrdersService {
     }
 //=================================================================================================
     /**
-     * 根據會員【選定】的購物車內容建立新的訂單。
-     * 此方法不再查詢完整購物車，而是直接使用傳入的、已經過驗證的商品列表。
+     * 【修改後版本】
+     * 根據會員選定的購物車內容、由 Controller 計算好的金額來建立新訂單。
      *
-     * @param memberId      參數用途：當前登入會員的唯一識別ID。
-     *                      資料來源：由控制器從 Session 或安全上下文獲取。
-     * @param orderFormData 參數用途：包含從結帳表單收集的訂單基本資訊。
-     *                      資料來源：由前端表單提交。
-     * @param checkoutItems 參數用途：【最重要】使用者在購物車勾選並通過驗證的商品列表。
-     *                      資料來源：由控制器從 Session 中取出後傳入。
-     * @return OrdersVO     成功建立的訂單物件。
-     * @throws IllegalStateException 當購物車為空、找不到會員或店家時拋出。
+     * @param memberId         當前登入會員的ID
+     * @param orderFormData    從結帳表單收集的訂單基本資訊
+     * @param checkoutItems    使用者勾選的商品列表
+     * @param selectedMemCouId 使用者選擇的會員優惠券ID
+     * @param subtotalAmount   【新參數】由 Controller 計算好的商品小計
+     * @param shippingFee      【新參數】由 Controller 計算好的運費
+     * @return 成功建立的訂單物件
+     * @throws IllegalStateException 當發生業務邏輯錯誤時拋出
      */
     @Transactional
-    public OrdersVO createOrderFromCart(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems, Integer selectedMemCouId) {
+    public OrdersVO createOrderFromCart(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems, Integer selectedMemCouId, Integer subtotalAmount, Integer shippingFee) {
 
-        // ======================================== 步驟1：獲取基礎資料 (與您原版相似) ========================================
+        // ==================== 1. 獲取基礎資料 (不變) ====================
         MemberVO member = memberRepo.findById(memberId)
                 .orElseThrow(() -> new IllegalStateException("訂單建立失敗：找不到會員ID " + memberId));
-
         if (checkoutItems == null || checkoutItems.isEmpty()) {
             throw new IllegalStateException("訂單建立失敗：沒有需要結帳的商品。");
         }
-
         StoreVO orderStore = checkoutItems.get(0).getProduct().getStore();
 
-        // ======================================== 步驟2：建立 OrdersVO 主物件並設定屬性 ========================================
+        // ==================== 2. 建立 OrdersVO 主物件並設定屬性 (不變) ====================
         OrdersVO order = new OrdersVO();
         order.setMember(member);
         order.setStore(orderStore);
-        // ... (設定 ordAddr, payMethod 等，與您原版相同)
         order.setOrdAddr(orderFormData.getOrdAddr());
         order.setPayMethod(orderFormData.getPayMethod());
         order.setDeliver(orderFormData.getDeliver());
         order.setComment(orderFormData.getComment());
         order.setOrdDate(new Timestamp(System.currentTimeMillis()));
-        order.setPaymentStatus(0); // 待付款
+        order.setPaymentStatus(1); // 假設非 LINE Pay 即為已付款或貨到付款，狀態直接設為1
         order.setOrderStatus(0);   // 處理中
 
-        // ======================================== 步驟3：處理訂單明細並計算原始總金額 ========================================
-        Integer ordSum = 0;
+        // ==================== 3. 處理訂單明細 (不變) ====================
         Set<OrdDetVO> orderDetails = new HashSet<>();
         for (CartVO cartItem : checkoutItems) {
             OrdDetVO ordDet = new OrdDetVO();
@@ -135,52 +131,45 @@ public class OrdersService {
             ordDet.setProdQty(cartItem.getProdN());
             ordDet.setProdPrice(cartItem.getProduct().getProdPrice());
             orderDetails.add(ordDet);
-            ordSum += cartItem.getProdN() * cartItem.getProduct().getProdPrice();
         }
-        order.setOrdSum(ordSum); // 設定訂單原始總額
         order.setOrdDet(orderDetails);
 
-        // ======================================== 步驟4：【核心】處理優惠券折扣 ========================================
+        // 直接使用 Controller 傳入的金額，不再重新計算
+        order.setOrdSum(subtotalAmount);
+        order.setShippingFee(shippingFee);
+
+        // ==================== 4. 處理優惠券折扣 (邏輯不變) ====================
         Integer couponDiscount = 0;
         if (selectedMemCouId != null && selectedMemCouId > 0) {
-            // 4.1 查找並驗證優惠券
             MemCouponVO memCoupon = memCouponRepo.findById(selectedMemCouId)
                     .orElseThrow(() -> new IllegalStateException("優惠券無效或已不存在。"));
 
-            // ★★★ 安全性與業務邏輯驗證 ★★★
+            // ... 安全性驗證 ...
             if (!memCoupon.getMember().getMemId().equals(memberId)) throw new IllegalStateException("權限錯誤：不能使用不屬於您的優惠券。");
             if (memCoupon.getUseStatus() != 0) throw new IllegalStateException("該優惠券已被使用或失效。");
-            if (new Timestamp(System.currentTimeMillis()).after(memCoupon.getCoupon().getCouEndDate())) throw new IllegalStateException("該優惠券已過期。");
-            if (ordSum < memCoupon.getCoupon().getCouMinOrd()) throw new IllegalStateException("訂單金額未達到優惠券最低消費門檻。");
+            if (subtotalAmount < memCoupon.getCoupon().getCouMinOrd()) throw new IllegalStateException("訂單金額未達到優惠券最低消費門檻。");
 
-            // 4.2 驗證通過，應用折扣
-            couponDiscount = memCoupon.getCoupon().getCouDiscount().intValue(); // 假設折扣是整數
-            order.setCoupon(memCoupon.getCoupon()); // 在 OrdersVO 中關聯 CouponVO
-
-            // ★★★ 關鍵：更新會員優惠券狀態 ★★★
-            memCoupon.setUseStatus(1); // 1 代表已使用
+            couponDiscount = memCoupon.getCoupon().getCouDiscount().intValue();
+            order.setCoupon(memCoupon.getCoupon());
+            memCoupon.setUseStatus(1);
             memCouponRepo.save(memCoupon);
         }
         order.setCouponDiscount(couponDiscount);
         order.setPromoDiscount(0); // 活動優惠暫設為0
 
-        // ======================================== 步驟5：計算最終金額 ========================================
-        Integer actualPayment = ordSum - couponDiscount - order.getPromoDiscount();
-        order.setActualPayment(Math.max(0, actualPayment)); // 確保實付金額不為負
+        // 修正實付金額公式，必須加上運費
+        Integer actualPayment = subtotalAmount - couponDiscount - order.getPromoDiscount() + shippingFee;
+        order.setActualPayment(Math.max(0, actualPayment));
 
-        // ======================================== 步驟6：保存訂單並清理購物車 ========================================
+        // ==================== 5. 保存訂單並清理購物車 (不變) ====================
         OrdersVO savedOrder = ordersRepo.save(order);
-
         List<Integer> checkedOutShopIds = checkoutItems.stream().map(CartVO::getShopId).collect(Collectors.toList());
         cartService.deleteCartItems(checkedOutShopIds);
-
-        // ★★★★★★★★★★★★★★★★★★★★★★ 新增區塊開始 ★★★★★★★★★★★★★★★★★★★★★★
-        // ============================== 步驟7：觸發 WebSocket 即時推播通知 ==============================
         triggerNotification(savedOrder);
-        // ★★★★★★★★★★★★★★★★★★★★★ 新增區塊結束 ★★★★★★★★★★★★★★★★★★★★★★
 
         return savedOrder;
     }
+
 
     // =======================================================================================================
     // 新增的訂單相關業務方法
@@ -385,12 +374,21 @@ public class OrdersService {
     //                      line pay 相關的方法
     //================================================================================================================================
     /**
-     * 【核心修改】從 `createOrderFromCart` 複製並修改而來，用於建立一筆「待付款」的訂單
-     * 主要差異是不會清理購物車、不更新優惠券狀態，並將付款狀態設為 0 (待付款)
+     * 【修改後版本】
+     * 建立一筆「待付款」的訂單，用於 LINE Pay 流程。
+     *
+     * @param memberId         當前登入會員的ID
+     * @param orderFormData    從結帳表單收集的訂單基本資訊
+     * @param checkoutItems    使用者勾選的商品列表
+     * @param selectedMemCouId 使用者選擇的會員優惠券ID
+     * @param subtotalAmount   【新參數】由 Controller 計算好的商品小計
+     * @param shippingFee      【新參數】由 Controller 計算好的運費
+     * @return 成功建立的待付款訂單物件
      */
     @Transactional
-    public OrdersVO createPendingOrder(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems, Integer selectedMemCouId) {
-        // ... (步驟 1-3 與 createOrderFromCart 完全相同：獲取資料、建立主物件、處理訂單明細)
+    public OrdersVO createPendingOrder(Integer memberId, OrdersVO orderFormData, List<CartVO> checkoutItems, Integer selectedMemCouId, Integer subtotalAmount, Integer shippingFee) {
+
+        // ==================== 1. 獲取基礎資料 (不變) ====================
         MemberVO member = memberRepo.findById(memberId)
                 .orElseThrow(() -> new IllegalStateException("訂單建立失敗：找不到會員ID " + memberId));
         if (checkoutItems == null || checkoutItems.isEmpty()) {
@@ -398,6 +396,7 @@ public class OrdersService {
         }
         StoreVO orderStore = checkoutItems.get(0).getProduct().getStore();
 
+        // ==================== 2. 建立 OrdersVO 主物件 (不變) ====================
         OrdersVO order = new OrdersVO();
         order.setMember(member);
         order.setStore(orderStore);
@@ -406,12 +405,10 @@ public class OrdersService {
         order.setDeliver(orderFormData.getDeliver());
         order.setComment(orderFormData.getComment());
         order.setOrdDate(new Timestamp(System.currentTimeMillis()));
+        order.setPaymentStatus(0); // ★ 關鍵：待付款
+        order.setOrderStatus(0);   // ★ 關鍵：處理中
 
-        // ★★★ 關鍵差異點 ★★★
-        order.setPaymentStatus(0); // 0: 待付款
-        order.setOrderStatus(0);   // 0: 處理中 (但未付款)
-
-        Integer ordSum = 0;
+        // ==================== 3. 處理訂單明細 (不變) ====================
         Set<OrdDetVO> orderDetails = new HashSet<>();
         for (CartVO cartItem : checkoutItems) {
             OrdDetVO ordDet = new OrdDetVO();
@@ -420,19 +417,19 @@ public class OrdersService {
             ordDet.setProdQty(cartItem.getProdN());
             ordDet.setProdPrice(cartItem.getProduct().getProdPrice());
             orderDetails.add(ordDet);
-            ordSum += cartItem.getProdN() * cartItem.getProduct().getProdPrice();
         }
-        order.setOrdSum(ordSum);
         order.setOrdDet(orderDetails);
 
-        // ... (步驟 4-5 與 createOrderFromCart 相同：處理優惠券、計算最終金額)
-        // 但此處「不」更新優惠券使用狀態
+        // 同樣直接使用 Controller 傳入的金額
+        order.setOrdSum(subtotalAmount);
+        order.setShippingFee(shippingFee);
+
+        // ==================== 4. 處理優惠券 (不更新使用狀態) ====================
         Integer couponDiscount = 0;
         if (selectedMemCouId != null && selectedMemCouId > 0) {
             MemCouponVO memCoupon = memCouponRepo.findById(selectedMemCouId)
                     .orElseThrow(() -> new IllegalStateException("優惠券無效或已不存在。"));
-            // ... (省略驗證邏輯)
-            if (ordSum >= memCoupon.getCoupon().getCouMinOrd()) {
+            if (subtotalAmount >= memCoupon.getCoupon().getCouMinOrd()) {
                 couponDiscount = memCoupon.getCoupon().getCouDiscount().intValue();
                 order.setCoupon(memCoupon.getCoupon());
             }
@@ -440,10 +437,11 @@ public class OrdersService {
         order.setCouponDiscount(couponDiscount);
         order.setPromoDiscount(0);
 
-        Integer actualPayment = ordSum - couponDiscount - order.getPromoDiscount();
+        // 修正實付金額公式，必須加上運費
+        Integer actualPayment = subtotalAmount - couponDiscount - order.getPromoDiscount() + shippingFee;
         order.setActualPayment(Math.max(0, actualPayment));
 
-        // ★★★ 關鍵差異點：只儲存訂單，不清空購物車，不更新優惠券狀態 ★★★
+        // ==================== 5. 只儲存訂單 (不刪購物車，不更新優惠券) ====================
         return ordersRepo.save(order);
     }
 

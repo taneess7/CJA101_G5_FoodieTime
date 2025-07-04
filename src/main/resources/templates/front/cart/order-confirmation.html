@@ -110,7 +110,7 @@
             </div>
             <div class="summary-row">
               <span>運費</span>
-              <span id="confirmation-shipping" th:text="|NT$ ${shippingFee}|">NT$ 0</span>
+              <span id="confirmation-shipping" th:text="|NT$ ${order.shippingFee}|">NT$ 0</span>
             </div>
             <div class="summary-row discount-row" th:if="${order.promoDiscount > 0 or order.couponDiscount > 0}">
               <span>折扣</span>
