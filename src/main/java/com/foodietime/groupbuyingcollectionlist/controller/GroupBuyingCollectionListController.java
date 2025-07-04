@@ -117,7 +117,7 @@ public class GroupBuyingCollectionListController {
         if (!success) {
             redirectAttributes.addFlashAttribute("error", "移除失敗或不存在");
         }
-        return "redirect:front/favoritelist/gb-favoritelist";
+        return "redirect:/gb/gbfavoritelist";
     }
 }
 
