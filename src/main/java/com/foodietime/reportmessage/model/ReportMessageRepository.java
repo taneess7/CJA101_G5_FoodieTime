@@ -27,4 +27,11 @@ public interface ReportMessageRepository extends JpaRepository<ReportMessageVO, 
 	List<ReportMessageVO> findForAdmin(@Param("status") Byte status, @Param("postId") Integer postId,
 			@Param("keyword") String keyword, @Param("startDate") LocalDate startDate,
 			@Param("endDate") LocalDate endDate);
+	
+	/**
+	 * 查詢特定會員的留言檢舉
+	 * @param memId 會員ID
+	 * @return 該會員的留言檢舉列表
+	 */
+	List<ReportMessageVO> findByMember_MemId(Integer memId);
 }

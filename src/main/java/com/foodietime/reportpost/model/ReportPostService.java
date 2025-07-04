@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.foodietime.directmessage.model.DirectMessageService;
-import com.foodietime.directmessage.model.DirectMessageVO;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.message.model.MessageService;
-import com.foodietime.post.model.PostRepository;
 import com.foodietime.post.model.PostService;
 import com.foodietime.post.model.PostVO;
 import com.foodietime.reportmessage.model.ReportMessageRepository;
@@ -27,8 +25,6 @@ import com.foodietime.reportmessage.model.ReportMessageService;
 import com.foodietime.reportmessage.model.ReportMessageVO;
 import com.foodietime.reportpost.controller.ReportPostMController.ResolveReportRequest;
 import com.foodietime.reportpost.dto.ForumReportDTO;
-import com.foodietime.smg.model.SmgService;
-import com.foodietime.smg.model.SmgVO;
 
 @Service("ReportPostService")
 public class ReportPostService {
@@ -48,11 +44,8 @@ public class ReportPostService {
 	@Autowired
 	private ReportMessageRepository reportMessageRepository;
 	
-	@Autowired
-	private DirectMessageService directMessageService;
-	
-	@Autowired
-	private SmgService smgService;
+	// 用於儲存處理人員和處理時間的靜態 Map
+	private static final Map<Integer, ForumReportDTO> handlerInfoMap = new java.util.concurrent.ConcurrentHashMap<>();
 
 	public ReportPostVO save(ReportPostVO vo) {
 		return repository.save(vo);
@@ -144,6 +137,14 @@ public class ReportPostService {
 			dto.setRepPostDate(pr.getRepPostDate());
 			dto.setRepPostReason(pr.getRepPostReason());
 			dto.setRepPostStatus(pr.getRepPostStatus());
+			
+			// 從 Map 中取得處理資訊
+			ForumReportDTO handlerInfo = handlerInfoMap.get(pr.getRepPostId());
+			if (handlerInfo != null) {
+				dto.setHandlerName(handlerInfo.getHandlerName());
+				dto.setHandleDate(handlerInfo.getHandleDate());
+			}
+			
 			combinedList.add(dto);
 		});
 
@@ -156,6 +157,14 @@ public class ReportPostService {
 			dto.setRepPostDate(mr.getRepMesDate());
 			dto.setRepPostReason(mr.getRepMesReason());
 			dto.setRepPostStatus(mr.getRepMesStatus());
+			
+			// 從 Map 中取得處理資訊
+			ForumReportDTO handlerInfo = handlerInfoMap.get(mr.getRepMesId());
+			if (handlerInfo != null) {
+				dto.setHandlerName(handlerInfo.getHandlerName());
+				dto.setHandleDate(handlerInfo.getHandleDate());
+			}
+			
 			combinedList.add(dto);
 		});
 
@@ -174,7 +183,6 @@ public class ReportPostService {
 		return new PageImpl<>(pageList, pageable, combinedList.size());
 	}
 
-	@Transactional
 	public void resolveForumReport(ResolveReportRequest request) {
 		MemberVO targetMember = null; // 被檢舉內容的作者
 		String contentTitle = ""; // 被檢舉內容的標題或摘要
@@ -190,16 +198,6 @@ public class ReportPostService {
 			postService.updateStatus(request.getContentId(), (byte) 2); // contentId 是 postId
 			this.updateStatus(request.getRepPostId(), (byte) 1); // 'this' 指的是 ReportPostService 自身
 		} else if ("comment".equals(request.getReportType())) {
-			// 取得被檢舉的留言資訊
-			com.foodietime.message.model.MessageVO message = messageService.getOneMessage(request.getContentId());
-			if (message != null) {
-				targetMember = message.getMember();
-				contentTitle = message.getMesContent();
-				if (contentTitle.length() > 30) {
-					contentTitle = contentTitle.substring(0, 30) + "...";
-				}
-			}
-			
 			// 先檢查檢舉是否存在及其狀態
 			ReportMessageVO reportMessage = reportMessageRepository.findById(request.getRepPostId())
 				.orElseThrow(() -> new IllegalArgumentException("找不到指定的留言檢舉，ID: " + request.getRepPostId()));
@@ -209,24 +207,67 @@ public class ReportPostService {
 				throw new IllegalStateException("檢舉已經被處理過，無法重複處理。檢舉ID: " + request.getRepPostId());
 			}
 			
-			// 檢查留言是否還存在
-			if (messageService.getOneMessage(request.getContentId()) != null) {
-				// 留言存在，直接刪除
-				messageService.deleteMessage(request.getContentId()); // contentId 是 mesId
+			// 取得被檢舉的留言資訊（只呼叫一次）
+			com.foodietime.message.model.MessageVO message = messageService.getOneMessage(request.getContentId());
+			if (message != null) {
+				targetMember = message.getMember();
+				contentTitle = message.getMesContent();
+				if (contentTitle.length() > 30) {
+					contentTitle = contentTitle.substring(0, 30) + "...";
+				}
+				
+				// 先將檢舉記錄的 MES_ID 設為 NULL，避免外鍵約束問題
+				updateReportMessageAndDeleteComment(reportMessage, request.getContentId());
+			} else {
+				// 留言不存在，只更新檢舉狀態
+				reportMessage.setRepMesStatus((byte) 1);
+				reportMessageRepository.save(reportMessage);
 			}
-			// 不論留言是否存在，都更新檢舉狀態為已處理
-			reportMessage.setRepMesStatus((byte) 1);
-			reportMessageRepository.save(reportMessage);
 		} else {
 			// 如果類型不對，拋出例外會讓 @Transactional 自動回復所有操作
 			throw new IllegalArgumentException("無效的檢舉類型: " + request.getReportType());
 		}
 		
+		// 記錄處理人員和處理時間到 DTO 中
+		if (request.getHandlerName() != null) {
+			updateReportDTOWithHandlerInfo(request.getRepPostId(), request.getHandlerName(), request.getReportType());
+		}
+		
 		// 發送通知給被檢舉內容的作者
 		if (targetMember != null) {
-			sendViolationNotification(targetMember, request.getReportType(), contentTitle);
+			// 檢舉通知現在統一在收件夾顯示，不需要額外發送 DirectMessage
+			// sendViolationNotification(targetMember, request.getReportType(), contentTitle);
 		}
 	}
+	
+	/**
+	 * 更新檢舉記錄並軟刪除留言的輔助方法
+	 */
+	@Transactional
+	private void updateReportMessageAndDeleteComment(ReportMessageVO reportMessage, Integer mesId) {
+		// 先軟刪除留言（將狀態設為已刪除，但不真正刪除記錄）
+		try {
+			messageService.deleteMessage(mesId);
+		} catch (Exception e) {
+			// 如果刪除失敗，記錄錯誤但繼續處理檢舉狀態
+			System.err.println("刪除留言 ID " + mesId + " 時發生錯誤: " + e.getMessage());
+		}
+		
+		// 更新檢舉記錄狀態為已處理
+		reportMessage.setRepMesStatus((byte) 1);
+		reportMessageRepository.save(reportMessage);
+	}
+	
+	@Transactional
+	private void deleteComment(Integer mesId) {
+		try {
+			messageService.deleteMessage(mesId);
+		} catch (Exception e) {
+			// 如果刪除失敗，記錄錯誤但繼續處理檢舉狀態
+			System.err.println("刪除留言 ID " + mesId + " 時發生錯誤: " + e.getMessage());
+		}
+	}
+	
 	
 	@Transactional
 	public int batchResolveForumReports(List<ResolveReportRequest> reports) {
@@ -247,16 +288,6 @@ public class ReportPostService {
 	                postService.updateStatus(request.getContentId(), (byte) 2);
 	                this.updateStatus(request.getRepPostId(), (byte) 1);
 	            } else if ("comment".equals(request.getReportType())) {
-	                // 取得被檢舉的留言資訊
-	                com.foodietime.message.model.MessageVO message = messageService.getOneMessage(request.getContentId());
-	                if (message != null) {
-	                    targetMember = message.getMember();
-	                    contentTitle = message.getMesContent();
-	                    if (contentTitle.length() > 30) {
-	                        contentTitle = contentTitle.substring(0, 30) + "...";
-	                    }
-	                }
-	                
 	                // 先檢查檢舉是否存在及其狀態
 	                ReportMessageVO reportMessage = reportMessageRepository.findById(request.getRepPostId())
 	                    .orElse(null);
@@ -272,14 +303,22 @@ public class ReportPostService {
 	                    continue;
 	                }
 	                
-	                // 檢查留言是否還存在
-	                if (messageService.getOneMessage(request.getContentId()) != null) {
-	                    // 留言存在，直接刪除
-	                    messageService.deleteMessage(request.getContentId());
+	                // 取得被檢舉的留言資訊（只呼叫一次）
+	                com.foodietime.message.model.MessageVO message = messageService.getOneMessage(request.getContentId());
+	                if (message != null) {
+	                    targetMember = message.getMember();
+	                    contentTitle = message.getMesContent();
+	                    if (contentTitle.length() > 30) {
+	                        contentTitle = contentTitle.substring(0, 30) + "...";
+	                    }
+	                    
+	                    // 先將檢舉記錄的 MES_ID 設為 NULL，避免外鍵約束問題
+	                    updateReportMessageAndDeleteComment(reportMessage, request.getContentId());
+	                } else {
+	                    // 留言不存在，只更新檢舉狀態
+	                    reportMessage.setRepMesStatus((byte) 1);
+	                    reportMessageRepository.save(reportMessage);
 	                }
-	                // 不論留言是否存在，都更新檢舉狀態為已處理
-	                reportMessage.setRepMesStatus((byte) 1);
-	                reportMessageRepository.save(reportMessage);
 	            } else {
 	                // 如果類型不對，跳過
 	                continue;
@@ -287,7 +326,8 @@ public class ReportPostService {
 	            
 	            // 發送通知給被檢舉內容的作者
 	            if (targetMember != null) {
-	                sendViolationNotification(targetMember, request.getReportType(), contentTitle);
+	                // 檢舉通知現在統一在收件夾顯示，不需要額外發送 DirectMessage
+	                // sendViolationNotification(targetMember, request.getReportType(), contentTitle);
 	            }
 	            
 	            successCount++;
@@ -303,9 +343,10 @@ public class ReportPostService {
 	 * 駁回單筆討論區檢舉（貼文或留言），將狀態更新為 2 (已駁回)。
 	 * @param reportId 檢舉ID
 	 * @param reportType 檢舉類型 ("post" 或 "comment")
+	 * @param handlerName 處理人員姓名（可選）
 	 */
 	@Transactional
-	public void rejectForumReport(Integer reportId, String reportType) {
+	public void rejectForumReport(Integer reportId, String reportType, String handlerName) {
 	    final byte REJECTED_STATUS = 2; // 2 代表 "已駁回"
 
 	    if ("post".equals(reportType)) {
@@ -326,6 +367,21 @@ public class ReportPostService {
 	    } else {
 	        throw new IllegalArgumentException("無效的檢舉類型: " + reportType);
 	    }
+	    
+	    // 記錄處理人員和處理時間到 DTO 中
+	    if (handlerName != null) {
+	        updateReportDTOWithHandlerInfo(reportId, handlerName, reportType);
+	    }
+	}
+	
+	/**
+	 * 駁回單筆討論區檢舉（貼文或留言），將狀態更新為 2 (已駁回)。
+	 * @param reportId 檢舉ID
+	 * @param reportType 檢舉類型 ("post" 或 "comment")
+	 */
+	@Transactional
+	public void rejectForumReport(Integer reportId, String reportType) {
+	    rejectForumReport(reportId, reportType, null);
 	}
 
 	/**
@@ -404,55 +460,104 @@ public class ReportPostService {
 		return isMemberBannedFromPosting(memberId, 5);
 	}
 
-
-	
 	/**
-	 * 發送違規通知給會員
+	 * 取得指定會員的所有檢舉通知（使用 ForumReportDTO）
+	 * @param memberId 會員ID
+	 * @return 檢舉通知列表
 	 */
-	private void sendViolationNotification(MemberVO member, String reportType, String contentTitle) {
-		try {
-			
-			
-			// 取得系統管理員（假設 ID 為 1）
-			SmgVO systemAdmin = smgService.findById(1);
-			if (systemAdmin == null) {
-				System.err.println("❌ 找不到系統管理員 (ID: 1)");
-				return;
-			}
-			
-			
-			// 建立通知訊息
-			DirectMessageVO notification = new DirectMessageVO();
-			notification.setMember(member);
-			notification.setSmgr(systemAdmin);
-			notification.setMessDirection(DirectMessageVO.MessageDirection.ADMIN_TO_MEMBER);
-			notification.setMessTime(LocalDateTime.now());
-			
-			// 根據檢舉類型設定不同的通知內容
-			String notificationContent;
-			if ("post".equals(reportType)) {
-				notificationContent = String.format(
-					"【系統通知】您的貼文「%s」因違反社群規範已被下架。如有疑問，請聯繫客服。",
-					contentTitle
-				);
-			} else {
-				notificationContent = String.format(
-					"【系統通知】您的留言「%s」因違反社群規範已被刪除。如有疑問，請聯繫客服。",
-					contentTitle
-				);
-			}
-			
-			notification.setMessContent(notificationContent);
-			
-			
-			// 儲存通知
-			DirectMessageVO savedNotification = directMessageService.addMessage(notification);
-			
-			
-		} catch (Exception e) {
-			// 記錄錯誤但不影響主要業務流程
-			
-			e.printStackTrace();
+	public List<ForumReportDTO> getNotificationsByMemberId(Integer memberId) {
+		List<ForumReportDTO> notifications = new ArrayList<>();
+		
+		// 取得該會員被檢舉的貼文
+		List<ReportPostVO> postReports = repository.findByMember_MemId(memberId);
+		for (ReportPostVO report : postReports) {
+			ForumReportDTO dto = new ForumReportDTO();
+			dto.setRepPostId(report.getRepPostId());
+			dto.setPost(report.getPost());
+			dto.setMember(report.getMember());
+			dto.setRepPostDate(report.getRepPostDate());
+			dto.setRepPostReason(report.getRepPostReason());
+			dto.setRepPostStatus(report.getRepPostStatus());
+			notifications.add(dto);
 		}
+		
+		// 取得該會員被檢舉的留言
+		List<ReportMessageVO> messageReports = reportMessageRepository.findByMember_MemId(memberId);
+		for (ReportMessageVO report : messageReports) {
+			ForumReportDTO dto = new ForumReportDTO();
+			dto.setRepPostId(report.getRepMesId());
+			dto.setComment(report.getMes());
+			dto.setMember(report.getMember());
+			dto.setRepPostDate(report.getRepMesDate());
+			dto.setRepPostReason(report.getRepMesReason());
+			dto.setRepPostStatus(report.getRepMesStatus());
+			notifications.add(dto);
+		}
+		
+		// 依檢舉時間降序排列
+		notifications.sort((a, b) -> b.getRepPostDate().compareTo(a.getRepPostDate()));
+		
+		return notifications;
+	}
+
+	/**
+	 * 取得指定檢舉的 ForumReportDTO（用於後台詳情頁面）
+	 * @param repPostId 檢舉ID
+	 * @return ForumReportDTO 或 null（如果找不到）
+	 */
+	public ForumReportDTO getOneForumReportDTO(Integer repPostId) {
+		ForumReportDTO dto = null;
+		
+		// 先嘗試從貼文檢舉中查找
+		ReportPostVO reportPost = repository.findById(repPostId).orElse(null);
+		if (reportPost != null) {
+			dto = new ForumReportDTO();
+			dto.setRepPostId(reportPost.getRepPostId());
+			dto.setPost(reportPost.getPost());
+			dto.setMember(reportPost.getMember());
+			dto.setRepPostDate(reportPost.getRepPostDate());
+			dto.setRepPostReason(reportPost.getRepPostReason());
+			dto.setRepPostStatus(reportPost.getRepPostStatus());
+		} else {
+			// 如果找不到貼文檢舉，嘗試從留言檢舉中查找
+			ReportMessageVO reportMessage = reportMessageRepository.findById(repPostId).orElse(null);
+			if (reportMessage != null) {
+				dto = new ForumReportDTO();
+				dto.setRepPostId(reportMessage.getRepMesId());
+				dto.setComment(reportMessage.getMes());
+				dto.setMember(reportMessage.getMember());
+				dto.setRepPostDate(reportMessage.getRepMesDate());
+				dto.setRepPostReason(reportMessage.getRepMesReason());
+				dto.setRepPostStatus(reportMessage.getRepMesStatus());
+			}
+		}
+		
+		// 如果有找到檢舉資料，嘗試從 Map 中取得處理資訊
+		if (dto != null) {
+			ForumReportDTO handlerInfo = handlerInfoMap.get(repPostId);
+			if (handlerInfo != null) {
+				dto.setHandlerName(handlerInfo.getHandlerName());
+				dto.setHandleDate(handlerInfo.getHandleDate());
+			}
+		}
+		
+		return dto;
+	}
+
+	/**
+	 * 更新 ForumReportDTO 中的處理人員和處理時間資訊
+	 * @param repPostId 檢舉ID
+	 * @param handlerName 處理人員姓名
+	 * @param reportType 檢舉類型
+	 */
+	private void updateReportDTOWithHandlerInfo(Integer repPostId, String handlerName, String reportType) {
+		// 建立一個包含處理資訊的 DTO
+		ForumReportDTO dto = new ForumReportDTO();
+		dto.setRepPostId(repPostId);
+		dto.setHandlerName(handlerName);
+		dto.setHandleDate(new java.util.Date());
+		
+		// 將處理資訊儲存到靜態 Map 中
+		handlerInfoMap.put(repPostId, dto);
 	}
 }
