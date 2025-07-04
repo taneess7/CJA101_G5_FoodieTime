@@ -41,11 +41,7 @@ public class ReportPostController {
 	public String insert(@Valid ReportPostVO reportPostVO, BindingResult result, ModelMap model, HttpSession session,
 			@RequestParam("action") String action) {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-		// ====== 測試用：手動指定登入會員 ======
-		// 你可以改這個 ID 來測試不同會員
-		MemberVO fakeMember = memservice.getById(1); // 2 改成你想測試的會員ID
-		session.setAttribute("loginMember", fakeMember);
-		// ====== 測試用結束 ======
+		
 		if (result.hasErrors()) {
 			return "front/reportpost/addReportPost";
 		}
@@ -56,7 +52,7 @@ public class ReportPostController {
 		/*************************** 2.開始新增資料 *****************************************/
 		reportPostService.save(reportPostVO);
 		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		MemberVO loginMember = (MemberVO) session.getAttribute("loggedInMember");
 		List<ReportPostVO> list = reportPostService.getAll();
 		model.addAttribute("reportPostListData", list);
 		// 取得貼文ID

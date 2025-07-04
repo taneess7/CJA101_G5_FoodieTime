@@ -160,7 +160,7 @@ public class MemberVO implements Serializable {
 	    }
 
 	    public enum MemberStatus {
-	        INACTIVE, ACTIVE
+	        INACTIVE, ACTIVE, DISABLED
 	    }
 
 	    public enum NoSpeakStatus {

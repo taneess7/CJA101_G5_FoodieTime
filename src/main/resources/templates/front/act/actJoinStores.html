@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>查看參與店家</title>
+<!-- 引入icon圖片 -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+ <!-- header/footer cs -->
+  <link rel="stylesheet" th:href="@{/css/common/index.css}">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  
+ <style>
+    /* act.css */
+
+.act-card {
+  width: 400px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.act-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.act-body {
+  padding: 1rem;
+}
+
+.act-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.act-meta {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.act-desc {
+  font-size: 0.95rem;
+  margin-top: 0.75rem;
+}
+
+.acts-list {
+  display: flex;         /* 啟用橫向排列 */
+  flex-wrap: wrap;       /* 超出自動換行 */
+  justify-content: center; /* 卡片靠左對齊 */
+ /* flex-direction: column;/*直排*/
+  gap: 1.5rem;
+  /*max-width: 800px; 會限制橫向排列最大寬度 搭配margin: 0 auto 卡片直排置中*/
+  margin: 0 ;
+  padding: 1rem;
+  padding-top: 100px;
+}
+
+.act-item {
+  display: flex;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+  align-items: center;
+  gap: 1rem;
+  width: 450px;          /* ✅ 固定寬度 */
+  flex-shrink: 0;        /* ✅ 避免縮小變形 */
+}
+
+/* 滑鼠移上去時的效果 */
+.act-item:hover {
+  transform: translateY(-5px); /* 上浮 5px */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 加強陰影 */
+  
+}
+
+.act-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.act-details {
+  flex: 1;
+}
+
+.act-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color:rgb(76, 175, 80);
+}
+
+.act-content {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.act-dates {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.act-discount {
+  font-weight: bold;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.btn-secondary {
+  background-color: #666;
+}
+.btn-secondary:hover {
+  background-color: #444;
+}
+
+.acts-container {
+  background-color: gray;
+  display: flex;
+  flex-wrap: wrap;      /* ✅ 多的自動換行 */
+  flex-direction: row;  /* ✅ 水平排列（預設就是 row，可以加強明確性） */
+  justify-content: flex-start; /* ✅ 左對齊 */
+  gap: 1.5rem;          /* ✅ 卡片間距 */
+}
+
+ .app-header {
+    position: fixed;           /* ✅ 固定在畫面頂部 */
+    top: 0;
+    left: 0;
+    width: 100%;               /* 撐滿整個寬度 */
+    z-index: 50;               /* 確保蓋在上方 */
+    height: 64px;
+    background-color: white;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+  }
+  
+  body {
+  background-color: #fdf4f1;
+  }
+ table {
+  width: 100%;
+  }
+
+#store-modal {
+  max-width: 350px;           /* 限制寬度 */
+  max-height: 500px;          /* 限制高度 */
+  overflow-y: auto;           /* 垂直方向出現滾動條 */
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.card {
+  display: flex;
+  background-color: white;   /* 右側白底 */
+  border-radius: 12px;
+  overflow: hidden;            /* 關鍵：讓圓角與內部分區生效 */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  
+}
+
+.card-left {
+  background-color: #A86F60;      /* 左半白底 */
+  padding: 10px;
+  flex: 0 0 40%;               /* 固定左邊 40% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-left img {
+  width: 100%;
+  height: auto;
+}
+
+.card-right {
+ width: 320px;
+  padding: 10px;
+  flex: 1;                     /* 右側自動填滿 */
+}
+
+
+#modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色 */
+  z-index: 999; /* 蓋在內容上，但低於 modal */
+}
+#store-modal {
+  z-index: 1000; /* 確保彈窗在遮罩上 */
+}
+
+  </style>
+
+
+</head>
+<body>
+ <header th:replace="~{front/common/header :: main-header}"></header> 
+ <div id="modal-overlay" style="display:none;"></div>
+
+<div id="acts-container" class="acts-list">
+ 
+<!-- 活動卡片插入這裡 -->
+<!-- Modal：查看參與店家，會跳出店家提示窗 -->
+	<div id="store-modal" style="display:none; position:fixed; top:10%; left:50%; transform:translateX(-50%);
+	    background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.3); z-index:1000;">
+	  <h3 style="margin-bottom:10px;">參與店家</h3>
+	  <ul id="store-list" style="padding-left: 1rem; line-height: 1.6;"></ul>
+	  <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="closeModal()">關閉</button>
+	</div>
+</div>	
+
+ <footer th:replace="~{front/common/footer :: main-footer}"></footer>
+<script>
+window.addEventListener('error', function (e) {
+  alert("JavaScript 發生錯誤，請開發者工具查看 console.log！");
+});
+</script>
+
+<script>
+const container = document.getElementById('acts-container');
+fetch('/api/act/{actId}/stores').then(r => r.json()).then(data => console.log("活動資料：", data));
+//讀取所有活動
+fetch('/api/allActs')
+	.then(res => res.json())
+	.then(acts => {
+		acts.forEach(act =>{ //迴圈
+			const item = document.createElement('div');
+			item.className = 'act-item';
+			
+			item.innerHTML = `
+				<div class="card">
+					  <div class="card-left">
+					  <img src="${act.actPhoto}" 
+					       alt="${act.actName}" 
+					       onerror="this.onerror=null; this.src='/images/act/default.png'"
+					       style="width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+					  </div>
+					  <div class="card-right">
+					  <div class="act-details">
+					    <div class="act-name">${act.actName}</div>
+					    <div class="act-content">${act.actContent.replace(/\n/g, '<br>')}</div>
+					    <div class="act-dates">
+					      活動開始時間: ${formatDateTime(act.actStartTime)}<br>
+					      活動結束時間: ${formatDateTime(act.actEndTime)}<br>
+					    </div>
+					    <a href="#" class="view-stores-link" data-actid="${act.actId}">＜查看參與店家＞</a>
+					  </div>
+					  </div>
+			   </div>
+
+				`;
+			container.appendChild(item);
+		})
+	})
+
+	//查看參與店家
+document.addEventListener('click', function (e) {
+	  if (e.target.classList.contains('view-stores-link')) {
+	    e.preventDefault();
+	    const actId = e.target.dataset.actid;
+
+	    fetch(`/api/act/${actId}/stores`)
+	      .then(res => res.json())
+	      .then(data => {
+	        const list = document.getElementById('store-list');
+	        list.innerHTML = '';
+	        if (data.length === 0) {
+	          list.innerHTML = '<li>目前尚無參與店家</li>';
+	          // 顯示彈窗與遮罩
+              document.getElementById('store-modal').style.display = 'block';
+        	  document.getElementById('modal-overlay').style.display = 'block';
+	        } else {
+	          data.forEach(store => {  //迴圈加資料
+	        	  
+	            const li = document.createElement('li');
+	         // 建立店家名稱
+	            const storeName = document.createElement('strong');
+	            storeName.textContent = store.storName;
+	            storeName.style.color = '#4A90E2';
+
+	            li.appendChild(storeName);
+	           
+
+	            // 如果有商品，加入商品表格
+	            if (store.products && store.products.length > 0) {
+	              const table = document.createElement('table');
+	              table.style.marginTop = '8px';
+	              table.innerHTML = `
+	                <thead>
+	                  <tr><th>商品名稱</th><th style=" text-align:right;">原價</th><th style=" text-align:right;">折扣價</th></tr>
+	                </thead>
+	                <tbody>
+	                  ${store.products.map(prod => `
+	                    <tr>
+	                      <td>${prod.prodName}</td>
+	                      <td style=" text-align:right;">${prod.prodPrice}</td>
+	                      <td style="color:red; text-align:right;">${prod.discountedPrice}</td>
+	                    </tr>
+	                  `).join('')}
+	                </tbody>
+	                <hr>
+	                <div style="margin-bottom: 1em;"></div>
+	              `;
+	              li.appendChild(table);
+	            }
+	              //加入到清單
+	            list.appendChild(li);
+	         // 顯示彈窗與遮罩
+	        	  document.getElementById('store-modal').style.display = 'block';
+	        	  document.getElementById('modal-overlay').style.display = 'block';
+	          });
+	        }
+	        document.getElementById('store-modal').style.display = 'block';
+	      })
+	      .catch(err => {
+	        alert("⚠ 讀取失敗，請稍後再試");
+	        console.error(err);
+	      });
+	  }
+	});
+	
+//修正時間格式
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mi = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+}
+
+
+//點空白處關閉彈窗：
+document.getElementById('modal-overlay').addEventListener('click', () => {
+	  document.getElementById('store-modal').style.display = 'none';
+	  document.getElementById('modal-overlay').style.display = 'none';
+	});
+	
+	
+function closeModal() {
+	  document.getElementById('store-modal').style.display = 'none';
+	  document.getElementById('modal-overlay').style.display = 'none';
+	}
+	
+/*測試用假資料*/
+// 	acts.forEach(act => {
+// 		  const item = document.createElement('div');
+// 		  item.className = 'act-item';
+	
+// 		  item.innerHTML = `
+// 		    <img src="${act.ACT_PHOTO}" alt="${act.ACT_NAME}">
+// 		    <div class="act-details">
+// 		      <div class="act-name">${act.ACT_NAME}</div>
+// 		      <div class="act-content">${act.ACT_CONTENT.replace(/\n/g, '<br>')}</div>
+// 		      <div class="act-dates">
+// 		        活動開始時間: ${act.ACT_STARTTIME}<br>
+// 		        活動結束時間: ${act.ACT_ENDTIME}<br>
+// 		        <a href="#" class="view-stores-link" data-actid="${act.ACT_ID}">＜查看參與店家＞</a>
+// 		      </div>
+// 		    </div>
+// 		    <div class="act-discount">${act.ACT_DISCOUNT_VALUE}</div>
+// 		  `;
+	
+// 		  container.appendChild(item);
+// 		});
+	
+	
+
+	// const acts = [
+//	 	  {
+//	 	    ACT_ID: 1,
+//	 	    ACT_NAME: "夏日祭典",
+//	 	    ACT_CONTENT: "飲料折5元",
+//	 	    ACT_STARTTIME: "2025-08-01",
+//	 	    ACT_ENDTIME: "2025-08-31",
+//	 	    ACT_DISCOUNT_VALUE: "95 折",
+//	 	    ACT_PHOTO: "img/sample.jpg"
+//	 	  },
+//	 	  {
+//	 	    ACT_ID: 2,
+//	 	    ACT_NAME: "草莓季",
+//	 	    ACT_CONTENT: "草莓新品上市，全品項 9 折",
+//	 	    ACT_STARTTIME: "2025-08-05",
+//	 	    ACT_ENDTIME: "2025-08-25",
+//	 	    ACT_DISCOUNT_VALUE: "$100",
+//	 	    ACT_PHOTO: "img/sample2.jpg"
+//	 	  }
+//	 	];
+</script>
+
+</body>
+</html>

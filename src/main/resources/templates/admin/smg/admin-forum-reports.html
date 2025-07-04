@@ -305,7 +305,7 @@
 											th:data-reporter="${report.member?.memName ?: '未知用戶'}"
 											th:data-report-time="${report.repPostDate != null ? #dates.format(report.repPostDate, 'yyyy-MM-dd HH:mm:ss') : 'N/A'}"
 											th:data-status-text="${report.repPostStatus == 0 ? '待處理' : (report.repPostStatus == 1 ? '已解決' : (report.repPostStatus == 2 ? '已駁回' : (report.repPostStatus == 3 ? '處理中' : '未知')))}"
-											th:data-handler-name="${report.handlerName ?: '-'}"
+											th:data-handler-name="${report.handlerName != null and !#strings.isEmpty(report.handlerName) ? report.handlerName : '-'}"
 											th:data-handle-time="${report.handleDate != null ? #dates.format(report.handleDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">
 											<i class="fas fa-eye"></i>
 										</button>
@@ -505,20 +505,31 @@
                 const handleTime = button.dataset.handleTime;
 
                 // 更新 Modal 內容
-                this.querySelector('#reportId').textContent = reportId;
-                this.querySelector('#reportType').textContent = typeText;
-                this.querySelector('#reportTime').textContent = reportTime;
-                this.querySelector('#reporter').textContent = reporter;
-                this.querySelector('#handler').textContent = handlerName;
-                this.querySelector('#handleTime').textContent = handleTime;
-                this.querySelector('#reportReason').textContent = reason;
-                this.querySelector('#reportedContent').innerHTML = `<p>${content.replace(/\n/g, '<br>')}</p>`; // 處理換行
+                this.querySelector('#reportId').textContent = reportId || '';
+                this.querySelector('#reportType').textContent = typeText || '';
+                this.querySelector('#reportTime').textContent = reportTime || '';
+                this.querySelector('#reporter').textContent = reporter || '';
+                
+                // 處理處理人員和處理時間，正確處理空值和未定義的情況
+                const handlerElement = this.querySelector('#handler');
+                const handleTimeElement = this.querySelector('#handleTime');
+                
+                // 檢查是否為空值、'-'、'null'、'undefined' 或實際的 undefined/null
+                const isEmptyHandler = !handlerName || handlerName === '-' || handlerName === 'null' || handlerName === 'undefined' || handlerName.trim() === '';
+                const isEmptyTime = !handleTime || handleTime === '-' || handleTime === 'null' || handleTime === 'undefined' || handleTime.trim() === '';
+                
+                handlerElement.textContent = isEmptyHandler ? '-' : handlerName;
+                handleTimeElement.textContent = isEmptyTime ? '-' : handleTime;
+                
+                this.querySelector('#reportReason').textContent = reason || '';
+                this.querySelector('#reportedContent').innerHTML = `<p>${(content || '').replace(/\n/g, '<br>')}</p>`;
 
                 // 更新狀態標籤
                 const reportStatusEl = this.querySelector('#reportStatus');
-                reportStatusEl.textContent = statusText;
+                reportStatusEl.textContent = statusText || '未知';
                 reportStatusEl.className = 'badge'; // 重置 class
-                if (statusText.includes('待處理')) {
+                
+                if (!statusText || statusText.includes('待處理')) {
                     reportStatusEl.classList.add('bg-warning', 'text-dark');
                 } else if (statusText.includes('處理中')) {
                     reportStatusEl.classList.add('bg-info');
@@ -533,7 +544,7 @@
                 // 根據狀態設置按鈕可用性
                 const modalApproveBtn = this.querySelector('#modalApproveBtn');
                 const modalRejectBtn = this.querySelector('#modalRejectBtn');
-                const isHandled = statusText.includes('已解決') || statusText.includes('已駁回');
+                const isHandled = statusText && (statusText.includes('已解決') || statusText.includes('已駁回'));
                 
                 modalApproveBtn.disabled = isHandled;
                 modalRejectBtn.disabled = isHandled;
@@ -604,11 +615,31 @@
                             const result = await response.json();
 
                             if (result.success) {
+                                // 獲取當前管理員資訊和處理時間
+                                const currentAdmin = document.querySelector('.user-name')?.textContent || '系統管理員';
+                                const currentTime = new Date().toLocaleString('zh-TW', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                });
+                                
                                 const row = this.closest('tr');
                                 row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
                                 this.innerHTML = '<i class="fas fa-check"></i>';
                                 this.disabled = true; // 操作成功後保持禁用
                                 if (rejectBtn) rejectBtn.disabled = true;
+                                
+                                // 更新該行的 data 屬性，以便檢視按鈕能顯示正確的處理資訊
+                                const viewBtn = row.querySelector('.view-btn');
+                                if (viewBtn) {
+                                    viewBtn.dataset.handlerName = currentAdmin;
+                                    viewBtn.dataset.handleTime = currentTime;
+                                    viewBtn.dataset.statusText = '已解決';
+                                }
+                                
                                 alert("操作成功！");
                             } else {
                                 throw new Error(result.message || "後端請求失敗");
@@ -666,12 +697,31 @@
                             const result = await response.json();
 
                             if (result.success) {
+                                // 獲取當前管理員資訊和處理時間
+                                const currentAdmin = document.querySelector('.user-name')?.textContent || '系統管理員';
+                                const currentTime = new Date().toLocaleString('zh-TW', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                });
+                                
                                 alert(result.message || "操作成功！");
                                 const row = this.closest('tr');
                                 row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
                                 this.innerHTML = '<i class="fas fa-check"></i>';
                                 this.disabled = true;
                                 if (approveBtn) approveBtn.disabled = true;
+                                
+                                // 更新該行的 data 屬性，以便檢視按鈕能顯示正確的處理資訊
+                                const viewBtn = row.querySelector('.view-btn');
+                                if (viewBtn) {
+                                    viewBtn.dataset.handlerName = currentAdmin;
+                                    viewBtn.dataset.handleTime = currentTime;
+                                    viewBtn.dataset.statusText = '已駁回';
+                                }
                             } else {
                                 throw new Error(result.message || "後端請求失敗");
                             }
@@ -729,12 +779,31 @@
                          if (!response.ok) throw new Error(result.message || `HTTP 錯誤! 狀態碼: ${response.status}`);
 
                          if (result.success) {
+                             // 獲取當前管理員資訊和處理時間
+                             const currentAdmin = document.querySelector('.user-name')?.textContent || '系統管理員';
+                             const currentTime = new Date().toLocaleString('zh-TW', {
+                                 year: 'numeric',
+                                 month: '2-digit',
+                                 day: '2-digit',
+                                 hour: '2-digit',
+                                 minute: '2-digit',
+                                 second: '2-digit'
+                             });
+                             
                              alert(result.message);
                              selectedCheckboxes.forEach(checkbox => {
                                  const row = checkbox.closest('tr');
                                  row.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
                                  row.querySelector('.approve-btn')?.setAttribute('disabled', 'true');
                                  row.querySelector('.reject-btn')?.setAttribute('disabled', 'true');
+                                 
+                                 // 更新該行的 data 屬性，以便檢視按鈕能顯示正確的處理資訊
+                                 const viewBtn = row.querySelector('.view-btn');
+                                 if (viewBtn) {
+                                     viewBtn.dataset.handlerName = currentAdmin;
+                                     viewBtn.dataset.handleTime = currentTime;
+                                     viewBtn.dataset.statusText = '已解決';
+                                 }
                              });
                          } else {
                              throw new Error(result.message || "後端請求失敗");
@@ -792,12 +861,31 @@
                         if (!response.ok) throw new Error(result.message || `HTTP 錯誤! 狀態碼: ${response.status}`);
 
                         if (result.success) {
+                            // 獲取當前管理員資訊和處理時間
+                            const currentAdmin = document.querySelector('.user-name')?.textContent || '系統管理員';
+                            const currentTime = new Date().toLocaleString('zh-TW', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            
                             alert(result.message);
                             selectedCheckboxes.forEach(checkbox => {
                                 const row = checkbox.closest('tr');
                                 row.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
                                 row.querySelector('.approve-btn')?.setAttribute('disabled', 'true');
                                 row.querySelector('.reject-btn')?.setAttribute('disabled', 'true');
+                                
+                                // 更新該行的 data 屬性，以便檢視按鈕能顯示正確的處理資訊
+                                const viewBtn = row.querySelector('.view-btn');
+                                if (viewBtn) {
+                                    viewBtn.dataset.handlerName = currentAdmin;
+                                    viewBtn.dataset.handleTime = currentTime;
+                                    viewBtn.dataset.statusText = '已駁回';
+                                }
                             });
                         } else {
                             throw new Error(result.message || "後端請求失敗");
@@ -808,6 +896,203 @@
                     } finally {
                         batchBtn.disabled = false;
                         batchBtn.innerHTML = originalHtml;
+                    }
+                }
+            });
+            
+            // Modal 中的通過檢舉按鈕事件
+            document.getElementById('modalApproveBtn').addEventListener('click', async function() {
+                const modal = document.getElementById('viewModal');
+                const reportId = modal.dataset.currentReportId;
+                const reportType = modal.dataset.currentReportType;
+                const contentId = modal.dataset.currentContentId;
+                
+                if (!reportId || !reportType) {
+                    alert('無法獲取檢舉資訊');
+                    return;
+                }
+                
+                const actionText = reportType === 'post' 
+                    ? "確定下架此貼文並標記檢舉為「已處理」？" 
+                    : "確定刪除此留言並標記檢舉為「已處理」？";
+                
+                if (confirm(actionText)) {
+                    const originalText = this.innerHTML;
+                    try {
+                        this.disabled = true;
+                        document.getElementById('modalRejectBtn').disabled = true;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 處理中...';
+                        
+                        // CSRF Token Handling
+                        let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                        let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                        if (!token || !header) {
+                            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                            if (match) {
+                                token = match[2];
+                                header = 'X-XSRF-TOKEN';
+                            }
+                        }
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (token && header) headers[header] = token;
+
+                        const response = await fetch('/smg/reports/resolve', {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify({
+                                repPostId: reportId,
+                                reportType: reportType,
+                                contentId: contentId
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error("伺服器錯誤回應:", errorText);
+                            throw new Error(`HTTP錯誤! 狀態碼: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // 獲取當前管理員資訊和處理時間
+                            const currentAdmin = document.querySelector('.user-name')?.textContent || '系統管理員';
+                            const currentTime = new Date().toLocaleString('zh-TW', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            
+                            // 更新 Modal 內容
+                            modal.querySelector('#reportStatus').textContent = '已解決';
+                            modal.querySelector('#reportStatus').className = 'badge bg-success';
+                            modal.querySelector('#handler').textContent = currentAdmin;
+                            modal.querySelector('#handleTime').textContent = currentTime;
+                            
+                            // 更新對應的表格行
+                            const correspondingRow = document.querySelector(`[data-report-id="${reportId}"]`)?.closest('tr');
+                            if (correspondingRow) {
+                                correspondingRow.cells[7].innerHTML = '<span class="badge bg-success">已解決</span>';
+                                correspondingRow.querySelector('.approve-btn')?.setAttribute('disabled', 'true');
+                                correspondingRow.querySelector('.reject-btn')?.setAttribute('disabled', 'true');
+                                
+                                // 更新 data 屬性
+                                const viewBtn = correspondingRow.querySelector('.view-btn');
+                                if (viewBtn) {
+                                    viewBtn.dataset.handlerName = currentAdmin;
+                                    viewBtn.dataset.handleTime = currentTime;
+                                    viewBtn.dataset.statusText = '已解決';
+                                }
+                            }
+                            
+                            this.innerHTML = '<i class="fas fa-check"></i> 已處理';
+                            alert("操作成功！");
+                        } else {
+                            throw new Error(result.message || "後端請求失敗");
+                        }
+                    } catch (error) {
+                        console.error("處理失敗:", error);
+                        alert("操作失敗: " + error.message);
+                        this.disabled = false;
+                        document.getElementById('modalRejectBtn').disabled = false;
+                        this.innerHTML = originalText;
+                    }
+                }
+            });
+            
+            // Modal 中的駁回檢舉按鈕事件
+            document.getElementById('modalRejectBtn').addEventListener('click', async function() {
+                const modal = document.getElementById('viewModal');
+                const reportId = modal.dataset.currentReportId;
+                const reportType = modal.dataset.currentReportType;
+                
+                if (!reportId || !reportType) {
+                    alert('無法獲取檢舉資訊');
+                    return;
+                }
+                
+                if (confirm(`確定要駁回檢舉 #${reportId}？此操作將標記檢舉為「已駁回」。`)) {
+                    const originalText = this.innerHTML;
+                    try {
+                        this.disabled = true;
+                        document.getElementById('modalApproveBtn').disabled = true;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 處理中...';
+                        
+                        // CSRF Token Handling
+                        let token = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+                        let header = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+                        if (!token || !header) {
+                            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                            if (match) {
+                                token = match[2];
+                                header = 'X-XSRF-TOKEN';
+                            }
+                        }
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (token && header) headers[header] = token;
+
+                        const response = await fetch('/smg/reports/reject', {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify({ repPostId: reportId, reportType: reportType })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error("伺服器錯誤回應:", errorText);
+                            throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+                        }
+                        
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // 獲取當前管理員資訊和處理時間
+                            const currentAdmin = document.querySelector('.user-name')?.textContent || '系統管理員';
+                            const currentTime = new Date().toLocaleString('zh-TW', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            
+                            // 更新 Modal 內容
+                            modal.querySelector('#reportStatus').textContent = '已駁回';
+                            modal.querySelector('#reportStatus').className = 'badge bg-danger';
+                            modal.querySelector('#handler').textContent = currentAdmin;
+                            modal.querySelector('#handleTime').textContent = currentTime;
+                            
+                            // 更新對應的表格行
+                            const correspondingRow = document.querySelector(`[data-report-id="${reportId}"]`)?.closest('tr');
+                            if (correspondingRow) {
+                                correspondingRow.cells[7].innerHTML = '<span class="badge bg-danger">已駁回</span>';
+                                correspondingRow.querySelector('.approve-btn')?.setAttribute('disabled', 'true');
+                                correspondingRow.querySelector('.reject-btn')?.setAttribute('disabled', 'true');
+                                
+                                // 更新 data 屬性
+                                const viewBtn = correspondingRow.querySelector('.view-btn');
+                                if (viewBtn) {
+                                    viewBtn.dataset.handlerName = currentAdmin;
+                                    viewBtn.dataset.handleTime = currentTime;
+                                    viewBtn.dataset.statusText = '已駁回';
+                                }
+                            }
+                            
+                            this.innerHTML = '<i class="fas fa-times"></i> 已駁回';
+                            alert(result.message || "操作成功！");
+                        } else {
+                            throw new Error(result.message || "後端請求失敗");
+                        }
+                    } catch (error) {
+                        console.error("駁回失敗:", error);
+                        alert("操作失敗: " + error.message);
+                        this.disabled = false;
+                        document.getElementById('modalApproveBtn').disabled = false;
+                        this.innerHTML = originalText;
                     }
                 }
             });

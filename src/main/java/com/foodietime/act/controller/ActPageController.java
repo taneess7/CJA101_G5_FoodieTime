@@ -23,10 +23,16 @@ public class ActPageController {
 	@Autowired
 	StoreService storeSvc;
 	
-	/***進到前台畫面***/
+	/***進到前台畫面-店家看有什麼活動可以參加***/
 	@GetMapping("/act")
     public String index() {
         return "/front/act/act"; // 對應 templates/act.html
+    }
+	
+	/*** 進到前台畫面 - 會員看有店家有優惠 ***/
+	@GetMapping("/act/storeActsForMem")
+    public String showActPage() {
+        return "front/act/actJoinStores"; // 請依你實際 HTML 存放的路徑調整
     }
 	
 	/*** 進到後台查詢頁 /src/main/resources/templates/admin/act/select_page.html 與 listAllAct.html ***/  
@@ -39,8 +45,9 @@ public class ActPageController {
 	/***進到後台ListAllAct畫面**/
 	@GetMapping("/act/listAllActs")
 	public String listAllAct(Model model) { 
-		return "admin/act/listAllActs";  //listAllActs.html
+		return "front/act/actJoinStores";  //listAllActs.html
 	}
+	
 	
 
 	

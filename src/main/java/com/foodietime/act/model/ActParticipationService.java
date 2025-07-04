@@ -49,6 +49,10 @@ public class ActParticipationService {
 	    return partRepo.findByStore_StorId(storId);
 
 	}
+	
+	public List<ActParticipationVO> findStoresByActId(Integer actId){
+		return partRepo.findByAct_ActId(actId);
+	}
 
 
 	

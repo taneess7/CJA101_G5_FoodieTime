@@ -15,12 +15,23 @@ public class MemberLoginInterceptor implements HandlerInterceptor{
 	    Object loggedInMember = session.getAttribute("loggedInMember");
 
 	    if (loggedInMember == null) {
-	        // ⏺ 記住原始請求網址（包含查詢參數）
 	        String uri = request.getRequestURI();
 	        String query = request.getQueryString();
 	        String fullUrl = uri + (query != null ? "?" + query : "");
 
-	        session.setAttribute("redirectAfterLogin", fullUrl);
+	     // 只有當 redirectAfterLogin 尚未被 RefererInterceptor 設定，才設定
+	        if (session.getAttribute("redirectAfterLogin") == null &&
+	            !"XMLHttpRequest".equals(request.getHeader("X-Requested-With")) && // 避免 AJAX
+	            request.getMethod().equalsIgnoreCase("GET") && // 只針對 GET 頁面
+	            !uri.startsWith("/favorite/") &&
+	            !uri.startsWith("/front/member/login") &&
+	            !uri.startsWith("/front/member/register") &&
+	            !uri.startsWith("/front/member/activate") &&
+	            !uri.startsWith("/front/member/verify")) {
+
+	            session.setAttribute("redirectAfterLogin", fullUrl);
+	        }
+
 
 	        response.sendRedirect(request.getContextPath() + "/front/member/login");
 	        return false;
@@ -28,5 +39,6 @@ public class MemberLoginInterceptor implements HandlerInterceptor{
 
 	    return true;
 	}
+
 
 }

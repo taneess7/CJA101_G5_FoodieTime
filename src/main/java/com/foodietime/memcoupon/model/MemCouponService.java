@@ -103,21 +103,21 @@ public class MemCouponService {
      * @param couponId 欲領取的優惠券 ID
      * @return 領取結果的訊息
      */
-    @Transactional // 標註為事務性操作，確保資料一致性
+    @Transactional
     public String claimCoupon(MemberVO memberVO, Integer couponId) {
-        // ==================== 1. 驗證會員和優惠券 ====================
+        // ==================== 1. 驗證會員和優惠券 (維持不變) ====================
         if (memberVO == null || memberVO.getMemId() == null) {
             return "錯誤：請先登入。";
         }
 
         CouponVO coupon = couponRepo.findById(couponId)
-                .orElse(null); // 如果找不到優惠券則為 null
+                .orElse(null);
 
         if (coupon == null) {
             return "錯誤：找不到指定的優惠券。";
         }
 
-        // ==================== 2. 檢查優惠券是否已過期或未開始 ====================
+        // ==================== 2. 檢查優惠券是否已過期或未開始 (維持不變) ====================
         Timestamp now = new Timestamp(System.currentTimeMillis());
         if (now.before(coupon.getCouStartDate())) {
             return "優惠券尚未開放領取。";
@@ -126,26 +126,25 @@ public class MemCouponService {
             return "優惠券已過期，無法領取。";
         }
 
-        // ==================== 3. 檢查會員是否已領取過此優惠券 ====================
-        // 可以透過查詢 memCouponRepo 來判斷
-        // 這裡需要 MemCouponRepository 提供一個查詢方法
-        // 例如: MemCouponVO findByMemberAndCoupon(MemberVO member, CouponVO coupon);
-        if (memCouponRepo.findByMemberAndCoupon(memberVO, coupon) != null) {
+        // ==================== 3. 【核心修正】使用 .isPresent() 檢查會員是否已領取 ====================
+        // findByMemberAndCoupon 應返回 Optional<MemCouponVO>
+        // 我們需要檢查這個 Optional 容器中「是否存在」值
+        if (memCouponRepo.findByMemberAndCoupon(memberVO, coupon).isPresent()) {
+            // 如果 .isPresent() 為 true，表示已領取過，返回錯誤訊息
             return "您已領取過此優惠券。";
         }
 
-        // ==================== 4. 建立新的 MemCouponVO 實例 ====================
+        // ==================== 4. 建立新的 MemCouponVO 實例 (維持不變) ====================
         MemCouponVO memCoupon = new MemCouponVO();
-        memCoupon.setMember(memberVO);  // 設定會員
-        memCoupon.setCoupon(coupon);    // 設定優惠券
-        memCoupon.setUseStatus(0);      // 預設為未使用 (0)
+        memCoupon.setMember(memberVO);
+        memCoupon.setCoupon(coupon);
+        memCoupon.setUseStatus(0);
 
-        // ==================== 5. 儲存到資料庫 ====================
+        // ==================== 5. 儲存到資料庫 (維持不變) ====================
         try {
             memCouponRepo.save(memCoupon);
-            return "SUCCESS"; // 返回成功標誌
+            return "SUCCESS";
         } catch (Exception e) {
-            // 記錄錯誤日誌
             System.err.println("領取優惠券失敗: " + e.getMessage());
             return "系統忙碌，請稍後再試。";
         }

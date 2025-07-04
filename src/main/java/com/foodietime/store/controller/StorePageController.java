@@ -222,7 +222,7 @@ public class StorePageController {
 	 
 //============================優惠券編輯===============================//
 	 //見CouponController
-//============================甜點飲料餐廳===============================//
+//============================甜點飲料餐廳 x沒有用到===============================//
 
 	@GetMapping("/desert2")
 	public String showSwStore2(Model model) {
@@ -294,7 +294,7 @@ public class StorePageController {
 	}
 
 	/*-----------------------------------------------------------編輯商品---------------------------------*/
-	
+	//============================一般商品列表===============================//	
 /***進入商品列表畫面***/
 
 	
@@ -373,7 +373,7 @@ public class StorePageController {
 //		  <option th:each="storeVO : ${storeListData}" th:value="${storeVO.storId}" th:text="${storeVO.storName}"></option>
 //		</select>
 		
-		
+		//============================一般商品新增===============================//			
 /***進入商品新增或編輯畫面***/
 		 @GetMapping("/prod/success")
 		    public String prodAddSuccess() {
@@ -403,6 +403,7 @@ public class StorePageController {
 			}else {
 				prodVO = new ProductVO();//沒有商品id，新增商品
 				//手動填入欄位預設值(vo.mysql沒有設定自動設定時間)
+				prodVO.setProdPrice(0);
 				prodVO.setProdUpdateTime(new Timestamp(System.currentTimeMillis()));
 				prodVO.setProdLastUpdate(new Timestamp(System.currentTimeMillis()));
 				
@@ -463,10 +464,9 @@ public class StorePageController {
 		/***查看商品列表選修改功能，按送出會進到這***/
 		@PostMapping("/prod/save")
 		public String saveProduct(
-		    @Valid @ModelAttribute("prod") ProductVO prod,
+		    @Valid @ModelAttribute("prod") ProductVO prod, BindingResult result,
 		    @RequestParam("categoryId") Integer categoryId,
 		    @RequestParam("upFiles") MultipartFile[] parts,
-		    BindingResult result,
 		    HttpSession session,
 		    Model model,
 		    RedirectAttributes redirectAttr

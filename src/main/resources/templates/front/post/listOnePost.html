@@ -44,7 +44,9 @@
 					</div>
 	
 					<div class="post-content">
-						<p th:text="${postVO.postContent}">貼文內容</p>
+						<div class="post-text-content" th:utext="${#strings.replace(#strings.replace(postVO.postContent, '&#10;', '<br>'), '&#13;', '')}">
+							貼文內容
+						</div>
 					</div>
 	
 					<div class="post-actions">
@@ -116,8 +118,11 @@
 					</div>
 				</div>
 				
-				<div th:if="${session.reportSuccess}" class="alert alert-success">
-					<span th:text="${session.reportSuccess}"></span>
+				<div th:if="${reportSuccess}" class="alert alert-success">
+					<span th:text="${reportSuccess}"></span>
+				</div>
+				<div th:if="${errorMessage}" class="alert alert-danger">
+					<span th:text="${errorMessage}"></span>
 				</div>
 			</div>
 			<div id="reportModal">
@@ -145,8 +150,8 @@
 						style="position: absolute; top: 8px; right: 12px;">✕</button>
 				</div>
 			</div>
-
-			
+		</div>
+		
 		<section class="comments-section">
 			<div class="comments-header">
 				<h3 class="comments-title">
@@ -237,6 +242,7 @@
 	</main>
 	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 </body>
+
 <script th:src="@{/js/front/post/selectOnePost.js}"></script>
 
 

@@ -17,9 +17,6 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo text-center">
-            <img src="https://via.placeholder.com/150x50?text=團購樂" alt="團購樂Logo">
-        </div>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-dashboard}">
@@ -50,43 +47,6 @@
                 </a>
             </li>
             
-            <li class="nav-item section-title">商家管理</li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-review}">
-                    <i class="fas fa-check-circle"></i>
-                    <span>審核商家</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-vendors-edit}">
-                    <i class="fas fa-store-alt"></i>
-                    <span>商家帳號查詢/編輯</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-reports}">
-                    <i class="fas fa-flag"></i>
-                    <span>檢舉功能</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-blacklist}">
-                    <i class="fas fa-ban"></i>
-                    <span>黑名單管理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-products-disable}">
-                    <i class="fas fa-times-circle"></i>
-                    <span>下架商品</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-vendors-permissions}">
-                    <i class="fas fa-key"></i>
-                    <span>權限變更</span>
-                </a>
-            </li>
             
             <li class="nav-item section-title">會員管理</li>
             <li class="nav-item">
@@ -109,30 +69,14 @@
                     <span>檢舉審核管理</span>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-status}">
-                    <i class="fas fa-toggle-on"></i>
-                    <span>啟用/停用</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"th:href="@{/smg/admin-groups-orders}">
+                <a class="nav-link" th:href="@{/smg/admin-groups-orders}">
                     <i class="fas fa-clipboard-list"></i>
                     <span>訂單詳情檢視</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-payments}">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-groups-refunds}">
-                    <i class="fas fa-undo"></i>
-                    <span>退款</span>
-                </a>
-            </li>
+
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/smg/admin-groups-monthly}">
                     <i class="fas fa-calendar-alt"></i>
@@ -147,12 +91,6 @@
                     <span>訂單詳情檢視</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/smg/admin-orders-payments}">
-                    <i class="fas fa-credit-card"></i>
-                    <span>付款處理</span>
-                </a>
-            </li>
             
             <li class="nav-item section-title">客服管理</li>
             <li class="nav-item">
@@ -162,7 +100,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link logout-btn" href="#">
+                <a class="nav-link logout-btn" th:href="@{/smg/logout}">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>登出</span>
                 </a>
@@ -181,22 +119,20 @@
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="admin-dashboard.html">儀表板</a></li>
                     <li class="breadcrumb-item">管理員管理</li>
-                    <li class="breadcrumb-item active">管理員權限管理</li>
+                    <li class="breadcrumb-item">管理員權限管理</li>
                 </ol>
             </nav>
             <div class="user-dropdown dropdown">
                 <a class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#"
 				   	role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
 				    <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="用戶頭像" class="user-avatar me-2">
-				    <span class="user-name" th:text="${session.loggedInSmg.smgrName}">系統管理員</span>
+				    <span class="user-name" th:text="${session.loggedInSmg.smgrAccount}">系統管理員</span>
 				</a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> 個人資料</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> 設定</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+                    <li><a class="dropdown-item logout-btn" th:href="@{/smg/logout}"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
                 </ul>
             </div>
         </div>
@@ -231,7 +167,7 @@
             <div class="card mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold">管理員列表</h6>
-                    <a href="admin-users-add.html" class="btn btn-sm btn-primary">
+                    <a href="/smg/admin-users-add" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> 新增管理員
                     </a>
                 </div>

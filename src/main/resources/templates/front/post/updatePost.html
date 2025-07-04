@@ -5,8 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>修改貼文 - FoodieTime 食刻</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" th:href="@{/css/front/post/addPost.css}">
 <link rel="stylesheet" th:href="@{/css/common/style.css}">
+<link rel="stylesheet" th:href="@{/css/front/post/addPost.css}">
+<link rel="stylesheet" th:href="@{/css/front/post/style.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<!-- PWA 設定 -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#FF5722">
+<link rel="apple-touch-icon" th:href="@{/images/icons/icon-192x192.png}">
 </head>
 <body class="min-h-screen bg-gray-100">
 	<!--     Header -->
@@ -33,15 +42,14 @@
 				<span th:text="${errorMessage}"></span>
 			</div>
 			
-			<!-- 驗證錯誤訊息顯示區域 -->
-			<div th:if="${#fields.hasErrors('*')}" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-				<strong class="font-bold">驗證錯誤：</strong>
-				<ul class="mt-2">
-					<li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
-				</ul>
-			</div>
-			<form th:action="@{/post/updatePost}" method="post"
-				th:object="${postVO}">
+			<form th:action="@{/post/updatePost}" method="post" th:object="${postVO}">
+				<!-- 驗證錯誤訊息顯示區域 - 移到表單內部 -->
+				<div th:if="${#fields.hasErrors('*')}" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+					<strong class="font-bold">驗證錯誤：</strong>
+					<ul class="mt-2">
+						<li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+					</ul>
+				</div>
 				<!-- 隱藏的貼文ID -->
 				<input type="hidden" th:field="*{postId}"> <input
 					type="hidden" th:field="*{member.memId}"> <input
@@ -77,10 +85,12 @@
 				<div class="flex justify-end space-x-4">
 					<!-- 按鈕 1: 儲存草稿 -->
 					<button type="submit" name="action" value="draft"
-						class="btn btn-secondary bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">儲存草稿</button>
+						class="btn-custom btn-draft" 
+						style="width: 120px !important; height: 44px !important; font-size: 16px !important; font-weight: 600 !important;">儲存草稿</button>
 					<!-- 按鈕 2: 發佈貼文 -->
 					<button type="submit" name="action" value="publish"
-						class="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">發佈貼文</button>
+						class="btn-custom btn-publish" 
+						style="width: 120px !important; height: 44px !important; font-size: 16px !important; font-weight: 600 !important;">發佈貼文</button>
 				</div>
 			</form>
 		</div>

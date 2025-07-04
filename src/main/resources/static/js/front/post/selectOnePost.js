@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			submitBtn.disabled = this.value.trim().length === 0;
 		});
 	}
+	
+	// 自動展開留言列表，讓留言列表預設是打開的
+	const commentsList = document.querySelector('.comments-list');
+	const expandBtn = document.querySelector('.expand-btn');
+	if (commentsList && expandBtn) {
+		// 如果留言列表還沒有 is-visible class，則自動展開
+		if (!commentsList.classList.contains('is-visible')) {
+			toggleComments();
+		}
+	}
 });
 
 /*<![CDATA[*/
@@ -78,9 +88,32 @@ function closeReportModal() {
 }
 // 自動隱藏提示
 setTimeout(function() {
-	var alert = document.querySelector('.alert-success');
-	if (alert) alert.style.display = 'none';
-}, 2000);
+	var successAlert = document.querySelector('.alert-success');
+	var errorAlert = document.querySelector('.alert-danger');
+	
+	// 從URL中獲取postId
+	var urlParams = new URLSearchParams(window.location.search);
+	var postId = urlParams.get('postId');
+	
+	if (successAlert) {
+		successAlert.style.display = 'none';
+		// 清除session中的成功訊息
+		var clearUrl = '/message/clear-session-message?type=success';
+		if (postId) {
+			clearUrl += '&postId=' + postId;
+		}
+		fetch(clearUrl, {method: 'POST'});
+	}
+	if (errorAlert) {
+		errorAlert.style.display = 'none';
+		// 清除session中的錯誤訊息
+		var clearUrl = '/message/clear-session-message?type=error';
+		if (postId) {
+			clearUrl += '&postId=' + postId;
+		}
+		fetch(clearUrl, {method: 'POST'});
+	}
+}, 3000);
 
 function openReportMessageModal(mesId) {
     document.getElementById('reportMessageId').value = mesId;
