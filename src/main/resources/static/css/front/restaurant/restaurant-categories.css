@@ -329,3 +329,155 @@
     cursor: pointer;
 }
 /* ==================== 商品燈箱 (Modal) 樣式 ==================== */
+
+/* ================== Coupon Grid Layout (新增/修改) ================== */
+.coupon-grid {
+    display: grid;
+    /* 預設兩欄，每欄等寬 */
+    grid-template-columns: repeat(2, 1fr);
+    /* 卡片間距 */
+    gap: 16px;
+}
+
+/* 響應式設計：當螢幕寬度小於 768px 時，變為單欄 */
+@media (max-width: 768px) {
+    .coupon-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 當沒有優惠券時的提示訊息樣式 */
+.coupon-empty-message {
+    grid-column: 1 / -1; /* 讓此元素橫跨所有欄位 */
+    text-align: center;
+    padding: 2em;
+    color: #777;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* ================== Coupon Card Styling (新增) ================== */
+.coupon-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.coupon-card:not(.disabled):hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.coupon-info {
+    text-align: left;
+    flex-grow: 1; /* 讓文字區塊佔滿可用空間 */
+    margin-right: 12px;
+}
+
+.coupon-info .menu-item-name,
+.coupon-info .menu-item-description,
+.coupon-info .menu-item-price {
+    text-align: left;
+    margin: 0;
+}
+.coupon-info .menu-item-description{
+    margin: 4px 0;
+}
+.coupon-info .menu-item-price {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #B07D62; /* 深棕色 */
+}
+
+
+/* ================== Coupon Button & State (新增/修改) ================== */
+.coupon-action .coupon-claim-btn {
+    min-width: 110px; /* 統一按鈕寬度 */
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    border: 1px solid #C39B7B; /* 主色調 */
+    background-color: transparent;
+    color: #C39B7B;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* 圖示與文字間距 */
+}
+
+/* 可領取按鈕的 Hover 效果 */
+.coupon-action .favorite-coupon-btn:not([disabled]):hover {
+    background-color: #C39B7B;
+    color: white;
+}
+
+/* 卡片與按鈕的禁用(disabled)狀態 */
+.coupon-card.disabled {
+    background-color: #FAFAFA; /* 淺灰色背景 */
+    color: #9E9E9E; /* 文字變灰 */
+}
+
+.coupon-card.disabled .coupon-info .menu-item-name {
+    color: #9E9E9E;
+}
+
+/* 所有禁用按鈕的統一樣式 */
+.coupon-action .coupon-claim-btn:disabled {
+    background-color: #E0E0E0; /* 灰色背景 */
+    border-color: #E0E0E0;
+    color: #9E9E9E; /* 灰色文字 */
+    cursor: not-allowed; /* 不可點擊的游標 */
+}
+
+/* ================== Modal Button Styles (新增) ================== */
+.modal-button-container {
+    display: flex;
+    gap: 12px; /* 按鈕之間的間距 */
+    margin-top: 1.5em; /* 與上方提示文字的間距 */
+    width: 100%;
+}
+
+.modal-button {
+    flex: 1; /* 讓兩個按鈕自動等寬，填滿容器 */
+    padding: 10px 16px;
+    border-radius: 8px; /* 圓角 */
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent; /* 預留邊框位置，防止 hover 時跳動 */
+    text-align: center;
+}
+
+/* --- 主要按鈕 (立即登入) --- */
+.modal-button.btn-primary {
+    background-color: #C39B7B; /* 主色調: 深赤陶色 */
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-button.btn-primary:hover {
+    background-color: #B07D62; /* 輔助色: 深棕色 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* --- 次要按鈕 (取消) --- */
+.modal-button.btn-secondary {
+    background-color: #FFFFFF;
+    color: #B07D62; /* 深棕色 */
+    border: 1px solid #E0E0E0; /* 邊框灰 */
+}
+
+.modal-button.btn-secondary:hover {
+    background-color: #FAFAFA; /* 淺灰背景 */
+    border-color: #C39B7B;
+    color: #C39B7B;
+}

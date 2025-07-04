@@ -306,39 +306,63 @@
 									</div>
 								</div>
 								<!-- ➕ 新增優惠券內容 (更動後版) -->
-								<div class="tab-content"
-									th:id="'coupon-content-' + ${store.storId}">
-									<div class="menu-item"
-										th:each="coupon : ${storeCouponMap[store.storId]}">
+								<div class="tab-content" th:id="'coupon-content-' + ${store.storId}">
 
-										<!-- 優惠券文字資訊 (這部分不變) -->
-										<div class="menu-item-info">
-											<h3 class="menu-item-name" th:text="${coupon.couType}">優惠券類型</h3>
-											<p class="menu-item-description" th:text="${coupon.couDesc}">優惠券說明</p>
-											<span class="menu-item-price"
-												th:text="'最低消費：NT$ ' + ${coupon.couMinOrd}">最低消費金額</span>
+									<!-- 1. 使用 Grid 佈局容器 -->
+									<div class="coupon-grid">
+
+										<!-- 如果店家沒有任何優惠券，顯示提示訊息 -->
+										<div th:if="${storeCouponMap == null or #lists.isEmpty(storeCouponMap[store.storId])}" class="coupon-empty-message">
+											<p>目前沒有可用的優惠券喔！</p>
 										</div>
 
-										<!-- 領取按鈕 (整合所有邏輯後的最終版本) -->
-										<button type="button" class="favorite-btn"
-											th:classappend="${claimedCouponIds != null and claimedCouponIds.contains(coupon.couId)} ? 'claimed' : 'favorite-coupon-btn'"
-											th:data-couid="${coupon.couId}"
-											th:disabled="${claimedCouponIds != null and claimedCouponIds.contains(coupon.couId)}">
-											<!-- 4. 根據條件顯示不同圖示和文字 -->
+										<!-- 2. 迭代優惠券，並為每張券建立卡片 -->
+										<div th:each="coupon : ${storeCouponMap[store.storId]}"
+											 class="coupon-card"
+											 th:with="
+                now = ${serverTime.toInstant()},
+                startDate = ${coupon.couStartDate.toInstant()},
+                endDate = ${coupon.couEndDate.toInstant()},
+                isExpired = ${now.isAfter(endDate)},
+                isNotStarted = ${now.isBefore(startDate)},
+                isClaimed = ${claimedCouponIds != null and #lists.contains(claimedCouponIds, coupon.couId)},
+                isUnavailable = ${isExpired or isNotStarted}
+             "
+											 th:classappend="${isUnavailable or isClaimed} ? 'disabled' : ''">
 
-											<!-- 情況 A: 已領取 -->
-											<span
-												th:if="${claimedCouponIds != null and claimedCouponIds.contains(coupon.couId)}">
-												<i class="fas fa-check-circle"></i> 已領取
-											</span>
+											<!-- 優惠券文字資訊 -->
+											<div class="coupon-info">
+												<h3 class="menu-item-name" th:text="${coupon.couName}">優惠券名稱</h3>
+												<p class="menu-item-description" th:text="${coupon.couDesc}">優惠券說明</p>
+												<span class="menu-item-price" th:text="'滿 ' + ${coupon.couMinOrd} + ' 元可使用'">最低消費金額</span>
+											</div>
 
-											<!-- 情況 B: 未領取 -->
-											<span
-												th:unless="${claimedCouponIds != null and claimedCouponIds.contains(coupon.couId)}">
-												<i class="far fa-heart"></i> 領取
-											</span>
-										</button>
+											<!-- 3. 根據不同狀態顯示對應的按鈕 -->
+											<div class="coupon-action">
+												<!-- 狀態 A: 可領取 -->
+												<button th:if="${!isUnavailable and !isClaimed}"
+														type="button"
+														class="coupon-claim-btn favorite-coupon-btn"
+														th:data-couid="${coupon.couId}">
+													<i class="far fa-heart"></i> 領取
+												</button>
 
+												<!-- 狀態 B: 已領取 -->
+												<button th:if="${isClaimed}" type="button" class="coupon-claim-btn" disabled>
+													<i class="fas fa-check-circle"></i> 已領取
+												</button>
+
+												<!-- 狀態 C: 尚未開放 -->
+												<button th:if="${isNotStarted}" type="button" class="coupon-claim-btn" disabled>
+													<i class="fas fa-hourglass-start"></i> 尚未開放
+												</button>
+
+												<!-- 狀態 D: 已過期 -->
+												<button th:if="${isExpired}" type="button" class="coupon-claim-btn" disabled>
+													<i class="fas fa-calendar-times"></i> 已過期
+												</button>
+											</div>
+										</div>
 									</div>
 								</div>
 								<!-- ==================== /優惠券項目區塊 ==================== -->
@@ -356,13 +380,17 @@
 	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 	<!-- ==================== 商品燈箱 (Modal) 結構 ============================================================ -->
 	<!-- ==================== 商品燈箱 (Modal) 結構 ============================================================ -->
+	<!-- ================================================================================================== -->
+
+	<!-- 商品燈箱 (Modal) 結構 (此部分維持不變) -->
 	<div class="product-modal-overlay" id="productModalOverlay">
+		<!-- ... 內部結構省略，維持原樣 ... -->
 		<div class="product-modal-content">
 			<button class="modal-close-btn" id="modalCloseBtn">&times;</button>
 			<div class="modal-body">
 				<div class="modal-product-image-container">
 					<img id="modalProductImage" src="" alt="商品圖片"
-						class="modal-product-image">
+						 class="modal-product-image">
 				</div>
 				<div class="modal-product-info">
 					<h2 id="modalProductName" class="modal-product-name">商品名稱</h2>
@@ -373,7 +401,7 @@
 						<div class="quantity-controls">
 							<button class="quantity-btn" id="quantityDecrement">-</button>
 							<input type="number" id="quantityInput" class="quantity-input"
-								value="1" min="1" max="99" readonly>
+								   value="1" min="1" max="99" readonly>
 							<button class="quantity-btn" id="quantityIncrement">+</button>
 						</div>
 					</div>
@@ -384,10 +412,53 @@
 			</div>
 		</div>
 	</div>
-	<!-- ==================== /商品燈箱 (Modal) 結構 ============================================================ -->
-	<!-- ==================== /商品燈箱 (Modal) 結構 ============================================================ -->
+
+	<!-- ==================== 登入提示燈箱 (收藏用) ==================== -->
+	<div id="login-prompt-modal"
+		 style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
+		<div
+				style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+			<h3>⚠️ 請先登入會員</h3>
+			<p style="margin: 1em 0;">您必須登入會員才能加入收藏清單。</p>
+			<div style="margin-top: 1em;">
+				<div class="modal-button-container">
+					<div class="modal-button-container">
+						<button class="modal-button btn-secondary" id="closeLoginPromptBtn">取消</button>
+						<button class="modal-button btn-primary" onclick="location.href='/front/member/login'">立即登入</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ==================== 加入購物車用的提示燈箱 ==================== -->
+	<div id="login-prompt-modal-buy"
+		 style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
+		<div style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+			<h3>⚠️ 請先登入會員</h3>
+			<p style="margin: 1em 0;">您必須登入會員才能將商品加入購物車。</p>
+			<div class="modal-button-container">
+				<button class="modal-button btn-secondary" id="closeLoginPromptBuyBtn">取消</button>
+				<button class="modal-button btn-primary" onclick="location.href='/front/member/login'">立即登入</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Toast 提示訊息 (維持不變) -->
+	<div id="toast-message"
+		 style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: #444; color: #fff; padding: 10px 20px; border-radius: 8px; display: none; font-size: 16px; z-index: 9999;">
+	</div>
+
+	<!-- ==================== JavaScript 修正 ==================== -->
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
+			// ==================== 原有的所有 Fetch 邏輯維持不變 ====================
+			// (收藏商品, 領取優惠券, Tab切換, 商品燈箱, 加入購物車... 等邏輯都維持原樣)
+			// ...
+			// ... 此處省略您原本的 fetch 程式碼，請保留它們 ...
+			// ...
+
 			// 收藏商品功能
 			document.querySelectorAll('.favorite-product-btn').forEach(btn => {
 				btn.addEventListener('click', function (e) {
@@ -403,7 +474,6 @@
 						body: JSON.stringify({prodId})
 					})
 							.then(async res => {
-								// 直接檢查 URL 是否被重導向到登入頁
 								if (res.url.includes("/front/member/login")) {
 									showLoginPrompt();
 									throw new Error("未登入(收藏)");
@@ -541,7 +611,6 @@
 				if (val > 1) { quantityInput.value = val - 1; updateAddToCartButton(); }
 			});
 
-			// ==================== 「加入購物車」的 fetch 邏輯 ====================
 			addToCartBtn.addEventListener('click', function() {
 				const formData = new URLSearchParams();
 				formData.append('prodId', currentProdId);
@@ -553,16 +622,12 @@
 					body: formData
 				})
 						.then(async response => {
-							// ★★★ 核心修正：直接檢查最終的 response.url 是否包含登入頁的路徑 ★★★
 							if (response.url.includes("/front/member/login")) {
 								showLoginPromptForBuy();
-								throw new Error('User not logged in (buy)'); // 拋出特定錯誤，中止 .then 鏈
+								throw new Error('User not logged in (buy)');
 							}
-
-							const data = await response.json(); // 只有在非重導向時才嘗試解析 JSON
-
+							const data = await response.json();
 							if (!response.ok) {
-								// 如果後端回傳了 JSON 格式的錯誤訊息
 								throw new Error(data.message || '加入購物車失敗');
 							}
 							return data;
@@ -572,7 +637,6 @@
 							showToast(data.message || '成功加入購物車');
 						})
 						.catch(error => {
-							// 只處理非「未登入」的錯誤，避免重複提示
 							if (error.message && !error.message.includes('User not logged in')) {
 								console.error('加入購物車時發生錯誤:', error);
 								alert(error.message);
@@ -580,7 +644,7 @@
 						});
 			});
 
-			// 登入提示框相關函式
+			// ==================== 登入提示框相關函式 (函式定義不變) ====================
 			function showLoginPrompt() {
 				sessionStorage.setItem('redirectAfterLogin', window.location.href);
 				document.getElementById('login-prompt-modal').style.display = 'flex';
@@ -606,36 +670,12 @@
 				toast.style.display = 'block';
 				setTimeout(() => { toast.style.display = 'none'; }, 2000);
 			}
+
+			// ★★ 步驟2: 在這裡為兩個取消按鈕加上事件監聽 ★★
+			document.getElementById('closeLoginPromptBtn').addEventListener('click', closeLoginPrompt);
+			document.getElementById('closeLoginPromptBuyBtn').addEventListener('click', closeLoginPromptForBuy);
 		});
 	</script>
-	<div id="login-prompt-modal"
-		style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
-		<div
-			style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
-			<h3>⚠️ 請先登入會員</h3>
-			<p style="margin: 1em 0;">您必須登入會員才能加入收藏清單。</p>
-			<div style="margin-top: 1em;">
-				<button onclick="location.href='/front/member/login'">立即登入</button>
-				<button onclick="closeLoginPrompt()">取消</button>
-			</div>
-		</div>
-	</div>
-	<!-- 加入購物車用的提示燈箱 -->
-	<div id="login-prompt-modal-buy"
-		 style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
-		<div style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
-			<h3>⚠️ 請先登入會員</h3>
-			<!-- ★★★ 修正提示文字 ★★★ -->
-			<p style="margin: 1em 0;">您必須登入會員才能將商品加入購物車。</p>
-			<div style="margin-top: 1em;">
-				<button onclick="location.href='/front/member/login'">立即登入</button>
-				<!-- ★★★ 修正關閉函式呼叫 ★★★ -->
-				<button onclick="closeLoginPromptForBuy()">取消</button>
-			</div>
-		</div>
-	</div>
-	<div id="toast-message"
-		style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: #444; color: #fff; padding: 10px 20px; border-radius: 8px; display: none; font-size: 16px; z-index: 9999;">
-	</div>
+
 </body>
 </html>
