@@ -1,9 +1,11 @@
 package com.foodietime.member.controller;
 
 import java.io.IOException;
+import jakarta.validation.Validator;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.foodietime.directmessage.model.DirectMessageDTO;
 import com.foodietime.directmessage.model.DirectMessageService;
@@ -54,21 +57,10 @@ public class MemberController {
     @Autowired
     private StoreCateService storeCateSvc;
 
+    @Autowired
+    private Validator validator;
+
     
-    // ✅ 初始化預設值（讓驗證不會失敗）
-    @ModelAttribute("member")
-    public MemberVO prepareMember() {
-        MemberVO member = new MemberVO();
-        member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
-        member.setMemNoSpeak(MemberVO.NoSpeakStatus.INACTIVE);
-        member.setMemNoPost(MemberVO.NoPostStatus.INACTIVE);
-        member.setMemNoGroup(MemberVO.NoGroupStatus.INACTIVE);
-        member.setMemNoJoingroup(MemberVO.NoJoingroupStatus.INACTIVE);
-        member.setTotalStarNum(0);
-        member.setTotalReviews(0);
-        member.setMemTime(Timestamp.from(Instant.now()));
-        return member;
-    }
     
     @GetMapping("/storeregister")
     public String showStoreForm(HttpSession session, Model model) {
@@ -143,31 +135,61 @@ public class MemberController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-    	if (!model.containsAttribute("member")) {
-    	    model.addAttribute("member", prepareMember());
-    	}
-        return "front/member/register"; // 對應 src/main/resources/templates/member/register.html
+        if (!model.containsAttribute("member")) {
+            MemberVO member = new MemberVO();
+            member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
+            member.setMemNoSpeak(MemberVO.NoSpeakStatus.INACTIVE);
+            member.setMemNoPost(MemberVO.NoPostStatus.INACTIVE);
+            member.setMemNoGroup(MemberVO.NoGroupStatus.INACTIVE);
+            member.setMemNoJoingroup(MemberVO.NoJoingroupStatus.INACTIVE);
+            member.setTotalStarNum(0);
+            member.setTotalReviews(0);
+            member.setMemTime(Timestamp.from(Instant.now()));
+            model.addAttribute("member", member);
+        }
+        return "front/member/register";
     }
 
+
     @PostMapping("/register")
-    public String register( @Valid @ModelAttribute("member") MemberVO member,
+    public String register(	@ModelAttribute("member") MemberVO member,
     		 				BindingResult result,
     		 				 @RequestParam(value = "confirmPassword") String confirmPassword,
     						@RequestParam(value = "mem_avatar", required = false) MultipartFile memAvatarFile,
                            @RequestParam(value = "isStore", required = false) Boolean isStore,
                            HttpSession session,
                            Model model) throws IOException {
-    	
-    	 System.out.println("【DEBUG】是否有錯誤: " + result.hasErrors());
-        if (result.hasErrors()) {
-            return "front/member/register";
+    	member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
+        member.setMemNoSpeak(MemberVO.NoSpeakStatus.INACTIVE);
+        member.setMemNoPost(MemberVO.NoPostStatus.INACTIVE);
+        member.setMemNoGroup(MemberVO.NoGroupStatus.INACTIVE);
+        member.setMemNoJoingroup(MemberVO.NoJoingroupStatus.INACTIVE);
+        member.setTotalStarNum(0);
+        member.setTotalReviews(0);
+        member.setMemTime(Timestamp.from(Instant.now()));
+
+     // ✅ 自動驗證欄位
+        Set<jakarta.validation.ConstraintViolation<MemberVO>> violations = validator.validate(member);
+        for (var violation : violations) {
+            String field = violation.getPropertyPath().toString();
+            String message = violation.getMessage();
+            result.rejectValue(field, "", message);
         }
-        
-        // ✅ 密碼與確認密碼不一致時手動加錯誤訊息
+    	 System.out.println("【DEBUG】是否有錯誤: " + result.hasErrors());  
+    	 // ✅ 密碼與確認密碼不一致時手動加錯誤訊息
         if (member.getMemPassword() == null || !member.getMemPassword().equals(confirmPassword)) {
+        	model.addAttribute("member", member);
             model.addAttribute("passwordError", "兩次輸入的密碼不一致");
             return "front/member/register";
         }
+        if (result.hasErrors()) {
+        	model.addAttribute("member", member);
+        	result.getFieldErrors().forEach(err ->
+            System.out.println("欄位錯誤: " + err.getField() + " -> " + err.getDefaultMessage()));
+            return "front/member/register";
+        }
+        
+      
     	
     	// 帳號或 Email 重複檢查
         if (memService.isAccountExists(member.getMemAccount())) {
@@ -198,9 +220,18 @@ public class MemberController {
         // 寄信
         memService.sendVerificationEmail(member.getMemEmail(), verificationCode);
 
-        return "front/member/verify";
+        return "redirect:/front/member/verify";
    
     }
+    @GetMapping("/verify")
+    public String showVerifyPage(HttpSession session, Model model) {
+        MemberVO member = (MemberVO) session.getAttribute("pendingMember");
+        if (member == null) {
+            return "redirect:/front/member/register"; // 防止直接打網址
+        }
+        return "front/member/verify";
+    }
+
     
     @PostMapping("/verify")
     public String verifyEmail(@RequestParam("code") String codeInput, HttpSession session, Model model) {
@@ -404,48 +435,78 @@ public class MemberController {
     // ✅ 接收表單送出更新
     @PostMapping("/update")
     public String updateMember(
-            @RequestParam("mem_id") Integer memId,
-            @RequestParam("mem_nickname") String nickname,
-            @RequestParam("mem_name") String name,
-            @RequestParam("mem_phone") String phone,
-            @RequestParam("mem_city") String city,
-            @RequestParam("mem_cityarea") String cityarea,
-            @RequestParam("mem_address") String address,
-            @RequestParam("mem_avatar") MultipartFile avatarFile,
-            HttpSession session,
-            Model model) {
+        @Valid @ModelAttribute("member") MemberVO member,
+        BindingResult result,
+        @RequestParam("mem_avatar") MultipartFile avatarFile,
+        RedirectAttributes redirectAttributes,
+        HttpSession session,
+        Model model
+    ) {
+        MemberVO sessionMember = (MemberVO) session.getAttribute("loggedInMember");
+        if (sessionMember == null) {
+            model.addAttribute("error", "請先登入");
+            return "redirect:/front/member/login";
+        }
 
-        MemberVO member = memService.getById(memId);
-        if (member == null) {
-            model.addAttribute("error", "查無會員資料");
+       
+
+        // 補齊必要欄位（避免前端修改關鍵欄位）
+        member.setMemId(sessionMember.getMemId());
+        member.setMemAccount(sessionMember.getMemAccount());
+        member.setMemPassword(sessionMember.getMemPassword());
+        member.setMemEmail(sessionMember.getMemEmail());
+        member.setMemGender(sessionMember.getMemGender()); 
+        member.setMemStatus(sessionMember.getMemStatus());
+        member.setMemCode(sessionMember.getMemCode());
+        member.setMemNoGroup(sessionMember.getMemNoGroup());
+        member.setMemNoJoingroup(sessionMember.getMemNoJoingroup());
+        member.setMemNoPost(sessionMember.getMemNoPost());
+        member.setMemNoSpeak(sessionMember.getMemNoSpeak());
+        member.setTotalReviews(sessionMember.getTotalReviews());
+        member.setTotalStarNum(sessionMember.getTotalStarNum());
+        member.setMemTime(sessionMember.getMemTime());
+        
+        // 如果有驗證錯誤
+        if (result.hasErrors()) {
+            // ✅ 補上原來的大頭照避免變成預設圖
+            if ((member.getMemAvatar() == null || member.getMemAvatar().length == 0)
+                    && sessionMember.getMemAvatar() != null) {
+                member.setMemAvatar(sessionMember.getMemAvatar());
+            }
             return "front/member/edit_profile";
         }
 
-        member.setMemNickname(nickname);
-        member.setMemName(name);
-        member.setMemPhone(phone);
-        member.setMemCity(city);
-        member.setMemCityarea(cityarea);
-        member.setMemAddress(address);
-        
-        // ✅ 處理大頭照（如果有上傳
+
+        // ✅ 上傳新圖片（有大小限制）
         if (avatarFile != null && !avatarFile.isEmpty()) {
+            if (avatarFile.getSize() > 2 * 1024 * 1024) { // 2MB 上限
+                model.addAttribute("error", "圖片大小不得超過 2MB");
+                return "front/member/edit_profile";
+            }
             try {
                 member.setMemAvatar(avatarFile.getBytes());
             } catch (IOException e) {
-                e.printStackTrace();
                 model.addAttribute("error", "圖片上傳失敗");
                 return "front/member/edit_profile";
             }
+        } else {
+            // ✅ 沒有重新上傳圖片 → 保留舊圖
+            member.setMemAvatar(sessionMember.getMemAvatar());
         }
 
-        memService.save(member); // 儲存更新
-
-        session.setAttribute("loggedInMember", member); // 更新 session 中資料
-        model.addAttribute("member", member);
+        memService.save(member);
+        session.setAttribute("loggedInMember", member);
         model.addAttribute("success", "資料已更新");
-        return "front/member/member_center";
+        System.out.println("更新成功！跳轉中");
+        System.out.println("會員名稱: " + member.getMemName());
+        System.out.println("Redirect 到 /front/member/member_center");
+        return "redirect:/front/member/member_center";
+        
     }
+
+
+
+
     
     @GetMapping("/avatar/{memId}")
     public ResponseEntity<byte[]> getAvatar(@PathVariable Integer memId) {
