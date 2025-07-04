@@ -29,6 +29,7 @@ public class DatabaseImageWriter {
                 System.out.println("1. 寫入「一般商品」圖片 (product)");
                 System.out.println("2. 寫入「商家」圖片 (store)");
                 System.out.println("3. 寫入「團購商品」圖片 (group_products)");
+                System.out.println("4. 寫入「平台活動」圖片 (activity)"); // 新增選項
                 System.out.println("0. 結束程式");
                 System.out.print("請輸入選項：");
 
@@ -43,6 +44,9 @@ public class DatabaseImageWriter {
                             break;
                         case 3:
                             writeGroupBuyProductImages();
+                            break;
+                        case 4:
+                            writeActivityImages(); // 新增的 case
                             break;
                         case 0:
                             System.out.println("程式已結束。");
@@ -90,6 +94,16 @@ public class DatabaseImageWriter {
         executeImageUpdate(photosPath, updateSql, 1);
     }
 
+    /**
+     * 讀取指定路徑的圖片，並更新到 `activity` 資料表。
+     */
+    public static void writeActivityImages() {
+        String photosPath = "src/main/resources/static/images/act";
+        String updateSql = "UPDATE activity SET ACT_PHOTO = ? WHERE ACT_ID = ?";
+        System.out.println("\n--- 開始更新「平台活動」圖片 ---");
+        executeImageUpdate(photosPath, updateSql, 1);
+    }
+
     // --- 3. 核心執行邏輯 (私有方法) ---
 
     /**
@@ -101,7 +115,10 @@ public class DatabaseImageWriter {
      */
     private static void executeImageUpdate(String photosPath, String updateSql, int startId) {
         File photoDir = new File(photosPath);
-        File[] photoFiles = photoDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png"));
+        File[] photoFiles = photoDir.listFiles((dir, name) -> {
+            String lowerCaseName = name.toLowerCase();
+            return lowerCaseName.endsWith(".jpg") || lowerCaseName.endsWith(".png") || lowerCaseName.endsWith(".jpeg");
+        });
 
         if (photoFiles == null || photoFiles.length == 0) {
             System.err.println("❌ 在以下路徑找不到圖片或資料夾不存在：" + photoDir.getAbsolutePath());
@@ -125,21 +142,21 @@ public class DatabaseImageWriter {
              PreparedStatement pstmt = con.prepareStatement(updateSql)) {
 
             System.out.println("✅ 資料庫連線成功。");
-            int count = startId;
+            int currentId = startId;
             for (File file : photoFiles) {
                 // 每個檔案的 FileInputStream 也應在 try-with-resources 中
                 try (FileInputStream fin = new FileInputStream(file)) {
                     pstmt.setBinaryStream(1, fin, file.length());
-                    pstmt.setInt(2, count);
+                    pstmt.setInt(2, currentId);
 
                     int rowsAffected = pstmt.executeUpdate();
                     if (rowsAffected > 0) {
-                        System.out.println("✅ 成功更新 ID = " + count + " 的圖片，來源：" + file.getName());
+                        System.out.println("✅ 成功更新 ID = " + currentId + " 的圖片，來源：" + file.getName());
                     } else {
-                        System.err.println("⚠️ 警告：更新 ID = " + count + " 時，沒有任何資料列被影響。");
+                        System.err.println("⚠️ 警告：更新 ID = " + currentId + " 時，沒有任何資料列被影響。請檢查資料庫中是否存在此ID。");
                     }
 
-                    count++;
+                    currentId++;
                 } catch (IOException ioEx) {
                     System.err.println("❌ 讀取圖片失敗：" + file.getAbsolutePath());
                     ioEx.printStackTrace();
