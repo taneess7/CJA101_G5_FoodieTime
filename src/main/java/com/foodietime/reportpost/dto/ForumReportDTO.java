@@ -39,4 +39,21 @@ public class ForumReportDTO {
 	public boolean isResolved() {
 		return repPostStatus == 1;
 	}
+	
+	// Getter 方法供 Thymeleaf 使用
+	public boolean getPostReport() {
+		return isPostReport();
+	}
+	
+	public boolean getCommentReport() {
+		return isCommentReport();
+	}
+	
+	public boolean getPending() {
+		return isPending();
+	}
+	
+	public boolean getResolved() {
+		return isResolved();
+	}
 }

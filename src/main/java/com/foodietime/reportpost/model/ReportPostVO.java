@@ -30,7 +30,7 @@ public class ReportPostVO implements Serializable {
 	@Column(name = "REP_POST_ID")
 	private Integer repPostId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "POST_ID", referencedColumnName = "POST_ID")
 	private PostVO post;
 

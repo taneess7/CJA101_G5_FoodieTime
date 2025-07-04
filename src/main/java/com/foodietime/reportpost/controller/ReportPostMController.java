@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
+
 import com.foodietime.message.model.MessageService;
 import com.foodietime.post.model.PostService;
 import com.foodietime.reportpost.dto.ForumReportDTO;
@@ -81,12 +83,12 @@ public class ReportPostMController {
 	@GetMapping("/detail")
 	public String viewReportDetail(@RequestParam("repPostId") Integer repPostId, ModelMap model,
 			RedirectAttributes redirectAttributes) {
-		ReportPostVO reportPostVO = reportPostService.getOneReportPost(repPostId);
-		if (reportPostVO == null) {
+		ForumReportDTO forumReportDTO = reportPostService.getOneForumReportDTO(repPostId);
+		if (forumReportDTO == null) {
 			redirectAttributes.addFlashAttribute("errorMessage", "找不到指定的檢舉案件");
 			return "redirect:/smg/admin-forum-reports";
 		}
-		model.addAttribute("reportPostVO", reportPostVO);
+		model.addAttribute("forumReportDTO", forumReportDTO);
 		return "admin/smg/admin-forum-reports/reportDetail"; // 需要建立對應的 Thymeleaf 視圖
 	}
 
@@ -151,6 +153,7 @@ public class ReportPostMController {
 		private Integer repPostId;
 		private String reportType;
 		private Integer contentId;
+		private String handlerName; // 處理人員姓名
 	}
 
 	/**
@@ -158,10 +161,26 @@ public class ReportPostMController {
 	 */
 	@PostMapping("/reports/resolve")
 	@ResponseBody
-	public ResponseEntity<?> resolveReport(@RequestBody ResolveReportRequest request) {
+	public ResponseEntity<?> resolveReport(@RequestBody ResolveReportRequest request, HttpSession session) {
 		log.info("接收到檢舉處理請求: repPostId={}, reportType={}, contentId={}", request.getRepPostId(),
 				request.getReportType(), request.getContentId());
 		try {
+			// 從 session 中取得當前登入的管理員資訊
+			Object loggedInSmg = session.getAttribute("loggedInSmg");
+			if (loggedInSmg != null) {
+				// 假設 loggedInSmg 有 getSmgrAccount 方法來取得管理員帳號
+				try {
+					java.lang.reflect.Method getAccountMethod = loggedInSmg.getClass().getMethod("getSmgrAccount");
+					String adminAccount = (String) getAccountMethod.invoke(loggedInSmg);
+					request.setHandlerName(adminAccount);
+				} catch (Exception e) {
+					// 如果無法取得管理員帳號，使用預設值
+					request.setHandlerName("系統管理員");
+				}
+			} else {
+				request.setHandlerName("系統管理員");
+			}
+			
 			// 將業務邏輯移至 Service 層，由 @Transactional 進行交易管理
 			reportPostService.resolveForumReport(request);
 
@@ -204,11 +223,23 @@ public class ReportPostMController {
 	 */
 	@PostMapping("/reports/reject")
 	@ResponseBody
-	public ResponseEntity<?> rejectReport(@RequestBody ResolveReportRequest request) {
+	public ResponseEntity<?> rejectReport(@RequestBody ResolveReportRequest request, HttpSession session) {
 		log.info("接收到檢舉駁回請求: repPostId={}", request.getRepPostId());
 		try {
+			// 從 session 中取得當前登入的管理員資訊
+			String handlerName = "系統管理員";
+			Object loggedInSmg = session.getAttribute("loggedInSmg");
+			if (loggedInSmg != null) {
+				try {
+					java.lang.reflect.Method getAccountMethod = loggedInSmg.getClass().getMethod("getSmgrAccount");
+					handlerName = (String) getAccountMethod.invoke(loggedInSmg);
+				} catch (Exception e) {
+					// 如果無法取得管理員帳號，使用預設值
+				}
+			}
+			
 			// 呼叫新的 Service 方法，該方法能處理不同類型的檢舉
-			reportPostService.rejectForumReport(request.getRepPostId(), request.getReportType());
+			reportPostService.rejectForumReport(request.getRepPostId(), request.getReportType(), handlerName);
 			return ResponseEntity.ok().body(Map.of("success", true, "message", "檢舉已駁回"));
 		} catch (Exception e) {
 			log.error("駁回檢舉 repPostId {} 時發生錯誤: {}", request.getRepPostId(), e.getMessage(), e);

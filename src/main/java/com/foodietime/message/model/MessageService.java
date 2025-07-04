@@ -41,7 +41,12 @@ public class MessageService {
 
 	@Transactional
 	public void deleteMessage(Integer mesId) {
-		repository.deleteById(mesId);
+		// 實作軟刪除，將留言內容設為已刪除標記
+		MessageVO message = repository.findById(mesId).orElse(null);
+		if (message != null) {
+			message.setMesContent("[此留言已被管理員刪除]");
+			repository.save(message);
+		}
 	}
 
 	public MessageVO getOneMessage(Integer mesId) {
