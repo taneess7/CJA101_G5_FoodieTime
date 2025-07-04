@@ -159,8 +159,8 @@
             right: 10px;
         }
         
-        .footer {
-            background-color: #343a40;
+        footer {
+            background-color: rgb(0, 0, 0);
             color: white;
             padding: 40px 0 20px;
             margin-top: 50px;
@@ -247,7 +247,7 @@
         <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
             <i class="bi bi-person"></i> 登入
         </a>
-        <a href="/register" class="btn btn-outline-primary me-2">
+        <a href="/front/member/register" class="btn btn-outline-primary me-2">
             <i class="bi bi-person-plus"></i> 註冊
         </a>
     </div>
@@ -380,26 +380,16 @@
                             <label for="password" class="form-label">密碼</label>
                             <input type="password" class="form-control" name="mem_password" id="mem_password" placeholder="請輸入密碼">
                         </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">記住我</label>
-                        </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">登入</button>
                         </div>
                     </form>
                     <hr>
                     <div class="text-center">
-                        <p>還沒有帳號？ <a href="#" class="text-decoration-none">立即註冊</a></p>
-                        <p><a href="#" class="text-decoration-none">忘記密碼？</a></p>
+                        <p>還沒有帳號？ <a href="/front/member/register" class="text-decoration-none">立即註冊</a></p>
                     </div>
                     <div class="d-grid gap-2 mt-3">
-                        <button class="btn btn-outline-danger">
-                            <i class="bi bi-google"></i> 使用 Google 登入
-                        </button>
-                        <button class="btn btn-outline-primary">
-                            <i class="bi bi-facebook"></i> 使用 Facebook 登入
-                        </button>
+                        <!-- 移除 Google 與 Facebook 登入按鈕 -->
                     </div>
                 </div>
             </div>
@@ -443,54 +433,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                    <h5 class="footer-title">團購樂</h5>
-                    <p>最優質的團購平台，讓您享受更多優惠，與朋友一起購買更划算！</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="bi bi-facebook"></i></a>
-                        <a href="#"><i class="bi bi-instagram"></i></a>
-                        <a href="#"><i class="bi bi-twitter"></i></a>
-                        <a href="#"><i class="bi bi-youtube"></i></a>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <h5 class="footer-title">快速連結</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">關於我們</a></li>
-                        <li><a href="#">服務條款</a></li>
-                        <li><a href="#">隱私政策</a></li>
-                        <li><a href="#">常見問題</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5 class="footer-title">團購分類</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">3C電子</a></li>
-                        <li><a href="#">美妝保養</a></li>
-                        <li><a href="#">服飾配件</a></li>
-                        <li><a href="#">居家生活</a></li>
-                        <li><a href="#">美食餐飲</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5 class="footer-title">聯絡我們</h5>
-                    <ul class="footer-links">
-                        <li><i class="bi bi-telephone"></i> 0800-123-456</li>
-                        <li><i class="bi bi-envelope"></i> service@groupbuy.com</li>
-                        <li><i class="bi bi-geo-alt"></i> 台北市信義區信義路五段7號</li>
-                        <li><i class="bi bi-clock"></i> 週一至週五 9:00-18:00</li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="my-4">
-            <div class="text-center">
-                <p>&copy; 2024 團購樂. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <footer th:replace="~{front/common/footer :: main-footer}"></footer>	
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
