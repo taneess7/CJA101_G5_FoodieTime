@@ -98,18 +98,6 @@ public class GroupOrdersService {
             groupOrdersVO.setOrderStatus((byte)1);
         }
         GroupOrdersVO savedOrder = groupOrdersRepository.save(groupOrdersVO);
-        // 新增：自動更新團購案累積購買數量並檢查是否成團
-        if (groupOrdersVO.getGroupBuyingCase() != null && groupOrdersVO.getGroupBuyingCase().getGbId() != null) {
-            Integer gbId = groupOrdersVO.getGroupBuyingCase().getGbId();
-            GroupBuyingCasesVO gbCase = groupBuyingCasesRepository.findById(gbId)
-                .orElseThrow(() -> new RuntimeException("找不到團購案"));
-            // 將本次訂單數量加到累積購買數量
-            int newQuantity = gbCase.getCumulativePurchaseQuantity() + groupOrdersVO.getQuantity();
-            gbCase.setCumulativePurchaseQuantity(newQuantity);
-            groupBuyingCasesRepository.save(gbCase);
-            // 自動判斷團購狀態
-            groupBuyingCasesService.autoUpdateGroupStatus(gbId);
-        }
         return savedOrder;
     }
 
