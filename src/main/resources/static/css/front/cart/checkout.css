@@ -1,989 +1,209 @@
 /**
- * FoodieTime 食刻 - 結帳頁面樣式 (與 cart.css 風格一致)
- * 此檔案包含所有必要的樣式，以確保結帳頁面與購物車頁面風格統一。
- * 內容為 cart.css 的完整複製。
+ * FoodieTime 食刻 - 結帳頁面樣式checkout.css
+ * 遵循專案設計規範，與 cart.css 風格統一，解決樣式重複與衝突。
  */
 
-/* ========== 基礎變數設定 ========== */
+/* ========== 1. 基礎變數設定 (遵循專案規範) ========== */
 :root {
-    --primary-color: #FF5722;
-    --primary-dark: #E64A19;
-    --primary-light: #FFCCBC;
-    --accent-green: #4CAF50;
-    --accent-blue: #2196F3;
-    --error: #F44336;
-    --success: #4CAF50;
-    --warning: #FF9800;
+    /* 顏色系統 */
+    --primary-color: #C39B7B; /* 主色調: 深赤陶色 */
+    --primary-dark: #B07D62;  /* 輔助色: 深棕色 */
+    --primary-light: #FFCCBC; /* 輔助色: 淺棕色 */
+    --success: #4CAF50;       /* 功能色: 成功綠 */
+    --error: #F44336;         /* 功能色: 錯誤紅 */
 
     --bg-light: #FFFFFF;
     --neutral-50: #FAFAFA;
-    --neutral-100: #F5F5F5;
     --neutral-200: #EEEEEE;
     --neutral-300: #E0E0E0;
-    --neutral-400: #BDBDBD;
-    --neutral-500: #9E9E9E;
     --neutral-600: #757575;
     --neutral-700: #616161;
     --neutral-800: #424242;
-    --neutral-900: #212121;
 
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 16px;
-    --space-4: 24px;
-    --space-5: 32px;
-    --space-6: 48px;
+    /* 尺寸與間距 (8px 網格系統) */
+    --space-1: 4px; --space-2: 8px; --space-3: 16px;
+    --space-4: 24px; --space-5: 32px; --space-6: 48px;
 
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-full: 9999px;
+    /* 圓角 */
+    --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
 
-    --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    /* 陰影 */
+    --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-2: 0 4px 8px rgba(0, 0, 0, 0.1);
 
+    /* 過渡 */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
 }
 
-/* ========== 購物車頁面基本結構 ========== */
+/* ========== 2. 頁面整體佈局 ========== */
 .cart-page {
     padding: var(--space-4) 0 var(--space-6);
-    min-height: calc(100vh - 200px);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-3);
-}
-
-/* ========== 購物流程指示器 ========== */
-.checkout-stepper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: var(--space-4) 0 var(--space-5);
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-}
-
-.checkout-stepper::before {
-    content: '';
-    position: absolute;
-    top: 24px;
-    left: 60px;
-    right: 60px;
-    height: 2px;
-    background-color: var(--neutral-300);
-    z-index: 1;
-}
-
-.stepper-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-    background-color: var(--bg-light);
-    padding: 0 var(--space-2);
-}
-
-.step-counter {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: var(--neutral-200);
-    color: var(--neutral-600);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 1.25rem;
-    margin-bottom: var(--space-2);
-    transition: all var(--transition-normal);
-    border: 2px solid var(--neutral-300);
-}
-
-.step-name {
-    color: var(--neutral-600);
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: color var(--transition-normal);
-    text-align: center;
-}
-
-.stepper-item.active .step-counter {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
-}
-
-.stepper-item.active .step-name {
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.stepper-item.completed .step-counter {
-    background-color: var(--success);
-    color: white;
-    border-color: var(--success);
-    box-shadow: 0 4px 8px rgba(93, 255, 34, 0.3);
-}
-
-.stepper-item.completed .step-name {
-    color: var(--success);
-    font-weight: 600;
-}
-/* ========== 購物車主內容佈局 (同時適用於結帳頁面) ========== */
-.cart-content, .checkout-content { /* 將 checkout-content 也加入 */
-    display: grid;
-    grid-template-columns: 1fr 340px; /* 主內容與側邊欄比例 */
-    gap: var(--space-4);
-    align-items: start;
+.checkout-container {
     margin-top: var(--space-4);
 }
 
-.cart-items {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1); /* 使用 shadow-1 */
-    overflow: hidden;
-}
-
-/* ========== 單個購物車項目 (同時適用於結帳頁面內的訂單摘要項目) ========== */
-.cart-item, .checkout-item { /* 將 checkout-item 也加入 */
-    display: grid;
-    grid-template-columns: 1fr auto auto; /* 商品名 數量x單價 小計 */
-    gap: var(--space-2);
-    padding: var(--space-3); /* 稍微縮小內邊距 */
-    border-bottom: 1px solid var(--neutral-200); /* 使用 neutral-200 */
-    transition: background-color 0.2s ease;
-    align-items: center; /* 垂直置中 */
-}
-.checkout-item .item-info {
-    display: flex;
-    flex-direction: column;
-}
-.checkout-item .item-name {
-    font-size: 1rem;
-    font-weight: 500;
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: var(--space-5);
     color: var(--neutral-800);
-    margin-bottom: 0;
-}
-.checkout-item .item-price {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    white-space: nowrap; /* 防止換行 */
-}
-.checkout-item .item-subtotal {
-    font-weight: 600;
-    color: var(--primary-color);
-    font-size: 1rem;
-    white-space: nowrap; /* 防止換行 */
 }
 
-
-.cart-item:last-child, .checkout-item:last-child {
-    border-bottom: none;
+.checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 360px; /* 左側表單，右側摘要欄 */
+    gap: var(--space-5);
+    align-items: start;
 }
 
-.cart-item:hover {
-    background-color: var(--neutral-50); /* 更淺的懸停背景 */
+/* ========== 3. 通用元件 ========== */
+/* 流程指示器 */
+.checkout-stepper {
+    display: flex; justify-content: space-between; max-width: 600px;
+    margin: var(--space-4) auto var(--space-5); position: relative;
+}
+.checkout-stepper::before {
+    content: ''; position: absolute; top: 24px; left: 60px; right: 60px;
+    height: 2px; background-color: var(--neutral-300); z-index: 1;
+}
+.stepper-item {
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; z-index: 2;  padding: 0 var(--space-2);
+}
+.step-counter {
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.25rem; margin-bottom: var(--space-2);
+    border: 2px solid var(--neutral-300); background-color: var(--neutral-200); color: var(--neutral-600);
+    transition: all var(--transition-normal);
+}
+.step-name { color: var(--neutral-600); font-size: 0.9rem; font-weight: 500; }
+.stepper-item.active .step-counter {
+    background-color: var(--primary-color); color: white; border-color: var(--primary-color);
+}
+.stepper-item.active .step-name { color: var(--primary-color); font-weight: 700; }
+.stepper-item.completed .step-counter {
+    background-color: var(--success); color: white; border-color: var(--success);
+}
+.stepper-item.completed .step-name { color: var(--success); font-weight: 700; }
+
+/* 錯誤提示框 */
+.alert.alert-danger {
+    padding: var(--space-3); margin-bottom: var(--space-4); border-radius: var(--radius-md);
+    border: 1px solid var(--error); background-color: rgba(244, 67, 54, 0.1);
+    color: var(--error); font-weight: 500;
 }
 
-/* 表單按鈕組 */
-.form-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-}
-
-/* 購物車商品圖片 (在 checkout 頁面可能不顯示) */
-.item-image {
-    width: 120px;
-    height: 120px;
-    border-radius: var(--radius-md);
-    background-color: var(--neutral-100); /* 使用中性色 */
-    overflow: hidden;
-}
-
-.product-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* 商品詳情與控制項的容器 */
-.item-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: var(--space-2);
-    min-height: 120px;
-}
-
-/* 商品資訊：名稱、描述、價格 */
-.item-info {
-    flex-grow: 1;
-}
-
-.item-name {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--neutral-900);
-    margin: 0 0 var(--space-1);
-}
-
-.item-description {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    margin: 0 0 var(--space-2);
-}
-
-.item-price {
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--primary-color);
-}
-
-/* ========== 控制項區域 ========== */
-.item-controls {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    padding-top: var(--space-2);
-    border-top: 1px dashed var(--neutral-200); /* 使用 neutral-200 */
-}
-
-/* 數量控制 */
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-}
-
-.quantity-label, .subtotal-label {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    white-space: nowrap;
-}
-
-.quantity-input-group {
-    display: inline-block;
-    align-items: center;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-}
-
-.quantity-btn {
-    width: 36px;
-    height: 36px;
-    background-color: var(--neutral-100);
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: var(--neutral-600);
-    transition: background-color 0.2s ease;
-}
-
-.quantity-btn:hover {
-    background-color: var(--neutral-200);
-}
-
-.quantity-input {
-    width: 50px;
-    height: 36px;
-    border: none;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--neutral-900);
-    -moz-appearance: textfield;
-}
-
-.quantity-input::-webkit-outer-spin-button,
-.quantity-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.update-btn {
-    height: 36px;
-    padding: 0 var(--space-3);
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.update-btn:hover {
-    background-color: var(--primary-dark);
-}
-
-/* 小計 */
-.item-subtotal {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-/* 刪除按鈕 */
-.item-controls form {
-    margin: 0;
-}
-
-.delete-btn {
-    background-color: transparent;
-    border: none;
-    color: var(--neutral-600);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: 0.9rem;
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-md);
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.delete-btn:hover {
-    background-color: var(--primary-light); /* 使用 primary-light */
-    color: var(--error);
-}
-
-/* ========== 空購物車提示 ========== */
-.empty-cart-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-6) var(--space-3);
-    text-align: center;
-}
-
-.empty-cart-icon {
-    font-size: 4rem;
-    color: var(--neutral-400);
-    margin-bottom: var(--space-3);
-}
-
-/* ========== 購物車側邊欄 (同時適用於結帳頁面) ========== */
-.cart-sidebar, .checkout-sidebar { /* 將 checkout-sidebar 也加入 */
-    position: sticky;
-    top: 100px;
-    align-self: start;
-}
-
-.cart-summary, .order-summary { /* 將 order-summary 也加入 */
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
-    padding: var(--space-4);
-}
-
-.summary-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: var(--space-3);
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: var(--space-2);
-}
-
-.summary-divider {
-    height: 1px;
-    background-color: var(--neutral-200);
-    margin: var(--space-3) 0;
-}
-
-.total-row {
-    font-size: 1.125rem;
-    font-weight: 600;
-}
-
-/* ========== 表單樣式 (適用於結帳表單) ========== */
+/* ========== 4. 結帳表單 ========== */
 .checkout-form {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
-    padding: var(--space-4);
+    background-color: var(--bg-light); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1); padding: var(--space-5);
 }
 
 .form-section {
-    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4); margin-bottom: var(--space-4);
     border-bottom: 1px solid var(--neutral-200);
-    padding-bottom: var(--space-4);
 }
-.form-section:last-of-type {
-    border-bottom: none;
-    margin-bottom: var(--space-4);
-    padding-bottom: 0;
-}
+.form-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
 .section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: var(--space-3);
-    color: var(--neutral-800);
+    font-size: 1.25rem; font-weight: 600;
+    margin: 0 0 var(--space-4); color: var(--neutral-800);
 }
 
-.form-group {
-    margin-bottom: var(--space-3);
-}
-
+.form-group { margin-bottom: var(--space-3); }
 .form-group label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: var(--space-1);
-    color: var(--neutral-700);
+    display: block; font-weight: 500;
+    margin-bottom: var(--space-2); color: var(--neutral-700);
 }
-
 .form-group input[type="text"],
-.form-group input[type="tel"],
-.form-group input[type="email"],
-.form-group input[type="datetime-local"],
-.form-group textarea {
-    width: 100%;
-    padding: var(--space-2);
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-sm);
-    font-size: 1rem;
-    color: var(--neutral-900);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.2);
-    outline: none;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.form-row {
-    display: flex;
-    gap: var(--space-3);
-}
-.form-row .form-group {
-    flex: 1;
-}
-
-/* 支付方式/取餐方式選擇 */
-.payment-methods {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
-}
-
-.payment-method {
-    display: flex;
-    align-items: center;
-    background-color: var(--neutral-50);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--neutral-200);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.payment-method:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 1px var(--primary-color);
-}
-
-.payment-method input[type="radio"] {
-    margin-right: var(--space-2);
-    accent-color: var(--primary-color); /* 改變選中時的顏色 */
-}
-
-.payment-method label {
-    margin-bottom: 0;
-    font-weight: normal;
-    cursor: pointer;
-    color: var(--neutral-800);
-}
-
-/* 支付細節區塊 (如果您未來需要JS切換顯示) */
-.payment-details {
-    border: 1px dashed var(--neutral-300);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    margin-top: var(--space-4);
-}
-
-.payment-icons {
-    display: flex;
-    gap: var(--space-2);
-    margin-top: var(--space-4);
-    justify-content: center;
-}
-
-.payment-icon {
-    height: 24px;
-    opacity: 0.7;
-}
-
-.payment-qrcode-container {
-    text-align: center;
-    padding: var(--space-4);
-}
-
-.payment-qrcode {
-    width: 150px;
-    height: 150px;
-    border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--space-3);
-}
-
-.payment-instruction {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-}
-
-.apple-pay-button-container {
-    text-align: center;
-    margin-top: var(--space-4);
-}
-
-.apple-pay-button {
-    background-color: black;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    border: none;
-}
-
-.apple-pay-button:hover {
-    opacity: 0.9;
-}
-
-.apple-pay-text::before {
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12.022 0C10.742 0 8.868 1.488 8.006 1.488c-.863 0-1.748-.847-2.915-.847-1.168 0-2.316.969-2.914 2.128-.588 1.15-.369 2.805.811 3.996 1.18 1.192 2.766 1.83 3.934 1.83 1.168 0 2.062-.733 2.915-.733.863 0 1.956.733 3.203.733 1.246 0 2.227-.864 2.915-2.023.689-1.15.53-2.61-.31-3.791-.84-.863-2.043-1.427-3.153-1.427zM12.022 0"/></svg>'); /* Apple logo SVG */
-    vertical-align: middle;
-    margin-right: 5px;
-}
-
-/* 表單動作按鈕 */
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: var(--space-4);
-}
-
-/* ========== 按鈕樣式 (一般按鈕) ========== */
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-}
-
-.btn-text {
-    background-color: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-}
-
-.btn-text:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
-}
-
-.btn-block {
-    width: 100%;
-    margin-bottom: var(--space-2);
-}
-
-/* 警示訊息 */
-.alert {
-    padding: var(--space-3);
-    margin-bottom: var(--space-4);
-    border-radius: var(--radius-sm);
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-.alert-danger {
-    background-color: rgba(244, 67, 54, 0.1); /* 使用 --error 變量，透明度 */
-    color: var(--error);
-    border: 1px solid var(--error);
-}
-
-/* ========== 推薦商品區域 (在結帳頁面通常不顯示，但CSS保留) ========== */
-.recommendations-section {
-    margin-top: var(--space-6);
-    padding: var(--space-5) 0;
-    border-radius: 20px;
-    background-color: var(--neutral-50);
-}
-
-.section-title { /* 已在表單區段中定義過，這裡為推薦商品區塊重定義 */
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: var(--space-4);
-    color: var(--neutral-900);
-    text-align: center;
-}
-
-.recommendations-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-4);
-}
-
-.recommendation-card {
-    background-color: var(--bg-light);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-1);
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.recommendation-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-2);
-}
-
-.recommendation-image-container {
-    height: 160px;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.recommendation-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.recommendation-card:hover .recommendation-image {
-    transform: scale(1.1);
-}
-
-.add-to-cart-btn {
-    position: absolute;
-    bottom: var(--space-2);
-    right: var(--space-2);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    box-shadow: var(--shadow-2);
+.form-group textarea,
+.form-select {
+    width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md); font-size: 1rem;
     transition: all var(--transition-fast);
 }
-
-.add-to-cart-btn:hover {
-    background-color: var(--primary-dark);
-    transform: scale(1.1);
-}
-
-.recommendation-details {
-    padding: var(--space-3);
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.recommendation-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--neutral-900);
-    line-height: 1.4;
-    min-height: 2.8em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-.recommendation-restaurant {
-    font-size: 0.875rem;
-    color: var(--neutral-600);
-    margin: var(--space-1) 0;
-    flex-grow: 1;
-}
-
-.recommendation-price {
-    font-weight: 600;
-    color: var(--primary-color);
-    font-size: 1.125rem;
-    margin-top: auto;
-    padding-top: var(--space-2);
-}
-
-
-/* ========== 響應式設計 ========== */
-@media (max-width: 992px) {
-    .cart-content, .checkout-content { /* 將 checkout-content 也加入 */
-        grid-template-columns: 1fr;
-    }
-
-    .cart-sidebar, .checkout-sidebar { /* 將 checkout-sidebar 也加入 */
-        position: static;
-        margin-top: var(--space-4);
-    }
-}
-
-@media (max-width: 768px) {
-    .cart-item {
-        grid-template-columns: 100px 1fr;
-    }
-}
-
-@media (max-width: 576px) {
-    .cart-item {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-
-    .item-image {
-        margin: 0 auto var(--space-2);
-    }
-
-    .item-controls {
-        align-items: center;
-    }
-    .checkout-item { /* 小螢幕下訂單摘要內的商品顯示 */
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding: var(--space-2);
-    }
-    .checkout-item .item-info,
-    .checkout-item .item-price,
-    .checkout-item .item-subtotal {
-        width: 100%;
-        text-align: center;
-        margin-bottom: var(--space-1);
-    }
-}
-/* ========== 一鍵帶入會員地址按鈕樣式 ========== */
-
-/* 基礎按鈕樣式 */
-#fill-member-address-btn {
-    /* 尺寸與間距 */
-    padding: var(--space-2) var(--space-3);
-    margin-top: 10px;
-    height: 36px;
-
-    /* 外觀設計 */
-    background-color: var(--bg-light);
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    border-radius: var(--radius-sm);
-
-    /* 字體設定 */
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
-
-    /* 互動效果 */
-    cursor: pointer;
-    transition: all var(--transition-normal);
-
-    /* 佈局 */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1);
-
-    /* 陰影效果 */
-    box-shadow: var(--shadow-1);
-}
-
-/* 懸停效果 */
-#fill-member-address-btn:hover {
-    background-color: var(--primary-color);
-    color: var(--bg-light);
-    border-color: var(--primary-dark);
-    box-shadow: var(--shadow-2);
-    transform: translateY(-1px);
-}
-
-/* 按下效果 */
-#fill-member-address-btn:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-1);
-    background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
-}
-
-/* 聚焦效果 (鍵盤導航) */
-#fill-member-address-btn:focus {
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(195, 155, 123, 0.3);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.2), var(--shadow-1);
 }
+.form-group textarea { resize: vertical; min-height: 100px; }
 
-/* 禁用狀態 (如果需要) */
-#fill-member-address-btn:disabled {
-    background-color: var(--neutral-100);
-    color: var(--neutral-400);
-    border-color: var(--neutral-300);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+/* 地址輸入框與按鈕的組合 */
+.form-group div { display: flex; gap: var(--space-2); }
+.form-group div input { flex-grow: 1; }
+#fill-member-address-btn {
+    flex-shrink: 0; padding: 0 var(--space-3); background-color: var(--bg-light);
+    color: var(--primary-color); border: 1px solid var(--primary-color);
+    border-radius: var(--radius-md); font-weight: 600; cursor: pointer;
+    transition: all var(--transition-fast);
 }
+#fill-member-address-btn:hover { background-color: var(--primary-color); color: white; }
 
-/* 載入狀態 (如果需要) */
-#fill-member-address-btn.loading {
-    pointer-events: none;
-    opacity: 0.7;
+/* 支付/取餐方式選項 */
+.payment-methods { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.payment-method {
+    display: flex; align-items: center; background-color: var(--neutral-50);
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200); cursor: pointer; transition: all var(--transition-fast);
 }
+.payment-method:hover { border-color: var(--primary-dark); }
+.payment-method input[type="radio"] { margin-right: var(--space-2); accent-color: var(--primary-color); }
+.payment-method label { margin: 0; cursor: pointer; color: var(--neutral-800); }
 
-#fill-member-address-btn.loading::after {
-    content: '';
-    width: 12px;
-    height: 12px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: button-spin 0.8s linear infinite;
-    margin-left: var(--space-1);
+/* 信用卡細節區塊 */
+#credit-card-details {
+    padding: var(--space-3); margin-top: var(--space-3);
+    border: 1px dashed var(--neutral-300); border-radius: var(--radius-lg);
 }
+.form-row { display: flex; gap: var(--space-3); }
+.form-row .form-group { flex: 1; }
+.credit-card-input { position: relative; }
+#cc-type-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
 
-@keyframes button-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* 結帳表單動作按鈕 */
+.form-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: var(--space-5);
 }
-
-/* ========== 區段標題與按鈕的佈局優化 ========== */
-
-/* 確保 section-header 的佈局正確 */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-3);
-    flex-wrap: wrap;
-    gap: var(--space-2);
+.btn {
+    padding: 12px 24px; border-radius: var(--radius-md); cursor: pointer;
+    font-size: 1rem; font-weight: 600; text-decoration: none;
+    transition: all var(--transition-fast);
 }
+.btn-primary { background-color: var(--primary-color); color: white; border: 1px solid var(--primary-color); }
+.btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-text { background-color: transparent; color: var(--primary-dark); border: 1px solid var(--neutral-300); }
+.btn-text:hover { background-color: var(--neutral-50); border-color: var(--primary-dark); }
 
-/* 確保標題不會被按鈕擠壓 */
-.section-header .section-title {
-    margin-bottom: 0;
-    flex-grow: 1;
-    min-width: 0; /* 允許文字截斷 */
+/* ========== 5. 訂單摘要側邊欄 ========== */
+.checkout-sidebar { position: sticky; top: 100px; }
+.order-summary {
+    background-color: var(--bg-light); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1); padding: var(--space-4);
 }
+.summary-title { font-size: 1.25rem; font-weight: 600; margin: 0 0 var(--space-3); }
+.summary-row { display: flex; justify-content: space-between; margin-bottom: var(--space-2); }
+.summary-row.discount-row span:last-child { color: var(--success); font-weight: 600; }
+.summary-divider { height: 1px; background-color: var(--neutral-200); margin: var(--space-3) 0; }
+.total-row { font-size: 1.25rem; font-weight: 700; color: var(--primary-dark); }
+.total-row span:first-child { font-weight: 600; }
 
-/* 按鈕容器 */
-.section-header .btn-group {
-    display: flex;
-    gap: var(--space-2);
-    flex-shrink: 0;
+
+/* ========== 6. 響應式設計 ========== */
+@media (max-width: 992px) {
+    .checkout-content { grid-template-columns: 1fr; }
+    .checkout-sidebar { position: static; margin-top: var(--space-5); }
 }
-
-/* ========== 響應式設計 ========== */
-
-/* 平板裝置 */
-@media (max-width: 768px) {
-    #fill-member-address-btn {
-        font-size: 0.8rem;
-        padding: var(--space-1) var(--space-2);
-        height: 32px;
-    }
-
-    .section-header {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
-    }
-
-    .section-header .section-title {
-        margin-bottom: var(--space-2);
-    }
-}
-
-/* 手機裝置 */
 @media (max-width: 576px) {
-    #fill-member-address-btn {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.875rem;
-        padding: var(--space-2);
-        height: 40px;
-    }
-
-    .section-header {
-        gap: var(--space-3);
-    }
+    .form-group div { flex-direction: column; }
+    .form-row { flex-direction: column; gap: 0; }
+    .form-actions { flex-direction: column-reverse; gap: var(--space-3); align-items: stretch; }
 }
 
-/* ========== 可選：按鈕圖示支援 ========== */
-
-/* 如果您想在按鈕中加入圖示 */
-#fill-member-address-btn .icon {
-    width: 16px;
-    height: 16px;
-    fill: currentColor;
-    flex-shrink: 0;
-}
-
-/* 成功狀態 (當地址成功填入時的視覺回饋) */
-#fill-member-address-btn.success {
-    background-color: var(--success);
-    border-color: var(--success);
-    color: white;
-}
-
-#fill-member-address-btn.success:hover {
-    background-color: #45a049; /* 稍深的綠色 */
-    border-color: #45a049;
-}

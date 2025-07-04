@@ -1,169 +1,44 @@
-/* --- 調整後的 Hero Section CSS --- */
+/**
+ * FoodieTime 食刻 - 首頁樣式 (大地黏土風 - RWD優化版)
+ * 解決了小螢幕下的佈局擠壓與重疊問題。
+ */
 
-/* 適用於：<section class="hero-section">
-   這是整個區塊最大的容器。 */
-.hero-section {
-    /* min-height: 70vh;：
-       功能：設定元素的最小高度為 70% 的「視窗高度」(Viewport Height)。
-       外觀效果：確保這個區塊至少有螢幕 70% 的高度，即使內容不多也能撐開空間。
-       設計目的：給予影片背景足夠的垂直顯示空間，創造大氣的視覺效果。 */
-    min-height: 70vh;
-
-    /* position: relative;：
-       功能：設定為「相對定位」。
-       外觀效果：本身位置不變。
-       設計目的：建立一個「定位基準」，讓我們的前景內容 (.hero-content) 可以用絕對定位來疊在影片上方。 */
-    position: relative;
-
-    /* display: flex; align-items: center; justify-content: center;：
-       功能：使用 Flexbox 排版模型。
-       外觀效果：讓它的子元素（也就是 .hero-content）在垂直和水平方向上都置中。
-       設計目的：確保文字內容無論在什麼螢幕尺寸下，都能完美地顯示在區塊的正中央。 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    /* text-align: center;：
-       功能：設定內部文字的對齊方式為置中。
-       設計目的：讓 h1, p 等標籤內的文字都預設置中對齊。*/
-    text-align: center;
-
-    /* overflow: hidden;：
-       功能：隱藏超出此容器範圍的內容。
-       設計目的：防止影片因為長寬比問題稍微超出邊界時，產生不必要的滾動條。 */
-    overflow: hidden;
-}
-
-/* 適用於：<div class="video-background">
-   這是專門放影片的背景層。 */
-.video-background {
-    /* position: absolute;：
-       功能：設定為「絕對定位」。
-       外觀效果：脫離正常文件流，相對於最近的已定位祖先 (.hero-section) 進行定位。
-       設計目的：讓這個背景層可以自由地延展到填滿整個 .hero-section，且不會影響到前景內容的排版。 */
-    position: absolute;
-
-    /* top: 0; left: 0;：
-       功能：將元素的頂部和左側邊界對齊到父容器的左上角。
-       設計目的：確保影片背景從父容器的左上角開始鋪滿。 */
-    top: 0;
-    left: 0;
-
-    /* width: 100%; height: 100%;：
-       功能：設定寬度和高度為父容器 (.hero-section) 的 100%。
-       外觀效果：讓這個 div 完全填滿 .hero-section 的空間。
-       設計目的：為影片創造一個全尺寸的畫布。 */
-    width: 100%;
-    height: 100%;
-
-    /* z-index: -1;：
-       功能：設定元素的堆疊順序 (stacking context)。負值會讓它跑到其他同層級元素的後面。
-       設計目的：這是最關鍵的一步！讓影片背景層「沉」到前景內容 (.hero-content) 的下面，才不會蓋住文字。 */
-    z-index: -1;
-}
-
-/* 適用於：<video> 元素本身 */
-.video-background video {
-    /* width: 100%; height: 100%;：
-       功能：設定影片的寬度和高度為其父容器 (.video-background) 的 100%。
-       外觀效果：讓影片的尺寸延展，填滿 .video-background 容器。
-       設計目的：確保影片能填滿我們設定好的背景區域。 */
-    width: 100%;
-    height: 100%;
-
-    /* object-fit: cover;：
-       功能：這是一個超級重要的屬性！它會讓影片在「保持自身長寬比」的前提下，自動縮放直到「剛好填滿」整個容器。
-       外觀效果：影片會鋪滿整個背景，不會被壓扁或拉長。如果影片比例和容器不同，多出來的部分會被裁切掉，但這正是我們想要的全螢幕效果。
-       設計目的：無論螢幕寬窄，都能確保影片背景是滿版且不變形的。 */
-    object-fit: cover;
-}
-
-/* 適用於：<div class="hero-content container">
-   這是前景內容的容器，負責置中文字和按鈕。 */
-.hero-content {
-    /* z-index: 1; (可選)
-       功能：設定堆疊順序。正值會讓它疊在 z-index 為負或沒有設定的元素之上。
-       設計目的：明確地告訴瀏覽器，這層內容要顯示在最上面。雖然背景層已經是 z-index: -1，但加上這個可以讓層級關係更清晰。 */
-    z-index: 1;
-
-    /* color: white; (建議)
-       功能：設定文字顏色。
-       設計目的：如果你的影片背景比較深，建議將文字顏色改成淺色（如白色），以確保可讀性。你可以根據你的影片色調調整。 */
-    /* color: white; */
-}
-
-
-
-
-/* --- 1. 設計系統: 大地黏土風 (Earthen Claymorphism) --- */
-
-/* 1.1 色彩與字體變數 (Color & Typography Palette) */
+/* ==================== 1. 設計系統: 大地黏土風 ==================== */
 :root {
-    /* 主導色系：背景與元素基底色必須相同 */
-    --bg-color: #F0E5D8; /* 淡土黃色 */
-
-    /* 陰影色：由背景色計算得出，用於雕刻形態 */
-    --shadow-dark: #D1C2B3; /* 較深的陰影色 */
-    --shadow-light: #FFFFFF; /* 較淺的高光色 */
-
-    /* 點綴色：用於圖標、圖表和高亮 */
-    --accent-color-1: #C39B7B; /* 深赤陶色 */
-    --accent-color-2: #B07D62; /* 赭石色 */
-    --accent-highlight: #FAF3E9; /* 暖白色高光 */
-
-    /* 文字顏色 */
-    --text-color: #5D4037; /* 深棕色 */
-
-    /* 圓潤度 */
-    --border-radius-soft: 25px; /* 柔軟的圓角 */
-    --border-radius-round: 50px; /* 更圓潤的圓角 */
+    /* 顏色與字體變數 */
+    --bg-color: #F0E5D8;
+    --shadow-dark: #D1C2B3;
+    --shadow-light: #FFFFFF;
+    --accent-color-1: #C39B7B;
+    --accent-color-2: #B07D62;
+    --accent-highlight: #FAF3E9;
+    --text-color: #5D4037;
+    --border-radius-soft: 25px;
+    --border-radius-round: 50px;
 }
 
-/* 1.2 基礎樣式 (Base Styling) */
+/* ==================== 2. 基礎與核心元素樣式 ==================== */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Nunito', 'YuanTi TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    font-family: 'Nunito', 'YuanTi TC', sans-serif;
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
-
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
 }
-
-/* --- 2. 核心黏土元素設計 (Core Claymorphism Elements) --- */
-
-/* 2.1 黏土元素基礎 (Shared styles for all clay elements) */
 .clay {
-    background-color: var(--bg-color); /* 關鍵規則：元素背景色與頁面背景色相同 */
+    background-color: var(--bg-color);
     border-radius: var(--border-radius-soft);
     transition: box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-
-/* 2.2 浮起效果 (Convex / Raised) - 用於卡片、按鈕 */
 .clay-convex {
-    box-shadow:
-        /* 右下方的深色陰影 (光源在左上) */
-            6px 6px 12px var(--shadow-dark),
-                /* 左上方的高光陰影 */
-            -6px -6px 12px var(--shadow-light);
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
 }
-
-/* 2.3 凹陷效果 (Concave / Pressed) - 用於輸入框、按鈕點擊 */
-.clay-concave {
-    box-shadow:
-        /* 左上方的內陰影 */
-            inset 6px 6px 12px var(--shadow-dark),
-                /* 右下方的內高光 */
-            inset -6px -6px 12px var(--shadow-light);
-}
-
-/* 2.4 按鈕設計 (Button Design) */
 .clay-button {
     border: none;
     padding: 1rem 2rem;
@@ -173,31 +48,12 @@ body {
     cursor: pointer;
     outline: none;
     border-radius: var(--border-radius-round);
-    margin-right: 1rem;
-    margin-left: 1rem;
+    text-decoration: none; /* 確保 a 標籤按鈕無底線 */
+    display: inline-block; /* 讓 a 標籤像按鈕一樣 */
 }
 .clay-button:active {
-    /* 交互時陰影反轉，模擬按壓效果 */
-    box-shadow:
-            inset 4px 4px 8px var(--shadow-dark),
-            inset -4px -4px 8px var(--shadow-light);
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
 }
-
-/* 2.5 輸入框設計 (Input Design) */
-.clay-input {
-    border: none;
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-    outline: none;
-    color: var(--text-color);
-}
-.clay-input::placeholder {
-    color: var(--shadow-dark);
-}
-
-/* 2.6 卡片設計 (Card Design) */
 .clay-card {
     padding: 2rem;
     height: 100%;
@@ -208,119 +64,155 @@ body {
     text-align: center;
 }
 
-/* --- 3. 頁面佈局與組件 (Layout & Components) --- */
-
-header, footer {
-    padding: 2rem 0;
-}
+/* ==================== 3. 頁面佈局與組件 ==================== */
 header {
-    box-shadow: 0 20px 30px -5px #F0E5D8;
+    padding: 1.5rem 0;
+    box-shadow: 0 35px 30px -10px var(--bg-color);
+    position: relative; /* 給 RWD 選單定位用 */
+    z-index: 10;
 }
-.main-nav .nav-link {
-    font-weight: 700;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius-round);
-    transition: all 0.2s ease-in-out;
-
+header .container {
+    display: flex;
+    flex-wrap: wrap; /* 允許換行 */
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem; /* 新增間距 */
 }
-.main-nav .nav-link:hover {
+.logo {
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: var(--text-color); /* 確保 logo 顏色正確 */
+}
+.logo span {
     color: var(--accent-color-1);
 }
-
-section {
-    padding: 5rem 0;
+.main-nav {
+    display: flex;
+    flex-wrap: wrap; /* 允許按鈕換行 */
+    justify-content: flex-end; /* 預設靠右 */
+    gap: 0.5rem; /* 按鈕間距 */
 }
 
+main {
+    overflow-x: hidden; /* 防止水平滾動 */
+}
+section {
+    padding: 4rem 0;
+}
 .section-title {
-    font-size: 3rem;
+    font-size: clamp(2rem, 5vw, 3rem); /* 響應式字體 */
     font-weight: 800;
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
 }
 
-/* Hero Section */
+/* Hero Section (影片背景) */
 .hero-section {
-    min-height: 70vh;
+    min-height: 80vh;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    overflow: hidden;
+    padding: 2rem 0; /* 增加上下 padding */
+}
+.video-background {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+}
+.video-background video {
+    width: 100%; height: 100%;
+    object-fit: cover; /* 關鍵：保持比例填滿容器 */
+}
+.hero-content {
+    z-index: 1;
+    color: white; /* 確保在影片上清晰可見 */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* 加文字陰影增加可讀性 */
 }
 .hero-title {
-    font-size: clamp(3rem, 10vw, 5rem);
+    font-size: clamp(2.5rem, 8vw, 5rem); /* 響應式字體 */
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    color: var(--shadow-light);
 }
 .hero-title .highlight {
-    color: var(--accent-color-1);
+    color: #FFDAB9; /* 在深色背景上，使用更亮的點綴色 */
 }
 .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 2.5vw, 1.25rem); /* 響應式字體 */
     max-width: 600px;
     margin: 0 auto 2.5rem;
-    color: var(--shadow-light);
+    opacity: 0.9;
+}
+.hero-content .clay-button {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    backdrop-filter: blur(5px);
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.3), -6px -6px 12px rgba(255,255,255,0.1);
 }
 
-/* Grid Layouts */
+/* Features & Users Grid */
 .features-grid, .users-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2.5rem;
 }
-
 .feature-icon, .user-icon {
     width: 80px;
     height: 80px;
     margin-bottom: 1.5rem;
 }
-
 .card-title {
     font-size: 1.5rem;
     font-weight: 700;
-    margin: 0 0 0.5rem;
+    margin-bottom: 0.5rem;
 }
 .card-desc {
     line-height: 1.6;
     flex-grow: 1;
 }
 
-/* 數據可視化：動態折線圖 */
-#data-chart-svg {
+/* 浮動美食轉盤 */
+#floating-roulette {
+    position: absolute;
+    top: 100px;
+    right: 50px;
+    width: 225px;
+    text-align: center;
+    z-index: 5;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    transition: all 0.3s ease; /* 新增過渡效果 */
+}
+#floating-roulette img {
     width: 100%;
-    max-width: 500px;
-    margin: 2rem auto 0;
-    filter: drop-shadow(3px 3px 5px var(--shadow-dark));
+    cursor: pointer;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
 }
-#data-chart-svg .chart-line {
-    fill: none;
-    stroke: var(--accent-color-2);
-    stroke-width: 6;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    /* 動畫初始狀態 */
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: draw-line 2s ease-in-out forwards;
+#floating-roulette p, #roulette-result {
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 10px;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.6);
 }
-@keyframes draw-line {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-.placeholder-image {
-    width: 100%;
-    height: 180px;
+#roulette-result img {
+    width: 150px;
+    height: 150px;
     object-fit: cover;
-    border-radius: var(--border-radius-soft);
-    margin-bottom: 1.5rem;
-    box-shadow:
-            inset 3px 3px 6px var(--shadow-dark),
-            inset -3px -3px 6px var(--shadow-light);
+    border-radius: 10px;
 }
+.spin { animation: rotate 1.5s ease-in-out; }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(1080deg); } }
 
+
+/* Footer */
 .app-footer {
     text-align: center;
     padding: 3rem 0;
@@ -328,62 +220,82 @@ section {
     border-top: 2px solid rgba(93, 64, 55, 0.1);
 }
 
-/* 美食轉盤 */
-#floating-roulette {
-	position: absolute; /* fixed */
-	top: 100px;
-	right: 50px;
-	width: 225px;
-	text-align: center;
-	z-index: 9999;
-	/* 👇 讓背景完全透明，移除白底 */
-	background: transparent;
-	border: none;
-	box-shadow: none;
-	padding: 0;
+/* ==================== 4. 響應式設計 (Responsive Design) ==================== */
+
+/* --- 平板裝置 (寬度小於 992px) --- */
+@media (max-width: 992px) {
+    .container {
+        padding: 0 1.5rem;
+    }
+    section {
+        padding: 3rem 0;
+    }
+    .section-title {
+        margin-bottom: 2.5rem;
+    }
+
+    /* 調整轉盤位置和大小 */
+    #floating-roulette {
+        width: 180px;
+        right: 20px;
+        top: 80px;
+    }
 }
 
-#floating-roulette img {
-	width: 100%;
-	cursor: pointer;
+/* --- 手機裝置 (寬度小於 768px) --- */
+@media (max-width: 768px) {
+    /* 讓 Header 置中對齊 */
+    header .container {
+        justify-content: center;
+    }
+    .logo {
+        margin-bottom: 0.5rem; /* 與下方按鈕的間距 */
+    }
+    .main-nav {
+        width: 100%;
+        justify-content: center;
+    }
+    /* 縮小按鈕，使其能在一行內容納 */
+    .main-nav .clay-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* 調整 Hero 區塊的間距 */
+    .hero-section {
+        min-height: 60vh;
+    }
+    .hero-subtitle {
+        margin-bottom: 2rem;
+    }
+    .hero-content div {
+        flex-direction: column; /* 讓按鈕垂直堆疊 */
+        align-items: center;
+    }
+
+    /* ★★ 核心修正：將轉盤移到主要內容下方，避免重疊 ★★ */
+    #floating-roulette {
+        position: relative; /* 變更定位方式，讓它回到正常文件流 */
+        top: auto;
+        right: auto;
+        margin: 3rem auto 0; /* 在下方產生間距 */
+        width: 180px;
+    }
+    /* 因為背景變了，修改轉盤文字顏色以確保可讀性 */
+    #floating-roulette p, #roulette-result {
+        color: var(--text-color);
+        text-shadow: none; /* 移除白色文字用的陰影 */
+    }
+    #roulette-result h3 { color: var(--accent-color-2); }
 }
 
-.bold-text {
-  font-weight: bold;
-}
-/* 結果區塊圖片設定 */
-#roulette-result img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-/* 結果區塊與說明文字樣式 */
-#floating-roulette p,
-#roulette-result {
-	color: rgb(255, 255, 255);
-	font-size: 1rem;
-    font-weight: bold;
-	margin-top: 10px;
-	
-}
-
-/* ============================ */
-.material-icons-outlined {
-    margin-right: 8px;
-    color: #495057;
-}
-
-.nav-link {
-    color: var(--text-primary);
-    font-weight: 500;
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    transition: background-color var(--transition-fast);
-}
-
-.nav-link:hover {
-    background-color: var(--neutral-100);
-    color: var(--primary-color);
+/* --- 螢幕更小的手機 (寬度小於 480px) --- */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .clay-button, .main-nav .clay-button {
+        width: 100%;
+        max-width: 280px;
+    }
 }

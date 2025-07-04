@@ -1,172 +1,192 @@
 // public/js/front/cart/cart.js
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // ================== 步驟1：獲取所有需要的 DOM 元素 ==================
     const cartForm = document.getElementById('cart-form');
-    if (!cartForm) return; // 如果不是購物車頁面，直接退出
+    if (!cartForm) return;
 
-    // 複選框相關元素
+    // 將所有需要操作的元素集中宣告
+    const shopGroups = document.querySelectorAll('.shop-group');
     const itemCheckboxes = document.querySelectorAll('.item-checkbox');
     const shopSelectAllCheckboxes = document.querySelectorAll('.shop-select-all');
-
-    // 訂單摘要元素
-    const selectedCountEl = document.getElementById('selected-items-count');
-    const selectedSubtotalEl = document.getElementById('selected-subtotal');
-    const shippingFeeEl = document.getElementById('shipping-fee');
-    const finalTotalEl = document.getElementById('final-total');
-    const checkoutBtn = document.getElementById('checkout-btn');
-
-    // (新增) 數量控制按鈕
     const quantityButtons = document.querySelectorAll('.quantity-btn');
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+    let shopIdToDelete = null;
+
+    // ================== 核心功能區 ==================
 
     /**
-     * ================== 核心功能 A：更新訂單摘要 (維持不變) ==================
-     * 遍歷所有已勾選的商品，重新計算總數量、小計、運費和總金額。
+     * 更新訂單摘要（小計、運費、總計）
      */
     function updateSummary() {
         let selectedCount = 0;
         let selectedSubtotal = 0;
 
-        itemCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const item = checkbox.closest('.cart-item');
-                // 從 data-* 屬性讀取最新的數據
-                const price = parseFloat(item.dataset.price);
-                const quantity = parseInt(item.dataset.quantity, 10);
-
-                selectedCount += quantity;
-                selectedSubtotal += price * quantity;
-            }
+        // 只計算已勾選的商品
+        document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+            const item = checkbox.closest('.cart-item');
+            const price = parseFloat(item.dataset.price);
+            const quantity = parseInt(item.dataset.quantity, 10);
+            selectedCount += quantity;
+            selectedSubtotal += price * quantity;
         });
 
         const shippingFee = selectedSubtotal > 0 && selectedSubtotal < 500 ? 60 : 0;
         const finalTotal = selectedSubtotal + shippingFee;
 
-        selectedCountEl.textContent = selectedCount;
-        selectedSubtotalEl.textContent = `NT$ ${selectedSubtotal.toLocaleString()}`;
-        shippingFeeEl.textContent = `NT$ ${shippingFee}`;
-        finalTotalEl.textContent = `NT$ ${finalTotal.toLocaleString()}`;
-        checkoutBtn.disabled = selectedSubtotal <= 0;
+        document.getElementById('selected-items-count').textContent = selectedCount;
+        document.getElementById('selected-subtotal').textContent = `NT$ ${selectedSubtotal.toLocaleString()}`;
+        document.getElementById('shipping-fee').textContent = `NT$ ${shippingFee}`;
+        document.getElementById('final-total').textContent = `NT$ ${finalTotal.toLocaleString()}`;
+        document.getElementById('checkout-btn').disabled = selectedSubtotal <= 0;
     }
 
     /**
-     * ================== 核心功能 B：(新增) 更新商品項目的 UI ==================
-     * @param {HTMLElement} itemEl - .cart-item 元素
-     * @param {number} newQuantity - 新的商品數量
+     * ★★【新增】管理跨店勾選限制的核心函式 ★★
      */
-    function updateItemUI(itemEl, newQuantity) {
-        const price = parseFloat(itemEl.dataset.price);
-        const quantityInput = itemEl.querySelector('.quantity-input');
-        const subtotalValue = itemEl.querySelector('.subtotal-value');
+    function manageShopSelectionLock() {
+        // 1. 找出第一個被勾選的商品屬於哪個店家
+        const firstSelectedCheckbox = document.querySelector('.item-checkbox:checked');
+        const activeShopGroup = firstSelectedCheckbox ? firstSelectedCheckbox.closest('.shop-group') : null;
 
-        // 1. 更新 data-quantity 屬性，這是 updateSummary 的數據來源
-        itemEl.dataset.quantity = newQuantity;
+        // 2. 遍歷所有店家群組
+        shopGroups.forEach(group => {
+            const isGroupActive = (group === activeShopGroup);
 
-        // 2. 更新輸入框中顯示的數字
-        quantityInput.value = newQuantity;
-
-        // 3. 更新該項目的小計
-        subtotalValue.textContent = `NT$ ${(price * newQuantity).toLocaleString()}`;
-
-        // 4. 重新計算整個訂單的總計
-        updateSummary();
+            // 如果沒有任何店家被選中，或當前店家是活躍店家，則啟用
+            if (!activeShopGroup || isGroupActive) {
+                group.style.opacity = '1';
+                group.style.pointerEvents = 'auto';
+                group.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.disabled = false);
+            } else { // 否則，禁用非活躍的店家
+                group.style.opacity = '0.5';
+                group.style.pointerEvents = 'none'; // 讓整個區塊不可點擊
+                group.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.disabled = true);
+            }
+        });
     }
 
-
     /**
-     * ================== 事件監聽器綁定 ==================
-     */
-
-    // 1. 監聽單一商品複選框 (維持不變)
-    itemCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            updateSummary();
-            updateShopSelectAllState(checkbox.closest('.shop-group'));
-        });
-    });
-
-    // 2. 監聽店家的"全選"複選框 (維持不變)
-    shopSelectAllCheckboxes.forEach(shopSelectAll => {
-        shopSelectAll.addEventListener('change', (event) => {
-            const shopGroup = event.target.closest('.shop-group');
-            const itemsInShop = shopGroup.querySelectorAll('.item-checkbox');
-            itemsInShop.forEach(itemCheckbox => {
-                itemCheckbox.checked = event.target.checked;
-            });
-            updateSummary();
-        });
-    });
-
-    // 3. 監聽店家標題點擊 (維持不變)
-    document.querySelectorAll('.shop-header').forEach(header => {
-        header.addEventListener('click', event => {
-            if (event.target.tagName !== 'INPUT') {
-                const checkbox = header.querySelector('.shop-select-all');
-                checkbox.checked = !checkbox.checked;
-                checkbox.dispatchEvent(new Event('change'));
-            }
-        });
-    });
-
-    // 4. 監聽所有 "+" 和 "-" 按鈕的點擊事件
-    quantityButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const itemEl = button.closest('.cart-item');
-            const quantityInput = itemEl.querySelector('.quantity-input');
-            const currentQuantity = parseInt(quantityInput.value, 10);
-
-            let newQuantity = currentQuantity;
-
-            // 判斷是加還是減
-            if (button.classList.contains('plus')) {
-                newQuantity = Math.min(99, currentQuantity + 1); // 最多99
-            } else if (button.classList.contains('minus')) {
-                newQuantity = Math.max(1, currentQuantity - 1); // 最少1
-            }
-
-            // 如果數量沒有變化，則不做任何事
-            if (newQuantity === currentQuantity) {
-                return;
-            }
-
-            // 使用 AJAX 在背景更新後端資料
-            const shopId = button.dataset.shopId;
-            const formData = new FormData();
-            formData.append('shopId', shopId);
-            formData.append('newQuantity', newQuantity);
-
-            fetch('/cart/updateQuantity', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // 如果後端成功更新，才更新前端UI
-                        updateItemUI(itemEl, newQuantity);
-                    } else {
-                        // 如果後端更新失敗，可以給出提示
-                        alert('更新數量失敗，請稍後再試！');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('網路錯誤，更新數量失敗！');
-                });
-        });
-    });
-
-
-    /**
-     * ================== 輔助函式 (維持不變) ==================
+     * 更新指定店家「全選」按鈕的狀態
+     * @param {HTMLElement} shopGroup - 要檢查的店家群組元素
      */
     function updateShopSelectAllState(shopGroup) {
+        if (!shopGroup) return;
         const shopSelectAll = shopGroup.querySelector('.shop-select-all');
         const allItemsInShop = shopGroup.querySelectorAll('.item-checkbox');
+        // 檢查該店所有商品是否都已勾選
         const allChecked = Array.from(allItemsInShop).every(cb => cb.checked);
         shopSelectAll.checked = allChecked;
     }
 
+
+    // ================== 事件監聽器綁定 ==================
+
+    // 【修正】監聽單一商品複選框
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            updateShopSelectAllState(checkbox.closest('.shop-group'));
+            manageShopSelectionLock();
+            updateSummary();
+        });
+    });
+
+    // 【修正】監聽店家「全選」複選框
+    shopSelectAllCheckboxes.forEach(shopSelectAll => {
+        shopSelectAll.addEventListener('change', (event) => {
+            const shopGroup = event.target.closest('.shop-group');
+            const itemsInShop = shopGroup.querySelectorAll('.item-checkbox');
+            // 將該店所有商品的勾選狀態與「全選」按鈕同步
+            itemsInShop.forEach(itemCheckbox => {
+                itemCheckbox.checked = event.target.checked;
+            });
+            manageShopSelectionLock();
+            updateSummary();
+        });
+    });
+
+    // 監聽數量按鈕 (維持不變)
+    quantityButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const itemEl = this.closest('.cart-item');
+            const quantityInput = itemEl.querySelector('.quantity-input');
+            let newQuantity = parseInt(quantityInput.value, 10);
+
+            if (this.classList.contains('plus')) newQuantity = Math.min(99, newQuantity + 1);
+            else if (this.classList.contains('minus')) newQuantity = Math.max(1, newQuantity - 1);
+
+            if (newQuantity === parseInt(quantityInput.value, 10)) return;
+
+            const shopId = this.dataset.shopId;
+            fetch('/cart/updateQuantity', {
+                method: 'POST',
+                body: new URLSearchParams({ shopId: shopId, newQuantity: newQuantity })
+            })
+                .then(res => {
+                    if (res.ok) {
+                        // 更新成功後，更新UI
+                        itemEl.dataset.quantity = newQuantity;
+                        quantityInput.value = newQuantity;
+                        const price = parseFloat(itemEl.dataset.price);
+                        itemEl.querySelector('.subtotal-value').textContent = `NT$ ${(price * newQuantity).toLocaleString()}`;
+                        updateSummary();
+                    } else {
+                        alert('更新數量失敗');
+                    }
+                })
+                .catch(() => alert('網路錯誤'));
+        });
+    });
+
+    // 監聽刪除按鈕與燈箱 (維持不變)
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            shopIdToDelete = this.dataset.shopId;
+            deleteConfirmModal.classList.add('active');
+        });
+    });
+
+    cancelDeleteBtn.addEventListener('click', () => {
+        deleteConfirmModal.classList.remove('active');
+        shopIdToDelete = null;
+    });
+
+    confirmDeleteBtn.addEventListener('click', () => {
+        if (!shopIdToDelete) return;
+
+        fetch('/cart/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ shopId: shopIdToDelete })
+        })
+            .then(response => {
+                if (response.ok) {
+                    const itemToRemove = document.querySelector(`.delete-btn[data-shop-id="${shopIdToDelete}"]`).closest('.cart-item');
+                    if (itemToRemove) {
+                        const shopGroup = itemToRemove.closest('.shop-group');
+                        itemToRemove.remove(); // 直接移除商品
+                        if (shopGroup && shopGroup.querySelectorAll('.cart-item').length === 0) {
+                            shopGroup.remove(); // 如果店家已空，移除店家
+                        }
+                        updateSummary(); // 更新總計
+                        manageShopSelectionLock();
+                    }
+                } else {
+                    alert('刪除失敗');
+                }
+            })
+            .catch(() => alert('網路錯誤'))
+            .finally(() => {
+                deleteConfirmModal.classList.remove('active');
+                shopIdToDelete = null;
+            });
+    });
+
     // ================== 頁面初始加載 ==================
     updateSummary();
+    manageShopSelectionLock();
 });
