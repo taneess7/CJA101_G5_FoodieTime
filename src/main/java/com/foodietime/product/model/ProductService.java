@@ -1,5 +1,7 @@
 package com.foodietime.product.model;
 
+import com.foodietime.product.dto.ProductCardDTO;
+
 import java.util.List;
 
 public interface ProductService {
@@ -18,6 +20,8 @@ public interface ProductService {
 
 	    List<ProductVO> getAllProducts();
 
+	    // ProductService.java (介面)
+	    List<ProductCardDTO> getProductCardsByStoreId(Integer storeId);
 	    //美食轉盤
 	    ProductVO getRandomProduct();
 }

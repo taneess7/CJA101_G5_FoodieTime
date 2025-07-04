@@ -142,16 +142,34 @@
 		<section class="search-products"
 			th:if="${param.keyword != null and not #lists.isEmpty(productList)}">
 			<h2>相關料理</h2>
-			<div class="menu-items">
-				<div class="menu-item" th:each="prod : ${productList}">
-					<img th:src="@{/product/image/{prodId}(prodId=${prod.prodId})}"
-						th:alt="${prod.prodName}" class="menu-item-image"
-						onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
+			<!-- 使用新的 storeProductCardMap -->
+			<div class="menu-items" th:if="${storeProductCardMap != null and not #lists.isEmpty(storeProductCardMap[store.storId])}">
+
+				<!-- 1. th:each 的變數改為 storeProductCardMap -->
+				<!-- 2. 迴圈中的變數命名為 prodCard，以代表這是一個 DTO -->
+				<div class="menu-item product-clickable"
+					 th:each="prodCard : ${storeProductCardMap[store.storId]}"
+					 th:attr="data-prod-id=${prodCard.prodId},
+                  data-prod-name=${prodCard.prodName},
+                  data-prod-desc=${prodCard.prodDesc},
+                  data-prod-price=${prodCard.prodPrice}">
+
+					<img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
+						 th:alt="${prodCard.prodName}" class="menu-item-image">
+
 					<div class="menu-item-info">
-						<h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
-						<p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
-						<span class="menu-item-price" th:text="'NT$ ' + ${prod.prodPrice}">價格</span>
+						<!-- 直接從 prodCard DTO 中獲取屬性 -->
+						<h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
+						<p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
+						<span class="menu-item-price" th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
 					</div>
+
+					<!-- 收藏按鈕的邏輯維持不變 -->
+					<button class="favorite-btn favorite-product-btn" th:data-prodid="${prodCard.prodId}">
+						<i th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
+						   th:style="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'color:red' : ''"></i>
+						收藏
+					</button>
 				</div>
 			</div>
 		</section>
@@ -243,39 +261,39 @@
 									th:data-storeid="${store.storId}">優惠券</button>
 							</div>
 							<div class="tabs-content">
-								<div class="tab-content active"
-									th:id="'menu-content-' + ${store.storId}">
+								<!-- "菜單" Tab 的內容 -->
+								<div class="tab-content active" th:id="'menu-content-' + ${store.storId}">
 									<div class="menu-items">
+
+										<!-- 1. th:each 的變數改為新的 storeProductCardMap -->
+										<!-- 2. 迴圈中的變數命名為 prodCard，以代表這是一個 DTO -->
 										<div class="menu-item product-clickable"
-											th:each="prod : ${storeProductMap[store.storId]}"
-											th:attr="data-prod-id=${prod.prodId},
-                                         data-prod-name=${prod.prodName},
-                                         data-prod-desc=${prod.prodDesc},
-                                         data-prod-price=${prod.prodPrice} ">
-											<!--,-->
-											<!--                                         data-prod-photo-url=@{/product/image/{prodId}(prodId=${prod.prodId})}">-->
-											<img
-												th:src="@{/product/image/{prodId}(prodId=${prod.prodId})}"
-												th:alt="${prod.prodName}" class="menu-item-image"
-												onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
+											 th:each="prodCard : ${storeProductCardMap[store.storId]}"
+											 th:attr="data-prod-id=${prodCard.prodId},
+                      data-prod-name=${prodCard.prodName},
+                      data-prod-desc=${prodCard.prodDesc},
+                      data-prod-price=${prodCard.prodPrice}">
+
+											<!-- 圖片請求 URL 維持不變 -->
+											<img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
+												 th:alt="${prodCard.prodName}" class="menu-item-image"
+												 onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
+
 											<div class="menu-item-info">
-												<h3 class="menu-item-name" th:text="${prod.prodName}">商品名稱</h3>
-												<p class="menu-item-description" th:text="${prod.prodDesc}">商品描述</p>
-												<span class="menu-item-price"
-													th:text="'NT$ ' + ${prod.prodPrice}">價格</span>
+												<!-- 直接從 prodCard DTO 中獲取屬性 -->
+												<h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
+												<p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
+												<span class="menu-item-price" th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
 											</div>
 
-											<button class="favorite-btn favorite-product-btn"
-												th:data-prodid="${prod.prodId}">
-												<i
-													th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prod.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
-													th:style="${favoriteProdIds != null and favoriteProdIds.contains(prod.prodId)} ? 'color:red' : ''"></i>
+											<!-- 收藏按鈕的邏輯維持不變，只是變數改為 prodCard -->
+											<button class="favorite-btn favorite-product-btn" th:data-prodid="${prodCard.prodId}">
+												<i th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
+												   th:style="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'color:red' : ''"></i>
 												收藏
 											</button>
 										</div>
-
 									</div>
-
 								</div>
 								<!-- 店家資訊 Tab內容 -->
 								<div class="tab-content"
