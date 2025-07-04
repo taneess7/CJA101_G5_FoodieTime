@@ -121,7 +121,7 @@ import com.foodietime.member.model.MemService;
 	            return dto;
 	        }).collect(Collectors.toList());
 
-	        model.addAttribute("dbVersion", "20250629");
+	        model.addAttribute("dbVersion", "20250704");
 	        model.addAttribute("members", dtoList);
 	        model.addAttribute("currentPage", page);
 	        model.addAttribute("totalPages", totalPages);
