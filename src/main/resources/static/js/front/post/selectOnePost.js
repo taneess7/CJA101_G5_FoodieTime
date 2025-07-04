@@ -117,7 +117,7 @@ setTimeout(function() {
 
 function openReportMessageModal(mesId) {
     document.getElementById('reportMessageId').value = mesId;
-    document.getElementById('reportMessageModal').style.display = 'block';
+    document.getElementById('reportMessageModal').style.display = 'flex';
 }
 function closeReportMessageModal() {
     document.getElementById('reportMessageModal').style.display = 'none';
