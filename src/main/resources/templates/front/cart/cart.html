@@ -99,13 +99,11 @@
                                                 <div class="item-subtotal">
                                                     <span class="subtotal-value" th:text="'NT$ ' + ${cartVO.product.prodPrice * cartVO.prodN}">NT$ 200</span>
                                                 </div>
-                                                <form method="post" th:action="@{/cart/delete}" style="display: contents;">
-                                                    <input type="hidden" name="shopId" th:value="${cartVO.shopId}">
-                                                    <button type="submit" class="delete-btn" onclick="return confirm('確定要刪除此商品嗎？')">
+                                                    <button type="button" class="delete-btn" th:data-shop-id="${cartVO.shopId}">
                                                         <i class="material-icons-outlined">delete_outline</i>
                                                         <span>刪除</span>
                                                     </button>
-                                                </form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -145,6 +143,23 @@
 </main>
 
 <footer th:replace="~{front/common/footer :: main-footer}"></footer>
+<!-- ====================【新增】刪除確認燈箱 (Modal) ==================== -->
+<div id="delete-confirm-modal" class="confirm-modal-overlay">
+    <div class="confirm-modal-content">
+        <h3 class="confirm-modal-title">
+            <i class="material-icons-outlined">warning_amber</i>
+            確認刪除
+        </h3>
+        <p class="confirm-modal-text">您確定要從購物車中移除此商品嗎？此操作無法復原。</p>
+        <div class="modal-button-container">
+            <!-- 將取消設為次要按鈕 -->
+            <button id="cancel-delete-btn" class="modal-button btn-secondary">取消</button>
+            <!-- 將確認刪除設為主要按鈕，並加上紅色警告樣式 -->
+            <button id="confirm-delete-btn" class="modal-button btn-danger">確認刪除</button>
+        </div>
+    </div>
+</div>
+<!-- ======================================================================= -->
 
 
 <script th:src="@{/js/common/main.js}"></script>
