@@ -218,9 +218,6 @@
                   <li class="nav-item">
                       <a class="nav-link" href="#new">最新上架</a>
                   </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="#">即將結束</a>
-                  </li>
                  
                   <li class="nav-item">
                       <!-- 未登入狀態：顯示登入模態視窗 -->
@@ -523,10 +520,12 @@
       }
       
       // 搜尋框回車事件
-      document.getElementById('searchInput').addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') {
-              searchProducts();
-          }
+      document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('searchInput').addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                  searchProducts();
+              }
+          });
       });
       
       document.addEventListener('DOMContentLoaded', function() {
