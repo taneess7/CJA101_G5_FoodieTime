@@ -24,32 +24,45 @@
 		    <p th:text="${error}"></p>
 		</div>
         <form th:action="@{/front/member/update}" method="post" enctype="multipart/form-data"
-		      th:object="${member}" class="space-y-6">
+      th:object="${member}" class="space-y-6" onsubmit="return confirm('確定送出嗎？')">
+
 		
 		    <!-- 隱藏 ID -->
 		    <input type="hidden" name="memId" th:value="${member.memId}" />
-		    <input type="hidden" th:field="*{memGender}" />
-		    <input type="hidden" th:field="*{memAccount}" />
-			<input type="hidden" th:field="*{memPassword}" />
-			<input type="hidden" th:field="*{memEmail}" />
+		 	<!-- ✅ 已存在的 -->
+			<!-- ❌ 改成不要用 th:field -->
+			<input type="hidden" name="memAccount" th:value="${member.memAccount}" />
+			<input type="hidden" name="memPassword" th:value="${member.memPassword}" />
+			<input type="hidden" name="memEmail" th:value="${member.memEmail}" />
+			<input type="hidden" name="memGender" th:value="${member.memGender}" />
+			<input type="hidden" name="memStatus" th:value="${member.memStatus}" />
+			<input type="hidden" name="memNoSpeak" th:value="${member.memNoSpeak}" />
+			<input type="hidden" name="memNoPost" th:value="${member.memNoPost}" />
+			<input type="hidden" name="memNoGroup" th:value="${member.memNoGroup}" />
+			<input type="hidden" name="memNoJoingroup" th:value="${member.memNoJoingroup}" />
+			<input type="hidden" name="totalStarNum" th:value="${member.totalStarNum}" />
+			<input type="hidden" name="totalReviews" th:value="${member.totalReviews}" />
+			<input type="hidden" name="memTime" th:value="${#dates.format(member.memTime, 'yyyy-MM-dd HH:mm:ss')}" />
+
+					 	
 		
 		    <!-- 📌 基本資料 -->
 		    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 		        <div>
 		            <label class="block text-sm font-semibold text-gray-700 mb-1">暱稱</label>
-		            <input type="text" th:field="*{memNickname}" required
+		            <input type="text" th:field="*{memNickname}" 
 		                   class="w-full border px-3 py-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition" />
 		            <div th:if="${#fields.hasErrors('memNickname')}" class="text-red-500 text-sm mt-1" th:errors="*{memNickname}"></div>
 		        </div>
 		        <div>
 		            <label class="block text-sm font-semibold text-gray-700 mb-1">姓名</label>
-		            <input type="text" th:field="*{memName}" required
+		            <input type="text" th:field="*{memName}" 
 		                   class="w-full border px-3 py-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition" />
 		            <div th:if="${#fields.hasErrors('memName')}" class="text-red-500 text-sm mt-1" th:errors="*{memName}"></div>
 		        </div>
 		        <div>
 		            <label class="block text-sm font-semibold text-gray-700 mb-1">電話</label>
-		            <input type="tel" th:field="*{memPhone}" required
+		            <input type="tel" th:field="*{memPhone}" 
 		                   class="w-full border px-3 py-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition" />
 		            <div th:if="${#fields.hasErrors('memPhone')}" class="text-red-500 text-sm mt-1" th:errors="*{memPhone}"></div>
 		        </div>
@@ -133,11 +146,15 @@
             }
         });
         
-        document.querySelector('form').addEventListener('submit', function () {
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.textContent = '儲存中...';
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector('form').addEventListener('submit', function () {
+                console.log("✅ 表單 submit 事件觸發了");
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.textContent = '儲存中...';
+            });
         });
+
     </script>
 </body>
 
