@@ -85,17 +85,22 @@
 		<div align="center">     <!--  model.addAttribute("actVO", new ActVO()) AddUpdateController 有建立通道 -->  
 		<form th:action="@{/act/insert}" method="post" th:object="${actVO}" enctype="multipart/form-data">
 			<div><h3><b>所有欄位皆為必填欄位</b></h3>  </div>     
-			<div>
-			<label>活動類型:</label>
-			<input type="text" th:field="*{actCate}" onchange="hideContent('actCate.errors');" placeholder="優惠活動"/><br/>
-			<div class="error-block">
-			<span  th:if="${#fields.hasErrors('actCate')}" th:errors="*{actCate}" class="error" id="actCate.errors"></span>
-			</div>
-			</div>
+			
+			
+			<label>選擇活動類型</label> 
+				<select name="actId" required>
+					<option value="0">---選擇活動---</option>
+					<option th:each="entry : ${actCateMap}" 
+					    th:value="${entry.key}"
+						th:text="'活動類型:' + ${entry.key} + ' - ' + ${entry.value}">
+					</option>
+				</select>
+			
+		   
 			
 			<div>
 			<label>活動名稱:</label>
-			<input type="text" th:field="*{actName}" onchange="hideContent('actName.errors');" placeholder="夏日祭典"/><br/>
+			<input type="text" th:field="*{actName}" onchange="hideContent('actName.errors');" placeholder="麵食推廣"/><br/>
 			<div class="error-block">
 			<span  th:if="${#fields.hasErrors('actName')}" th:errors="*{actName}" class="error" id="actName.errors"></span>
 			</div>
@@ -105,7 +110,7 @@
 			
 			<div>
 			<label>活動內容:</label>
-			<input type="text" th:field="*{actContent}" onchange="hideContent('actContent.errors');" placeholder="飲料折5%"/><br/>
+			<input type="text" th:field="*{actContent}" onchange="hideContent('actContent.errors');" placeholder="麵食折5%"/><br/>
 			<div class="error-block">
 			<span  th:if="${#fields.hasErrors('actContent')}" th:errors="*{actContent}" class="error" id="actContent.errors" ></span>
 			</div>
@@ -130,7 +135,7 @@
 			
 			<div>
 			<label>折扣值:</label>
-			<input type="text" th:field="*{actDiscValue}" onchange="hideContent('actDiscValue.errors');" placeholder="5"/><br/>
+			<input type="text" th:field="*{actDiscValue}" onchange="hideContent('actDiscValue.errors');" placeholder="固定金額折扣: 5 ,百分比折扣: 0.5"/><br/>
 			<div class="error-block">
 			<span  th:if="${#fields.hasErrors('actDiscValue')}" th:errors="*{actDiscValue}" class="error" id="actDiscValue.errors"></span>
 			</div>

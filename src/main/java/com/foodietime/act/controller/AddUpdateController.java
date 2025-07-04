@@ -227,6 +227,18 @@ public class AddUpdateController {
 		List<StoreVO> list = storeSvc.getAll();
 		return list;
 	}
+	
+	// 列出下拉選單-產生「所有活動分類」的下拉選單
+	@ModelAttribute("actCateMap")
+	protected Map<Integer, String> prepareActCateMap(){
+		Map<Integer, String> map = new LinkedHashMap<>();
+		
+		List<ActVO> cateList = actSvc.getAllActs();
+		for (ActVO cate : cateList ) {
+			map.put(cate.getActId(), cate.getActCate());
+		}
+		return map;
+	}
 
 //	//列出下拉選單- 產生「所有店家分類」的下拉選單
 //	@ModelAttribute("storeCateMap")
