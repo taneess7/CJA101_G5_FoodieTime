@@ -72,7 +72,7 @@
 }
 .stepper-item {
     display: flex; flex-direction: column; align-items: center;
-    position: relative; z-index: 2; background-color: var(--bg-light); padding: 0 var(--space-2);
+    position: relative; z-index: 2;  padding: 0 var(--space-2);
 }
 .step-counter {
     width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
