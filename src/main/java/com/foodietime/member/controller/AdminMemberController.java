@@ -22,6 +22,10 @@ import com.foodietime.member.model.BatchUpdateStatusRequestDTO;
 import com.foodietime.member.model.MemService;
 	import com.foodietime.member.model.MemberDTO;
 	import com.foodietime.member.model.MemberVO;
+import com.foodietime.smg.model.SmgVO;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 	
 	@Controller
 	@RequestMapping("/smg/admin-members-permissions")
@@ -29,6 +33,9 @@ import com.foodietime.member.model.MemService;
 	
 	    @Autowired
 	    private MemService memService;
+	    
+	    
+
 	
 	    @GetMapping
 	    public String showMemberPermissions(
@@ -36,7 +43,11 @@ import com.foodietime.member.model.MemService;
 	            @RequestParam(value = "status", required = false) String status,
 	            @RequestParam(value = "lastModified", required = false) String lastModified,
 	            @RequestParam(value = "page", defaultValue = "1") int page,
+	            HttpSession session,
 	            Model model) {
+	    	
+	    	SmgVO smg = (SmgVO) session.getAttribute("loggedInSmg");
+	    	model.addAttribute("loggedInSmgId", smg != null ? smg.getSmgrId() : -1);
 
 	        int pageSize = 10;
 	        List<MemberVO> allMembers = memService.getAll();
@@ -146,54 +157,60 @@ import com.foodietime.member.model.MemService;
 	            @RequestParam("memNoPost") Integer memNoPost,
 	            @RequestParam("memNoGroup") Integer memNoGroup,
 	            @RequestParam("memNoJoingroup") Integer memNoJoingroup,
-	            @RequestParam("permissionReason") String permissionReason
+	            @RequestParam("permissionReason") String permissionReason,
+	            HttpServletRequest request
 	    ) {
 	        MemberVO original = memService.getById(memId);
-	        
-	     // 先取舊值
+
+	        // 先建立回傳物件
+	        Map<String, Object> result = new HashMap<>();
+
+	        // 先取舊值
 	        int oldStatus = original.getMemStatus().ordinal();
 	        int oldNoSpeak = original.getMemNoSpeak().ordinal();
 	        int oldNoPost = original.getMemNoPost().ordinal();
 	        int oldNoGroup = original.getMemNoGroup().ordinal();
 	        int oldNoJoingroup = original.getMemNoJoingroup().ordinal();
 
-
-	        // 更新權限欄位
+	        // 更新欄位
 	        original.setMemStatus(MemberVO.MemberStatus.values()[memStatus]);
 	        original.setMemNoSpeak(MemberVO.NoSpeakStatus.values()[memNoSpeak]);
 	        original.setMemNoPost(MemberVO.NoPostStatus.values()[memNoPost]);
 	        original.setMemNoGroup(MemberVO.NoGroupStatus.values()[memNoGroup]);
 	        original.setMemNoJoingroup(MemberVO.NoJoingroupStatus.values()[memNoJoingroup]);
-	        // 模擬會員等級邏輯（這裡是寫死的）
-
-	    
-	        String lastModifiedDate = LocalDate.now().toString();
-	        String lastModifiedBy = "系統管理員";
 
 	        memService.save(original);
 
-	        // 回傳 JSON 給前端 AJAX
-	        Map<String, Object> result = new HashMap<>();
+	        // 若該會員為目前登入者，且狀態變為停權 → 踢出
+	        HttpSession session = request.getSession(false);
+	        if (session != null) {
+	            MemberVO loggedIn = (MemberVO) session.getAttribute("loggedInMember");
+	            // 只踢出會員端登入者（不要踢管理員）
+	            if (loggedIn != null && loggedIn.getMemId().equals(memId) && memStatus == 2) {
+	                session.setAttribute("kickoutReason", "您的帳號已被停權，請聯絡客服人員！");
+	                result.put("kickedOut", true);
+	            }
+	        }
+
+	        // 填入回傳資料
 	        result.put("success", true);
 	        result.put("memId", memId);
-	        
 	        result.put("memStatus", memStatus);
 	        result.put("memNoSpeak", memNoSpeak);
 	        result.put("memNoPost", memNoPost);
 	        result.put("memNoGroup", memNoGroup);
 	        result.put("memNoJoingroup", memNoJoingroup);
-
 	        result.put("oldStatus", oldStatus);
 	        result.put("oldNoSpeak", oldNoSpeak);
 	        result.put("oldNoPost", oldNoPost);
 	        result.put("oldNoGroup", oldNoGroup);
 	        result.put("oldNoJoingroup", oldNoJoingroup);
-	        
-	        result.put("lastModifiedDate", lastModifiedDate);
-	        result.put("lastModifiedBy", lastModifiedBy);
+	        result.put("lastModifiedDate", LocalDate.now().toString());
+	        result.put("lastModifiedBy", "系統管理員");
 
 	        return result;
 	    }
+
 
 	    
 	    @GetMapping("/get-member/{memId}")

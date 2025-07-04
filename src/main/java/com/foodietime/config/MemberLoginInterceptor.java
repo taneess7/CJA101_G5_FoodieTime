@@ -2,19 +2,28 @@ package com.foodietime.config;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.foodietime.member.model.MemService;
+import com.foodietime.member.model.MemberVO;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 public class MemberLoginInterceptor implements HandlerInterceptor{
+	
+	private final MemService memService;
+
+    public MemberLoginInterceptor(MemService memService) {
+        this.memService = memService;
+    }
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 	        throws Exception {
 
 	    HttpSession session = request.getSession();
-	    Object loggedInMember = session.getAttribute("loggedInMember");
+	    MemberVO loggedIn = (MemberVO) session.getAttribute("loggedInMember");
 
-	    if (loggedInMember == null) {
+	    if (loggedIn == null) {
 	        String uri = request.getRequestURI();
 	        String query = request.getQueryString();
 	        String fullUrl = uri + (query != null ? "?" + query : "");
@@ -36,8 +45,15 @@ public class MemberLoginInterceptor implements HandlerInterceptor{
 	        response.sendRedirect(request.getContextPath() + "/front/member/login");
 	        return false;
 	    }
+	    // 🔥 重新查詢資料庫，判斷是否已被停權
+        MemberVO fresh = memService.getById(loggedIn.getMemId());
+        if (fresh.getMemStatus().ordinal() == 2) {
+            session.invalidate();
+            response.sendRedirect(request.getContextPath() + "/front/member/login?error=disabled");
+            return false;
+        }
 
-	    return true;
+        return true;
 	}
 
 

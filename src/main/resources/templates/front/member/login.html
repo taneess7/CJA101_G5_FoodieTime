@@ -55,7 +55,12 @@
 		    </div>
 		</div>
 
-            
+            <div th:if="${param.error != null and param.error.contains('disabled')}" 
+			     class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg text-sm text-center shadow-sm">
+			    ⚠️ 您的帳號已被停權，請聯絡客服人員！
+			</div>
+
+            	
 
             <!-- 錯誤提示 -->
             <div th:if="${error}" class="bg-red-50 border border-red-400 text-red-700 px-4 py-2 rounded-lg text-sm text-center shadow-sm">

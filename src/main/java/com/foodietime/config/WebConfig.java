@@ -1,13 +1,17 @@
 package com.foodietime.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.foodietime.member.model.MemService;
 import com.foodietime.smg.loginInterceptor.SmgLoginInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+	@Autowired
+    private MemService memService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -27,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/front/member/**");
 
         // 會員頁 強制登入
-        registry.addInterceptor(new MemberLoginInterceptor())
+        registry.addInterceptor(new MemberLoginInterceptor(memService))
                 .addPathPatterns(
                     "/front/member/member_center",
                     "/front/member/edit_profile",
@@ -36,7 +40,8 @@ public class WebConfig implements WebMvcConfigurer {
                     "/member/orders/**",
                     "/cart/**",
                     "/favorite/**",
-                    "/post/**"
+                    "/post/**",
+                    "/gb/gbindex"
                     
                 )
                 .excludePathPatterns(

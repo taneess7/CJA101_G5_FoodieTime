@@ -431,115 +431,6 @@
     </div>
 
 
-    <!-- Permission Settings -->
-<!--     <div class="row" style="margin-left: 250px;"> -->
-<!--         <div class="col-md-6"> -->
-<!--             <h6>權限等級設定</h6> -->
-<!--             <div class="mb-3"> -->
-<!--                 <label for="permissionLevelSelect" class="form-label">權限等級</label> -->
-<!--                 <select class="form-select" id="permissionLevelSelect"> -->
-<!--                     <option value="basic">基本會員</option> -->
-<!--                     <option value="premium">高級會員</option> -->
-<!--                     <option value="vip">VIP會員</option> -->
-<!--                     <option value="restricted">限制會員</option> -->
-<!--                 </select> -->
-<!--             </div> -->
-
-<!--             <div class="mb-3"> -->
-<!--                 <label for="permissionReason" class="form-label">變更原因</label> -->
-<!--                 <textarea class="form-control" id="permissionReason" rows="3" placeholder="請輸入權限變更原因說明..."></textarea> -->
-<!--             </div> -->
-<!--         </div> -->
-
-<!--         <div class="col-md-6"> -->
-<!--             <h6>功能權限設定</h6> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canPurchase" checked> -->
-<!--                 <label class="form-check-label" for="canPurchase"> -->
-<!--                     購買商品 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canCreateGroup" checked> -->
-<!--                 <label class="form-check-label" for="canCreateGroup"> -->
-<!--                     發起團購 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canJoinGroup" checked> -->
-<!--                 <label class="form-check-label" for="canJoinGroup"> -->
-<!--                     參加團購 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canComment" checked> -->
-<!--                 <label class="form-check-label" for="canComment"> -->
-<!--                     發表評論 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canMessage"> -->
-<!--                 <label class="form-check-label" for="canMessage"> -->
-<!--                     發送訊息 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canUploadImage" checked> -->
-<!--                 <label class="form-check-label" for="canUploadImage"> -->
-<!--                     上傳圖片 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--             <div class="form-check mb-2"> -->
-<!--                 <input class="form-check-input" type="checkbox" id="canInvite" checked> -->
-<!--                 <label class="form-check-label" for="canInvite"> -->
-<!--                     邀請好友 -->
-<!--                 </label> -->
-<!--             </div> -->
-<!--         </div> -->
-<!--     </div> -->
-
-    <!-- Permission History -->
-<!--     <div class="mt-4" style="margin-left: 250px;" > -->
-<!--         <h6>權限變更歷史</h6> -->
-<!--         <div class="table-responsive"> -->
-<!--             <table class="table table-sm"> -->
-<!--                 <thead> -->
-<!--                     <tr> -->
-<!--                         <th>變更日期</th> -->
-<!--                         <th>變更前</th> -->
-<!--                         <th>變更後</th> -->
-<!--                         <th>操作人員</th> -->
-<!--                         <th>變更原因</th> -->
-<!--                     </tr> -->
-<!--                 </thead> -->
-<!--                 <tbody> -->
-<!--                     <tr> -->
-<!--                         <td>2024-01-10</td> -->
-<!--                         <td><span class="badge bg-secondary">基本會員</span></td> -->
-<!--                         <td><span class="badge bg-info">高級會員</span></td> -->
-<!--                         <td>系統管理員</td> -->
-<!--                         <td>消費金額達到升級標準</td> -->
-<!--                     </tr> -->
-<!--                     <tr> -->
-<!--                         <td>2023-05-15</td> -->
-<!--                         <td>-</td> -->
-<!--                         <td><span class="badge bg-secondary">基本會員</span></td> -->
-<!--                         <td>系統</td> -->
-<!--                         <td>新會員註冊</td> -->
-<!--                     </tr> -->
-<!--                 </tbody> -->
-<!--             </table> -->
-<!--         </div> -->
-<!--     </div> -->
- 
-<!--     <div class="modal-footer" style="margin-left: 250px;"> -->
-<!--         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
-<!--         <button type="submit" class="btn btn-primary">儲存變更</button> -->
-<!--     </div> -->
- 
-
-
-    <!-- Batch Permission Update Modal -->
     <!-- Batch Permission Update Modal -->
 <div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -569,10 +460,12 @@
         </div>
     </div>
 </div>
-
+	
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+
     <!-- 自訂JS -->
     <script th:src="@{/js/admin/admin-script.js}"></script>
     
@@ -849,56 +742,61 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    console.log("變更成功", data);
+			    if (data.success) {
+			
+			        // ✅ 若停權的是自己 → 登出
+			       if (data.kickedOut === true) {
+					    alert("該會員目前登入中，已被強制登出。");
+					    return; // ❗後台不用導頁
+					}
 
-                    const row = document.querySelector(`input[data-member-id="${data.memId}"]`).closest('tr');
-
-                    // 狀態 badge
-                    const statusSpan = row.querySelector('td:nth-child(5) span');
-                    if (data.memStatus == 0) {
-                        statusSpan.className = 'badge bg-secondary';
-                        statusSpan.textContent = '尚未啟用';
-                    } else if (data.memStatus == 1) {
-                        statusSpan.className = 'badge bg-success';
-                        statusSpan.textContent = '啟用';
-                    } else if (data.memStatus == 2) {
-                        statusSpan.className = 'badge bg-danger';
-                        statusSpan.textContent = '停權';
-                    }
-
-                    // 最後修改
-                    row.querySelector('td:nth-child(6) div').textContent = data.lastModifiedDate;
-                    row.querySelector('td:nth-child(6) small').textContent = data.lastModifiedBy;
-
-                    // 動態 append 權限變更歷史
-                    const historyTable = document.querySelector('#permissionHistoryTable tbody');
-
-					const historyRow = `
-					    <tr>
-					        <td>${data.lastModifiedDate}</td>
-					        <td>
-					            <ul style="padding-left: 1em;">
-					                <li>狀態: ${data.oldStatus == 1 ? '啟用' : '停用'} ➔ ${data.memStatus == 1 ? '啟用' : '停用'}</li>
-					                <li>禁言: ${data.oldNoSpeak == 1 ? '禁止發言' : '允許發言'} ➔ ${data.memNoSpeak == 1 ? '禁止發言' : '允許發言'}</li>
-					                <li>發文: ${data.oldNoPost == 1 ? '禁止發文' : '允許發文'} ➔ ${data.memNoPost == 1 ? '禁止發文' : '允許發文'}</li>
-					                <li>開團: ${data.oldNoGroup == 1 ? '禁開團' : '正常'} ➔ ${data.memNoGroup == 1 ? '禁開團' : '正常'}</li>
-					                <li>參團: ${data.oldNoJoingroup == 1 ? '禁參團' : '正常'} ➔ ${data.memNoJoingroup == 1 ? '禁參團' : '正常'}</li>
-					            </ul>
-					        </td>
-					        <td>${data.lastModifiedBy}</td>
-					        <td>${permissionReason}</td>
-					    </tr>
-					`;
-					
-					historyTable.insertAdjacentHTML('afterbegin', historyRow);
-					saveHistoryToLocal(memId, historyRow);
-
-                    bootstrap.Modal.getInstance(document.getElementById('editPermissionsModal')).hide();
-                } else {
-                    alert('變更失敗！');
-                }
-            })
+			
+			        console.log("變更成功", data);
+			
+			        const row = document.querySelector(`input[data-member-id="${data.memId}"]`).closest('tr');
+			
+			        // 狀態 badge
+			        const statusSpan = row.querySelector('td:nth-child(5) span');
+			        if (data.memStatus == 0) {
+			            statusSpan.className = 'badge bg-secondary';
+			            statusSpan.textContent = '尚未啟用';
+			        } else if (data.memStatus == 1) {
+			            statusSpan.className = 'badge bg-success';
+			            statusSpan.textContent = '啟用';
+			        } else if (data.memStatus == 2) {
+			            statusSpan.className = 'badge bg-danger';
+			            statusSpan.textContent = '停權';
+			        }
+			
+			        // 最後修改
+			        row.querySelector('td:nth-child(6) div').textContent = data.lastModifiedDate;
+			        row.querySelector('td:nth-child(6) small').textContent = data.lastModifiedBy;
+			
+			        const historyTable = document.querySelector('#permissionHistoryTable tbody');
+			        const historyRow = `
+			            <tr>
+			                <td>${data.lastModifiedDate}</td>
+			                <td>
+			                    <ul style="padding-left: 1em;">
+			                        <li>狀態: ${data.oldStatus == 1 ? '啟用' : '停用'} ➔ ${data.memStatus == 1 ? '啟用' : '停用'}</li>
+			                        <li>禁言: ${data.oldNoSpeak == 1 ? '禁止發言' : '允許發言'} ➔ ${data.memNoSpeak == 1 ? '禁止發言' : '允許發言'}</li>
+			                        <li>發文: ${data.oldNoPost == 1 ? '禁止發文' : '允許發文'} ➔ ${data.memNoPost == 1 ? '禁止發文' : '允許發文'}</li>
+			                        <li>開團: ${data.oldNoGroup == 1 ? '禁開團' : '正常'} ➔ ${data.memNoGroup == 1 ? '禁開團' : '正常'}</li>
+			                        <li>參團: ${data.oldNoJoingroup == 1 ? '禁參團' : '正常'} ➔ ${data.memNoJoingroup == 1 ? '禁參團' : '正常'}</li>
+			                    </ul>
+			                </td>
+			                <td>${data.lastModifiedBy}</td>
+			                <td>${permissionReason}</td>
+			            </tr>
+			        `;
+			        historyTable.insertAdjacentHTML('afterbegin', historyRow);
+			        saveHistoryToLocal(memId, historyRow);
+			
+			        bootstrap.Modal.getInstance(document.getElementById('editPermissionsModal')).hide();
+			    } else {
+			        alert('變更失敗！');
+			    }
+			})
             .catch(error => {
                 console.error('發生錯誤:', error);
                 alert('變更時發生錯誤');
@@ -914,6 +812,13 @@
 
 
     </script>
+    
+    <script th:inline="javascript">
+  window.loggedInMemberId = "[[${loggedInSmgId}]]";
+  console.log("目前登入的後台管理員 ID：", window.loggedInMemberId);
+
+	</script>
+    
 </body>
 
 </html>

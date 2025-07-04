@@ -94,12 +94,20 @@ public class MemberController {
                                    @RequestParam("photoFile") MultipartFile photoFile,
                                    @RequestParam(value = "storOffDayList", required = false) List<String> storOffDayList,
                                    HttpSession session,
-                                   Model model) throws IOException {
-
+                                   Model model) throws IOException { 
+    	// 設定預設值
+    	if (store.getStorStatus() == null) store.setStorStatus((byte) 2); // 未上架
+        if (store.getStorReportCount() == null) store.setStorReportCount((byte) 0);
+        if (store.getStarNum() == null) store.setStarNum(0);
+        if (store.getReviews() == null) store.setReviews(0);
+        if (store.getStorOpen() == null) store.setStorOpen((byte) 1); // 預設營業
+        
         if (result.hasErrors()) {
         	model.addAttribute("storeCateList", storeCateSvc.getAll());
             return "front/member/storeregister";
         }
+
+        
         
         // ✅ 將 List<String> 公休日轉換為以逗號分隔的字串，存入 StoreVO
         if (storOffDayList != null && !storOffDayList.isEmpty()) {
@@ -108,24 +116,20 @@ public class MemberController {
             store.setStorOffDay("");
         }
         
-        // 設定預設值
-        store.setStorStatus((byte) 2); // 未上架
-        store.setStorReportCount((byte) 0);
-        store.setStarNum(0);
-        store.setReviews(0);
-        store.setStorOpen((byte) 1); // 預設營業
-        
+       
         // 處理圖片
         if (photoFile != null && !photoFile.isEmpty()) {
             store.setStorPhoto(photoFile.getBytes());
         }
-        
+       
         // 取出會員
         MemberVO member = (MemberVO) session.getAttribute("registeringStore");
         if (member != null) {
             store.setStorEmail(member.getMemEmail());
             // 如果你之後有 FK，可以寫 store.setMember(member);
         }
+        
+        
 
         storeService.addStore(store); // ✅ 儲存 storeVO
         session.setAttribute("loggedInStore", store); // ✅ 新增這行：補上 store session
@@ -333,7 +337,7 @@ public class MemberController {
     public String showLoginForm(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
         // 如果已經登入，直接回會員中心
         if (session.getAttribute("loggedInMember") != null) {
-            return "redirect:/front/member/member_center";
+            return "redirect:/index";
         }
 
         // ==================== ★★★【邏輯修改處】★★★ ====================
@@ -413,7 +417,7 @@ public class MemberController {
             return "redirect:" + redirectUrl;
         }
 
-        return "redirect:/front/member/member_center"; // 預設頁面
+        return "redirect:/index"; // 預設頁面
     }
 
 
