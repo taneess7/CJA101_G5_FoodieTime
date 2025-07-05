@@ -22,7 +22,8 @@
 <meta name="theme-color" content="#FF5722">
 <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Cache-Control"
+	content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
@@ -140,54 +141,41 @@
 
 		<!-- 🔍 只有在關鍵字搜尋時才顯示「所有相關料理」 -->
 		<section class="search-products"
-			th:if="${param.keyword != null and not #lists.isEmpty(productList)}">
-			<h2>相關料理</h2>
-			<!-- 使用新的 storeProductCardMap -->
-			<div class="menu-items" th:if="${storeProductCardMap != null and not #lists.isEmpty(storeProductCardMap[store.storId])}">
-
-				<!-- 1. th:each 的變數改為 storeProductCardMap -->
-				<!-- 2. 迴圈中的變數命名為 prodCard，以代表這是一個 DTO -->
-				<div class="menu-item product-clickable"
-					 th:each="prodCard : ${storeProductCardMap[store.storId]}"
-					 th:attr="data-prod-id=${prodCard.prodId},
-                  data-prod-name=${prodCard.prodName},
-                  data-prod-desc=${prodCard.prodDesc},
-                  data-prod-price=${prodCard.prodPrice}">
-
-					<img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
-						 th:alt="${prodCard.prodName}" class="menu-item-image">
-
-					<div class="menu-item-info">
-						<!-- 直接從 prodCard DTO 中獲取屬性 -->
-						<h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
-						<p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
-						<span class="menu-item-price" th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
-					</div>
-
-					<!-- 收藏按鈕的邏輯維持不變 -->
-					<button class="favorite-btn favorite-product-btn" th:data-prodid="${prodCard.prodId}">
-						<i th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
-						   th:style="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'color:red' : ''"></i>
-						收藏
-					</button>
-				</div>
-			</div>
-		</section>
+         th:if="${param.keyword != null and not #lists.isEmpty(productList)}">
+    <h2>相關料理</h2>
+    <div class="menu-items">
+        <div class="menu-item product-clickable"
+             th:each="prodCard : ${productList}"
+             th:attr="data-prod-id=${prodCard.prodId},
+                      data-prod-name=${prodCard.prodName},
+                      data-prod-desc=${prodCard.prodDesc},
+                      data-prod-price=${prodCard.prodPrice}">
+            <img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
+                 th:alt="${prodCard.prodName}" class="menu-item-image">
+            <div class="menu-item-info">
+                <h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
+                <p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
+                <span class="menu-item-price" th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
+            </div>
+        </div>
+    </div>
+</section>
+		
 
 		<!-- ❗查無結果顯示 -->
-		<div class="container">
-			<div
-				th:if="${#lists.isEmpty(storeList) and #lists.isEmpty(productList)}"
-				style="text-align: center; padding: 2em;">
+		<div class="container"
+			th:if="${param.keyword != null and #lists.isEmpty(storeList)}">
+			<div style="text-align: center; padding: 2em;">
 				<h3>
 					沒有符合「<span th:text="${param.keyword}">關鍵字</span>」的結果
 				</h3>
 				<p>請嘗試其他關鍵字。</p>
 			</div>
 		</div>
-		<div class="container">
-			<div class="restaurant-list">
-				<article class="restaurant-detail" th:each="store : ${storeList}">
+	<div class="container"
+     th:if="${param.keyword == null or not #lists.isEmpty(storeList)}">
+	<div class="restaurant-list">
+		<article class="restaurant-detail" th:each="store : ${storeList}">
 					<!-- 餐廳主區塊 -->
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">
@@ -262,34 +250,40 @@
 							</div>
 							<div class="tabs-content">
 								<!-- "菜單" Tab 的內容 -->
-								<div class="tab-content active" th:id="'menu-content-' + ${store.storId}">
+								<div class="tab-content active"
+									th:id="'menu-content-' + ${store.storId}">
 									<div class="menu-items">
 
 										<!-- 1. th:each 的變數改為新的 storeProductCardMap -->
 										<!-- 2. 迴圈中的變數命名為 prodCard，以代表這是一個 DTO -->
 										<div class="menu-item product-clickable"
-											 th:each="prodCard : ${storeProductCardMap[store.storId]}"
-											 th:attr="data-prod-id=${prodCard.prodId},
+											th:each="prodCard : ${storeProductCardMap[store.storId]}"
+											th:attr="data-prod-id=${prodCard.prodId},
                       data-prod-name=${prodCard.prodName},
                       data-prod-desc=${prodCard.prodDesc},
                       data-prod-price=${prodCard.prodPrice}">
 
 											<!-- 圖片請求 URL 維持不變 -->
-											<img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
-												 th:alt="${prodCard.prodName}" class="menu-item-image"
-												 onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
+											<img
+												th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
+												th:alt="${prodCard.prodName}" class="menu-item-image"
+												onerror="this.onerror=null; this.src='/images/restaurant/placeholder.svg';">
 
 											<div class="menu-item-info">
 												<!-- 直接從 prodCard DTO 中獲取屬性 -->
 												<h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
-												<p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
-												<span class="menu-item-price" th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
+												<p class="menu-item-description"
+													th:text="${prodCard.prodDesc}">商品描述</p>
+												<span class="menu-item-price"
+													th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
 											</div>
 
 											<!-- 收藏按鈕的邏輯維持不變，只是變數改為 prodCard -->
-											<button class="favorite-btn favorite-product-btn" th:data-prodid="${prodCard.prodId}">
-												<i th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
-												   th:style="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'color:red' : ''"></i>
+											<button class="favorite-btn favorite-product-btn"
+												th:data-prodid="${prodCard.prodId}">
+												<i
+													th:classappend="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'fas fa-heart' : 'far fa-heart'"
+													th:style="${favoriteProdIds != null and favoriteProdIds.contains(prodCard.prodId)} ? 'color:red' : ''"></i>
 												收藏
 											</button>
 										</div>
@@ -324,20 +318,23 @@
 									</div>
 								</div>
 								<!-- ➕ 新增優惠券內容 (更動後版) -->
-								<div class="tab-content" th:id="'coupon-content-' + ${store.storId}">
+								<div class="tab-content"
+									th:id="'coupon-content-' + ${store.storId}">
 
 									<!-- 1. 使用 Grid 佈局容器 -->
 									<div class="coupon-grid">
 
 										<!-- 如果店家沒有任何優惠券，顯示提示訊息 -->
-										<div th:if="${storeCouponMap == null or #lists.isEmpty(storeCouponMap[store.storId])}" class="coupon-empty-message">
+										<div
+											th:if="${storeCouponMap == null or #lists.isEmpty(storeCouponMap[store.storId])}"
+											class="coupon-empty-message">
 											<p>目前沒有可用的優惠券喔！</p>
 										</div>
 
 										<!-- 2. 迭代優惠券，並為每張券建立卡片 -->
 										<div th:each="coupon : ${storeCouponMap[store.storId]}"
-											 class="coupon-card"
-											 th:with="
+											class="coupon-card"
+											th:with="
                 now = ${serverTime.toInstant()},
                 startDate = ${coupon.couStartDate.toInstant()},
                 endDate = ${coupon.couEndDate.toInstant()},
@@ -346,37 +343,40 @@
                 isClaimed = ${claimedCouponIds != null and #lists.contains(claimedCouponIds, coupon.couId)},
                 isUnavailable = ${isExpired or isNotStarted}
              "
-											 th:classappend="${isUnavailable or isClaimed} ? 'disabled' : ''">
+											th:classappend="${isUnavailable or isClaimed} ? 'disabled' : ''">
 
 											<!-- 優惠券文字資訊 -->
 											<div class="coupon-info">
 												<h3 class="menu-item-name" th:text="${coupon.couName}">優惠券名稱</h3>
 												<p class="menu-item-description" th:text="${coupon.couDesc}">優惠券說明</p>
-												<span class="menu-item-price" th:text="'滿 ' + ${coupon.couMinOrd} + ' 元可使用'">最低消費金額</span>
+												<span class="menu-item-price"
+													th:text="'滿 ' + ${coupon.couMinOrd} + ' 元可使用'">最低消費金額</span>
 											</div>
 
 											<!-- 3. 根據不同狀態顯示對應的按鈕 -->
 											<div class="coupon-action">
 												<!-- 狀態 A: 可領取 -->
 												<button th:if="${!isUnavailable and !isClaimed}"
-														type="button"
-														class="coupon-claim-btn favorite-coupon-btn"
-														th:data-couid="${coupon.couId}">
+													type="button" class="coupon-claim-btn favorite-coupon-btn"
+													th:data-couid="${coupon.couId}">
 													<i class="far fa-heart"></i> 領取
 												</button>
 
 												<!-- 狀態 B: 已領取 -->
-												<button th:if="${isClaimed}" type="button" class="coupon-claim-btn" disabled>
+												<button th:if="${isClaimed}" type="button"
+													class="coupon-claim-btn" disabled>
 													<i class="fas fa-check-circle"></i> 已領取
 												</button>
 
 												<!-- 狀態 C: 尚未開放 -->
-												<button th:if="${isNotStarted}" type="button" class="coupon-claim-btn" disabled>
+												<button th:if="${isNotStarted}" type="button"
+													class="coupon-claim-btn" disabled>
 													<i class="fas fa-hourglass-start"></i> 尚未開放
 												</button>
 
 												<!-- 狀態 D: 已過期 -->
-												<button th:if="${isExpired}" type="button" class="coupon-claim-btn" disabled>
+												<button th:if="${isExpired}" type="button"
+													class="coupon-claim-btn" disabled>
 													<i class="fas fa-calendar-times"></i> 已過期
 												</button>
 											</div>
@@ -408,7 +408,7 @@
 			<div class="modal-body">
 				<div class="modal-product-image-container">
 					<img id="modalProductImage" src="" alt="商品圖片"
-						 class="modal-product-image">
+						class="modal-product-image">
 				</div>
 				<div class="modal-product-info">
 					<h2 id="modalProductName" class="modal-product-name">商品名稱</h2>
@@ -419,7 +419,7 @@
 						<div class="quantity-controls">
 							<button class="quantity-btn" id="quantityDecrement">-</button>
 							<input type="number" id="quantityInput" class="quantity-input"
-								   value="1" min="1" max="99" readonly>
+								value="1" min="1" max="99" readonly>
 							<button class="quantity-btn" id="quantityIncrement">+</button>
 						</div>
 					</div>
@@ -433,16 +433,18 @@
 
 	<!-- ==================== 登入提示燈箱 (收藏用) ==================== -->
 	<div id="login-prompt-modal"
-		 style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
+		style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
 		<div
-				style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+			style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
 			<h3>⚠️ 請先登入會員</h3>
 			<p style="margin: 1em 0;">您必須登入會員才能加入收藏清單。</p>
 			<div style="margin-top: 1em;">
 				<div class="modal-button-container">
 					<div class="modal-button-container">
-						<button class="modal-button btn-secondary" id="closeLoginPromptBtn">取消</button>
-						<button class="modal-button btn-primary" onclick="location.href='/front/member/login'">立即登入</button>
+						<button class="modal-button btn-secondary"
+							id="closeLoginPromptBtn">取消</button>
+						<button class="modal-button btn-primary"
+							onclick="location.href='/front/member/login'">立即登入</button>
 					</div>
 
 				</div>
@@ -452,20 +454,23 @@
 
 	<!-- ==================== 加入購物車用的提示燈箱 ==================== -->
 	<div id="login-prompt-modal-buy"
-		 style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
-		<div style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+		style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
+		<div
+			style="background: #fff; padding: 2em; border-radius: 10px; text-align: center; max-width: 300px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
 			<h3>⚠️ 請先登入會員</h3>
 			<p style="margin: 1em 0;">您必須登入會員才能將商品加入購物車。</p>
 			<div class="modal-button-container">
-				<button class="modal-button btn-secondary" id="closeLoginPromptBuyBtn">取消</button>
-				<button class="modal-button btn-primary" onclick="location.href='/front/member/login'">立即登入</button>
+				<button class="modal-button btn-secondary"
+					id="closeLoginPromptBuyBtn">取消</button>
+				<button class="modal-button btn-primary"
+					onclick="location.href='/front/member/login'">立即登入</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Toast 提示訊息 (維持不變) -->
 	<div id="toast-message"
-		 style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: #444; color: #fff; padding: 10px 20px; border-radius: 8px; display: none; font-size: 16px; z-index: 9999;">
+		style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: #444; color: #fff; padding: 10px 20px; border-radius: 8px; display: none; font-size: 16px; z-index: 9999;">
 	</div>
 
 	<!-- ==================== JavaScript 修正 ==================== -->
