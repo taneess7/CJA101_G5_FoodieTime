@@ -132,7 +132,7 @@ import jakarta.servlet.http.HttpSession;
 	            return dto;
 	        }).collect(Collectors.toList());
 
-	        model.addAttribute("dbVersion", "20250704");
+	        model.addAttribute("dbVersion", "20250705");
 	        model.addAttribute("members", dtoList);
 	        model.addAttribute("currentPage", page);
 	        model.addAttribute("totalPages", totalPages);
