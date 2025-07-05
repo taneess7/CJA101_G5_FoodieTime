@@ -5,7 +5,37 @@
 <title>Insert title here</title>
 
 <style>
+.discount-table {
+  width: 100%;
+  max-width: 300px;
+  margin: 1rem 0;
+  border-collapse: collapse;
+  font-family: 'Noto Sans TC', sans-serif;
+  table-layout: fixed;  /* ✅ 固定欄寬 */
+}
 
+.discount-table thead {
+  background-color: #f8f4f1;
+}
+
+.discount-table th,
+.discount-table td {
+  padding: 6px 10px;  /* ✅ 減少 padding */
+  border: 1px solid #888;
+  text-align: center;
+  word-wrap: break-word; /* ✅ 自動換行 */
+  font-size: 14px; /* ✅ 字稍微小一點 */
+}
+
+.discount-table th {
+  font-weight: bold;
+  color: #333;
+}
+
+.discount-table .highlight {
+  color: #d9534f;
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -15,19 +45,24 @@
     <h2  style="color: #bd9977;" th:text="'活動名稱：' + ${entry.key.actName}"></h2>
     <p th:text="'內容：' + ${entry.key.actContent}"></p>
 
-    <table border="1">
-        <tr>
-            <th>商品名稱</th>
-            <th>原價</th>
-            <th>折扣價</th>
-        </tr>
-        <tr th:each="prod : ${entry.value}">
-            <td th:text="${prod.prodName}"></td>
-            <td th:text="${prod.prodPrice}" style="color: red;"></td>
-            <td th:text="${@actCategoryEnum.from(entry.key.actCate).calculate(prod, entry.key)}"></td>
-        </tr>
+      <table class="discount-table">
+        <thead>
+		        <tr>
+		            <th style="width:150px;">商品名稱</th>
+		            <th>原價</th>
+		            <th>折扣價</th>
+		        </tr>
+         </thead>
+          <tbody>
+		        <tr th:each="prod : ${entry.value}">
+		            <td th:text="${prod.prodName}"></td>
+		            <td th:text="${prod.prodPrice}" style="color: red;"></td>
+		            <td th:text="${@actCategoryEnum.from(entry.key.actCate).calculate(prod, entry.key)}"></td>
+		        </tr>
+   
+    	</tbody>
     </table>
-    <hr/>
+   <hr style="background-color: #f8f4f1; height: 3px; border: none;" />
 </div>
 
     
