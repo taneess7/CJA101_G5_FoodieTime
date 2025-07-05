@@ -1,0 +1,294 @@
+body {
+    background-color: var(--neutral-50);
+}
+
+.main-content {
+    padding: var(--space-4) 0 var(--space-6);
+}
+
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+.member-section {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+}
+
+/* ==================== 2. 會員側邊欄 (最終標準化版本) ==================== */
+.member-sidebar {
+    flex: 0 0 260px;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-1);
+    position: sticky;
+    top: 88px;
+    overflow: hidden;
+    padding: var(--space-4);
+}
+
+.member-profile {
+    text-align: center;
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.member-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto var(--space-3);
+    border: 3px solid var(--bg-light);
+    box-shadow: var(--shadow-2);
+    flex-shrink: 0;
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.member-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.member-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 12px var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.member-nav-item:hover {
+    background-color: var(--neutral-50);
+    color: var(--primary-dark);
+}
+
+.member-nav-item.active {
+    background-color: rgba(195, 155, 123, 0.1);
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.member-nav-item i {
+    font-size: 22px;
+}
+
+
+/* ==================== 3. 內容主體 (標準化) ==================== */
+.member-content-main {
+    flex: 1;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5) var(--space-6);
+    min-width: 0;
+}
+.member-content-header {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--neutral-200);
+}
+.member-content-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ==================== 4. 收藏網格 ==================== */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-4);
+}
+
+.favorite-card {
+    background: var(--bg-light);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+    transition: all var(--transition-normal);
+}
+.favorite-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-2);
+}
+
+/* ==================== 5. 卡片圖片區 ==================== */
+.card-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+}
+.favorite-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+.favorite-form {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+}
+.favorite-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(4px);
+}
+.favorite-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+}
+.favorite-btn.active i {
+    color: var(--error);
+}
+.favorite-btn i {
+    font-size: 20px;
+    color: var(--neutral-400);
+}
+
+/* ==================== 6. 卡片內容 ==================== */
+.card-content {
+    padding: var(--space-4);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-3);
+    gap: var(--space-2);
+}
+.gb-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    flex: 1;
+    line-height: 1.4;
+}
+.category-tag {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    padding: 4px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.product-name {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-3);
+    line-height: 1.4;
+}
+
+.card-info {
+    margin-bottom: var(--space-4);
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.info-item i {
+    font-size: 18px;
+    color: var(--primary-color);
+}
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: center;
+}
+
+/* ==================== 7. 空狀態 ==================== */
+.empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    padding: var(--space-6) 0;
+    border: 2px dashed var(--neutral-200);
+    border-radius: var(--radius-md);
+}
+.empty-state i { font-size: 4rem; color: var(--neutral-300); margin-bottom: var(--space-3); }
+.empty-state p { font-size: 1.2rem; font-weight: 500; margin: 0 0 var(--space-1); }
+.empty-state span { color: var(--text-secondary); }
+
+/* ==================== 8. 按鈕與底部操作 ==================== */
+.action-footer {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--neutral-200);
+    text-align: center;
+}
+
+.btn {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600;
+    transition: all var(--transition-normal); border: 1px solid transparent;
+    text-decoration: none; cursor: pointer;
+}
+.btn-primary { background-color: var(--primary-color); color: var(--text-white); }
+.btn-primary:hover { background-color: var(--primary-dark); }
+.btn-secondary { background-color: var(--neutral-200); color: var(--text-secondary); }
+.btn-secondary:hover { background-color: var(--neutral-300); color: var(--text-primary); }
+
+/* ==================== 9. 響應式設計 ==================== */
+@media (max-width: 992px) {
+    .member-section { flex-direction: column; }
+    .member-sidebar { position: static; width: 100%; margin-bottom: var(--space-4); }
+    .member-content-main { padding: var(--space-4); }
+}
+
+@media (max-width: 768px) {
+    .favorites-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-3); }
+    .card-header { flex-direction: column; align-items: flex-start; }
+    .category-tag { margin-top: var(--space-1); }
+}
+
+@media (max-width: 480px) {
+    .favorites-grid { grid-template-columns: 1fr; }
+    .member-content-main { padding: var(--space-3); }
+}

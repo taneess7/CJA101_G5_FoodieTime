@@ -41,15 +41,15 @@ public class MemOrdersController {
     @GetMapping
     public String showMemberOrders(Model model, HttpSession session) {
         // ==================== 1. 安全性檢查：從 Session 獲取登入會員 ====================
-        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-        if (member == null) {
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO == null) {
             // 若 session 中找不到會員資訊，表示尚未登入，重導至登入頁面
             return "redirect:/login"; // 假設登入頁面路徑為 /login
         }
-
+        model.addAttribute("memberVO", memberVO);
         // ==================== 2. 業務邏輯：呼叫 Service 獲取會員所有訂單 ====================
         // 透過 OrdersService 中的 getOrdersByMemberId 方法安全地查詢訂單
-        List<OrdersVO> allOrders = ordersService.getOrdersByMemberId(member.getMemId());
+        List<OrdersVO> allOrders = ordersService.getOrdersByMemberId(memberVO.getMemId());
 
         // ==================== 3. 資料處理：將訂單分類為「進行中」與「歷史訂單」====================
         // 參考商家訂單管理邏輯，定義進行中訂單的狀態碼 (0:待處理, 1:已接單, 2:準備中)

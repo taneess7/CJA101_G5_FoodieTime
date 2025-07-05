@@ -1,269 +1,164 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="zh-Hant">
-
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>會員中心</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
-    <link rel="stylesheet" th:href="@{/css/common/index.css}">
-    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員中心 - FoodieTime 食刻</title>
+
+    <!-- Google Fonts & Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <!-- WebSocket 相關 JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- FoodieTime Design System -->
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/membercenter/member-center.css}">
+
+    <!-- WebSocket & Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/common/websocket.js}"></script>
+    <script th:src="@{/js/common/main.js}"></script>
     <script th:inline="javascript">
-        window.addEventListener('pageshow', function (event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
-        
         // 頁面載入完成後初始化 WebSocket
         document.addEventListener('DOMContentLoaded', function() {
-            // 從 Thymeleaf 取得會員 ID
-            const memId = /*[[${member.memId}]]*/ null;
-            console.log('memId in script:', memId);
+            const memId = /*[[${memberVO.memId}]]*/ null;
             if (memId) {
-                connectWebSocketNotify({
-                    memId: memId
-                });
+                connectWebSocketNotify({ memId: memId });
             }
         });
     </script>
-    <script th:src="@{/js/common/main.js}"></script>
-    <style>
- 
-  .app-header {
-    position: fixed;           /* ✅ 固定在畫面頂部 */
-    top: 0;
-    left: 0;
-    width: 100%;               /* 撐滿整個寬度 */
-    z-index: 50;               /* 確保蓋在上方 */
-    height: 64px;
-    background-color: white;
-    padding: 0 1rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-  }
-</style>
-
-
-
- 
-    
 </head>
+<body>
 
-<body class="bg-gradient-to-br from-orange-100 to-rose-200 font-sans overflow-x-hidden">
+<!-- ======================= Header ======================= -->
+<header th:replace="~{front/common/header :: main-header}"></header>
 
-
-
-
-	<header th:replace="~{front/common/header :: main-header}"></header>
-    <!-- 整頁容器（padding 不要包 flex） -->
-   	
-
-
-<div class="w-full min-h-screen overflow-x-hidden pt-24">
-
- 	<div class="max-w-6xl mx-auto flex gap-8 px-4 py-8 min-h-screen items-start relative">
-
-
-
-
-
-        <!-- 左側側邊欄 -->
-        <aside id="sidebar" class="w-[260px] bg-white p-6 rounded-3xl shadow-lg flex-shrink-0">
-
-
-
-
-
-
-
-
-
-    <!-- 上半 avatar + nav -->
-    <div>
-        <!-- 頭像 / 名字 -->
-        <div class="member-profile mb-6 text-center">
-            <div class="member-avatar mb-4">
-                <img th:src="${member.memAvatar != null} ? 
-                             @{/front/member/avatar/{id}(id=${member.memId})} : 
-                             @{/images/icons/logo.png}"  
-                     alt="會員頭像" class="w-24 h-24 rounded-full mx-auto">
-            </div>
-            <div class="member-info">
-                <h3 class="member-name text-lg font-semibold text-gray-800" th:text="${member.memNickname}">王小明</h3>
-            </div>
-        </div>
-
-        <!-- menu 選單 -->
-        <nav class="member-nav flex flex-col space-y-3">
-            <a th:href="@{/front/member/member_center}" 
-			   th:class="'member-nav-item flex items-center space-x-2 ' +
-			             (${currentPage} == 'member_center' ? 'text-orange-600 font-bold' : 'text-gray-700 hover:text-orange-600')">
-			    <i class="material-icons-outlined">person</i>
-			    <span>會員資料</span>
-			</a>
-
-            <div th:if="${session.loggedInStore != null}">
-		        <a th:href="@{/store/sc}" 
-		           class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-		            <i class="material-icons-outlined">store</i>
-		            <span>店家後台</span>
-		        </a>
-		    </div>
-            <a th:href="@{/member/orders}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">receipt_long</i>
-                <span>一般訂單記錄</span>
-            </a>
-            <a th:href="@{/gb/member/orders}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">receipt</i>
-                <span>團購訂單記錄</span>
-            </a>
-            <a th:href="@{/gb/gbfavoritelist}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">favorite</i>
-                <span>團購收藏</span>
-            </a>
-            <a th:href="@{/member/coupons}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">local_offer</i>
-                <span>優惠券</span>
-            </a>
-            <a th:href="@{/favorite/member-favorites}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">favorite</i>
-                <span>收藏餐廳</span>
-            </a>
-           <a th:href="@{/front/member/post/notifications}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                <i class="material-icons-outlined">inbox</i>
-                <span>收件夾</span>
-            </a>
-            
-        </nav>
-    </div>
-
-    
-
-</aside>
-
-
-        <!-- 右側會員中心內容 -->
-         <div class="flex-1 bg-white p-10 rounded-3xl shadow-2xl">
-
-
-
-
-            <h2 class="text-4xl font-bold text-orange-700 mb-8 text-center tracking-wide">會員資料</h2>
-			<div th:if="${success}" class="bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded mb-4 text-center">
-			    <p th:text="${success}"></p>
-			</div>
-			
-            <!-- 大頭貼 -->
-            <div class="flex flex-col items-center mb-10 space-y-2">
-                <img th:src="${member.memAvatar != null} ? 
-                             @{/front/member/avatar/{id}(id=${member.memId})} : 
-                             @{/images/icons/logo.png}"
-                     alt="大頭照"
-                     class="w-32 h-32 rounded-full object-cover shadow-md border-4 border-orange-200 hover:scale-105 transition-transform duration-300" />
-            </div>
-
-            <!-- 會員基本資料 -->
-            <div class="mb-10">
-                <h3 class="text-xl font-semibold text-orange-600 mb-4 border-b pb-2">基本資料</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 text-[16px] leading-relaxed">
-                    <div><strong>暱稱：</strong><span th:text="${member.memNickname}"></span></div>
-                    <div><strong>姓名：</strong><span th:text="${member.memName}"></span></div>
-                    <div class="break-words overflow-hidden">
-					  <strong>Email：</strong>
-					  <span th:text="${member.memEmail}"></span>
-					</div>
-                    <div><strong>電話：</strong><span th:text="${member.memPhone}"></span></div>
-                    <div><strong>城市：</strong><span th:text="${member.memCity} + ' ' + ${member.memCityarea}"></span></div>
-                    <div class="break-all overflow-hidden">
-					  <strong>地址：</strong>
-					  <span th:text="${member.memAddress}"></span>
-					</div>
+<!-- ======================= Main Content ======================= -->
+<!-- ======================= Main Content ======================= -->
+<main class="main-content">
+    <div class="content-container">
+        <div class="member-section">
+            <!-- ========== Member Sidebar ========== -->
+            <aside class="member-sidebar">
+                <!-- Profile Card -->
+                <div class="member-profile">
+                    <div class="member-avatar">
+                        <img th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
+                             alt="會員頭像">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name" th:text="${memberVO.memNickname}">會員暱稱</h3>
+                    </div>
                 </div>
 
-                <!-- 我的訊息 -->
-                <div class="mt-8">
-                    <div class="flex items-center justify-between bg-gray-50 border border-orange-200 rounded-xl p-5 shadow transition hover:shadow-lg">
-                        <div>
-                            <h4 class="text-lg font-semibold text-orange-700 mb-1 flex items-center">
-                                <i class="fas fa-envelope mr-2"></i> 我的訊息
-                            </h4>
-                            <p class="text-sm text-orange-600">查看您收到的系統通知與管理員回覆</p>
-                        </div>
-                        <a class="inline-flex items-center bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition"
-                           th:href="@{/front/member/messages}">
-                            前往查看
-                            <i class="fas fa-chevron-right ml-2"></i>
+                <!-- Navigation (與其他頁面相同) -->
+                <nav class="member-nav">
+                    <a th:href="@{/front/member/member_center}" class="member-nav-item" th:classappend="${currentPage == 'member_center' ? 'active' : ''}">
+                        <i class="material-icons-outlined">person</i>
+                        <span>會員資料</span>
+                    </a>
+                    <div th:if="${session.loggedInStore != null}">
+                        <a th:href="@{/store/sc}" class="member-nav-item">
+                            <i class="material-icons-outlined">store</i>
+                            <span>店家後台</span>
                         </a>
                     </div>
+                    <a th:href="@{/member/orders}" class="member-nav-item">
+                        <i class="material-icons-outlined">receipt_long</i>
+                        <span>一般訂單</span>
+                    </a>
+                    <a th:href="@{/gb/member/orders}" class="member-nav-item" th:classappend="${currentPage == 'gb_orders' ? 'active' : ''}">
+                        <i class="material-icons-outlined">receipt</i>
+                        <span>團購訂單</span>
+                    </a>
+                    <a th:href="@{/gb/gbfavoritelist}" class="member-nav-item" th:classappend="${currentPage == 'gb_favorites' ? 'active' : ''}">
+                        <i class="material-icons-outlined">group</i>
+                        <span>團購收藏</span>
+                    </a>
+                    <a th:href="@{/member/coupons}" class="member-nav-item" th:classappend="${currentPage == 'coupons' ? 'active' : ''}">
+                        <i class="material-icons-outlined">local_offer</i>
+                        <span>我的優惠券</span>
+                    </a>
+                    <a th:href="@{/favorite/member-favorites}" class="member-nav-item" th:classappend="${currentPage == 'favorites' ? 'active' : ''}">
+                        <i class="material-icons-outlined">favorite</i>
+                        <span>收藏餐廳</span>
+                    </a>
+                    <a th:href="@{/front/member/post/notifications}" class="member-nav-item" th:classappend="${currentPage == 'notifications' ? 'active' : ''}">
+                        <i class="material-icons-outlined">inbox</i>
+                        <span>收件夾</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- ========== Member Content ========== -->
+            <div class="member-content-main">
+                <h1 class="content-title">會員資料</h1>
+
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+                <div class="profile-header">
+                    <img th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
+                         alt="會員大頭照" class="profile-avatar-large" />
+                </div>
+
+                <!-- 基本資料 -->
+                <section class="content-section">
+                    <h2 class="section-title">基本資料</h2>
+                    <div class="info-grid">
+                        <div class="info-item"><strong>暱稱：</strong><span th:text="${memberVO.memNickname}"></span></div>
+                        <div class="info-item"><strong>姓名：</strong><span th:text="${memberVO.memName}"></span></div>
+                        <div class="info-item"><strong>Email：</strong><span th:text="${memberVO.memEmail}"></span></div>
+                        <div class="info-item"><strong>電話：</strong><span th:text="${memberVO.memPhone}"></span></div>
+                        <div class="info-item"><strong>地區：</strong><span th:text="${memberVO.memCity} + ' ' + ${memberVO.memCityarea}"></span></div>
+                        <div class="info-item"><strong>地址：</strong><span th:text="${memberVO.memAddress}"></span></div>
+                    </div>
+
+                    <!-- ========= 我的訊息 (已加回) ========= -->
+                    <div class="info-card">
+                        <div class="info-card-content">
+                            <h4><i class="fas fa-envelope"></i>我的訊息</h4>
+                            <p>查看您收到的系統通知與管理員回覆</p>
+                        </div>
+                        <a th:href="@{/front/member/messages}" class="btn-link">
+                            前往查看 <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- 帳號狀態 -->
+                <section class="content-section">
+                    <h2 class="section-title section-title-danger">帳號狀態</h2>
+                    <div class="status-grid">
+                        <div class="status-item"><span class="font-semibold">帳號狀態：</span><span th:text="${memberVO.memStatus.name() == 'ACTIVE' ? '正常' : '黑名單'}"></span></div>
+                        <div class="status-item"><span class="font-semibold">禁言狀態：</span><span th:text="${memberVO.memNoSpeak.name() == 'INACTIVE' ? '未禁言' : '已禁言'}"></span></div>
+                        <div class="status-item"><span class="font-semibold">禁貼文狀態：</span><span th:text="${memberVO.memNoPost.name() == 'INACTIVE' ? '未禁貼文' : '已禁貼文'}"></span></div>
+                        <div class="status-item"><span class="font-semibold">禁開團狀態：</span><span th:text="${memberVO.memNoGroup.name() == 'INACTIVE' ? '未禁開團' : '已禁開團'}"></span></div>
+                        <div class="status-item"><span class="font-semibold">禁加團狀態：</span><span th:text="${memberVO.memNoJoingroup.name() == 'INACTIVE' ? '未禁加團' : '已禁加團'}"></span></div>
+                    </div>
+                </section>
+
+                <!-- ========= 操作按鈕 (已恢復原始結構) ========= -->
+                <div class="action-buttons-main">
+                    <a th:href="@{/front/member/edit_profile}" class="btn btn-primary">
+                        <i class="fas fa-pencil-alt"></i> 修改會員資料
+                    </a>
+                    <a th:href="@{/index}" class="btn btn-tertiary">
+                        <i class="fas fa-home"></i> 返回首頁
+                    </a>
+                </div>
+                <div class="action-buttons-contact">
+                    <a th:href="@{/front/directmessage/send}" class="btn btn-secondary">
+                        <i class="material-icons-outlined">support_agent</i> 聯絡我們
+                    </a>
                 </div>
             </div>
-
-            <!-- 狀態欄位 -->
-            <div class="mb-10">
-                <h3 class="text-xl font-semibold text-red-600 mb-4 border-b pb-2">帳號狀態</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 text-sm md:text-base">
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm">
-                        <span class="font-semibold">帳號狀態：</span>
-                        <span th:text="${member.memStatus == T(com.foodietime.member.model.MemberVO.MemberStatus).ACTIVE ? '正常' : '黑名單'}"></span>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm">
-                        <span class="font-semibold">禁言狀態：</span>
-                        <span th:text="${member.memNoSpeak == T(com.foodietime.member.model.MemberVO.NoSpeakStatus).INACTIVE ? '未禁言' : '已禁言'}"></span>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm">
-                        <span class="font-semibold">禁貼文狀態：</span>
-                        <span th:text="${member.memNoPost == T(com.foodietime.member.model.MemberVO.NoPostStatus).INACTIVE ? '未禁貼文' : '已禁貼文'}"></span>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm">
-                        <span class="font-semibold">禁開團狀態：</span>
-                        <span th:text="${member.memNoGroup == T(com.foodietime.member.model.MemberVO.NoGroupStatus).INACTIVE ? '未禁開團' : '已禁開團'}"></span>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm">
-                        <span class="font-semibold">禁加團狀態：</span>
-                        <span th:text="${member.memNoJoingroup == T(com.foodietime.member.model.MemberVO.NoJoingroupStatus).INACTIVE ? '未禁加團' : '已禁加團'}"></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 操作按鈕 -->
-            <div class="mt-8 flex flex-col items-center space-y-4">
-                <a href="/front/member/edit_profile"
-                   class="inline-flex items-center bg-orange-600 text-white px-6 py-2 rounded-xl hover:bg-orange-700 transition duration-300 shadow">
-                    ✏️ 修改會員資料
-                </a>
-                <a href="/index"
-                   class="inline-flex items-center bg-gray-300 text-gray-800 px-6 py-2 rounded-xl hover:bg-gray-400 transition duration-300 shadow">
-                    ⬅️ 返回首頁
-                </a>
-            </div>
-
-           <div class="mt-4 text-center">
-			    <a href="/front/directmessage/send"
-			       class="inline-flex items-center justify-center bg-white text-orange-600 border border-orange-400 px-5 py-2 rounded-xl shadow hover:bg-orange-50 hover:text-orange-800 transition duration-300">
-			        <i class="material-icons-outlined mr-2">support_agent</i>
-			        聯絡我們
-			    </a>
-			</div>
-
-
-        </div> <!-- 右側內容 -->
-
+        </div>
     </div>
-    </div> <!-- max-w-6xl flex -->
-	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
-	
+</main>
 
+<!-- ======================= Footer ======================= -->
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 
-
-	
 </body>
-
 </html>

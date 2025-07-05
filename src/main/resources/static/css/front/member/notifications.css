@@ -1,0 +1,447 @@
+/*
+ * FoodieTime Member Center - Notifications Page Styles
+ * Design System: Material Design
+ * Main Color: Deep Terracotta (#C39B7B)
+ */
+
+/* ==================== 1. 通用佈局 (繼承 style.css) ==================== */
+body {
+    background-color: var(--neutral-50);
+}
+
+.main-content {
+    padding: var(--space-4) 0 var(--space-6);
+}
+
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+.member-section {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+}
+
+/* ==================== 2. 會員側邊欄 (最終標準化版本) ==================== */
+.member-sidebar {
+    flex: 0 0 260px;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-1);
+    position: sticky;
+    top: 88px;
+    overflow: hidden;
+    padding: var(--space-4);
+}
+
+.member-profile {
+    text-align: center;
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.member-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto var(--space-3);
+    border: 3px solid var(--bg-light);
+    box-shadow: var(--shadow-2);
+    flex-shrink: 0;
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.member-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.member-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 12px var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.member-nav-item:hover {
+    background-color: var(--neutral-50);
+    color: var(--primary-dark);
+}
+
+.member-nav-item.active {
+    background-color: rgba(195, 155, 123, 0.1);
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.member-nav-item i {
+    font-size: 22px;
+}
+
+/* ==================== 3. 內容主體 (標準化) ==================== */
+.member-content-main {
+    flex: 1;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5) var(--space-6);
+    min-width: 0;
+}
+
+.member-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--neutral-200);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.member-content-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.notification-count {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    background-color: var(--neutral-100);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+}
+
+/* ==================== 4. 篩選器 ==================== */
+.filter-section {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-light);
+    color: var(--text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+    background-color: var(--neutral-50);
+    border-color: var(--neutral-300);
+}
+
+.filter-btn.active {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border-color: var(--primary-color);
+}
+
+/* ==================== 5. 通知項目 ==================== */
+.notifications-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.notification-item {
+    background-color: var(--bg-light);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-1);
+    transition: all var(--transition-normal);
+}
+
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+}
+
+.notification-violation {
+    border-left: 4px solid var(--error);
+    background-color: rgba(244, 67, 54, 0.02);
+}
+
+.notification-system {
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+}
+
+.notification-type {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.notification-type i {
+    font-size: 20px;
+}
+
+.notification-violation .notification-type i {
+    color: var(--error);
+}
+
+.notification-system .notification-type i {
+    color: var(--primary-color);
+}
+
+.type-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--radius-full);
+}
+
+.notification-violation .type-label {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--error);
+}
+
+.notification-system .type-label {
+    background-color: rgba(195, 155, 123, 0.1);
+    color: var(--primary-dark);
+}
+
+.notification-time {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.notification-content {
+    margin-bottom: var(--space-3);
+}
+
+.message-content {
+    background-color: var(--neutral-50);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.notification-violation .message-content {
+    background-color: rgba(244, 67, 54, 0.05);
+    border-left: 3px solid var(--error);
+}
+
+.notification-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.sender-info,
+.full-time {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.sender-info i,
+.full-time i {
+    font-size: 16px;
+}
+
+/* ==================== 6. 分頁 ==================== */
+.pagination-section {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--neutral-200);
+}
+
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.pagination-btn,
+.pagination-number {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.pagination-btn {
+    background-color: var(--neutral-100);
+    color: var(--text-secondary);
+}
+
+.pagination-btn:hover {
+    background-color: var(--neutral-200);
+}
+
+.pagination-number {
+    background-color: var(--bg-light);
+    color: var(--text-secondary);
+    border: 1px solid var(--neutral-200);
+}
+
+.pagination-number:hover {
+    background-color: var(--neutral-50);
+}
+
+.pagination-number.active {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border-color: var(--primary-color);
+}
+
+/* ==================== 7. 空狀態與按鈕 ==================== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-6) 0;
+    border: 2px dashed var(--neutral-200);
+    border-radius: var(--radius-md);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--neutral-300);
+    margin-bottom: var(--space-3);
+}
+
+.empty-state p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0 0 var(--space-1);
+}
+
+.empty-state span {
+    color: var(--text-secondary);
+}
+
+.action-footer {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--neutral-200);
+    text-align: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-normal);
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: var(--neutral-200);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--neutral-300);
+    color: var(--text-primary);
+}
+
+/* ==================== 8. 響應式設計 ==================== */
+@media (max-width: 992px) {
+    .member-section {
+        flex-direction: column;
+    }
+
+    .member-sidebar {
+        position: static;
+        width: 100%;
+        margin-bottom: var(--space-4);
+    }
+
+    .member-content-main {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .member-content-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-section {
+        width: 100%;
+    }
+
+    .filter-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    .notification-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pagination-nav {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+}
+
+@media (max-width: 480px) {
+    .member-content-main {
+        padding: var(--space-3);
+    }
+
+    .notification-item {
+        padding: var(--space-3);
+    }
+}

@@ -1,289 +1,311 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>團購訂單 - FoodieTime 食刻</title>
-    <meta name="description" content="FoodieTime 食刻購物車 - 輕鬆結帳、安全支付，享受美食無負擔。">
-    <link rel="stylesheet" th:href="@{/css/common/style.css}">
-    <link rel="stylesheet" th:href="@{/css/front/memgborders/member-gborders.css}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <!-- PWA 支援 -->
-    <link rel="manifest" th:href="@{/manifest.json}">
-    <meta name="theme-color" content="#FF5722">
-    <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
-    <style>
-        /* 讓所有表格標題置左 */
-        th {
-            text-align: left;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>我的團購訂單 - FoodieTime 食刻</title>
+
+	<!-- Google Fonts & Icons -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+
+	<!-- FoodieTime Design System -->
+	<link rel="stylesheet" th:href="@{/css/common/style.css}">
+	<link rel="stylesheet" th:href="@{/css/front/memgborders/member-gborders.css}">
+
 </head>
 <body>
-<!-- 導覽列（與購物車頁面完全一致） -->
+
+<!-- ======================= Header ======================= -->
 <header th:replace="~{front/common/header :: main-header}"></header>
+
+<!-- ======================= Main Content ======================= -->
 <main class="main-content">
-    <div class="content-container">
-        <div class="member-section">
-            
-            <!-- 主內容區 -->
-            <section class="member-content">
-			    <div class="member-content-header d-flex justify-content-between align-items-center">
-                    <h1 class="member-content-title mb-0">我的團購訂單</h1>
-                    <div class="d-flex align-items-center" style="gap: 10px;">
-                        <select id="filterPaymentStatus" class="form-select form-select-sm" style="width: 120px;">
-                            <option value="">付款狀態(全部)</option>
-                            <option value="0">未付款</option>
-                            <option value="1">已付款</option>
-                        </select>
-                        <select id="filterShippingStatus" class="form-select form-select-sm" style="width: 120px;">
-                            <option value="">出貨狀態(全部)</option>
-                            <option value="0">未出貨</option>
-                            <option value="1">已出貨</option>
-                        </select>
-                        <select id="filterOrderStatus" class="form-select form-select-sm" style="width: 140px;">
-                            <option value="">訂單狀態(全部)</option>
-                            <option value="1">已接單</option>
-                            <option value="2">已完成</option>
-                            <option value="3">開團失敗</option>
-                            <option value="4">團主取消</option>
-                        </select>
-                    </div>
-			    </div>
-			    <div class="order-list-container">
-			        <div id="noDataMessage" class="empty-state" th:if="${#lists.isEmpty(orders)}">
-			            <i class="material-icons-outlined">shopping_basket</i>
-			            <p>目前無任何團購訂單</p>
-			        </div>
-			        <div class="card mb-4" id="orderTableCard" th:if="${!#lists.isEmpty(orders)}">
-			            <div class="card-body table-responsive">
-			                <table class="table table-bordered" width="100%" cellspacing="0">
-			                    <thead>
-			                        <tr>
-			                            <th>訂單編號</th>
-			                            <th>團購標題</th>
-			                            <th>商品名稱</th>
-			                            <th>數量</th>
-			                            <th>總金額</th>
-			                            <th>付款方式</th>
-			                            <th>付款狀態</th>
-			                            <th>出貨狀態</th>
-			                            <th>訂單狀態</th>
-			                            <th>操作</th>
-			                        </tr>
-			                    </thead>
-			                    <tbody id="ordersTbody">
-			                        <tr th:each="order : ${orders}"
-			                            th:with="gbcase=${order.groupBuyingCase},
-			                                     prod=${gbcase.gbProd},
-			                                     isActive=${gbcase.gbStatus == 1 or gbcase.gbStatus == 3},
-			                                     isFailed=${gbcase.gbStatus == 6},
-			                                     isCanceled=${gbcase.gbStatus == 5},
-			                                     isEnded=${gbcase.gbStatus == 4}">
-			                            <td th:text="${order.gbOrId}">訂單編號</td>
-			                            <td th:text="${gbcase.gbTitle}">團購標題</td>
-			                            <td th:text="${prod != null ? prod.gbProdName : '商品'}">商品名稱</td>
-			                            <td th:text="${order.quantity}">數量</td>
-			                            <td th:text="${order.amount}">總金額</td>
-			                            <td>
-			                                <span th:switch="${order.payMethod}">
-			                                    <span th:case="0">信用卡</span>
-			                                    <span th:case="1">現金</span>
-			                                    <span th:case="2">第三方</span>
-			                                    <span th:case="*">未知</span>
-			                                </span>
-			                            </td>
-			                            <td>
-			                                <span th:switch="${order.paymentStatus}">
-			                                    <span th:case="0">未付款</span>
-			                                    <span th:case="1">已付款</span>
-			                                    <span th:case="*">未知</span>
-			                                </span>
-			                            </td>
-			                            <td>
-			                                <span th:switch="${order.shippingStatus}">
-			                                    <span th:case="0">未出貨</span>
-			                                    <span th:case="1">已出貨</span>
-			                                    <span th:case="*">未知</span>
-			                                </span>
-			                            </td>
-			                            <td th:switch="${order.orderStatus}" th:attr="data-status=${order.orderStatus}">
-			                                <span th:case="0">未接單</span>
-			                                <span th:case="1">已接單</span>
-			                                <span th:case="2">已完成</span>
-			                                <span th:case="3">開團失敗</span>
-			                                <span th:case="4">團主取消</span>
-			                                <span th:case="*">未知</span>
-			                            </td>
-			                            <td>
-			                                <form th:action="@{'/gb/update/' + ${order.gbOrId}}" method="post" th:if="${order.orderStatus != 2}">
-			                                    <input type="hidden" name="field" value="orderStatus" />
-			                                    <input type="hidden" name="newStatus" value="2" />
-			                                    <button type="submit" class="btn btn-xs btn-primary">完成訂單</button>
-			                                </form>
-			                                <button class="btn btn-xs btn-secondary" disabled th:if="${order.orderStatus == 2}">已完成</button>
-			                            </td>
-			                        </tr>
-			                    </tbody>
-			                </table>
-			                <nav aria-label="Page navigation" class="mt-4">
-			                    <ul class="pagination justify-content-center" id="pagination"></ul>
-			                </nav>
-			                <div class="d-flex justify-content-between align-items-center mt-3">
-							    <span>
-							        第 <span id="startRecord">0</span>-<span id="endRecord">0</span> 筆，共
-							        <span id="totalRecords" class="fw-bold">0</span> 筆
-							    </span>
-							</div>
-                            <div>
-                                <button class="btn btn-secondary" onclick="window.history.back();">返回</button>
-                            </div>
-			            </div>
-			        </div>
-			    </div>
-			</section>
-        </div>
-    </div>
+	<div class="content-container">
+		<div class="member-section">
+
+			<!-- ========== Member Sidebar (Standardized) ========== -->
+			<aside class="member-sidebar">
+				<!-- Profile Card -->
+				<div class="member-profile" th:if="${memberVO}">
+					<div class="member-avatar">
+						<img th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
+							 alt="會員頭像">
+					</div>
+					<div class="member-info">
+						<h3 class="member-name" th:text="${memberVO.memNickname}">會員暱稱</h3>
+					</div>
+				</div>
+
+				<!-- Navigation -->
+				<nav class="member-nav">
+					<a th:href="@{/front/member/member_center}" class="member-nav-item">
+						<i class="material-icons-outlined">person</i>
+						<span>會員資料</span>
+					</a>
+					<div th:if="${session.loggedInStore != null}">
+						<a th:href="@{/store/sc}" class="member-nav-item">
+							<i class="material-icons-outlined">store</i>
+							<span>店家後台</span>
+						</a>
+					</div>
+					<a th:href="@{/member/orders}" class="member-nav-item">
+						<i class="material-icons-outlined">receipt_long</i>
+						<span>一般訂單</span>
+					</a>
+					<a th:href="@{/gb/member/orders}" class="member-nav-item active">
+						<i class="material-icons-outlined">receipt</i>
+						<span>團購訂單</span>
+					</a>
+					<a th:href="@{/gb/gbfavoritelist}" class="member-nav-item">
+						<i class="material-icons-outlined">group</i>
+						<span>團購收藏</span>
+					</a>
+					<a th:href="@{/member/coupons}" class="member-nav-item">
+						<i class="material-icons-outlined">local_offer</i>
+						<span>我的優惠券</span>
+					</a>
+					<a th:href="@{/favorite/member-favorites}" class="member-nav-item">
+						<i class="material-icons-outlined">favorite</i>
+						<span>收藏餐廳</span>
+					</a>
+					<a th:href="@{/front/member/post/notifications}" class="member-nav-item" th:classappend="${currentPage == 'notifications' ? 'active' : ''}">
+						<i class="material-icons-outlined">inbox</i>
+						<span>收件夾</span>
+					</a>
+				</nav>
+			</aside>
+
+			<!-- ========== Member Content ========== -->
+			<div class="member-content-main">
+				<div class="member-content-header">
+					<h1 class="member-content-title">我的團購訂單</h1>
+					<div class="filter-controls">
+						<select id="filterPaymentStatus" class="filter-select">
+							<option value="">付款狀態(全部)</option>
+							<option value="0">未付款</option>
+							<option value="1">已付款</option>
+						</select>
+						<select id="filterShippingStatus" class="filter-select">
+							<option value="">出貨狀態(全部)</option>
+							<option value="0">未出貨</option>
+							<option value="1">已出貨</option>
+						</select>
+						<select id="filterOrderStatus" class="filter-select">
+							<option value="">訂單狀態(全部)</option>
+							<option value="1">已接單</option>
+							<option value="2">已完成</option>
+							<option value="3">開團失敗</option>
+							<option value="4">團主取消</option>
+						</select>
+					</div>
+				</div>
+
+				<div th:if="${#lists.isEmpty(orders)}" class="empty-state">
+					<i class="material-icons-outlined">shopping_basket</i>
+					<p>目前無任何團購訂單</p>
+				</div>
+
+				<div class="table-container" th:if="${not #lists.isEmpty(orders)}">
+					<table class="orders-table">
+						<thead>
+						<tr>
+							<th>訂單編號</th>
+							<th>團購標題</th>
+							<th>商品</th>
+							<th>數量</th>
+							<th>總額</th>
+							<th>付款方式</th>
+							<th>付款狀態</th>
+							<th>出貨狀態</th>
+							<th>訂單狀態</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody id="ordersTbody">
+						<tr th:each="order : ${orders}"
+							th:with="gbcase=${order.groupBuyingCase}, prod=${gbcase.gbProd}">
+							<td data-label="訂單編號" th:text="${order.gbOrId}"></td>
+							<td data-label="團購標題" th:text="${gbcase.gbTitle}"></td>
+							<td data-label="商品" th:text="${prod != null ? prod.gbProdName : '商品'}"></td>
+							<td data-label="數量" th:text="${order.quantity}"></td>
+							<td data-label="總額" th:text="'$ ' + ${#numbers.formatInteger(order.amount, 0, 'COMMA')}"></td>
+							<td data-label="付款方式">
+                                    <span th:switch="${order.payMethod}">
+                                        <span th:case="0">信用卡</span>
+                                        <span th:case="1">現金</span>
+                                        <span th:case="2">第三方</span>
+                                        <span th:case="*">未知</span>
+                                    </span>
+							</td>
+							<td data-label="付款狀態">
+                                    <span class="status-badge" th:classappend="${order.paymentStatus == 0 ? 'status-unpaid' : 'status-paid'}">
+                                        <span th:text="${order.paymentStatus == 0 ? '未付款' : '已付款'}"></span>
+                                    </span>
+							</td>
+							<td data-label="出貨狀態">
+                                     <span class="status-badge" th:classappend="${order.shippingStatus == 0 ? 'status-unshipped' : 'status-shipped'}">
+                                        <span th:text="${order.shippingStatus == 0 ? '未出貨' : '已出貨'}"></span>
+                                    </span>
+							</td>
+							<td data-label="訂單狀態" th:attr="data-status=${order.orderStatus}">
+                                    <span class="status-badge" th:switch="${order.orderStatus}">
+                                        <span th:case="0" class="status-pending">未接單</span>
+                                        <span th:case="1" class="status-accepted">已接單</span>
+                                        <span th:case="2" class="status-completed">已完成</span>
+                                        <span th:case="3" class="status-failed">開團失敗</span>
+                                        <span th:case="4" class="status-cancelled">團主取消</span>
+                                        <span th:case="*"  class="status-unknown">未知</span>
+                                    </span>
+							</td>
+							<td data-label="操作">
+								<form th:action="@{'/gb/update/' + ${order.gbOrId}}" method="post" th:if="${order.orderStatus != 2}" style="display: inline;">
+									<input type="hidden" name="field" value="orderStatus" />
+									<input type="hidden" name="newStatus" value="2" />
+									<button type="submit" class="btn btn-primary btn-sm">完成訂單</button>
+								</form>
+								<button class="btn btn-disabled btn-sm" disabled th:if="${order.orderStatus == 2}">已完成</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="pagination-footer" th:if="${not #lists.isEmpty(orders)}">
+					<div class="records-info">
+						第 <span id="startRecord">0</span>-<span id="endRecord">0</span> 筆，共 <span id="totalRecords" class="fw-bold">0</span> 筆
+					</div>
+					<nav class="pagination-nav">
+						<ul class="pagination-container" id="pagination"></ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
 </main>
+
+<!-- ======================= Footer ======================= -->
 <footer th:replace="~{front/common/footer :: main-footer}"></footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
-
-
-
-
-
-
-
-
-<!-- 分頁 -->
+<!-- JavaScript (完全保留) -->
 <script>
-  const ITEMS_PER_PAGE = 5;
-  let currentPage = 1;
-  let allItems = [];
+	const ITEMS_PER_PAGE = 5;
+	let currentPage = 1;
+	let allItems = [];
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initItems();
-    showPage(1);
-    updatePagination();
-  });
+	document.addEventListener('DOMContentLoaded', () => {
+		initAndFilter();
+		document.getElementById('filterPaymentStatus').addEventListener('change', initAndFilter);
+		document.getElementById('filterShippingStatus').addEventListener('change', initAndFilter);
+		document.getElementById('filterOrderStatus').addEventListener('change', initAndFilter);
+	});
 
-  function initItems() {
-    const rows = Array.from(document.querySelectorAll('#ordersTbody tr'));
-    allItems = rows.filter(tr =>
-      !tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
-    );
-  }
+	function initAndFilter() {
+		const payVal = document.getElementById('filterPaymentStatus').value;
+		const shipVal = document.getElementById('filterShippingStatus').value;
+		const orderVal = document.getElementById('filterOrderStatus').value;
 
-  function getCurrentItemsToUse() {
-    return allItems;
-  }
+		const allRows = Array.from(document.querySelectorAll('#ordersTbody tr'));
 
-  function showPage(page) {
-    currentPage = page;
-    const itemsToUse = getCurrentItemsToUse();
-    if (itemsToUse.length === 0) {
-      allItems.forEach(tr => tr.style.display = 'none');
-      updatePaginationInfo(0, 0, 0);
-      updateNoDataMessage();
-      return;
-    }
-    const start = (page - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    itemsToUse.forEach((tr, idx) => {
-      tr.style.display = (idx >= start && idx < end) ? '' : 'none';
-    });
-    updatePaginationInfo(start, end, itemsToUse.length);
-    updateNoDataMessage();
-  }
+		allItems = allRows.filter(tr => {
+			const paymentText = tr.querySelector('td:nth-child(7) span.status-badge').textContent.trim();
+			const shippingText = tr.querySelector('td:nth-child(8) span.status-badge').textContent.trim();
+			const orderStatusAttr = tr.querySelector('td:nth-child(9)').getAttribute('data-status');
 
-  function updatePaginationInfo(startIndex, endIndex, total) {
-    const startRecord = total === 0 ? 0 : startIndex + 1;
-    const endRecord = Math.min(endIndex, total);
-    document.getElementById('startRecord').textContent = startRecord;
-    document.getElementById('endRecord').textContent = endRecord;
-    document.getElementById('totalRecords').textContent = total;
-  }
+			let show = true;
+			if (payVal !== '') {
+				const expectedPaymentText = payVal === '0' ? '未付款' : '已付款';
+				if (paymentText !== expectedPaymentText) show = false;
+			}
+			if (shipVal !== '') {
+				const expectedShippingText = shipVal === '0' ? '未出貨' : '已出貨';
+				if (shippingText !== expectedShippingText) show = false;
+			}
+			if (orderVal !== '' && orderStatusAttr !== orderVal) {
+				show = false;
+			}
+			return show;
+		});
 
-  function updatePagination() {
-    const itemsToUse = getCurrentItemsToUse();
-    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
-    const container = document.getElementById('pagination');
-    container.innerHTML = '';
-    if (itemsToUse.length === 0 || totalPages === 1) {
-      container.style.display = 'none';
-      return;
-    } else {
-      container.style.display = 'flex';
-    }
-    // 上一頁
-    const prevLi = document.createElement('li');
-    prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
-    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
-    container.appendChild(prevLi);
-    // 頁碼
-    for (let i = 1; i <= totalPages; i++) {
-      const li = document.createElement('li');
-      li.className = i === currentPage ? 'page-item active' : 'page-item';
-      li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
-      container.appendChild(li);
-    }
-    // 下一頁
-    const nextLi = document.createElement('li');
-    nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
-    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1});return false;">下一頁</a>`;
-    container.appendChild(nextLi);
-  }
+		showPage(1);
+		updatePagination();
+	}
 
-  window.changePage = function(page) {
-    const itemsToUse = getCurrentItemsToUse();
-    const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
-    if (page < 1 || page > totalPages) return;
-    showPage(page);
-    updatePagination();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  
-  function updateNoDataMessage() {
-    const itemsToUse = getCurrentItemsToUse();
-    const visibleCount = itemsToUse.filter(tr => tr.style.display !== 'none').length;
-    const noDataMsg = document.getElementById('noDataMessage');
-    const orderTableCard = document.getElementById('orderTableCard');
-    if (noDataMsg) noDataMsg.style.display = visibleCount === 0 ? '' : 'none';
-    if (orderTableCard) orderTableCard.style.display = visibleCount === 0 ? 'none' : '';
-  }
-//篩選功能
-  function applyFilters() {
-    const payVal = document.getElementById('filterPaymentStatus').value;
-    const shipVal = document.getElementById('filterShippingStatus').value;
-    const orderVal = document.getElementById('filterOrderStatus').value;
-    let visibleCount = 0;
-    allItems.forEach(tr => {
-      // 直接抓顯示文字
-      const paymentText = tr.querySelector('td:nth-child(7)')?.innerText.trim();
-      const shippingText = tr.querySelector('td:nth-child(8)')?.innerText.trim();
-      const orderStatusAttr = tr.querySelector('td:nth-child(9)')?.getAttribute('data-status') || '';
-      let show = true;
-      if (payVal !== '') {
-        if ((payVal === '0' && paymentText !== '未付款') 
-            (payVal === '1' && paymentText !== '已付款')) show = false;
-      }
-      if (shipVal !== '') {
-        if ((shipVal === '0' && shippingText !== '未出貨') ||
-            (shipVal === '1' && shippingText !== '已出貨')) show = false;
-      }
-      if (orderVal !== '' && orderStatusAttr !== orderVal) show = false;
-      tr.style.display = show ? '' : 'none';
-      if (show) visibleCount++;
-    });
-    updatePagination();
-    showPage(1);
-    updateNoDataMessage();
-  }
-  document.getElementById('filterPaymentStatus').addEventListener('change', applyFilters);
-  document.getElementById('filterShippingStatus').addEventListener('change', applyFilters);
-  document.getElementById('filterOrderStatus').addEventListener('change', applyFilters);
+	function showPage(page) {
+		currentPage = page;
+		const totalItems = allItems.length;
+		const container = document.querySelector('#ordersTbody');
+
+		// 隱藏所有行
+		document.querySelectorAll('#ordersTbody tr').forEach(tr => tr.style.display = 'none');
+
+		if (totalItems === 0) {
+			updatePaginationInfo(0, 0, 0);
+			updateNoDataMessage(true);
+			return;
+		}
+
+		updateNoDataMessage(false);
+		const start = (page - 1) * ITEMS_PER_PAGE;
+		const end = start + ITEMS_PER_PAGE;
+		const pageItems = allItems.slice(start, end);
+
+		pageItems.forEach(tr => {
+			tr.style.display = ''; // 顯示當前頁的行
+		});
+
+		updatePaginationInfo(start, end, totalItems);
+	}
+
+	function updatePaginationInfo(startIndex, endIndex, total) {
+		document.getElementById('startRecord').textContent = total === 0 ? 0 : startIndex + 1;
+		document.getElementById('endRecord').textContent = Math.min(endIndex, total);
+		document.getElementById('totalRecords').textContent = total;
+	}
+
+	function updatePagination() {
+		const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+		const container = document.getElementById('pagination');
+		container.innerHTML = '';
+
+		if (totalPages <= 1) return;
+
+		const createPageItem = (page, text, isDisabled = false, isActive = false) => {
+			const li = document.createElement('li');
+			li.className = 'page-item' + (isDisabled ? ' disabled' : '') + (isActive ? ' active' : '');
+			const a = document.createElement('a');
+			a.className = 'page-link';
+			a.href = '#';
+			a.textContent = text;
+			a.onclick = (e) => {
+				e.preventDefault();
+				if (!isDisabled) changePage(page);
+			};
+			li.appendChild(a);
+			return li;
+		};
+
+		container.appendChild(createPageItem(currentPage - 1, '«', currentPage === 1));
+		for (let i = 1; i <= totalPages; i++) {
+			container.appendChild(createPageItem(i, i, false, i === currentPage));
+		}
+		container.appendChild(createPageItem(currentPage + 1, '»', currentPage === totalPages));
+	}
+
+	function changePage(page) {
+		showPage(page);
+		updatePagination();
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
+	function updateNoDataMessage(show) {
+		const noDataMsg = document.querySelector('.empty-state');
+		const tableContainer = document.querySelector('.table-container');
+		const paginationFooter = document.querySelector('.pagination-footer');
+		if (noDataMsg) noDataMsg.style.display = show ? 'flex' : 'none';
+		if (tableContainer) tableContainer.style.display = show ? 'none' : 'block';
+		if (paginationFooter) paginationFooter.style.display = show ? 'none' : 'block';
+	}
 </script>
+
 </body>
 </html>

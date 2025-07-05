@@ -33,7 +33,7 @@ public class PostMController {
 	        return "redirect:/front/member/login";
 	    }
 	    
-	    
+	    model.addAttribute("memberVO", member);
 	    
 	    // 取得所有系統通知（管理員發送的訊息）
 	    List<DirectMessageDTO> allNotifications = dmService.getMessagesDtoByMemberId(member.getMemId())

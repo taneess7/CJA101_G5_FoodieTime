@@ -152,6 +152,7 @@ public class GroupBuyingCollectionListController {
         if (member == null) {
             return "redirect:/login"; // 或導向登入頁
         }
+        model.addAttribute("memberVO", member);
         Integer memId = member.getMemId();
         List<GroupBuyingCollectionListVO> list = groupBuyingCollectionListService.findByMemIdWithDetails(memId);
         model.addAttribute("collectionList", list);

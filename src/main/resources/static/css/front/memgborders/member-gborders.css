@@ -1,745 +1,290 @@
-/**
- * 會員優惠券頁面樣式（完全比照購物車 cart.css 樣式）
- * FoodieTime 食刻
+/*
+ * FoodieTime Member Center - Group Buy Orders Page Styles
+ * Design System: Material Design
  */
 
-/* ========== 變數與基礎重置 ========== */
-:root {
-  --primary-color: #FF5722;
-  --primary-light: #FFCCBC;
-  --primary-dark: #E64A19;
-  --accent-green: #4CAF50;
-  --accent-blue: #2196F3;
-
-  --neutral-50: #FAFAFA;
-  --neutral-100: #F5F5F5;
-  --neutral-200: #EEEEEE;
-  --neutral-300: #E0E0E0;
-  --neutral-400: #BDBDBD;
-  --neutral-500: #9E9E9E;
-  --neutral-600: #757575;
-  --neutral-700: #616161;
-  --neutral-800: #424242;
-  --neutral-900: #212121;
-
-  --success: #4CAF50;
-  --warning: #FFC107;
-  --error: #F44336;
-  --info: #2196F3;
-
-  --text-primary: rgba(0, 0, 0, 0.87);
-  --text-secondary: rgba(0, 0, 0, 0.6);
-  --text-disabled: rgba(0, 0, 0, 0.38);
-  --text-white: #FFFFFF;
-
-  --bg-light: #FFFFFF;
-  --bg-gray: #F5F5F5;
-  --bg-dark: #212121;
-
-  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
-
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 32px;
-  --space-6: 40px;
-
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
-
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s ease;
-}
-
-/* ========== 基礎重置 ========== */
-* {
-  box-sizing: border-box;
-}
-
+/* ==================== 1. 通用佈局 (繼承 style.css) ==================== */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-primary);
-  line-height: 1.6;
+  background-color: var(--neutral-50);
 }
 
-a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color var(--transition-fast);
+.main-content {
+  padding: var(--space-4) 0 var(--space-6);
 }
 
-a:hover {
-  color: var(--primary-dark);
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-/* ========== 容器與主要區塊 ========== */
 .content-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--space-3);
 }
 
-.main-content {
-  min-height: calc(100vh - 120px);
-  padding: var(--space-4) 0 var(--space-6);
-}
-
 .member-section {
   display: flex;
   gap: var(--space-4);
-  margin: var(--space-4) 0;
-  min-height: 600px;
+  align-items: flex-start;
 }
 
+/* ==================== 2. 會員側邊欄 (最終標準化版本) ==================== */
 .member-sidebar {
-  flex: 0 0 280px;
+  flex: 0 0 260px;
   background-color: var(--bg-light);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-1);
-  padding: 0;
-  height: fit-content;
-  position: sticky;
-  top: calc(80px + var(--space-4));
   border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-1);
+  position: sticky;
+  top: 88px;
+  overflow: hidden;
+  padding: var(--space-4); /* 統一使用較大的外邊距 */
 }
 
 .member-profile {
-  padding: var(--space-4);
-  border-bottom: 1px solid var(--neutral-200);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(255, 204, 188, 0.5) 100%);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  text-align: center;
+  padding-bottom: var(--space-4); /* 統一下方間距 */
+  margin-bottom: var(--space-4); /* 統一下方間距 */
+  border-bottom: 1px solid var(--neutral-100);
 }
 
 .member-avatar {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   overflow: hidden;
-  background-color: var(--neutral-100);
-  flex-shrink: 0;
+  margin: 0 auto var(--space-3);
   border: 3px solid var(--bg-light);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--shadow-2);
+  flex-shrink: 0; /* 確保在 flex 容器中不被壓縮 */
 }
 
 .member-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.member-info {
-  flex: 1;
-  min-width: 0;
+  display: block; /* 移除圖片底部的空白 */
 }
 
 .member-name {
-  font-size: 18px;
   font-weight: 600;
-  margin: 0 0 var(--space-1);
+  font-size: 1.2rem;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.member-level {
-  font-size: 14px;
-  color: var(--primary-color);
-  margin: 0;
-  font-weight: 600;
-  background-color: var(--bg-light);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  display: inline-block;
 }
 
 .member-nav {
-  padding: var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2); /* 統一項目間距 */
 }
 
 .member-nav-item {
   display: flex;
   align-items: center;
-  padding: var(--space-3) var(--space-4);
-  color: var(--text-primary);
+  gap: var(--space-3);
+  padding: 12px var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: 500;
   text-decoration: none;
   transition: all var(--transition-fast);
-  gap: var(--space-3);
-  border-left: 3px solid transparent;
-  font-weight: 500;
 }
 
 .member-nav-item:hover {
   background-color: var(--neutral-50);
-  color: var(--primary-color);
-  transform: translateX(2px);
+  color: var(--primary-dark);
 }
 
 .member-nav-item.active {
-  background-color: var(--primary-light);
-  color: var(--primary-color);
-  font-weight: 600;
-  border-left-color: var(--primary-color);
+  background-color: rgba(195, 155, 123, 0.1);
+  color: var(--primary-dark);
+  font-weight: 700;
 }
 
-.member-nav-item.logout {
-  color: var(--error);
-  margin-top: var(--space-3);
-  border-top: 1px solid var(--neutral-200);
-  padding-top: var(--space-4);
+.member-nav-item i {
+  font-size: 22px;
 }
 
-.member-nav-item.logout:hover {
-  background-color: #FFEBEE;
-  color: var(--error);
-}
 
-/* ========== 會員內容 ========== */
-.member-content {
+/* ==================== 3. 內容主體 (標準化) ==================== */
+.member-content-main {
   flex: 1;
   background-color: var(--bg-light);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-1);
-  padding: var(--space-5);
-  min-height: 600px;
-  border: 1px solid var(--neutral-200);
-  animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
+  box-shadow: var(--shadow-2);
+  padding: var(--space-5) var(--space-6);
+  min-width: 0;
 }
-
 .member-content-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--neutral-200);
   flex-wrap: wrap;
   gap: var(--space-3);
-  padding-bottom: var(--space-4);
-  border-bottom: 2px solid var(--neutral-200);
 }
-
 .member-content-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  margin: 0;
   color: var(--text-primary);
-  position: relative;
 }
 
-.member-content-title::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
-  border-radius: var(--radius-sm);
-}
-
-/* ========== 優惠券篩選 ========== */
-.coupon-filter {
+/* ==================== 4. 篩選器控制項 ==================== */
+.filter-controls {
   display: flex;
-  align-items: center;
   gap: var(--space-3);
 }
-
 .filter-select {
-  padding: var(--space-3) var(--space-5) var(--space-3) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--neutral-200);
   border-radius: var(--radius-md);
-  border: 2px solid var(--neutral-200);
   background-color: var(--bg-light);
-  font-size: 14px;
-  color: var(--text-primary);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right var(--space-3) center;
-  background-size: 16px;
-  min-width: 180px;
-  font-weight: 500;
 }
-
-.filter-select:hover,
+.filter-select:hover { border-color: var(--neutral-300); }
 .filter-select:focus {
-  border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(195, 155, 123, 0.2);
 }
 
-/* ========== 優惠券列表 ========== */
-.coupons-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: var(--space-4);
-  margin-top: var(--space-4);
+/* ==================== 5. 訂單表格 ==================== */
+.table-container {
+  overflow-x: auto; /* 響應式關鍵：讓表格可以水平滾動 */
 }
-
-/* ========== 優惠券卡片 ========== */
-.coupon-card {
-  background-color: var(--bg-light);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-1);
-  overflow: hidden;
-  border: 1px solid var(--neutral-200);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-  animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
-  cursor: pointer;
-  position: relative;
-}
-
-.coupon-card:hover {
-  background-color: var(--neutral-50);
-  box-shadow: var(--shadow-2);
-  transform: translateY(-4px);
-}
-
-.coupon-card.used,
-.coupon-card.expired {
-  opacity: 0.65;
-  filter: grayscale(20%);
-}
-
-.coupon-header {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  color: white;
-  padding: var(--space-4);
-  position: relative;
-  overflow: hidden;
-}
-
-.coupon-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
+.orders-table {
   width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
-  transform: rotate(45deg);
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  min-width: 800px; /* 確保在滾動時表格有最小寬度 */
 }
-
-.coupon-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 0 0 var(--space-1);
-  position: relative;
-  z-index: 1;
+.orders-table th, .orders-table td {
+  padding: var(--space-3);
+  text-align: left;
+  vertical-align: middle;
 }
-
-.coupon-merchant {
-  font-size: 0.875rem;
-  opacity: 0.9;
-  margin: 0;
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
-}
-
-.coupon-body {
-  padding: var(--space-5) var(--space-4) var(--space-4);
-}
-
-.coupon-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin: 0 0 var(--space-3);
-  line-height: 1.2;
-}
-
-.coupon-description {
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-4);
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.coupon-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3) var(--space-4);
-  border-top: 1px dashed var(--neutral-200);
+.orders-table thead {
   background-color: var(--neutral-50);
 }
-
-.coupon-expiry {
-  font-size: 0.8125rem;
+.orders-table th {
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--neutral-200);
+}
+.orders-table tbody tr {
+  border-bottom: 1px solid var(--neutral-100);
+  transition: background-color var(--transition-fast);
+}
+.orders-table tbody tr:hover {
+  background-color: var(--neutral-50);
+}
+.orders-table td {
   color: var(--text-secondary);
-  flex: 1;
+}
+.orders-table td:first-child {
   font-weight: 500;
+  color: var(--primary-dark);
 }
 
-.coupon-status {
-  font-size: 0.75rem;
+/* ==================== 6. 狀態標籤 ==================== */
+.status-badge {
+  padding: 6px 12px;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
-  text-align: center;
   white-space: nowrap;
 }
+.status-unpaid { background-color: #FFF8E1; color: #FFA000; }
+.status-paid { background-color: #E8F5E9; color: var(--success); }
+.status-unshipped { background-color: #FCE4EC; color: #D81B60; }
+.status-shipped { background-color: #E3F2FD; color: #1E88E5; }
+.status-pending, .status-unknown { background-color: var(--neutral-200); color: var(--text-secondary); }
+.status-accepted { background-color: #E0F2F1; color: #00796B; }
+.status-completed { background-color: var(--neutral-800); color: var(--text-white); padding: 6px 12px; border-radius: var(--radius-full);}
+.status-failed, .status-cancelled { background-color: #FFEBEE; color: var(--error); }
 
-.status-available {
-  background-color: #E8F5E8;
-  color: var(--success);
-  border: 1px solid var(--success);
-}
 
-.status-used {
-  background-color: var(--neutral-100);
-  color: var(--text-secondary);
-  border: 1px solid var(--neutral-200);
-}
-
-.status-expired {
-  background-color: #FFEBEE;
-  color: var(--error);
-  border: 1px solid var(--error);
-}
-
-/* ========== 優惠券標籤 ========== */
-.coupon-tag {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  padding: var(--space-1) var(--space-3);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-  border-radius: var(--radius-full);
-  z-index: 2;
-  box-shadow: var(--shadow-1);
-}
-
-.tag-new {
-  background-color: var(--success);
-}
-
-.tag-expiring-soon {
-  background-color: var(--warning);
-}
-
-/* ========== 空狀態 ========== */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-5) 0;
-  color: var(--text-secondary);
-  text-align: center;
-  grid-column: 1 / -1;
-  background-color: var(--neutral-50);
-  border-radius: var(--radius-md);
-  border: 2px dashed var(--neutral-200);
-}
-
-.empty-state i {
-  font-size: 4rem;
-  margin-bottom: var(--space-4);
-  color: var(--neutral-300);
-}
-
-.empty-state p {
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 500;
-}
-
-/* ========== 優惠券詳情彈窗 ========== */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-normal);
-  padding: var(--space-4);
-}
-
-.modal.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-container {
-  background-color: var(--bg-light);
-  border-radius: var(--radius-md);
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-2);
-  transform: translateY(20px) scale(0.95);
-  transition: all var(--transition-normal);
-}
-
-.modal.active .modal-container {
-  transform: translateY(0) scale(1);
-}
-
-.modal-header {
+/* ==================== 7. 分頁與其他控制項 ==================== */
+.pagination-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--neutral-200);
-  background-color: var(--neutral-50);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--neutral-200);
 }
-
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-  color: var(--text-primary);
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
+.records-info {
+  font-size: 0.9rem;
   color: var(--text-secondary);
+}
+.pagination-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2);
-  border-radius: 50%;
+  list-style: none;
+  gap: var(--space-1);
+}
+.page-item .page-link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  color: var(--primary-dark);
+  text-decoration: none;
+  border-radius: var(--radius-md);
   transition: all var(--transition-fast);
-  width: 40px;
-  height: 40px;
+}
+.page-item:hover .page-link { background-color: var(--neutral-100); }
+.page-item.active .page-link {
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  font-weight: 600;
+}
+.page-item.disabled .page-link {
+  color: var(--neutral-300);
+  pointer-events: none;
 }
 
-.modal-close:hover {
-  background-color: var(--neutral-100);
-  color: var(--text-primary);
+/* ==================== 8. 空狀態與按鈕 ==================== */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  padding: var(--space-6) 0;
+  border: 2px dashed var(--neutral-200);
+  border-radius: var(--radius-md);
 }
+.empty-state i { font-size: 3.5rem; color: var(--neutral-300); margin-bottom: var(--space-3); }
+.empty-state p { font-size: 1.1rem; font-weight: 500; margin-bottom: var(--space-4); }
 
-.modal-content {
-  padding: var(--space-5);
-}
+.btn { /* 與其他頁面共用 */ }
+.btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+.btn-disabled { background-color: var(--neutral-200); color: var(--text-secondary); cursor: not-allowed; border: 1px solid transparent; border-radius: 15px }
 
-/* ========== 響應式設計 ========== */
+/* ==================== 9. 響應式設計 ==================== */
 @media (max-width: 992px) {
-  .member-section {
-    gap: var(--space-3);
-  }
-
-  .member-sidebar {
-    flex: 0 0 220px;
-  }
-
-  .coupons-container {
-    grid-template-columns: 1fr;
-  }
-
-  .member-content {
-    padding: var(--space-4);
-  }
+  .member-content-main { padding: var(--space-4); }
 }
-
 @media (max-width: 768px) {
-  .member-section {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .member-sidebar {
-    flex: none;
-    width: 100%;
-    position: static;
-  }
-
-  .member-content {
-    padding: var(--space-3);
-  }
-
-  .member-content-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-
-  .coupon-filter {
-    width: 100%;
-  }
-
-  .filter-select {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .coupons-container {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-  }
-
-  .modal {
-    padding: var(--space-3);
-  }
-
-  .modal-container {
-    max-height: 95vh;
-  }
-
-  .modal-content {
-    padding: var(--space-3);
-  }
-}
-
-@media (max-width: 480px) {
-  .member-profile {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--space-3);
-  }
-
-  .member-avatar {
-    width: 80px;
-    height: 80px;
-  }
-
-  .member-content {
-    padding: var(--space-2);
-  }
-
-  .coupon-card {
+  /* 在手機版，隱藏非關鍵的表格欄位，顯示 data-label */
+  .orders-table thead { display: none; }
+  .orders-table, .orders-table tbody, .orders-table tr, .orders-table td { display: block; width: 100%; }
+  .orders-table tr {
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--neutral-200);
     border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
   }
-
-  .coupon-header {
-    padding: var(--space-3);
+  .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--neutral-100);
   }
-
-  .coupon-body {
-    padding: var(--space-4) var(--space-3) var(--space-3);
+  .orders-table td:last-child { border-bottom: none; }
+  .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-right: var(--space-2);
   }
-
-  .coupon-value {
-    font-size: 1.125rem;
-  }
-
-  .modal-header {
-    padding: var(--space-3);
-  }
-
-  .modal-content {
-    padding: var(--space-2);
-  }
-}
-
-/* ========== 動畫效果 ========== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* ========== 無障礙設計 ========== */
-:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-/* ========== 高對比模式支援 ========== */
-@media (prefers-contrast: more) {
-  :root {
-    --primary-color: #D32F2F;
-    --primary-dark: #B71C1C;
-    --accent-green: #2E7D32;
-    --accent-blue: #1565C0;
-  }
-
-  .coupon-card {
-    border-color: #000;
-  }
-
-  input,
-  textarea,
-  select {
-    border-color: #000;
-  }
-}
-
-/* ========== 自定義滾動條 ========== */
-.modal-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.modal-container::-webkit-scrollbar-track {
-  background: var(--neutral-50);
-  border-radius: var(--radius-sm);
-}
-
-.modal-container::-webkit-scrollbar-thumb {
-  background: var(--neutral-300);
-  border-radius: var(--radius-sm);
-}
-
-.modal-container::-webkit-scrollbar-thumb:hover {
-  background: var(--neutral-400);
 }

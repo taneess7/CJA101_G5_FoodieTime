@@ -1,119 +1,95 @@
 <!DOCTYPE html>
-<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>會員優惠卷 - FoodieTime 食刻</title>
-    <meta name="description" content="FoodieTime 食刻購物車 - 輕鬆結帳、安全支付，享受美食無負擔。">
+    <title>我的優惠券 - FoodieTime 食刻</title>
+    <meta name="description" content="查看並管理您在 FoodieTime 食刻獲得的所有優惠券。">
+
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+
+    <!-- FoodieTime Design System -->
     <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <!-- PWA 支援 -->
+
+    <!-- PWA Support -->
     <link rel="manifest" th:href="@{/manifest.json}">
-    <meta name="theme-color" content="#FF5722">
+    <meta name="theme-color" content="#C39B7B">
     <link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
 </head>
 <body>
-<!-- 導覽列（與購物車頁面完全一致） -->
-<header class="app-header">
-    <div class="header-container">
-        <!-- Logo 區域 -->
-        <div class="logo-container">
-            <a th:href="@{/index}" class="logo">
-                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </a>
-        </div>
 
-        <!-- 搜尋區域 -->
-        <div class="search-container">
-            <div class="search-bar">
-                <i class="search-icon material-icons-outlined">search</i>
-                <input type="text" class="search-input" placeholder="搜尋餐廳、料理或地址...">
-                <button class="mic-icon" aria-label="語音搜尋">
-                    <i class="material-icons-outlined">mic</i>
-                </button>
-                <button class="camera-icon" aria-label="拍照搜尋">
-                    <i class="material-icons-outlined">photo_camera</i>
-                </button>
-            </div>
-        </div>
+<!-- ======================= Header ======================= -->
+<header th:replace="~{front/common/header :: main-header}"></header>
 
-        <!-- 導覽選單 -->
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li class="nav-item">
-                    <a th:href="@{/map}" class="nav-link">地圖</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/group-order.html}" class="nav-link">團購</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/deals.html}" class="nav-link">優惠</a>
-                </li>
-                <li class="nav-item">
-                    <button class="login-btn"><a th:href="@{/login}">登入/註冊</a></button>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-
-<!-- 主要內容 -->
+<!-- ======================= Main Content ======================= -->
 <main class="main-content">
     <div class="content-container">
-        <!-- 會員區塊 -->
         <div class="member-section">
-            <!-- 會員側邊欄 -->
+            <!-- ========== Member Sidebar ========== -->
             <aside class="member-sidebar">
+                    <!-- Profile Card -->
                 <div class="member-profile">
                     <div class="member-avatar">
-                        <img src="img/avatar.svg" alt="會員頭像">
+                        <img th:src="${memberVO.memAvatar != null} ?
+                             @{/front/member/avatar/{id}(id=${memberVO.memId})} :
+                             @{/images/icons/logo.png}"
+                             alt="會員頭像" class="w-24 h-24 rounded-full mx-auto">
                     </div>
                     <div class="member-info">
-                        <h3 class="member-name">王小明</h3>
-                        <p class="member-level">白金會員</p>
+                        <h3 class="member-name"  th:text="${memberVO.memNickname}">會員名稱</h3>
                     </div>
                 </div>
 
+                <!-- Navigation -->
                 <nav class="member-nav">
-                    <a href="member.html" class="member-nav-item">
+
+                    <a th:href="@{/front/member/member_center}" class="member-nav-item" th:classappend="${currentPage == 'member_center' ? 'active' : ''}">
                         <i class="material-icons-outlined">person</i>
                         <span>會員資料</span>
                     </a>
-                    <a href="member-orders.html" class="member-nav-item">
+                    <div th:if="${session.loggedInStore != null}">
+                        <a th:href="@{/store/sc}" class="member-nav-item">
+                            <i class="material-icons-outlined">store</i>
+                            <span>店家後台</span>
+                        </a>
+                    </div>
+                    <a th:href="@{/member/orders}" class="member-nav-item">
                         <i class="material-icons-outlined">receipt_long</i>
-                        <span>訂單記錄</span>
+                        <span>一般訂單</span>
                     </a>
-                    <a href="member-coupons.html" class="member-nav-item active">
+                    <a th:href="@{/gb/member/orders}" class="member-nav-item">
+                        <i class="material-icons-outlined">receipt</i>
+                        <span>團購訂單</span>
+                    </a>
+                    <a th:href="@{/gb/gbfavoritelist}" class="member-nav-item">
+                        <i class="material-icons-outlined">group</i>
+                        <span>團購收藏</span>
+                    </a>
+                    <a th:href="@{/member/coupons}" class="member-nav-item active" >
                         <i class="material-icons-outlined">local_offer</i>
-                        <span>優惠券</span>
+                        <span>我的優惠券</span>
                     </a>
-                    <a href="member-favorites.html" class="member-nav-item">
+                    <a th:href="@{/favorite/member-favorites}" class="member-nav-item">
                         <i class="material-icons-outlined">favorite</i>
                         <span>收藏餐廳</span>
                     </a>
-                    <a href="member-points.html" class="member-nav-item">
-                        <i class="material-icons-outlined">stars</i>
-                        <span>點數紀錄</span>
-                    </a>
-                    <a href="#" class="member-nav-item logout">
-                        <i class="material-icons-outlined">logout</i>
-                        <span>登出</span>
+                    <a th:href="@{/front/member/post/notifications}" class="member-nav-item" >
+                        <i class="material-icons-outlined">inbox</i>
+                        <span>收件夾</span>
                     </a>
                 </nav>
             </aside>
 
+            <!-- ========== Member Content ========== -->
             <div class="member-content">
                 <div class="member-content-header">
                     <h1 class="member-content-title">我的優惠券</h1>
                     <div class="coupon-filter">
-                        <!-- ==================== Thymeleaf 改造點 1: 篩選器表單 ==================== -->
-                        <!-- 這個表單的 onchange 事件會提交表單，觸發 Controller 重新查詢 -->
                         <form th:action="@{/member/coupons}" method="get" id="filterForm">
-                            <select id="coupon-status-filter" name="status" class="filter-select"
-                                    onchange="document.getElementById('filterForm').submit()">
+                            <select id="coupon-status-filter" name="status" class="filter-select" onchange="this.form.submit()">
                                 <option value="all" th:selected="${currentFilter == 'all'}">全部優惠券</option>
                                 <option value="available" th:selected="${currentFilter == 'available'}">可使用</option>
                                 <option value="used" th:selected="${currentFilter == 'used'}">已使用</option>
@@ -123,52 +99,49 @@
                     </div>
                 </div>
 
-                <!-- ==================== Thymeleaf 改造點 2: 優惠券列表 ==================== -->
-                <!-- 優惠券列表容器 -->
-                <div class="coupons-container" id="coupons-container">
-                    <!-- 檢查列表是否為空 -->
+                <div class="coupons-grid">
+                    <!-- Empty State -->
                     <div th:if="${#lists.isEmpty(memberCoupons)}" class="empty-state">
-                        <i class="material-icons-outlined">local_offer</i>
-                        <p>沒有符合條件的優惠券</p>
+                        <i class="material-icons-outlined">sentiment_dissatisfied</i>
+                        <p>您目前沒有符合條件的優惠券</p>
+                        <span>試試看參與更多平台活動來獲取吧！</span>
                     </div>
 
-                    <!-- 使用 th:each 迭代優惠券列表 -->
+                    <!-- Coupon Cards Loop -->
                     <div th:each="memCoupon : ${memberCoupons}"
                          th:with="
-        coupon=${memCoupon.coupon},
-        isUsed=${memCoupon.useStatus == 1},
-        isExpired=${memCoupon.useStatus == 0 and now.after(coupon.couEndDate)},
-        isAvailable=${memCoupon.useStatus == 0 and !now.after(coupon.couEndDate) and !now.before(coupon.couStartDate)}
-     "
-                         class="coupon-card"  th:classappend="${isUsed ? 'used' : (isExpired ? 'expired' : '')}">
+                           coupon=${memCoupon.coupon},
+                           isUsed=${memCoupon.useStatus == 1},
+                           isExpired=${memCoupon.useStatus == 0 and #dates.createNow().after(coupon.couEndDate)},
+                           isAvailable=${memCoupon.useStatus == 0 and !isExpired and #dates.createNow().after(coupon.couStartDate)}
+                         "
+                         class="coupon-card"
+                         th:classappend="${isUsed ? 'status-used' : (isExpired ? 'status-expired' : 'status-available')}">
 
-                        <!-- 卡片頭部 -->
-                        <div class="coupon-header">
-                            <h3 class="coupon-title" th:text="*{coupon.couName}">優惠券標題</h3>
-                            <!-- 假設 CouponVO 有 storeVO 關聯 -->
-                            <p class="coupon-merchant"
-                               th:text="*{coupon.store != null ? coupon.store.storName : '全平台適用'}">適用商家</p>
-                        </div>
-                        <!-- 卡片主體 -->
-                        <div class="coupon-body">
-                            <!-- 格式化優惠內容 -->
-                            <div class="coupon-value"
-                                 th:with="discountValue=*{coupon.couDiscount}"
-                                 th:text="${discountValue.compareTo(T(java.math.BigDecimal).ONE) < 0
-                    ? #numbers.formatDecimal(discountValue.multiply(T(java.math.BigDecimal).TEN), 1, 0) + '折'
-                    : '折抵 ' + #numbers.formatInteger(discountValue, 0, 'COMMA') + '元'}">
-                                優惠面額
+                        <div class="card-main-content">
+                            <div class="card-left">
+                                <div class="discount-value" th:text="${coupon.couDiscount.compareTo(T(java.math.BigDecimal).ONE) < 0
+                                     ? #numbers.formatDecimal(coupon.couDiscount.multiply(T(java.math.BigDecimal).TEN), 1, 0) + '折'
+                                     : 'NT$ ' + #numbers.formatInteger(coupon.couDiscount, 0, 'COMMA')}">
+                                    NT$ 100
+                                </div>
+                                <div class="merchant-name" th:text="*{coupon.store != null ? coupon.store.storName : '全平台適用'}">
+                                    適用商家
+                                </div>
                             </div>
-                            <p class="coupon-description" th:text="*{coupon.couDesc}">優惠券詳細描述</p>
+                            <div class="card-right">
+                                <h3 class="coupon-name" th:text="*{coupon.couName}">優惠券名稱</h3>
+                                <p class="coupon-description" th:text="*{coupon.couDesc}">優惠券詳細說明文字</p>
+                            </div>
                         </div>
-                        <!-- 卡片底部 -->
-                        <div class="coupon-footer">
-                            <div class="coupon-expiry" th:text="${'期限: ' + #dates.format(coupon.couStartDate, 'yyyy/MM/dd') + ' - ' + #dates.format(coupon.couEndDate, 'yyyy/MM/dd')}">有效期限</div>
-                            <div class="coupon-status">
-                                <!-- 根據狀態顯示不同文字與樣式 -->
-                                <span th:if="${isAvailable}" class="status-available">可使用</span>
-                                <span th:if="${isUsed}" class="status-used">已使用</span>
-                                <span th:if="${isExpired}" class="status-expired">已過期</span>
+                        <div class="card-footer">
+                            <span class="expiry-date" th:text="${'有效期限: ' + #dates.format(coupon.couEndDate, 'yyyy-MM-dd')}">
+                                有效期限: 2024-12-31
+                            </span>
+                            <div class="status-badge">
+                                <span th:if="${isAvailable}">可使用</span>
+                                <span th:if="${isUsed}">已使用</span>
+                                <span th:if="${isExpired}">已過期</span>
                             </div>
                         </div>
                     </div>
@@ -177,55 +150,12 @@
         </div>
     </div>
 </main>
-<footer class="app-footer">
-    <div class="footer-container">
-        <div class="footer-top">
-            <div class="footer-logo">
-                <img src="img/logo.png" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </div>
-            <div class="footer-nav">
-                <div class="footer-nav-group">
-                    <h4 class="footer-nav-title">功能</h4>
-                    <ul class="footer-nav-list">
-                        <li><a href="map.html">地圖搜尋</a></li>
-                        <li><a href="group-order.html">團購功能</a></li>
-                        <li><a href="deals.html">比價優惠</a></li>
-                        <li><a href="collections.html">收藏管理</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-group">
-                    <h4 class="footer-nav-title">關於我們</h4>
-                    <ul class="footer-nav-list">
-                        <li><a href="about.html">公司簡介</a></li>
-                        <li><a href="team.html">團隊成員</a></li>
-                        <li><a href="careers.html">加入我們</a></li>
-                        <li><a href="press.html">媒體報導</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-group">
-                    <h4 class="footer-nav-title">幫助</h4>
-                    <ul class="footer-nav-list">
-                        <li><a href="faq.html">常見問題</a></li>
-                        <li><a href="contact.html">聯絡我們</a></li>
-                        <li><a href="terms.html">使用條款</a></li>
-                        <li><a href="privacy.html">隱私政策</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p class="copyright">© 2023 FoodieTime 食刻. 保留所有權利。</p>
-            <div class="social-links">
-                <a href="#" class="social-link"><i class="material-icons-outlined">facebook</i></a>
-                <a href="#" class="social-link"><i class="material-icons-outlined">instagram</i></a>
-                <a href="#" class="social-link"><i class="material-icons-outlined">twitter</i></a>
-                <a href="#" class="social-link"><i class="material-icons-outlined">youtube_activity</i></a>
-            </div>
-        </div>
-    </div>
-</footer>
-<!-- JavaScript -->
-<script src="js/main.js"></script>
+
+<!-- ======================= Footer ======================= -->
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+
+<!-- JavaScript (保留) -->
+<script th:src="@{/js/main.js}"></script>
+
 </body>
 </html>

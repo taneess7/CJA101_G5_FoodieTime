@@ -1,0 +1,319 @@
+/*
+ * FoodieTime Member Center - Main Page Styles
+ * Design System: Material Design
+ * Main Color: Deep Terracotta (#C39B7B)
+ */
+
+/* ==================== 1. 通用佈局 (繼承 style.css) ==================== */
+body {
+    background-color: var(--neutral-50);
+}
+
+.main-content {
+    padding: var(--space-4) 0 var(--space-6);
+}
+
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+.member-section {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+}
+
+/* ==================== 2. 會員側邊欄 (最終標準化版本) ==================== */
+.member-sidebar {
+    flex: 0 0 260px;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-1);
+    position: sticky;
+    top: 88px;
+    overflow: hidden;
+    padding: var(--space-4); /* 統一使用較大的外邊距 */
+}
+
+.member-profile {
+    text-align: center;
+    padding-bottom: var(--space-4); /* 統一下方間距 */
+    margin-bottom: var(--space-4); /* 統一下方間距 */
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.member-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto var(--space-3);
+    border: 3px solid var(--bg-light);
+    box-shadow: var(--shadow-2);
+    flex-shrink: 0; /* 確保在 flex 容器中不被壓縮 */
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* 移除圖片底部的空白 */
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.member-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2); /* 統一項目間距 */
+}
+
+.member-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 12px var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.member-nav-item:hover {
+    background-color: var(--neutral-50);
+    color: var(--primary-dark);
+}
+
+.member-nav-item.active {
+    background-color: rgba(195, 155, 123, 0.1);
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.member-nav-item i {
+    font-size: 22px;
+}
+
+
+/* ==================== 3. 會員內容主體 ==================== */
+.member-content-main {
+    flex: 1;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5) var(--space-6);
+}
+
+.content-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    text-align: center;
+    margin-bottom: var(--space-5);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: var(--space-5);
+}
+
+.profile-avatar-large {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    padding: 4px;
+    background: var(--bg-light);
+    box-shadow: var(--shadow-2);
+    transition: transform var(--transition-normal);
+}
+.profile-avatar-large:hover {
+    transform: scale(1.05);
+}
+
+.content-section {
+    margin-bottom: var(--space-5);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-4);
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+}
+.section-title-danger {
+    color: var(--error);
+    border-bottom-color: var(--error);
+}
+
+/* 基本資料網格 */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4) var(--space-5);
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+.info-item strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-right: var(--space-2);
+}
+
+/* ========= 新增: 我的訊息卡片樣式 ========= */
+.info-card {
+    margin-top: var(--space-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--neutral-50);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-1);
+    transition: all var(--transition-normal);
+}
+.info-card:hover {
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
+}
+.info-card-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+.info-card-content p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+.info-card .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+.info-card .btn-link:hover {
+    background-color: var(--primary-dark);
+}
+.info-card .btn-link i { font-size: 14px; }
+
+
+/* 狀態網格 */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-3);
+}
+.status-item {
+    background-color: rgba(244, 67, 54, 0.05);
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--error);
+}
+
+/* ========= 修改: 操作按鈕 ========= */
+.action-buttons-main {
+    margin-top: var(--space-5);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+.action-buttons-contact {
+    margin-top: var(--space-4);
+    text-align: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-normal);
+    border: 1px solid transparent;
+}
+.btn i { font-size: 18px; }
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    box-shadow: var(--shadow-1);
+}
+
+.btn-secondary {
+    background-color: var(--bg-light);
+    color: var(--primary-dark);
+    border-color: var(--primary-color);
+}
+.btn-secondary:hover {
+    background-color: rgba(195, 155, 123, 0.1);
+    box-shadow: var(--shadow-1);
+}
+
+.btn-tertiary {
+    background-color: var(--neutral-200);
+    color: var(--text-secondary);
+}
+.btn-tertiary:hover {
+    background-color: var(--neutral-300);
+    color: var(--text-primary);
+}
+
+
+/* 響應式設計 */
+@media (max-width: 992px) {
+    .member-section { flex-direction: column; }
+    .member-sidebar { position: static; width: 100%; margin-bottom: var(--space-4); }
+}
+
+@media (max-width: 768px) {
+    .info-grid { grid-template-columns: 1fr; }
+    .member-content-main { padding: var(--space-4); }
+    .content-title { font-size: 2rem; }
+    .section-title { font-size: 1.25rem; }
+    .action-buttons-main { flex-direction: column; align-items: stretch; text-align: center; }
+}
+
+/* 提示訊息 */
+.alert {
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid;
+    text-align: center;
+    font-weight: 500;
+}
+.alert-success {
+    background-color: #E8F5E9;
+    border-color: var(--success);
+    color: var(--success);
+}
