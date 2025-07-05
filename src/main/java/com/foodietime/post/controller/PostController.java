@@ -437,11 +437,7 @@ public class PostController {
 //		return listAllPost(sort, model, session); // 重定向到 listAllPost 方法
 //	}
 
-	// ================ 選擇頁面 ================
-	@GetMapping("/select_page")
-	public String select_page() {
-		return "front/post/select_page";
-	}
+	
 
 	// ================ 新增：按讚數排序 ================
 	@PostMapping("/like")

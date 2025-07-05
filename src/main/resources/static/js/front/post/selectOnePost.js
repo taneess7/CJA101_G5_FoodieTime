@@ -67,7 +67,28 @@ document.addEventListener('DOMContentLoaded', function() {
 			toggleComments();
 		}
 	}
+	
+	// 禁用已刪除留言的檢舉按鈕
+	disableDeletedMessageReportButtons();
 });
+
+// 禁用已刪除留言的檢舉按鈕
+function disableDeletedMessageReportButtons() {
+	const commentItems = document.querySelectorAll('.comment-item');
+	
+	commentItems.forEach(item => {
+		const commentText = item.querySelector('.comment-text');
+		if (commentText && commentText.textContent.trim() === '[此留言已被管理員刪除]') {
+			const reportBtn = item.querySelector('button[onclick*="openReportMessageModal"]');
+			if (reportBtn) {
+				reportBtn.disabled = true;
+				reportBtn.style.opacity = '0.5';
+				reportBtn.style.cursor = 'not-allowed';
+				reportBtn.title = '此留言已被刪除，無法檢舉';
+			}
+		}
+	});
+}
 
 /*<![CDATA[*/
 function editPost() {
@@ -116,6 +137,26 @@ setTimeout(function() {
 }, 3000);
 
 function openReportMessageModal(mesId) {
+    // 檢查是否為已刪除的留言
+    const commentItems = document.querySelectorAll('.comment-item');
+    let isDeletedMessage = false;
+    
+    commentItems.forEach(item => {
+        const reportBtn = item.querySelector(`button[onclick*="${mesId}"]`);
+        if (reportBtn) {
+            const commentText = item.querySelector('.comment-text');
+            if (commentText && commentText.textContent.trim() === '[此留言已被管理員刪除]') {
+                isDeletedMessage = true;
+            }
+        }
+    });
+    
+    // 如果是已刪除的留言，顯示提示並返回
+    if (isDeletedMessage) {
+        alert('此留言已被管理員刪除，無法檢舉');
+        return;
+    }
+    
     document.getElementById('reportMessageId').value = mesId;
     document.getElementById('reportMessageModal').style.display = 'flex';
 }

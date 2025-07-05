@@ -80,7 +80,7 @@ public class PostVO implements Serializable {
 	
 
 // ========== 對應多方 ==========
-	@OneToMany(mappedBy = "post")
+	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
 	private Set<ReportPostVO> reportPost; // 這個分類底下的所有貼文
 
 	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)

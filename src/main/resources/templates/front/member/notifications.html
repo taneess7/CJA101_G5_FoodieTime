@@ -32,10 +32,6 @@
             transform: translateY(-2px);
         }
         
-        /* 確保header logo文字保持粗體 */
-        .logo-text {
-            font-weight: 700 !important;
-        }
     </style>    
 </head>
 
@@ -168,7 +164,7 @@
                                 <!-- 留言檢舉 -->
                                 <div th:if="${notification.commentReport}">
                                     <p class="text-gray-800">
-                                        您的留言被檢舉
+                                        您的留言已被管理員刪除
                                     </p>
                                 </div>
                             </div>
