@@ -39,16 +39,7 @@ public class PostMController {
 	    
 
 	    model.addAttribute("memberVO", member);
-	    
-	    // 取得所有系統通知（管理員發送的訊息）
-	    List<DirectMessageDTO> allNotifications = dmService.getMessagesDtoByMemberId(member.getMemId())
-	        .stream()
-	        .filter(msg -> msg.getMessDirection() == 1) // 只取管理員發送的訊息
-	        .filter(msg -> msg.getMessContent() != null && msg.getMessContent().contains("【系統通知】")) //排除客服回覆
-	        .sorted((a, b) -> b.getMessTime().compareTo(a.getMessTime())) // 依時間降序排列
-	        .collect(Collectors.toList());
-	    
-	    
+
 	    // 取得該會員的所有檢舉通知（使用 ForumReportDTO）
 	    List<ForumReportDTO> allNotifications = reportPostService.getNotificationsByMemberId(member.getMemId());
 
