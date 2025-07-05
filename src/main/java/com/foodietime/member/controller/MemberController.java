@@ -414,7 +414,11 @@ public class MemberController {
         // ✅ ✅ ✅ 檢查是否有記錄登入前的頁面
         String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
     	// ✅ 避免導向 reset-password 等一次性頁面
-        if (redirectUrl != null && redirectUrl.contains("/reset-password")) {
+        if (redirectUrl != null && (
+        		redirectUrl.contains("/reset-password") ||
+        		redirectUrl.contains("/front/member/member_center") ||
+        	    redirectUrl.contains("/front/member/edit_profile")
+        	    )) {
             redirectUrl = null;
         }
         

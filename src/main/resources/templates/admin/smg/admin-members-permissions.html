@@ -218,8 +218,8 @@
 		</span>
     </td>
     <td>
-        <div th:text="${member.lastModifiedDate}"></div>
-        <small class="text-muted" th:text="${member.lastModifiedBy}"></small>
+        <div th:text="${member.lastModifiedDate != '-' ? member.lastModifiedDate : '尚無紀錄'}"></div>
+		<small th:text="${member.lastModifiedBy != '-' ? member.lastModifiedBy : ''}"></small>
     </td>
     <td>
         <button class="btn btn-sm btn-outline-primary me-1"
@@ -877,6 +877,37 @@
   console.log("目前登入的後台管理員 ID：", window.loggedInMemberId);
 
 	</script>
+	
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+		    document.querySelectorAll('.member-checkbox').forEach(cb => {
+		        const memId = cb.getAttribute('data-member-id');
+		        const historyKey = `memberHistory_${memId}`;
+		        const historyArr = JSON.parse(localStorage.getItem(historyKey)) || [];
+		
+		        if (historyArr.length > 0) {
+		            // 解析 HTML 取得最新異動時間
+		            const tempDiv = document.createElement('div');
+		            tempDiv.innerHTML = historyArr[0]; // 最新的那筆 row
+		
+		            const dateText = tempDiv.querySelector('td')?.textContent?.trim();
+		            const byText = tempDiv.querySelectorAll('td')[2]?.textContent?.trim(); // 第三格是操作人員
+		
+		            const row = cb.closest('tr');
+		            const dateCell = row.querySelector('td:nth-child(6) div');
+		            const byCell = row.querySelector('td:nth-child(6) small');
+		
+		            if (dateCell && dateText) {
+		                dateCell.textContent = `${dateText}（本地）`;
+		            }
+		            if (byCell && byText) {
+		                byCell.textContent = byText;
+		            }
+		        }
+		    });
+		});
+		</script>
+	
     
 </body>
 
