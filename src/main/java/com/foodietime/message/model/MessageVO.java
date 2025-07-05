@@ -61,7 +61,7 @@ public class MessageVO implements Serializable {
 
 
 	// ========== 對應多方 ==========
-	@OneToMany(mappedBy = "mes", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "mes", cascade = CascadeType.REMOVE)
 	private Set<ReportMessageVO> reportMessage; // 這個分類底下的所有留言
 
     // ==================== 2. 手動實作 equals 和 hashCode ====================

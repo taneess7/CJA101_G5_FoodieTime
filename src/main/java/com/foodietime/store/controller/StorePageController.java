@@ -1,6 +1,7 @@
 package com.foodietime.store.controller;
 
 import java.beans.PropertyEditorSupport;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Time;
@@ -13,14 +14,22 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -32,6 +41,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -129,19 +139,23 @@ public class StorePageController {
 	    // 放進 model 以供 Thymeleaf 表單綁定使用
 		model.addAttribute("storeVO", storeVO); // 這一行必不可少！
 		model.addAttribute("storCatNameList", storeCateSvc.getAll());
-		// 顯示預覽圖//
-		if (storeVO.getStorPhoto() != null) {
-			String base64Image = Base64.getEncoder().encodeToString(storeVO.getStorPhoto());
-			model.addAttribute("base64Image", base64Image);
-		} else {
-			model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?"); // 或放預設圖片連結
-		}
+		
+		
+//		// Base64顯示預覽圖太慢，改用專門回傳圖片的Controller//
+//		if (storeVO.getStorPhoto() != null) {
+//			String base64Image = Base64.getEncoder().encodeToString(storeVO.getStorPhoto());
+//			model.addAttribute("base64Image", base64Image);
+//		} else {
+//			model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?"); // 或放預設圖片連結
+//		}
 
 		// 撈取資料後回到原頁面//
 		return "front/store/store_edit2"; // 找 templates/store_edit2 測試thymleaf 、圖片預覽、地址轉經緯度功能
 	}
+	
+	
 
-	// 更新store全部欄位
+	//====================更新store全部欄位=========================//
 	@PostMapping("/updateAll")
 	public String updateStore(@Valid @ModelAttribute("storeVO") StoreVO storeVO, BindingResult result, Model model,
 			@RequestParam("upFiles") MultipartFile[] parts, @RequestParam("storWeeklyOffDay") String[] offDays // 公休日欄位：多選
@@ -261,7 +275,7 @@ public class StorePageController {
 					String base64Image = Base64.getEncoder().encodeToString(prod.getProdPhoto());
 					prodImageMap.put(prod.getProdId(), base64Image);
 				} else {
-					prodImageMap.put(prod.getProdId(), ""); // 預設圖
+					prodImageMap.put(prod.getProdId(), "https://placehold.co/200x200/eeeeee/999"); // 預設圖
 				}
 			}
 			storeProdImageMap.put(storId, prodImageMap); // 商品圖片 base64 map
@@ -485,17 +499,31 @@ public class StorePageController {
 		    }
 		    Integer storId = loggedInStore.getStorId();
 
-		    // 2️⃣ 預處理分類與圖片欄位
+		    // 2️ 預處理分類與圖片欄位
 		    setCategory(prod, categoryId);
 		    setStore(prod, storId);
-		    handleImage(prod, parts, model);
-
+		 // !要在錯誤驗證前就設定圖片（呼叫你的方法），避免prod.getProdPhoto() 還是空的，導致圖片消失
+	        handleImage(prod, parts, model);
+	    
+		    
 		    // 3️ 驗證錯誤：回表單
 		    if (result.hasErrors()) {
 		        logValidationErrors(result);
 		        model.addAttribute("prod", prod);
 		        model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
 		        model.addAttribute("errorMessages", extractErrorMessages(result));
+		        
+		        //設定圖片
+		        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
+		            prod.setProdPhoto(parts[0].getBytes()); // 用新圖取代
+		            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+		        } else if (prod.getProdPhoto() != null) {
+		            // 否則顯示原圖
+		            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+		        } else {
+		            // 若沒有圖片，給預設
+		            model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?text=No+Image");
+		        }
 		        return "front/store/prod/prodEdit";
 		    }
 
@@ -511,7 +539,30 @@ public class StorePageController {
 		        // ✏️ 修改商品
 		        result = removeFieldError(prod, result, "upFiles");
 		        if (result.hasErrors()) {
-		            return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();
+		        	
+		        	 //設定圖片
+			        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
+			        	
+			            prod.setProdPhoto(parts[0].getBytes()); // 用新圖取代
+			            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+			        } else if (prod.getProdPhoto() != null) {
+			            // 否則顯示原圖
+			            model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
+			        } else {
+			            // 若沒有圖片，給預設
+			            model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?text=No+Image");
+			        }
+		        	   
+		        	 System.out.println("使用上傳圖片");
+		        	
+		        	
+		        	model.addAttribute("prod", prod);
+		        	model.addAttribute("prodCateList", prodCateSvcImpl.getAllCategories());
+		        	model.addAttribute("errorMessages", extractErrorMessages(result));
+
+		        	
+		        	return "front/store/prod/prodEdit"; 
+		            //return "redirect:/store/prod/prodEdit?prodId=" + prod.getProdId();
 		        }
 		        
 		     // 處理商品圖片欄位（如果沒上傳新圖片，就保留原圖）
@@ -550,18 +601,24 @@ public class StorePageController {
 		}
 
 		private void handleImage(ProductVO prod, MultipartFile[] parts, Model model) throws IOException {
-			try {
+		    try {
 		        if (parts != null && parts.length > 0 && !parts[0].isEmpty()) {
-		            prod.setProdPhoto(parts[0].getBytes());
+		            prod.setProdPhoto(parts[0].getBytes());  // ✅ 使用上傳新圖
+		            System.out.println("使用上傳圖片");
+		        } else if (prod.getProdPhoto() == null && prod.getProdId() != null) {
+		            // 若沒有上傳新圖，且prod內也沒有圖→ 撈原圖
+		            byte[] originalPhoto = prodSvc.getProductById(prod.getProdId()).getProdPhoto();
+		            prod.setProdPhoto(originalPhoto);
+		            System.out.println("沒上傳圖片，使用原圖");
 		        }
 		    } catch (IOException e) {
 		        model.addAttribute("imageError", "圖片上傳失敗：" + e.getMessage());
 		    }
-		
+
 		    if (prod.getProdPhoto() != null) {
 		        model.addAttribute("base64Image", Base64.getEncoder().encodeToString(prod.getProdPhoto()));
 		    } else {
-		        model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?");
+		        model.addAttribute("base64Image", "https://placehold.co/300x200/ffcc00/333?text=No+Image");
 		    }
 		}
 
@@ -609,7 +666,86 @@ public class StorePageController {
 			return "front/store/listAllProds";
 			
 		}
+		//====================專門回傳圖片的 Controller=========================//
+		@GetMapping("/photo/{storId}") //店家照片
+		public ResponseEntity<byte[]> getStorePhoto(@PathVariable Integer storId) {
+			
+		    byte[] photo = storeSvc.findById(storId).getStorPhoto();
+		    if (photo == null) {
+		        return ResponseEntity.notFound().build();
+		    }
+
+		    HttpHeaders headers = new HttpHeaders();
+		    
+		    //自動判斷圖片格式
+		    String format = "jpeg"; //預設
+		    
+		    try {
+		    	ByteArrayInputStream bais = new ByteArrayInputStream(photo);
+		    	Iterator<ImageReader> readers = ImageIO.getImageReaders(ImageIO.createImageInputStream(bais));
+		    	if (readers.hasNext()) {
+		    		format = readers.next().getFormatName().toLowerCase();//可能為 jpeg, png, gif...
+		    	}
+		    } catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+		    //根據格式設定 Content-Type
+		    switch(format) {
+		    case "png":
+		    	headers.setContentType(MediaType.IMAGE_PNG);
+		    	break;
+		    case "gif":
+		    	headers.setContentType(MediaType.IMAGE_GIF);
+		    	break;
+		    default:
+		    	headers.setContentType(MediaType.IMAGE_JPEG);
+		    	break;
+		    }
+		    
+		   
+		    return new ResponseEntity<>(photo, headers, HttpStatus.OK);
+		}
 		
+		
+		@GetMapping("/prod/photo/{prodId}")  //商品圖片
+		public ResponseEntity<byte[]> getProdPhoto(@PathVariable Integer prodId) {
+			ProductVO prod = prodSvc.getProductById(prodId);
+			 if (prod == null || prod.getProdPhoto() == null) {
+			        return ResponseEntity.notFound().build();
+			    }
+
+		    byte[] photo = prod.getProdPhoto();
+
+		    HttpHeaders headers = new HttpHeaders();
+		    
+		    //自動判斷圖片格式
+		    String format = "jpeg"; //預設
+		    
+		    try {
+		    	ByteArrayInputStream bais = new ByteArrayInputStream(photo);
+		    	Iterator<ImageReader> readers = ImageIO.getImageReaders(ImageIO.createImageInputStream(bais));
+		    	if (readers.hasNext()) {
+		    		format = readers.next().getFormatName().toLowerCase();//可能為 jpeg, png, gif...
+		    	}
+		    } catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+		    //根據格式設定 Content-Type
+		    switch(format) {
+		    case "png":
+		    	headers.setContentType(MediaType.IMAGE_PNG);
+		    	break;
+		    case "gif":
+		    	headers.setContentType(MediaType.IMAGE_GIF);
+		    	break;
+		    default:
+		    	headers.setContentType(MediaType.IMAGE_JPEG);
+		    	break;
+		    }
+		    
+		   
+		    return new ResponseEntity<>(photo, headers, HttpStatus.OK);
+		}
 		//===========================進入商品列表，撈出所有店家的商品=======================================
 		
 //		@GetMapping("/listAllStoreProds")

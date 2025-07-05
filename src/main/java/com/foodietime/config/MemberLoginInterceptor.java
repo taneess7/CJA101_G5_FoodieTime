@@ -16,45 +16,62 @@ public class MemberLoginInterceptor implements HandlerInterceptor{
     public MemberLoginInterceptor(MemService memService) {
         this.memService = memService;
     }
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-	        throws Exception {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-	    HttpSession session = request.getSession();
-	    MemberVO loggedIn = (MemberVO) session.getAttribute("loggedInMember");
+        HttpSession session = request.getSession();
+        MemberVO loggedIn = (MemberVO) session.getAttribute("loggedInMember");
 
-	    if (loggedIn == null) {
-	        String uri = request.getRequestURI();
-	        String query = request.getQueryString();
-	        String fullUrl = uri + (query != null ? "?" + query : "");
+        if (loggedIn == null) {
+            String uri = request.getRequestURI();
+            String query = request.getQueryString();
+            String fullUrl = uri + (query != null ? "?" + query : "");
 
-	     // 只有當 redirectAfterLogin 尚未被 RefererInterceptor 設定，才設定
-	        if (session.getAttribute("redirectAfterLogin") == null &&
-	            !"XMLHttpRequest".equals(request.getHeader("X-Requested-With")) && // 避免 AJAX
-	            request.getMethod().equalsIgnoreCase("GET") && // 只針對 GET 頁面
-	            !uri.startsWith("/favorite/") &&
-	            !uri.startsWith("/front/member/login") &&
-	            !uri.startsWith("/front/member/register") &&
-	            !uri.startsWith("/front/member/activate") &&
-	            !uri.startsWith("/front/member/verify")) {
+            // AJAX 請求回傳 401 JSON
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"error\": \"unauthorized\", \"message\": \"尚未登入\"}");
+                return false;
+            }
 
-	            session.setAttribute("redirectAfterLogin", fullUrl);
-	        }
+            // 非 AJAX 請求：記錄 redirect
+            if (session.getAttribute("redirectAfterLogin") == null &&
+                request.getMethod().equalsIgnoreCase("GET") &&
+                !uri.startsWith("/favorite/") &&
+                !uri.startsWith("/front/member/login") &&
+                !uri.startsWith("/front/member/register") &&
+                !uri.startsWith("/front/member/activate") &&
+                !uri.startsWith("/front/member/verify")) {
+                session.setAttribute("redirectAfterLogin", fullUrl);
+            }
 
+            response.sendRedirect(request.getContextPath() + "/front/member/login");
+            return false;
+        }
 
-	        response.sendRedirect(request.getContextPath() + "/front/member/login");
-	        return false;
-	    }
-	    // 🔥 重新查詢資料庫，判斷是否已被停權
+        // 🔥 重新查詢是否已被停權
         MemberVO fresh = memService.getById(loggedIn.getMemId());
         if (fresh.getMemStatus().ordinal() == 2) {
             session.invalidate();
+
+            // AJAX 請求：回傳 JSON
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"error\": \"disabled\", \"message\": \"帳號已停權\"}");
+                return false;
+            }
+
+            // 非 AJAX 請求：重導登入頁
             response.sendRedirect(request.getContextPath() + "/front/member/login?error=disabled");
             return false;
         }
 
         return true;
-	}
+    }
+
 
 
 }

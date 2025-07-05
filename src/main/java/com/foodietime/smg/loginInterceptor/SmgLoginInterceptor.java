@@ -16,11 +16,29 @@ public class SmgLoginInterceptor implements HandlerInterceptor {
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
         HttpSession session = request.getSession();
-        SmgVO smg = (SmgVO) session.getAttribute("loggedInSmg");
+        SmgVO smg = (session != null) ? (SmgVO) session.getAttribute("loggedInSmg") : null;
+        
+
         if (smg == null) {
-            response.sendRedirect("/smg/login");
-            return false; // 終止請求
+            // 判斷是否為 AJAX 請求
+            String ajaxHeader = request.getHeader("X-Requested-With");
+
+            if ("XMLHttpRequest".equals(ajaxHeader)) {
+                // AJAX：回傳 JSON 格式錯誤提示
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.setStatus(401); // Unauthorized
+                response.getWriter().write("{\"error\":\"unauthorized\",\"message\":\"請重新登入管理員帳號\"}");
+            } else {
+                // 一般瀏覽器頁面導向登入畫面
+                response.sendRedirect(request.getContextPath() + "/smg/login");
+            }
+
+            return false;
         }
-        return true; // 通過攔截
+        System.out.println("✅ SmgLoginInterceptor 放行: " + request.getRequestURI());
+        return true;
+        
     }
+    
 }

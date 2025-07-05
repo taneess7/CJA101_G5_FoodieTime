@@ -126,8 +126,8 @@ import jakarta.servlet.http.HttpSession;
 	                dto.setAvatarBase64("");
 	            }
 
-	            dto.setLastModifiedDate(LocalDate.now().toString());
-	            dto.setLastModifiedBy("系統管理員");
+	            dto.setLastModifiedDate("-"); // 或 null，看你前端怎麼處理
+	            dto.setLastModifiedBy("-");
 
 	            return dto;
 	        }).collect(Collectors.toList());
@@ -150,7 +150,7 @@ import jakarta.servlet.http.HttpSession;
 	    // 提交表單更新
 	    @PostMapping("/update-status")
 	    @ResponseBody
-	    public Map<String, Object> updateMember(
+	    public ResponseEntity<Map<String, Object>> updateMember(
 	            @RequestParam("memId") Integer memId,
 	            @RequestParam("memStatus") Integer memStatus,
 	            @RequestParam("memNoSpeak") Integer memNoSpeak,
@@ -160,10 +160,16 @@ import jakarta.servlet.http.HttpSession;
 	            @RequestParam("permissionReason") String permissionReason,
 	            HttpServletRequest request
 	    ) {
-	        MemberVO original = memService.getById(memId);
-
+	    	System.out.println("✅ 有進入 /update-status controller");
 	        // 先建立回傳物件
 	        Map<String, Object> result = new HashMap<>();
+	        MemberVO original = memService.getById(memId);
+	        
+	        if (original == null) {
+	            result.put("success", false);
+	            result.put("message", "會員不存在");
+	            return ResponseEntity.badRequest().body(result);
+	        }
 
 	        // 先取舊值
 	        int oldStatus = original.getMemStatus().ordinal();
@@ -208,7 +214,7 @@ import jakarta.servlet.http.HttpSession;
 	        result.put("lastModifiedDate", LocalDate.now().toString());
 	        result.put("lastModifiedBy", "系統管理員");
 
-	        return result;
+	        return ResponseEntity.ok(result);
 	    }
 
 

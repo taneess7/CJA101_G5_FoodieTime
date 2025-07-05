@@ -11,6 +11,7 @@
     <!-- FoodieTime Design System -->
     <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <link rel="stylesheet" th:href="@{/css/front/member/notifications.css}">
+
 </head>
 <body>
 
@@ -128,6 +129,7 @@
                             <div class="full-time">
                                 <i class="material-icons-outlined">schedule</i>
                                 <span th:text="${#temporals.format(notification.messTime, 'yyyy年MM月dd日 HH:mm')}">2024年01月15日 14:30</span>
+
                             </div>
                         </div>
                     </div>

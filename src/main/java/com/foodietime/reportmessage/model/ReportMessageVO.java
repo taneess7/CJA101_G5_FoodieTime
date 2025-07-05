@@ -32,7 +32,7 @@ public class ReportMessageVO implements Serializable {
 	@Column(name = "REP_MES_ID")
 	private Integer repMesId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MES_ID", referencedColumnName = "MES_ID")
 	private MessageVO mes;
 

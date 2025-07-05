@@ -48,8 +48,10 @@
   						    </option>
 						</select>
 				 </div>
-
-				
+<!-- 				 <div id="subTypeOptions" style="margin-top: 10px;"> -->
+<!-- 					<label><input type="radio" name="productType" id="isDrink" value="1">飲料</label> -->
+<!-- 				    <label><input type="radio" name="productType" id="isDessert" value="0">甜點</label> -->
+<!-- 				</div> -->
 				
 				<div>
 					<label>商品名稱<span class="required">*</span></label> 
@@ -80,12 +82,13 @@
 									class="form-input" name="upFiles" id="store-image"
 									accept="image/*" onchange="previewImage(event)">
 								<!-- 頁面載入時顯示「資料庫裡的原始圖片」 -->
-								<img id="imagePreview"
-									th:src="${base64Image}" alt="預覽圖片"
-									style="max-width: 200px; margin-top: 10px; border-radius: 16px" />
+								<img id="imagePreview" class="img-rounded" th:src="@{/store/prod/photo/{id}(id=${prod.prodId})}" 
+     									onerror="this.src='https://placehold.co/300x200/ffcc00/333?text=No+Image'" 
+     									alt="預覽圖片" style="max-height: 150px;">
 
 							</div>
-				
+
+
 			<!-- 上架狀態 -->
 				<div class="form-group">
 					<label class="form-label">上架狀態</label> <select
@@ -108,7 +111,9 @@
 	
 		<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 <script>
-  
+window.addEventListener("DOMContentLoaded", function () {
+	  document.getElementById("categorySelect").dispatchEvent(new Event("change"));
+	});
 
 	/*店家照片預覽*/
 	  function previewImage(event) {
@@ -131,6 +136,23 @@
 		      }, 2000); // 2秒後開始淡出
 		    }
 		  });
+	
+	//次選項
+	  document.getElementById("categorySelect").addEventListener("change", function () {
+		  const selectedText = this.options[this.selectedIndex].text;
+		  const radios = document.querySelectorAll('input[name="productType"]');
+
+		  if (selectedText.includes("甜點") || selectedText.includes("飲料")) {
+		    // ✅ 啟用
+		    radios.forEach(r => r.disabled = false);
+		  } else {
+		    // ❌ 禁用且取消勾選
+		    radios.forEach(r => {
+		      r.disabled = true;
+		      r.checked = false;
+		    });
+		  }
+		});
 
 </script>
 

@@ -80,13 +80,13 @@ public class PostVO implements Serializable {
 	
 
 // ========== 對應多方 ==========
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
 	private Set<ReportPostVO> reportPost; // 這個分類底下的所有貼文
 
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
 	private Set<MessageVO> message;
 
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
 	private Set<FavoritePostVO> favoritePost;
 
     // ==================== 2. 手動實作 equals 和 hashCode ====================

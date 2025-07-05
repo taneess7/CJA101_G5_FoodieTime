@@ -349,7 +349,8 @@ public class MemberController {
                     && !referer.contains("/front/member/register")
                     && !referer.contains("/front/member/activate")
                     && !referer.contains("/front/member/verify")
-            		&& !referer.contains("/favorite/")) {
+            		&& !referer.contains("/favorite/")
+            		&& !referer.contains("/gb/gbindex")) {
                 session.setAttribute("redirectAfterLogin", referer);
             }
         }
@@ -412,6 +413,15 @@ public class MemberController {
         
         // ✅ ✅ ✅ 檢查是否有記錄登入前的頁面
         String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+    	// ✅ 避免導向 reset-password 等一次性頁面
+        if (redirectUrl != null && (
+        		redirectUrl.contains("/reset-password") ||
+        		redirectUrl.contains("/front/member/member_center") ||
+        	    redirectUrl.contains("/front/member/edit_profile")
+        	    )) {
+            redirectUrl = null;
+        }
+        
         if (redirectUrl != null) {
             session.removeAttribute("redirectAfterLogin");
             return "redirect:" + redirectUrl;
@@ -577,10 +587,89 @@ public class MemberController {
     @PostMapping("/saveRedirectAfterLogin")
     @ResponseBody
     public void saveRedirectAfterLogin(@RequestParam("url") String url, HttpSession session) {
-        if (url != null && !url.isBlank()) {
-            session.setAttribute("redirectAfterLogin", url);
-        }
+    	if (!url.matches(".*/(reset-password|verify|activate)(\\?.*)?")) {
+    	    session.setAttribute("redirectAfterLogin", url);
+    	}
     }
+    
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        return "front/member/forgot_password";
+    }
+    
+    @PostMapping("/forgot-password")
+    public String processForgotPassword(@RequestParam("email") String email, Model model, HttpSession session) {
+        MemberVO member = memService.getByMemEmail(email);
+        if (member == null) {
+            model.addAttribute("error", "找不到此 Email 對應的帳號");
+            return "front/member/forgot_password";
+        }
+        
+        // 忘記密碼流程中加這段檢查
+        if (member.getMemStatus() != MemberVO.MemberStatus.ACTIVE) {
+            model.addAttribute("error", "您的帳號尚未啟用，請先至信箱啟用帳號");
+            return "front/member/forgot_password";
+        }
+
+
+        // 產生 token 並保存
+        String resetToken = UUID.randomUUID().toString();
+        member.setMemCode(resetToken);
+        memService.save(member);
+
+        // 寄送 Email
+        String resetLink = "http://localhost:8080/front/member/reset-password?token=" + resetToken;
+        memService.sendResetPasswordEmail(email, resetLink);
+
+        model.addAttribute("message", "重設密碼連結已寄出，請至信箱查看");
+        return "front/member/forgot_password";
+    }
+    
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam("token") String token, Model model,RedirectAttributes redirectAttributes) {
+        MemberVO member = memService.getByMemCode(token);
+        if (member == null) {
+            redirectAttributes.addFlashAttribute("error", "重設連結已過期，請重新申請");
+            return "redirect:/front/member/forgot-password";
+        }
+        model.addAttribute("token", token);
+        return "front/member/reset_password";
+    }
+    
+    @PostMapping("/reset-password")
+    public String processResetPassword(@RequestParam("token") String token,
+                                       @RequestParam("password") String password,
+                                       @RequestParam("confirmPassword") String confirmPassword,
+                                       HttpSession session,
+                                       Model model) {
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("error", "兩次密碼不一致");
+            model.addAttribute("token", token);
+            return "front/member/reset_password";
+        }
+
+        MemberVO member = memService.getByMemCode(token);
+        if (member == null) {
+            model.addAttribute("error", "無效或過期的重設連結");
+            return "front/member/reset_password";
+        }
+        
+        // ✅ 檢查是否與舊密碼相同
+        if (member.getMemPassword() != null && member.getMemPassword().equals(password)) {
+            model.addAttribute("error", "新密碼不能與舊密碼相同");
+            model.addAttribute("token", token);
+            return "front/member/reset_password";
+        }
+
+        member.setMemPassword(password); // 建議 hash 處理
+        member.setMemCode(null); // 清除 token
+        memService.save(member);
+        
+        session.invalidate();
+        return "redirect:/front/member/login?resetSuccess=true";
+    }
+
+
 
 
 

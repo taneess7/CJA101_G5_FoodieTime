@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>所有商品資料</title>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>                                    <!-- ●●js  for jquery datatables 用 -->
+<script	src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>              <!-- ●●js  for jquery datatables 用 -->
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.jqueryui.min.css" /> <!-- ●●css for jquery datatables 用 -->
+<link rel="stylesheet" href="/css/front/store/prod.css">
+<script>
+	$(document).ready(function() {
+		$('#example').DataTable({
+			"lengthMenu": [3 ,5, 10, 20, 50, 100],
+			"pageLength": 5, 
+			"searching": true,  //搜尋功能, 預設是開啟
+		    "paging": true,     //分頁功能, 預設是開啟
+		    "ordering": true,   //排序功能, 預設是開啟
+		    "language": {
+		        "processing": "處理中...",
+		        "loadingRecords": "載入中...",
+		        "lengthMenu": "顯示 _MENU_ 筆結果",
+		        "zeroRecords": "沒有符合的結果",
+		        "info": "顯示第 _START_ 至 _END_ 筆結果，共<font color=red> _TOTAL_ </font>筆",
+		        "infoEmpty": "顯示第 0 至 0 筆結果，共 0 筆",
+		        "infoFiltered": "(從 _MAX_ 筆結果中過濾)",
+		        "infoPostFix": "",
+		        "search": "搜尋:",
+		        "paginate": {
+		            "first": "第一頁",
+		            "previous": "上一頁",
+		            "next": "下一頁",
+		            "last": "最後一頁"
+		        },
+		        "aria": {
+		            "sortAscending":  ": 升冪排列",
+		            "sortDescending": ": 降冪排列"
+		        }
+		    }
+		});
+	});
+</script>
+
+<style>
+body{
+	margin:0 10px;
+}
+.prod-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 10px 28px 0px 28px;
+    margin: 32px auto 0 auto;
+    max-width: 90vw;
+}
+.prod-card-title {
+    color: #ff7f50;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+#example {
+  font-size: 18px;
+}
+#example th, #example td {
+  padding: 4px 8px !important;
+  line-height: 1.2;
+}
+#example .prod-img {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 6px;
+  border: 2px dotted blue;
+  background-color: white;
+  object-fit: cover;
+}
+.table-responsive {
+  padding: 0 4px;
+}
+
+.prod-desc-ellipsis{
+    width: 250px;
+    max-width: 250px;
+    white-space: nowrap;      /* 不換行 */
+    overflow: hidden;         /* 超出隱藏 */
+    text-overflow: ellipsis;  /* 超出顯示「...」 */
+}
+
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
+	 <div align="center"></div>
+</nav>
+<div class="prod-card">
+  <h2 class="prod-card-title" style="margin:0 auto">一般商品列表</h2>
+  <div class="table-responsive">
+    <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
+      <thead >
+		<tr style="background-color:#f1e5d9">
+			<th>商品ID</th><!-- 原本的計數 -->
+<!-- 			<th>商品編號</th> -->
+<!-- 			<th>店家編號</th> -->
+			<th>類別</th>
+			<th>商品名稱</th>
+			<th style="width:250px;" >商品描述</th>
+			<th>價格</th>
+			<th>商品圖片</th>
+			<th>狀態</th>
+			<th>最後更新時間</th>
+			<th>操作</th>
+<!-- 			<th>被檢舉次數</th> -->
+		</tr>
+      </thead>
+	
+      <tbody>  <!-- 跑 th:each 迴圈，但又不會讓畫面上真的多出一層 <div> 或 <span> -->
+		<th:block th:each="prodVO, stat : ${prodListData}">
+			<tr>
+				<td th:text="${stat.count}"></td>
+<!-- 				<td th:text="${prodVO.prodId}"></td> -->
+				<td class="white-nowrap" th:text="${prodVO.productCategory.prodCate}"></td>
+				<td th:text="${prodVO.prodName}"></td>
+				<td style="width:250px;" class="prod-desc-ellipsis"  th:text="${prodVO.prodDesc}"></td>
+				<td th:text="${prodVO.prodPrice}"></td>
+				<td><img class="prod-img" style="border: 2px dotted blue;width:50px; height:50px; background-color: white;" th:src="@{/store/DBGifReader} + '?prodId=' + ${prodVO.prodId}" width="50px"></td>
+				<td th:text="${prodVO.prodStatus} ? '上架' : '下架'"></td>
+				<td th:text="${#dates.format(prodVO.prodLastUpdate,'yyyy-MM-dd HH:mm:ss')}"></td>
+
+			<td>
+			  <form method="get" th:action="@{/store/prod/prodEdit}" style="margin-bottom: 0px;">
+			     <input type="hidden" name="prodId" th:value="${prodVO.prodId}">
+			         <button style="text-align:center; vertical-align:middle;" type="submit">修改</button>
+<!-- 			     <input type="submit" value="修改">  -->
+			  </form>
+			
+			</td>
+<!-- 			<td> -->
+<!-- 			  <form method="post" th:action="@{/act/delete}" style="margin-bottom: 0px;"> -->
+<!-- 			     <input type="submit" value="刪除"> -->
+<!-- 			     <input type="hidden" name="actId" th:value="${actVO.actId}"> -->
+<!-- 			  </form> -->
+			
+<!-- 			</td> -->
+			</tr>
+		</th:block>
+      </tbody>
+    </table>
+  </div>
+</div>
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+</body>
+</html>
