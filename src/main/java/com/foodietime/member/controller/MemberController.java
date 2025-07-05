@@ -546,7 +546,7 @@ public class MemberController {
         if (member == null) {
             return "redirect:/front/member/login";
         }
-        model.addAttribute("member", member);
+        model.addAttribute("memberVO", member);
         model.addAttribute("currentPage", "member_center");
         return "front/member/member_center"; // 要有這個 HTML
     }

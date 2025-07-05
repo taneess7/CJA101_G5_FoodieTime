@@ -1,90 +1,166 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的收藏團購 - FoodieTime 食刻</title>
 
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>收藏團購 - FoodieTime 食刻</title>
-	<link rel="stylesheet" th:href="@{/css/front/favoritelist/style.css}">
-	<link rel="stylesheet" th:href="@{/css/front/favoritelist/member-favorites.css}">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-	<meta name="theme-color" content="#FF5722">
-	<link rel="apple-touch-icon" th:href="@{/images/icons/logo.png}">
+    <!-- Google Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+
+    <!-- FoodieTime Design System -->
+    <link rel="stylesheet" th:href="@{/css/common/style.css}">
+    <link rel="stylesheet" th:href="@{/css/front/favoritelist/gb-favorites.css}">
 </head>
+<body>
+
+<!-- ======================= Header ======================= -->
 <header th:replace="~{front/common/header :: main-header}"></header>
+
+<!-- ======================= Main Content ======================= -->
 <main class="main-content">
     <div class="content-container">
         <div class="member-section">
-        	<!-- 主內容區 -->
-            <div class="member-content">
+
+            <!-- ========== Member Sidebar (Standardized) ========== -->
+            <aside class="member-sidebar">
+                <!-- Profile Card -->
+                <div class="member-profile" th:if="${memberVO}">
+                    <div class="member-avatar">
+                        <img th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
+                             alt="會員頭像">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name" th:text="${memberVO.memNickname}">會員暱稱</h3>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="member-nav">
+                    <a th:href="@{/front/member/member_center}" class="member-nav-item">
+                        <i class="material-icons-outlined">person</i>
+                        <span>會員資料</span>
+                    </a>
+                    <div th:if="${session.loggedInStore != null}">
+                        <a th:href="@{/store/sc}" class="member-nav-item">
+                            <i class="material-icons-outlined">store</i>
+                            <span>店家後台</span>
+                        </a>
+                    </div>
+                    <a th:href="@{/member/orders}" class="member-nav-item" >
+                        <i class="material-icons-outlined">receipt_long</i>
+                        <span>一般訂單</span>
+                    </a>
+                    <a th:href="@{/gb/member/orders}" class="member-nav-item">
+                        <i class="material-icons-outlined">receipt</i>
+                        <span>團購訂單</span>
+                    </a>
+                    <a th:href="@{/gb/gbfavoritelist}" class="member-nav-item active" >
+                        <i class="material-icons-outlined">group</i>
+                        <span>團購收藏</span>
+                    </a>
+                    <a th:href="@{/member/coupons}" class="member-nav-item">
+                        <i class="material-icons-outlined">local_offer</i>
+                        <span>我的優惠券</span>
+                    </a>
+                    <a th:href="@{/favorite/member-favorites}" class="member-nav-item">
+                        <i class="material-icons-outlined">favorite</i>
+                        <span>收藏餐廳</span>
+                    </a>
+                    <a th:href="@{/front/member/post/notifications}" class="member-nav-item">
+                        <i class="material-icons-outlined">inbox</i>
+                        <span>收件夾</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- ========== Member Content ========== -->
+            <div class="member-content-main">
                 <div class="member-content-header">
                     <h1 class="member-content-title">我的收藏團購</h1>
-                    
                 </div>
-                <div class="restaurants-container" id="gb-container">
-                    <div class="restaurant-card" th:each="item : ${collectionList}" th:attr="data-category=${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">
-                        <div class="restaurant-details">
-                            <h3 class="restaurant-name" th:text="${item.groupBuyingCase.gbTitle}">團購標題</h3>
-                            <div class="restaurant-category">
-                                <span class="cuisine-tag" th:text="${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">分類</span>
+
+                <!-- 空狀態 -->
+                <div th:if="${#lists.isEmpty(collectionList)}" class="empty-state">
+                    <i class="material-icons-outlined">favorite_border</i>
+                    <p>您目前沒有收藏任何團購</p>
+                    <span>快去發掘喜歡的團購商品吧！</span>
+                </div>
+
+                <!-- 收藏列表 -->
+                <div class="favorites-grid" th:if="${not #lists.isEmpty(collectionList)}">
+                    <div class="favorite-card" th:each="item : ${collectionList}"
+                         th:attr="data-category=${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">
+
+                        <!-- 商品圖片 -->
+                        <div class="card-image">
+                            <img th:if="${item.groupBuyingCase.gbProd.gbProdPhoto != null}"
+                                 th:src="@{'/gb/gbproduct/image/' + ${item.groupBuyingCase.gbProd.gbProdId}}"
+                                 alt="商品圖片" />
+                            <img th:unless="${item.groupBuyingCase.gbProd.gbProdPhoto != null}"
+                                 th:src="@{/images/restaurant/placeholder.svg}"
+                                 alt="預設圖片" />
+
+                            <!-- 收藏按鈕 -->
+                            <form th:action="@{/gb/remove}" method="post" class="favorite-form">
+                                <input type="hidden" name="memId" th:value="${item.member.memId}" />
+                                <input type="hidden" name="gbId" th:value="${item.groupBuyingCase.gbId}" />
+                                <button type="submit" class="favorite-btn active" aria-label="取消收藏">
+                                    <i class="material-icons-outlined">favorite</i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- 卡片內容 -->
+                        <div class="card-content">
+                            <div class="card-header">
+                                <h3 class="gb-title" th:text="${item.groupBuyingCase.gbTitle}">團購標題</h3>
+                                <span class="category-tag" th:text="${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">分類</span>
                             </div>
-                            <div class="product-list">
-                                <div class="product-block-row">
-                                    <div class="product-img-col">
-                                        <img class="product-image"
-                                             th:if="${item.groupBuyingCase.gbProd.gbProdPhoto != null}"
-                                             th:src="@{'/gb/gbproduct/image/' + ${item.groupBuyingCase.gbProd.gbProdId}}" alt="商品圖片" />
-                                        <img class="product-image"
-                                             th:unless="${item.groupBuyingCase.gbProd.gbProdPhoto != null}"
-                                             th:src="@{/images/restaurant/placeholder.svg}" alt="預設圖片" />
-                                    </div>
-                                    <div class="product-info-col">
-                                        <p class="product-name" th:text="${item.groupBuyingCase.gbProd.gbProdName}">商品名稱</p>
-                                        <form th:action="@{/gb/remove}" method="post" style="display:inline;">
-                                            <input type="hidden" name="memId" th:value="${item.member.memId}" />
-                                            <input type="hidden" name="gbId" th:value="${item.groupBuyingCase.gbId}" />
-                                            <button type="submit" class="action-btn favorite-btn active" aria-label="取消收藏">
-                                                <i class="material-icons-outlined">favorite</i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="restaurant-info">
+
+                            <p class="product-name" th:text="${item.groupBuyingCase.gbProd.gbProdName}">商品名稱</p>
+
+                            <div class="card-info">
                                 <div class="info-item">
                                     <i class="material-icons-outlined">store</i>
                                     <span th:text="${item.groupBuyingCase.store.storName}">店家名稱</span>
                                 </div>
                                 <div class="info-item">
                                     <i class="material-icons-outlined">access_time</i>
-                                    <span th:text="${#temporals.format(item.groupBuyingCase.gbStartTime, 'yyyy-MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(item.groupBuyingCase.gbEndTime, 'yyyy-MM-dd HH:mm')}">團購期間</span>
+                                    <span th:text="${#temporals.format(item.groupBuyingCase.gbStartTime, 'MM/dd')} + ' ~ ' + ${#temporals.format(item.groupBuyingCase.gbEndTime, 'MM/dd')}">團購期間</span>
                                 </div>
                             </div>
-                            <div class="restaurant-actions-bottom">
-                                <a th:href="@{'/gb/detail/' + ${item.groupBuyingCase.gbId}}" class="view-btn">查看團購</a>
+
+                            <div class="card-actions">
+                                <a th:href="@{'/gb/detail/' + ${item.groupBuyingCase.gbId}}" class="btn btn-primary">查看團購</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div style="margin-top: 24px;">
+
+                <!-- 返回按鈕 -->
+                <div class="action-footer">
                     <button class="btn btn-secondary" onclick="window.history.back();">返回</button>
                 </div>
             </div>
         </div>
     </div>
 </main>
-<footer th:replace="~{front/common/footer :: main-footer}"></footer>
-<script>
-function filterGbFavorites() {
-    const selected = document.getElementById("gbCategorySelect").value;
-    const cards = document.querySelectorAll(".restaurant-card");
-    cards.forEach(card => {
-        const category = card.getAttribute("data-category");
-        card.style.display = (selected === "all" || category === selected) ? "block" : "none";
-    });
-}
 
+<!-- ======================= Footer ======================= -->
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+
+<!-- JavaScript (保留篩選功能) -->
+<script>
+    function filterGbFavorites() {
+        const selected = document.getElementById("gbCategorySelect").value;
+        const cards = document.querySelectorAll(".favorite-card");
+        cards.forEach(card => {
+            const category = card.getAttribute("data-category");
+            card.style.display = (selected === "all" || category === selected) ? "block" : "none";
+        });
+    }
 </script>
+
 </body>
 </html>

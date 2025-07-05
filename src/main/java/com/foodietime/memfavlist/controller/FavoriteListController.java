@@ -47,7 +47,7 @@ public class FavoriteListController {
 	    if (member == null) {
 	        return "redirect:/category/login";
 	    }
-
+		model.addAttribute("memberVO", member);
 	    List<FavoriteListVO> favoriteList = favoriteListService.getFavoritesByMemId(member.getMemId());
 	    
 	    // 將商品依店家分組

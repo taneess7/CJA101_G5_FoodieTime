@@ -45,7 +45,7 @@ public class MemCouponController {
             return "redirect:/login";
         }
         Integer currentMemberId = memberVO.getMemId();
-
+        model.addAttribute("memberVO", memberVO);
         // ============================ 步驟 2: 調用 Service 獲取優惠券資料 ============================
         List<MemCouponVO> memberCoupons = memCouponService.findCouponsByMemberAndStatus(currentMemberId, status);
 

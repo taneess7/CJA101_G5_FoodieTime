@@ -1,0 +1,315 @@
+/*
+ * FoodieTime Member Center - Order History Page Styles (Layout Fixed)
+ * Design System: Material Design
+ * Main Color: Deep Terracotta (#C39B7B)
+ */
+
+/* ==================== 1. 通用佈局 (繼承 style.css) ==================== */
+body {
+    background-color: var(--neutral-50);
+}
+
+.main-content {
+    padding: var(--space-4) 0 var(--space-6);
+}
+
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+.member-section {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+}
+
+/* ==================== 2. 會員側邊欄 (最終標準化版本) ==================== */
+.member-sidebar {
+    flex: 0 0 260px;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-1);
+    position: sticky;
+    top: 88px;
+    overflow: hidden;
+    padding: var(--space-4); /* 統一使用較大的外邊距 */
+}
+
+.member-profile {
+    text-align: center;
+    padding-bottom: var(--space-4); /* 統一下方間距 */
+    margin-bottom: var(--space-4); /* 統一下方間距 */
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.member-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto var(--space-3);
+    border: 3px solid var(--bg-light);
+    box-shadow: var(--shadow-2);
+    flex-shrink: 0; /* 確保在 flex 容器中不被壓縮 */
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* 移除圖片底部的空白 */
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.member-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2); /* 統一項目間距 */
+}
+
+.member-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 12px var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.member-nav-item:hover {
+    background-color: var(--neutral-50);
+    color: var(--primary-dark);
+}
+
+.member-nav-item.active {
+    background-color: rgba(195, 155, 123, 0.1);
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.member-nav-item i {
+    font-size: 22px;
+}
+
+
+/* ==================== 3. 會員內容區塊通用樣式 ==================== */
+.member-content {
+    flex: 1;
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-5);
+    min-width: 0;
+}
+
+.member-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--neutral-200);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.member-content-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ==================== 4. 頁籤 (Tabs) ==================== */
+.order-tabs {
+    display: flex;
+    gap: var(--space-2);
+    background-color: var(--neutral-100);
+    padding: var(--space-1);
+    border-radius: var(--radius-md);
+}
+
+.tab-btn {
+    padding: var(--space-2) var(--space-4);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.tab-btn.active {
+    background-color: var(--bg-light);
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-1);
+}
+
+/* ==================== 5. 訂單區塊與列表 ==================== */
+.order-section {
+    display: none; /* 預設隱藏 */
+}
+
+.order-section.active {
+    display: block; /* 透過 JS 控制顯示 */
+    animation: fadeIn 0.5s ease;
+}
+
+.orders-container {
+    display: grid;
+    gap: var(--space-5);
+}
+
+/* ==================== 6. 訂單卡片 (Order Card) ==================== */
+.order-card {
+    background: var(--bg-light);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    transition: all var(--transition-normal);
+}
+.order-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-2);
+    border-color: var(--neutral-300);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.store-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.store-info i {
+    color: var(--primary-color);
+}
+
+.order-card-body {
+    padding: var(--space-4);
+}
+
+.order-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+.order-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    border-top: 1px dashed var(--neutral-200);
+    padding-top: var(--space-4);
+}
+
+.order-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: var(--space-3);
+    align-items: center;
+    font-size: 0.95rem;
+}
+.item-name { color: var(--text-primary); }
+.item-qty { color: var(--text-secondary); }
+.item-price { font-weight: 500; }
+
+.order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--neutral-50);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.order-total {
+    font-size: 1rem;
+    font-weight: 500;
+}
+.order-total strong {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.order-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* ==================== 7. 訂單狀態標籤 ==================== */
+.order-status {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+}
+.status-pending { background-color: #FFF3E0; color: #FB8C00; } /* 橘色 */
+.status-accepted { background-color: #E3F2FD; color: #1E88E5; } /* 藍色 */
+.status-preparing { background-color: #E8EAF6; color: #3949AB; } /* 靛藍 */
+.status-completed { background-color: #E8F5E9; color: var(--success); } /* 綠色 */
+.status-cancelled { background-color: var(--neutral-100); color: var(--text-secondary); } /* 灰色 */
+
+/* ==================== 8. 按鈕與空狀態 (與其他會員頁面共用) ==================== */
+.btn {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 10px 20px; border-radius: var(--radius-md); font-weight: 600;
+    transition: all var(--transition-normal); border: 1px solid transparent;
+}
+.btn-sm { padding: 8px 16px; font-size: 0.9rem; }
+.btn-primary { background-color: var(--primary-color); color: var(--text-white); }
+.btn-primary:hover { background-color: var(--primary-dark); }
+.btn-secondary { background-color: var(--bg-light); color: var(--primary-dark); border-color: var(--neutral-300); }
+.btn-secondary:hover { background-color: var(--neutral-50); border-color: var(--neutral-400); }
+.btn-disabled { background-color: var(--neutral-200); color: var(--text-secondary); cursor: not-allowed; }
+
+.empty-state {
+    text-align: center; padding: var(--space-6) 0;
+    border: 2px dashed var(--neutral-200); border-radius: var(--radius-md);
+}
+.empty-state i { font-size: 3.5rem; color: var(--neutral-300); margin-bottom: var(--space-3); }
+.empty-state p { font-size: 1.1rem; font-weight: 500; margin-bottom: var(--space-4); }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== 9. 響應式設計 ==================== */
+@media (max-width: 992px) {
+    .member-section {
+        flex-direction: column;
+    }
+    .member-sidebar {
+        position: static;
+        width: 100%;
+        margin-bottom: var(--space-4);
+    }
+}
+@media (max-width: 768px) {
+    .member-content-header { flex-direction: column; align-items: stretch; }
+    .order-tabs { justify-content: center; }
+    .order-card-footer, .order-meta { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+    .order-actions { width: 100%; justify-content: flex-end; }
+}

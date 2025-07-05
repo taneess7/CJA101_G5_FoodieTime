@@ -1,260 +1,207 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="zh-Hant">
-
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>收件夾 - 會員中心</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/front/memcoupon/member-coupons.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收件夾 - FoodieTime 食刻</title>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+
+    <!-- FoodieTime Design System -->
     <link rel="stylesheet" th:href="@{/css/common/style.css}">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* 背景漸層 */
-        body {
-            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 50%, #FFCCBC 100%) !important;
-        }
-        
-        /* 會員資料區塊樣式 */
-        .member-profile {
-            background: linear-gradient(135deg, #FFCCBC 0%, #FFB74D 100%);   
-        }
-        
-        /* 通知卡片樣式 */
-        .notification-item {
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .notification-item:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            transform: translateY(-2px);
-        }
-        
-    </style>    
+    <link rel="stylesheet" th:href="@{/css/front/member/notifications.css}">
+
 </head>
+<body>
 
-<body class="bg-gradient-to-br from-orange-100 to-rose-200 font-sans overflow-x-hidden">
+<!-- ======================= Header ======================= -->
 <header th:replace="~{front/common/header :: main-header}"></header>
-    <!-- 整頁容器 -->
-   	<div class="w-full min-h-screen overflow-x-hidden pt-8">
-        <div class="max-w-6xl mx-auto flex gap-8 px-4 py-8 min-h-screen items-start relative">
 
-            <!-- 左側側邊欄 -->
-           	<aside class="w-[260px] bg-white p-6 rounded-3xl shadow-lg flex-shrink-0">
+<!-- ======================= Main Content ======================= -->
+<main class="main-content">
+    <div class="content-container">
+        <div class="member-section">
 
-        <!-- 上半 avatar + nav -->
-        <div>
-            <!-- 頭像 / 名字 -->
-            <div class="member-profile mb-6 text-center">
-                <div class="member-avatar mb-4">
-                    <img th:src="${member.memAvatar != null} ? 
-                                 @{/front/member/avatar/{id}(id=${member.memId})} : 
-                                 @{/images/icons/logo.png}"  
-                         alt="會員頭像" class="w-24 h-24 rounded-full mx-auto">
+            <!-- ========== Member Sidebar (Standardized) ========== -->
+            <aside class="member-sidebar">
+                <!-- Profile Card -->
+                <div class="member-profile" th:if="${memberVO}">
+                    <div class="member-avatar">
+                        <img th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
+                             alt="會員頭像">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name" th:text="${memberVO.memNickname}">會員暱稱</h3>
+                    </div>
                 </div>
-                <div class="member-info">
-                    <h3 class="member-name text-lg font-semibold text-gray-800" th:text="${member.memNickname}">王小明</h3>
-                </div>
-            </div>
 
-            <!-- menu 選單 -->
-            <nav class="member-nav flex flex-col space-y-3">
-                <a th:href="@{/front/member/member_center}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                    <i class="material-icons-outlined">person</i>
-                    <span>會員資料</span>
-                </a>
-                <div th:if="${session.loggedInStore != null}">
-                    <a th:href="@{/store/sc}" 
-                       class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                        <i class="material-icons-outlined">store</i>
-                        <span>店家後台</span>
+                <!-- Navigation -->
+                <nav class="member-nav">
+                    <a th:href="@{/front/member/member_center}" class="member-nav-item" th:classappend="${currentPage == 'member_center' ? 'active' : ''}">
+                        <i class="material-icons-outlined">person</i>
+                        <span>會員資料</span>
                     </a>
+                    <div th:if="${session.loggedInStore != null}">
+                        <a th:href="@{/store/sc}" class="member-nav-item">
+                            <i class="material-icons-outlined">store</i>
+                            <span>店家後台</span>
+                        </a>
+                    </div>
+                    <a th:href="@{/member/orders}" class="member-nav-item" th:classappend="${currentPage == 'orders' ? 'active' : ''}">
+                        <i class="material-icons-outlined">receipt_long</i>
+                        <span>一般訂單</span>
+                    </a>
+                    <a th:href="@{/gb/member/orders}" class="member-nav-item" th:classappend="${currentPage == 'gb_orders' ? 'active' : ''}">
+                        <i class="material-icons-outlined">receipt</i>
+                        <span>團購訂單</span>
+                    </a>
+                    <a th:href="@{/gb/gbfavoritelist}" class="member-nav-item" th:classappend="${currentPage == 'gb_favorites' ? 'active' : ''}">
+                        <i class="material-icons-outlined">group</i>
+                        <span>團購收藏</span>
+                    </a>
+                    <a th:href="@{/member/coupons}" class="member-nav-item" th:classappend="${currentPage == 'coupons' ? 'active' : ''}">
+                        <i class="material-icons-outlined">local_offer</i>
+                        <span>我的優惠券</span>
+                    </a>
+                    <a th:href="@{/favorite/member-favorites}" class="member-nav-item" th:classappend="${currentPage == 'favorites' ? 'active' : ''}">
+                        <i class="material-icons-outlined">favorite</i>
+                        <span>收藏餐廳</span>
+                    </a>
+                    <a th:href="@{/front/member/post/notifications}" class="member-nav-item active">
+                        <i class="material-icons-outlined">inbox</i>
+                        <span>收件夾</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- ========== Member Content ========== -->
+            <div class="member-content-main">
+                <div class="member-content-header">
+                    <h1 class="member-content-title">收件夾</h1>
+                    <div class="notification-count">
+                        共 <span th:text="${#lists.size(notifications)}">0</span> 則通知
+                    </div>
                 </div>
-                <a th:href="@{/member/orders}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                    <i class="material-icons-outlined">receipt_long</i>
-                    <span>訂單記錄</span>
-                </a>
-                <a th:href="@{/member/coupons}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                    <i class="material-icons-outlined">local_offer</i>
-                    <span>優惠券</span>
-                </a>
-                <a th:href="@{/favorite/member-favorites}" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                    <i class="material-icons-outlined">favorite</i>
-                    <span>收藏餐廳</span>
-                </a>
-                <!-- 點數紀錄 -->
-                <a href="#" class="member-nav-item flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-                    <i class="material-icons-outlined">stars</i>
-                    <span>點數紀錄</span>
-                </a>
-                <!-- 收件夾（當前頁面） -->
-                <a th:href="@{/front/member/post/notifications}" class="member-nav-item flex items-center space-x-2 text-orange-600 font-bold">
+
+                <!-- 篩選器 -->
+                <div class="filter-section">
+                    <button class="filter-btn active" data-filter="all">全部通知</button>
+                    <button class="filter-btn" data-filter="violation">違規通知</button>
+                    <button class="filter-btn" data-filter="system">系統訊息</button>
+                </div>
+
+                <!-- 空狀態 -->
+                <div th:if="${#lists.isEmpty(notifications)}" class="empty-state">
                     <i class="material-icons-outlined">inbox</i>
-                    <span>收件夾</span>
-                </a>
-               
-            </nav>
-        </div>
-
-        </aside>
-
-            <!-- 右側收件夾內容 -->
-            <div class="flex-1 bg-white p-10 rounded-3xl shadow-2xl transition-all duration-300">
-            
-            <!-- 頁面標題 -->
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-4xl font-bold text-orange-700 tracking-wide">收件夾</h2>
-                <div class="text-sm text-gray-600">
-                    共 <span th:text="${#lists.size(notifications)}">0</span> 則通知
-                </div>
-            </div>
-
-            <!-- 通知篩選選項 -->
-            <div class="mb-6">
-                <div class="flex space-x-4">
-                    <button class="filter-btn active px-4 py-2 rounded-lg bg-orange-600 text-white font-medium transition" data-filter="all">
-                        全部通知
-                    </button>
-                    <button class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition" data-filter="violation">
-                        違規通知
-                    </button>
-                </div>
-            </div>
-
-            <!-- 通知列表 -->
-            <div class="notification-list space-y-4">
-                <!-- 無通知時的顯示 -->
-                <div th:if="${#lists.isEmpty(notifications)}" class="text-center py-12">
-                    <i class="material-icons-outlined text-6xl text-gray-300 mb-4">inbox</i>
-                    <p class="text-gray-500 text-lg">目前沒有任何通知</p>
-                    <p class="text-gray-400 text-sm mt-2">系統會在這裡顯示重要通知和檢舉處理結果</p>
+                    <p>目前沒有任何通知</p>
+                    <span>系統會在這裡顯示重要通知和檢舉處理結果</span>
                 </div>
 
-                <!-- 通知項目 -->
-                <div th:each="notification : ${notifications}" 
-                     class="notification-item bg-gray-50 border-l-4 border-red-500 rounded-lg p-6 hover:shadow-md transition-shadow"
-                     th:data-type="violation">
-                    
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <!-- 通知標頭 -->
-                            <div class="flex items-center mb-3">
-                                <i class="material-icons-outlined mr-2 text-red-600">warning</i>
-                                <span class="text-sm font-medium px-2 py-1 rounded text-red-600 bg-red-100">
-                                    檢舉通知
-                                </span>
-                                <span class="ml-auto text-sm text-gray-500"
-                                      th:text="${#dates.format(notification.repPostDate, 'yyyy-MM-dd HH:mm')}">
-                                    2024-01-15 14:30
-                                </span>
+                <!-- 通知列表 -->
+                <div class="notifications-container" th:if="${not #lists.isEmpty(notifications)}">
+                    <div th:each="notification : ${notifications}"
+                         class="notification-item"
+                         th:classappend="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? 'notification-violation' : 'notification-system'"
+                         th:data-type="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? 'violation' : 'system'">
+
+                        <div class="notification-header">
+                            <div class="notification-type">
+                                <i class="material-icons-outlined"
+                                   th:text="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? 'warning' : 'info'">info</i>
+                                <span class="type-label"
+                                      th:text="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? '違規通知' : '系統訊息'">系統訊息</span>
                             </div>
-                            
-                            <!-- 通知內容 -->
-                            <div class="text-gray-800 leading-relaxed mb-3 bg-white p-4 rounded border-l-2 border-red-200">
-                                
-                                <!-- 貼文檢舉 -->
-                                <div th:if="${notification.postReport}">
-                                    <p class="text-gray-800">
-                                        您的貼文「<span th:text="${notification.post != null ? notification.post.postTitle : '未知貼文'}">貼文標題</span>」因違反社群規範已被下架。
-                                    </p>
-                                </div>
-                                
-                                <!-- 留言檢舉 -->
-                                <div th:if="${notification.commentReport}">
-                                    <p class="text-gray-800">
-                                        您的留言已被管理員刪除
-                                    </p>
-                                </div>
+                            <span class="notification-time" th:text="${#temporals.format(notification.messTime, 'yyyy-MM-dd HH:mm')}">2024-01-15 14:30</span>
+                        </div>
+
+                        <div class="notification-content">
+                            <div class="message-content" th:text="${notification.messContent}">
+                                【系統通知】您的貼文「這是測試貼文標題」因違反社群規範已被下架。如有疑問，請聯繫客服。
                             </div>
-                            
-                            <!-- 通知來源 -->
-                            <div class="flex items-center text-sm text-gray-500">
-                                <i class="material-icons-outlined text-xs mr-1">admin_panel_settings</i>
-                                <span>檢舉系統</span>
-                                <span class="ml-4">
-                                    <i class="material-icons-outlined text-xs mr-1">schedule</i>
-                                    <span th:text="${#dates.format(notification.repPostDate, 'yyyy年MM月dd日 HH:mm')}">2024年01月15日 14:30</span>
-                                </span>
+                        </div>
+
+                        <div class="notification-footer">
+                            <div class="sender-info">
+                                <i class="material-icons-outlined">admin_panel_settings</i>
+                                <span>發送者：系統管理員</span>
+                            </div>
+                            <div class="full-time">
+                                <i class="material-icons-outlined">schedule</i>
+                                <span th:text="${#temporals.format(notification.messTime, 'yyyy年MM月dd日 HH:mm')}">2024年01月15日 14:30</span>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 分頁 -->
-            <div th:if="${totalPages > 1}" class="mt-8 flex justify-center">
-                <nav class="flex space-x-2">
-                    <!-- 上一頁 -->
-                    <a th:if="${currentPage > 0}" 
-                       th:href="@{/front/member/post/notifications(page=${currentPage - 1})}"
-                       class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center">
-                        <i class="material-icons-outlined text-sm mr-1">chevron_left</i>
-                        上一頁
-                    </a>
-                    
-                    <!-- 頁碼 -->
-                    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                        <a th:href="@{/front/member/post/notifications(page=${i})}"
-                           th:text="${i + 1}"
-                           class="px-4 py-2 rounded-lg transition"
-                           th:classappend="${i == currentPage} ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'">
+                <!-- 分頁 -->
+                <div th:if="${totalPages > 1}" class="pagination-section">
+                    <nav class="pagination-nav">
+                        <a th:if="${currentPage > 0}"
+                           th:href="@{/front/member/post/notifications(page=${currentPage - 1})}"
+                           class="pagination-btn">
+                            <i class="material-icons-outlined">chevron_left</i>
+                            上一頁
                         </a>
-                    </span>
-                    
-                    <!-- 下一頁 -->
-                    <a th:if="${currentPage < totalPages - 1}" 
-                       th:href="@{/front/member/post/notifications(page=${currentPage + 1})}"
-                       class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center">
-                        下一頁
-                        <i class="material-icons-outlined text-sm ml-1">chevron_right</i>
-                    </a>
-                </nav>
-            </div>
 
-            <!-- 返回按鈕 -->
-            <div class="mt-8 text-center">
-                <a th:href="@{/front/member/member_center}"
-                   class="inline-flex items-center bg-gray-300 text-gray-800 px-6 py-2 rounded-xl hover:bg-gray-400 transition duration-300 shadow">
-                    <i class="material-icons-outlined mr-2">arrow_back</i>
-                    返回會員中心
-                </a>
-            </div>
+                        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                            <a th:href="@{/front/member/post/notifications(page=${i})}"
+                               th:text="${i + 1}"
+                               class="pagination-number"
+                               th:classappend="${i == currentPage} ? 'active' : ''">1</a>
+                        </span>
+
+                        <a th:if="${currentPage < totalPages - 1}"
+                           th:href="@{/front/member/post/notifications(page=${currentPage + 1})}"
+                           class="pagination-btn">
+                            下一頁
+                            <i class="material-icons-outlined">chevron_right</i>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- 返回按鈕 -->
+                <div class="action-footer">
+                    <a th:href="@{/front/member/member_center}" class="btn btn-secondary">
+                        <i class="material-icons-outlined">arrow_back</i>
+                        返回會員中心
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-<footer th:replace="~{front/common/footer :: main-footer}"></footer>
-    <script>
-        // 篩選功能
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const notificationItems = document.querySelectorAll('.notification-item');
+</main>
 
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const filter = this.dataset.filter;
-                    
-                    // 更新按鈕狀態
-                    filterBtns.forEach(b => {
-                        b.classList.remove('active', 'bg-orange-600', 'text-white');
-                        b.classList.add('bg-gray-200', 'text-gray-700');
-                    });
-                    this.classList.add('active', 'bg-orange-600', 'text-white');
-                    this.classList.remove('bg-gray-200', 'text-gray-700');
-                    
-                    // 篩選通知
-                    notificationItems.forEach(item => {
-                        if (filter === 'all' || item.dataset.type === filter) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
+<!-- ======================= Footer ======================= -->
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+
+<!-- JavaScript (完全保留功能) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const notificationItems = document.querySelectorAll('.notification-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+
+                // 更新按鈕狀態
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 篩選通知
+                notificationItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.type === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
                 });
             });
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>

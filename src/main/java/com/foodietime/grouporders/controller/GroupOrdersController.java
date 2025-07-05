@@ -152,6 +152,7 @@ public class GroupOrdersController {
         if (member == null) {
             return "front/member/login";
         }
+        model.addAttribute("memberVO", member);
         Integer memId = member.getMemId();
         List<GroupOrdersVO> orders = groupOrdersService.getOrdersByMemberIsNotLeader(memId);
         model.addAttribute("orders", orders);
