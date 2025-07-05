@@ -740,6 +740,7 @@ body {
 	position: relative;
 	font-family: inherit;
 	animation: fadeIn 0.3s;
+	display: flex;
 	flex-direction: column;
 	gap: 16px;
 }

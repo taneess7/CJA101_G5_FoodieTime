@@ -14,20 +14,20 @@ public class PostCategoryService {
 	@Autowired
 	private PostCategoryRepository repository;
 	
-	public PostCategoryVO addPostCategory(String postCate) {
-		PostCategoryVO postcategoryVO = new PostCategoryVO();
-		postcategoryVO.setPostCate(postCate);
+	// public PostCategoryVO addPostCategory(String postCate) {
+	// 	PostCategoryVO postcategoryVO = new PostCategoryVO();
+	// 	postcategoryVO.setPostCate(postCate);
 		
-		return repository.save(postcategoryVO);
+	// 	return repository.save(postcategoryVO);
 		
-	}
+	// }
 	
-	public PostCategoryVO updatePostCategory(Integer postCateId, String postCate) {
-		PostCategoryVO postcategoryVO = new PostCategoryVO();
-		postcategoryVO.setPostCateId(postCateId);
-		postcategoryVO.setPostCate(postCate);
-		return repository.save(postcategoryVO);
-	}
+	// public PostCategoryVO updatePostCategory(Integer postCateId, String postCate) {
+	// 	PostCategoryVO postcategoryVO = new PostCategoryVO();
+	// 	postcategoryVO.setPostCateId(postCateId);
+	// 	postcategoryVO.setPostCate(postCate);
+	// 	return repository.save(postcategoryVO);
+	// }
 	
 	public void deletePostCategory(Integer postCateId) {
 		repository.deleteById(postCateId);

@@ -214,31 +214,33 @@
 					</div>
 				</div>
 			</div>
-			<div id="reportMessageModal">
-				<div class="modal-content">
-					<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
-					<form th:action="@{/reportmessage/insert}" method="post">
-						<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input
-							type="hidden" name="member.memId" th:value="${loginMember.memId}" />
-						<input type="hidden" name="repMessageStatus" value="0" /> <input
-							type="hidden" name="action" value="insert" />
-						<div class="mb-2">
-							<label for="repMessageReason" class="block mb-1">檢舉原因</label>
-							<textarea id="repMesReason" name="repMesReason"
-								class="w-full border rounded px-2 py-1" rows="3" maxlength="255"
-								required></textarea>
-						</div>
-						<div class="flex justify-end space-x-2 mt-3">
-							<button type="button" class="btn btn-secondary"
-								onclick="closeReportMessageModal()">取消</button>
-							<button type="submit" class="btn btn-danger">送出檢舉</button>
-						</div>
-					</form>
-					<button onclick="closeReportMessageModal()"
-						style="position: absolute; top: 8px; right: 12px;">✕</button>
-				</div>
-			</div>
 		</section>
+		
+		<!-- 檢舉留言 Modal -->
+		<div id="reportMessageModal">
+			<div class="modal-content">
+				<h3 class="text-lg font-bold mb-2">檢舉留言</h3>
+				<form th:action="@{/reportmessage/insert}" method="post">
+					<input type="hidden" name="mes.mesId" id="reportMessageId" /> <input
+						type="hidden" name="member.memId" th:value="${loginMember.memId}" />
+					<input type="hidden" name="repMessageStatus" value="0" /> <input
+						type="hidden" name="action" value="insert" />
+					<div class="mb-2">
+						<label for="repMessageReason" class="block mb-1">檢舉原因</label>
+						<textarea id="repMesReason" name="repMesReason"
+							class="w-full border rounded px-2 py-1" rows="3" maxlength="255"
+							required></textarea>
+					</div>
+					<div class="flex justify-end space-x-2 mt-3">
+						<button type="button" class="btn btn-secondary"
+							onclick="closeReportMessageModal()">取消</button>
+						<button type="submit" class="btn btn-danger">送出檢舉</button>
+					</div>
+				</form>
+				<button onclick="closeReportMessageModal()"
+					style="position: absolute; top: 8px; right: 12px;">✕</button>
+			</div>
+		</div>
 	</main>
 	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 </body>
