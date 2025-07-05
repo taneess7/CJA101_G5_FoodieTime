@@ -225,19 +225,19 @@
                             </table>
                         </div>
 
-                        <!-- Batch Actions and Pagination -->
-		                <div class="d-flex justify-content-between align-items-center mt-3">
-		    			<div>
-					        <button class="btn btn-primary me-2" onclick="batchChangeStatus(1)">
-					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「啟用」
-					        </button>
-					        <button class="btn btn-secondary me-2" onclick="batchChangeStatus(0)">
-					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「停用」
-					        </button>
-					        <button class="btn btn-danger me-2" onclick="batchChangeStatus(2)">
-							    <i class="fas fa-user-slash me-1"></i> 批量變更狀態為「停權」
-							</button>
-		    			</div>
+<!--                         Batch Actions and Pagination -->
+<!-- 		                <div class="d-flex justify-content-between align-items-center mt-3"> -->
+<!-- 		    			<div> -->
+<!-- 					        <button class="btn btn-primary me-2" onclick="batchChangeStatus(1)"> -->
+<!-- 					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「啟用」 -->
+<!-- 					        </button> -->
+<!-- 					        <button class="btn btn-secondary me-2" onclick="batchChangeStatus(0)"> -->
+<!-- 					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「停用」 -->
+<!-- 					        </button> -->
+<!-- 					        <button class="btn btn-danger me-2" onclick="batchChangeStatus(2)"> -->
+<!-- 							    <i class="fas fa-user-slash me-1"></i> 批量變更狀態為「停權」 -->
+<!-- 							</button> -->
+<!-- 		    			</div> -->
 
 
 
@@ -418,35 +418,35 @@
     </div>
 
 
-    <!-- Batch Permission Update Modal -->
-<div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<!--     Batch Permission Update Modal -->
+<!-- <div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel" aria-hidden="true"> -->
+<!--     <div class="modal-dialog"> -->
+<!--         <div class="modal-content"> -->
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="batchPermissionModalLabel">批量變更會員狀態</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<!--             <div class="modal-header"> -->
+<!--                 <h5 class="modal-title" id="batchPermissionModalLabel">批量變更會員狀態</h5> -->
+<!--                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+<!--             </div> -->
 
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    已選擇 <span id="selectedMembersCount">0</span> 位會員進行狀態變更
-                </div>
-                <div class="mb-3">
-                    <label for="batchPermissionReason" class="form-label">變更原因</label>
-                    <textarea class="form-control" id="batchPermissionReason" rows="3" placeholder="請輸入變更原因..."></textarea>
-                </div>
-            </div>
+<!--             <div class="modal-body"> -->
+<!--                 <div class="alert alert-info"> -->
+<!--                     <i class="fas fa-info-circle me-2"></i> -->
+<!--                     已選擇 <span id="selectedMembersCount">0</span> 位會員進行狀態變更 -->
+<!--                 </div> -->
+<!--                 <div class="mb-3"> -->
+<!--                     <label for="batchPermissionReason" class="form-label">變更原因</label> -->
+<!--                     <textarea class="form-control" id="batchPermissionReason" rows="3" placeholder="請輸入變更原因..."></textarea> -->
+<!--                 </div> -->
+<!--             </div> -->
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="confirmBatchPermissionUpdate()">確認變更</button>
-            </div>
+<!--             <div class="modal-footer"> -->
+<!--                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
+<!--                 <button type="button" class="btn btn-primary" onclick="confirmBatchPermissionUpdate()">確認變更</button> -->
+<!--             </div> -->
 
-        </div>
-    </div>
-</div>
+<!--         </div> -->
+<!--     </div> -->
+<!-- </div> -->
 	
 
     <!-- Bootstrap JS -->
@@ -600,104 +600,114 @@
         }
 
       
-        function batchChangeStatus(targetStatus) {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            if (selectedMembers.length === 0) {
-                alert('請選擇要變更狀態的會員');
-                return;
-            }
+//         function batchChangeStatus(targetStatus) {
+//             const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+//             if (selectedMembers.length === 0) {
+//                 alert('請選擇要變更狀態的會員');
+//                 return;
+//             }
 
-            // 記錄選幾個
-            document.getElementById('selectedMembersCount').textContent = selectedMembers.length;
+//             // 記錄選幾個
+//             document.getElementById('selectedMembersCount').textContent = selectedMembers.length;
 
-            // 存 targetStatus 進 global variable（因為 modal 裡確認按鈕需要用）
-            window.batchTargetStatus = targetStatus;
+//             // 存 targetStatus 進 global variable（因為 modal 裡確認按鈕需要用）
+//             window.batchTargetStatus = targetStatus;
 
-            // 清空 reason
-            document.getElementById('batchPermissionReason').value = '';
+//             // 清空 reason
+//             document.getElementById('batchPermissionReason').value = '';
 
-            // 開 modal
-            const modal = new bootstrap.Modal(document.getElementById('batchPermissionModal'));
-            modal.show();
-        }
+//             // 開 modal
+//             const modal = new bootstrap.Modal(document.getElementById('batchPermissionModal'));
+//             modal.show();
+//         }
 		
-        function confirmBatchPermissionUpdate() {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            const reason = document.getElementById('batchPermissionReason').value;
+//         function confirmBatchPermissionUpdate() {
+//             const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+//             const reason = document.getElementById('batchPermissionReason').value;
 
-            if (!reason.trim()) {
-                alert('請輸入變更原因');
-                return;
-            }
+//             if (!reason.trim()) {
+//                 alert('請輸入變更原因');
+//                 return;
+//             }
 
-            const ids = Array.from(selectedMembers).map(cb => cb.getAttribute('data-member-id'));
+//             const ids = Array.from(selectedMembers).map(cb => cb.getAttribute('data-member-id'));
+//             const today = new Date().toISOString().slice(0, 10);
+//             const operator = '[[${session.loggedInSmg.smgrName}]]';
+//             const statusText = window.batchTargetStatus == 1 ? '啟用' : (window.batchTargetStatus == 0 ? '停用' : '停權');
 
-            fetch('/smg/admin-members-permissions/batch-update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    memIds: ids,
-                    targetStatus: window.batchTargetStatus,
-                    reason: reason
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                	ids.forEach(memId => {
-                	    const batchHistoryRow = `
-                	        <tr>
-                	            <td>${new Date().toISOString().slice(0, 10)}</td>
-                	            <td>
-                	                <ul style="padding-left: 1em;">
-                	                    <li>狀態: 批量變更 ➔ ${window.batchTargetStatus == 1 ? '啟用' : '停用'}</li>
-                	                </ul>
-                	            </td>
-                	            <td>系統管理員</td>
-                	            <td>${reason}</td>
-                	        </tr>
-                	    `;
-                	    saveHistoryToLocal(memId, batchHistoryRow);
-                	});
-                    alert(`批量變更成功，共 ${data.updatedCount} 位會員`);
-                 // --- 存 localStorage ---
-                    const savedData = JSON.parse(localStorage.getItem('adminMembersPageData')) || {
-                        version: currentVersion,
-                        batchPermissionHistory: [],
-                        permissionHistory: [],
-                        searchConditions: {}
-                    };
+//             fetch('/smg/admin-members-permissions/batch-update-status', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({
+//                     memIds: ids,
+//                     targetStatus: window.batchTargetStatus,
+//                     reason: reason
+//                 })
+//             })
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data.success) {
+//                     ids.forEach(memId => {
+//                         const batchHistoryRow = `
+//                             <tr>
+//                                 <td>${today}</td>
+//                                 <td>
+//                                     <ul style="padding-left: 1em;">
+//                                         <li>狀態: 批量變更 ➔ ${statusText}</li>
+//                                     </ul>
+//                                 </td>
+//                                 <td>${operator}</td>
+//                                 <td>${reason}</td>
+//                             </tr>
+//                         `;
+//                         saveHistoryToLocal(memId, batchHistoryRow);
 
-                    const newHistoryItem = {
-                            date: new Date().toISOString().substring(0, 10),
-                            targetStatus: window.batchTargetStatus == 1 ? '啟用' : '停用',
-                            memberCount: ids.length,
-                            operator: '[[${session.loggedInSmg.smgrName}]]',
-                            reason: reason
-                        };
+//                         // ✅ 即時更新畫面上的日期與操作人員欄位
+//                         const row = document.querySelector(`.member-checkbox[data-member-id="${memId}"]`)?.closest('tr');
+//                         if (row) {
+//                             const dateCell = row.querySelector('td:nth-child(6) div');
+//                             const byCell = row.querySelector('td:nth-child(6) small');
+//                             if (dateCell) dateCell.textContent = `${today}（本地）`;
+//                             if (byCell) byCell.textContent = operator;
+//                         }
+//                     });
 
-                    	savedData.batchPermissionHistory.unshift(newHistoryItem);
+//                     // ✅ 更新 localStorage 全局歷史紀錄
+//                     const savedData = JSON.parse(localStorage.getItem('adminMembersPageData')) || {
+//                         version: currentVersion,
+//                         batchPermissionHistory: [],
+//                         permissionHistory: [],
+//                         searchConditions: {}
+//                     };
 
-                        // 最多只保留 20 筆
-                        if (savedData.batchPermissionHistory.length > 20) {
-						    savedData.batchPermissionHistory = savedData.batchPermissionHistory.slice(0, 20);
-						}
-						
-						localStorage.setItem('adminMembersPageData', JSON.stringify(savedData));
+//                     const newHistoryItem = {
+//                         date: today,
+//                         targetStatus: statusText,
+//                         memberCount: ids.length,
+//                         operator: operator,
+//                         reason: reason
+//                     };
 
-                    bootstrap.Modal.getInstance(document.getElementById('batchPermissionModal')).hide();
-                    location.reload();
-                } else {
-                    alert('批量變更失敗');
-                }
-            })
-            .catch(error => {
-                console.error('發生錯誤:', error);
-                alert('批量變更失敗');
-            });
-        }
+//                     savedData.batchPermissionHistory.unshift(newHistoryItem);
+//                     if (savedData.batchPermissionHistory.length > 20) {
+//                         savedData.batchPermissionHistory = savedData.batchPermissionHistory.slice(0, 20);
+//                     }
+//                     localStorage.setItem('adminMembersPageData', JSON.stringify(savedData));
+
+//                     alert(`批量變更成功，共 ${data.updatedCount} 位會員`);
+//                     bootstrap.Modal.getInstance(document.getElementById('batchPermissionModal')).hide();
+//                 } else {
+//                     alert('批量變更失敗');
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error('發生錯誤:', error);
+//                 alert('批量變更失敗');
+//             });
+//         }
+
 
 
 
