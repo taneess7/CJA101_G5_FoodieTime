@@ -53,7 +53,7 @@ public enum ActCategoryEnum {
 
  // 類型 2: 店家分類符合
     DRINK_DAY(List.of("優惠活動"), (prod, act) -> {
-    	 String catName = prod.getStore().getStorCatName();
+    	String catName = prod.getProductCategory().getProdCate(); // 改為商品分類名稱
     	    int price = prod.getProdPrice();
     	    double value = act.getActDiscValue();   // 折扣值
     	    Byte type = act.getActDiscount();    // 折扣類型：1 = 減價、0 = 百分比
