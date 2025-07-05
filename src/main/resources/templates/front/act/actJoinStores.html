@@ -115,14 +115,23 @@
 }
 
 .btn-secondary {
-  background-color: #666;
+  position: relative;
+  background-color: #f99ca1; /* 粉紅色背景 */
+  border: none;
+  padding: 8px 12px;
+  font-size: 15px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  overflow: hidden;
+   border-radius: 8px; /* ← 圓角設定 */
 }
 .btn-secondary:hover {
-  background-color: #444;
+  background-color: rgb(255, 128, 192);
 }
 
 .acts-container {
-  background-color: gray;
+  background-color: rgb(255, 128, 128);
   display: flex;
   flex-wrap: wrap;      /* ✅ 多的自動換行 */
   flex-direction: row;  /* ✅ 水平排列（預設就是 row，可以加強明確性） */
