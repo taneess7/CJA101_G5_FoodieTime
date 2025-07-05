@@ -126,8 +126,8 @@ import jakarta.servlet.http.HttpSession;
 	                dto.setAvatarBase64("");
 	            }
 
-	            dto.setLastModifiedDate(LocalDate.now().toString());
-	            dto.setLastModifiedBy("系統管理員");
+	            dto.setLastModifiedDate("-"); // 或 null，看你前端怎麼處理
+	            dto.setLastModifiedBy("-");
 
 	            return dto;
 	        }).collect(Collectors.toList());
