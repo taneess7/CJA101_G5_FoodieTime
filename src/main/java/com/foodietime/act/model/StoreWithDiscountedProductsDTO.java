@@ -3,14 +3,21 @@ package com.foodietime.act.model;
 import java.util.List;
 
 public class StoreWithDiscountedProductsDTO {
-	 private String storName;
+	private Integer storId;
+	    private String storName;
 	    private List<ProductDiscountDTO> products;
 
-	    public StoreWithDiscountedProductsDTO(String storName, List<ProductDiscountDTO> products) {
-	        this.storName = storName;
+	    public StoreWithDiscountedProductsDTO(Integer storId, String storName, List<ProductDiscountDTO> products) {
+	    	this.storId = storId;  //給參與店家頁面跳轉用
+	    	this.storName = storName;
 	        this.products = products;
 	    }
 
+	    
+	    public Integer getStorId() {
+	        return storId;
+	    }
+	    
 	    public String getStorName() {
 	        return storName;
 	    }

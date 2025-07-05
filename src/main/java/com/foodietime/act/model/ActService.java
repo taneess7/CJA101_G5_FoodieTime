@@ -73,7 +73,10 @@ public class ActService {
 		return actPartRepo.existsByStore_StorIdAndAct_ActId(storId, actId);
 	}
 	
-
+   //顯示參與活動的店家 (dto) 沒有用到
+	public List<ActStoreDTO> getActsWithStores() {
+        return repository.findAllWithStore();
+    }
 
 
 	// 更新 - 查資料後再改欄位

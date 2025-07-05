@@ -295,14 +295,18 @@ document.addEventListener('click', function (e) {
         	  document.getElementById('modal-overlay').style.display = 'block';
 	        } else {
 	          data.forEach(store => {  //迴圈加資料
-	        	  
+	        	  console.log("🔍 store =", store); //console可看到storId
 	            const li = document.createElement('li');
 	         // 建立店家名稱
-	            const storeName = document.createElement('strong');
-	            storeName.textContent = store.storName;
-	            storeName.style.color = '#4A90E2';
-
-	            li.appendChild(storeName);
+	            const storeLink = document.createElement('a')
+	            storeLink.textContent = store.storName;
+	            storeLink.href = `/category/store/${store.storId}`;  // ✅ 設定連結
+	            storeLink.style.color = '#4A90E2';
+	            storeLink.style.fontWeight = 'bold';  // 模擬 strong 樣式
+	            storeLink.style.textDecoration = 'none';  // 可選：去除底線
+	            storeLink.target = '_blank';  // 可選：在新視窗打開
+	            li.appendChild(storeLink); // ✅ 這裡改成 storeLink 而不是 storeName
+	        
 	           
 
 	            // 如果有商品，加入商品表格
