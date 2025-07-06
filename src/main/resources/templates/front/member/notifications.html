@@ -101,23 +101,34 @@
                 <!-- 通知列表 -->
                 <div class="notifications-container" th:if="${not #lists.isEmpty(notifications)}">
                     <div th:each="notification : ${notifications}"
-                         class="notification-item"
-                         th:classappend="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? 'notification-violation' : 'notification-system'"
-                         th:data-type="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? 'violation' : 'system'">
+                         class="notification-item notification-violation"
+                         data-type="violation">
 
                         <div class="notification-header">
                             <div class="notification-type">
-                                <i class="material-icons-outlined"
-                                   th:text="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? 'warning' : 'info'">info</i>
-                                <span class="type-label"
-                                      th:text="${#strings.contains(notification.messContent, '違反') or #strings.contains(notification.messContent, '下架') or #strings.contains(notification.messContent, '刪除')} ? '違規通知' : '系統訊息'">系統訊息</span>
+                                <i class="material-icons-outlined">warning</i>
+                                <span class="type-label">違規通知</span>
                             </div>
-                            <span class="notification-time" th:text="${#temporals.format(notification.messTime, 'yyyy-MM-dd HH:mm')}">2024-01-15 14:30</span>
+                            <span class="notification-time" th:text="${#dates.format(notification.repPostDate, 'yyyy-MM-dd HH:mm')}">2024-01-15 14:30</span>
                         </div>
 
                         <div class="notification-content">
-                            <div class="message-content" th:text="${notification.messContent}">
-                                【系統通知】您的貼文「這是測試貼文標題」因違反社群規範已被下架。如有疑問，請聯繫客服。
+                            <div class="message-content">
+                                <!-- 根據檢舉類型顯示不同的內容 -->
+                                <div th:if="${notification.postReport}">
+                                    <!-- 貼文檢舉通知 -->
+                                    <span>【系統通知】您的貼文「</span>
+                                    <span th:text="${notification.post?.postTitle ?: '未知貼文'}">貼文標題</span>
+                                    <span>」因違反社群規範已被下架。</span>
+                                    
+                                    <span>如有疑問，請聯繫客服。</span>
+                                </div>
+                                <div th:if="${notification.commentReport}">
+                                    <!-- 留言檢舉通知 -->
+                                    <span>【系統通知】您的留言因違反社群規範已被刪除。</span>
+                                    
+                                    <span>如有疑問，請聯繫客服。</span>
+                                </div>
                             </div>
                         </div>
 
@@ -128,8 +139,7 @@
                             </div>
                             <div class="full-time">
                                 <i class="material-icons-outlined">schedule</i>
-                                <span th:text="${#temporals.format(notification.messTime, 'yyyy年MM月dd日 HH:mm')}">2024年01月15日 14:30</span>
-
+                                <span th:text="${#dates.format(notification.repPostDate, 'yyyy年MM月dd日 HH:mm')}">2024年01月15日 14:30</span>
                             </div>
                         </div>
                     </div>
