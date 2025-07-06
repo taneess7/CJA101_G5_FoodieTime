@@ -457,7 +457,7 @@ public class ReportPostService {
 	 * @return true 如果會員被禁止發文，false 否則
 	 */
 	public boolean isMemberBannedFromPosting(Integer memberId) {
-		return isMemberBannedFromPosting(memberId, 5);
+		return isMemberBannedFromPosting(memberId, 100);
 	}
 
 	/**
@@ -466,38 +466,38 @@ public class ReportPostService {
 	 * @return 檢舉通知列表
 	 */
 	public List<ForumReportDTO> getNotificationsByMemberId(Integer memberId) {
-		List<ForumReportDTO> notifications = new ArrayList<>();
-		
-		// 取得該會員被檢舉的貼文
-		List<ReportPostVO> postReports = repository.findByMember_MemId(memberId);
-		for (ReportPostVO report : postReports) {
-			ForumReportDTO dto = new ForumReportDTO();
-			dto.setRepPostId(report.getRepPostId());
-			dto.setPost(report.getPost());
-			dto.setMember(report.getMember());
-			dto.setRepPostDate(report.getRepPostDate());
-			dto.setRepPostReason(report.getRepPostReason());
-			dto.setRepPostStatus(report.getRepPostStatus());
-			notifications.add(dto);
-		}
-		
-		// 取得該會員被檢舉的留言
-		List<ReportMessageVO> messageReports = reportMessageRepository.findByMember_MemId(memberId);
-		for (ReportMessageVO report : messageReports) {
-			ForumReportDTO dto = new ForumReportDTO();
-			dto.setRepPostId(report.getRepMesId());
-			dto.setComment(report.getMes());
-			dto.setMember(report.getMember());
-			dto.setRepPostDate(report.getRepMesDate());
-			dto.setRepPostReason(report.getRepMesReason());
-			dto.setRepPostStatus(report.getRepMesStatus());
-			notifications.add(dto);
-		}
-		
-		// 依檢舉時間降序排列
-		notifications.sort((a, b) -> b.getRepPostDate().compareTo(a.getRepPostDate()));
-		
-		return notifications;
+	    List<ForumReportDTO> notifications = new ArrayList<>();
+
+	    // 查詢這個會員發的貼文被檢舉
+	    List<ReportPostVO> postReports = repository.findByPost_Member_MemId(memberId);
+	    for (ReportPostVO report : postReports) {
+	        ForumReportDTO dto = new ForumReportDTO();
+	        dto.setRepPostId(report.getRepPostId());
+	        dto.setPost(report.getPost());
+	        // 這裡設定被檢舉人（貼文作者）
+	        dto.setMember(report.getPost().getMember());
+	        dto.setRepPostDate(report.getRepPostDate());
+	        dto.setRepPostReason(report.getRepPostReason());
+	        dto.setRepPostStatus(report.getRepPostStatus());
+	        notifications.add(dto);
+	    }
+
+	    // 查詢這個會員發的留言被檢舉
+	    List<ReportMessageVO> messageReports = reportMessageRepository.findByMes_Member_MemId(memberId);
+	    for (ReportMessageVO report : messageReports) {
+	        ForumReportDTO dto = new ForumReportDTO();
+	        dto.setRepPostId(report.getRepMesId());
+	        dto.setComment(report.getMes());
+	        // 這裡設定被檢舉人（留言作者）
+	        dto.setMember(report.getMes().getMember());
+	        dto.setRepPostDate(report.getRepMesDate());
+	        dto.setRepPostReason(report.getRepMesReason());
+	        dto.setRepPostStatus(report.getRepMesStatus());
+	        notifications.add(dto);
+	    }
+
+	    notifications.sort((a, b) -> b.getRepPostDate().compareTo(a.getRepPostDate()));
+	    return notifications;
 	}
 
 	/**

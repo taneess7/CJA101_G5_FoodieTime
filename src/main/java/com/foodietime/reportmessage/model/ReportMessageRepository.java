@@ -34,4 +34,6 @@ public interface ReportMessageRepository extends JpaRepository<ReportMessageVO, 
 	 * @return 該會員的留言檢舉列表
 	 */
 	List<ReportMessageVO> findByMember_MemId(Integer memId);
+	
+	List<ReportMessageVO> findByMes_Member_MemId(Integer memId);
 }
