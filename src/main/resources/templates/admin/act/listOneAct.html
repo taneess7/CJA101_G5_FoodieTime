@@ -21,15 +21,31 @@
 		display: inline-block;
 		width: 200px;
 		text-align: left;
-		font-weight: bold;
+		
 	}
 	
 	body { /*讓nav不要蓋住內容*/
-		  margin: 120px auto 2rem auto;
+		  margin: 0px auto 2rem auto;
 		  padding: 1rem;
 		  max-width: 100%;
 		  overflow-x: hidden;
 		}
+		
+	 .custom-btn {
+	     background-color: #ff6b6b;
+	    color: white;
+	    border: none;
+	    padding: 6px 12px;           /* ✅ 原本是 10px 25px，這裡縮小 */
+	    font-size: 0.9rem;           /* ✅ 原本是 1rem */
+	    font-weight: 600;
+	    border-radius: 6px;          /* ✅ 原本是 8px */
+	    box-shadow: 0 3px 6px rgba(255, 107, 107, 0.3);
+	    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	    cursor: pointer;
+	    display: inline-block;
+	    text-align: center;
+	    user-select: none;
+	}
 </style>
 </head>
 <body>
@@ -38,7 +54,7 @@
 		 <div align="center"> <h2>單一活動資料</h2>
 		     	     
 <!-- 			 <sapn><a class="navbar-brand" th:href="@{/act/select_page}">回查詢頁</a></span> -->
-         	 <sapn><a class="navbar-brand" th:href="@{/act/listAllAct}">回活動列表</a><sapn><label th:text="${success}"></label>
+         	 <sapn><a class="custom-btn"  style="text-decoration: none; "th:href="@{/act/listAllAct}">回活動列表</a><sapn><label th:text="${success}"></label>
 			
 		 </div>
 
