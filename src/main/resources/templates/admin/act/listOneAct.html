@@ -35,8 +35,13 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>單一活動資料 - listOneAct.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}">回查詢頁<label th:text="${success}"></label></a></h3></div>
+		 <div align="center"> <h2>單一活動資料</h2>
+		     	     
+<!-- 			 <sapn><a class="navbar-brand" th:href="@{/act/select_page}">回查詢頁</a></span> -->
+         	 <sapn><a class="navbar-brand" th:href="@{/act/listAllAct}">回活動列表</a><sapn><label th:text="${success}"></label>
+			
+		 </div>
+
 </nav>
 
 	<div align="center" th:fragment="listOneAct-div"> <!-- 此div被select_page.html第158行insert用 -->

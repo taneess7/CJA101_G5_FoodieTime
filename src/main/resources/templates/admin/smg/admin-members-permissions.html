@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- 自訂CSS -->
     <link rel="stylesheet" th:href="@{/css/admin/admin-style.css}">
+    <script src="/js/admin/admin-permission.js"></script>
     
     <style>
 	  html, body {
@@ -155,16 +156,7 @@
                             </div>
                             
                             
-                            <div class="col-md-2">
-                                <label for="lastModified" class="form-label">最後修改</label>
-                                <select class="form-select" id="lastModified" name="lastModified" th:value="${param.keyword}">
-                                    <option value="">全部時間</option>
-                                    <option value="today">今天</option>
-                                    <option value="week">本週</option>
-                                    <option value="month">本月</option>
-                                    <option value="quarter">本季</option>
-                                </select>
-                            </div>
+                           
                             <div class="col-md-1 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary w-100">
                                     <i class="fas fa-search"></i>
@@ -184,7 +176,6 @@
                                         <th>聯絡資訊</th>                                 
                                         <th>註冊日期</th>
                                         <th>狀態</th>                                 
-                                        <th>最後修改</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -218,10 +209,6 @@
 		</span>
     </td>
     <td>
-        <div th:text="${member.lastModifiedDate != '-' ? member.lastModifiedDate : '尚無紀錄'}"></div>
-		<small th:text="${member.lastModifiedBy != '-' ? member.lastModifiedBy : ''}"></small>
-    </td>
-    <td>
         <button class="btn btn-sm btn-outline-primary me-1"
                 th:attr="onclick=|editPermissions(${member.memId}, true)|">
             <i class="fas fa-eye"></i>
@@ -238,19 +225,19 @@
                             </table>
                         </div>
 
-                        <!-- Batch Actions and Pagination -->
-		                <div class="d-flex justify-content-between align-items-center mt-3">
-		    			<div>
-					        <button class="btn btn-primary me-2" onclick="batchChangeStatus(1)">
-					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「啟用」
-					        </button>
-					        <button class="btn btn-secondary me-2" onclick="batchChangeStatus(0)">
-					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「停用」
-					        </button>
-					        <button class="btn btn-danger me-2" onclick="batchChangeStatus(2)">
-							    <i class="fas fa-user-slash me-1"></i> 批量變更狀態為「停權」
-							</button>
-		    			</div>
+<!--                         Batch Actions and Pagination -->
+<!-- 		                <div class="d-flex justify-content-between align-items-center mt-3"> -->
+<!-- 		    			<div> -->
+<!-- 					        <button class="btn btn-primary me-2" onclick="batchChangeStatus(1)"> -->
+<!-- 					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「啟用」 -->
+<!-- 					        </button> -->
+<!-- 					        <button class="btn btn-secondary me-2" onclick="batchChangeStatus(0)"> -->
+<!-- 					            <i class="fas fa-edit me-1"></i> 批量變更狀態為「停用」 -->
+<!-- 					        </button> -->
+<!-- 					        <button class="btn btn-danger me-2" onclick="batchChangeStatus(2)"> -->
+<!-- 							    <i class="fas fa-user-slash me-1"></i> 批量變更狀態為「停權」 -->
+<!-- 							</button> -->
+<!-- 		    			</div> -->
 
 
 
@@ -423,7 +410,7 @@
                     <!-- Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary" onclick="savePermissionChanges()">儲存變更</button>
+                        <button type="button" class="btn btn-primary" onclick="AdminPermissionManager.savePermissionChanges()">儲存變更</button>
                     </div>
                 </form>
             </div>
@@ -431,35 +418,35 @@
     </div>
 
 
-    <!-- Batch Permission Update Modal -->
-<div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<!--     Batch Permission Update Modal -->
+<!-- <div class="modal fade" id="batchPermissionModal" tabindex="-1" aria-labelledby="batchPermissionModalLabel" aria-hidden="true"> -->
+<!--     <div class="modal-dialog"> -->
+<!--         <div class="modal-content"> -->
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="batchPermissionModalLabel">批量變更會員狀態</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<!--             <div class="modal-header"> -->
+<!--                 <h5 class="modal-title" id="batchPermissionModalLabel">批量變更會員狀態</h5> -->
+<!--                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+<!--             </div> -->
 
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    已選擇 <span id="selectedMembersCount">0</span> 位會員進行狀態變更
-                </div>
-                <div class="mb-3">
-                    <label for="batchPermissionReason" class="form-label">變更原因</label>
-                    <textarea class="form-control" id="batchPermissionReason" rows="3" placeholder="請輸入變更原因..."></textarea>
-                </div>
-            </div>
+<!--             <div class="modal-body"> -->
+<!--                 <div class="alert alert-info"> -->
+<!--                     <i class="fas fa-info-circle me-2"></i> -->
+<!--                     已選擇 <span id="selectedMembersCount">0</span> 位會員進行狀態變更 -->
+<!--                 </div> -->
+<!--                 <div class="mb-3"> -->
+<!--                     <label for="batchPermissionReason" class="form-label">變更原因</label> -->
+<!--                     <textarea class="form-control" id="batchPermissionReason" rows="3" placeholder="請輸入變更原因..."></textarea> -->
+<!--                 </div> -->
+<!--             </div> -->
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="confirmBatchPermissionUpdate()">確認變更</button>
-            </div>
+<!--             <div class="modal-footer"> -->
+<!--                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
+<!--                 <button type="button" class="btn btn-primary" onclick="confirmBatchPermissionUpdate()">確認變更</button> -->
+<!--             </div> -->
 
-        </div>
-    </div>
-</div>
+<!--         </div> -->
+<!--     </div> -->
+<!-- </div> -->
 	
 
     <!-- Bootstrap JS -->
@@ -613,253 +600,116 @@
         }
 
       
-        function batchChangeStatus(targetStatus) {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            if (selectedMembers.length === 0) {
-                alert('請選擇要變更狀態的會員');
-                return;
-            }
+//         function batchChangeStatus(targetStatus) {
+//             const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+//             if (selectedMembers.length === 0) {
+//                 alert('請選擇要變更狀態的會員');
+//                 return;
+//             }
 
-            // 記錄選幾個
-            document.getElementById('selectedMembersCount').textContent = selectedMembers.length;
+//             // 記錄選幾個
+//             document.getElementById('selectedMembersCount').textContent = selectedMembers.length;
 
-            // 存 targetStatus 進 global variable（因為 modal 裡確認按鈕需要用）
-            window.batchTargetStatus = targetStatus;
+//             // 存 targetStatus 進 global variable（因為 modal 裡確認按鈕需要用）
+//             window.batchTargetStatus = targetStatus;
 
-            // 清空 reason
-            document.getElementById('batchPermissionReason').value = '';
+//             // 清空 reason
+//             document.getElementById('batchPermissionReason').value = '';
 
-            // 開 modal
-            const modal = new bootstrap.Modal(document.getElementById('batchPermissionModal'));
-            modal.show();
-        }
+//             // 開 modal
+//             const modal = new bootstrap.Modal(document.getElementById('batchPermissionModal'));
+//             modal.show();
+//         }
 		
-        function confirmBatchPermissionUpdate() {
-            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
-            const reason = document.getElementById('batchPermissionReason').value;
+//         function confirmBatchPermissionUpdate() {
+//             const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+//             const reason = document.getElementById('batchPermissionReason').value;
 
-            if (!reason.trim()) {
-                alert('請輸入變更原因');
-                return;
-            }
+//             if (!reason.trim()) {
+//                 alert('請輸入變更原因');
+//                 return;
+//             }
 
-            const ids = Array.from(selectedMembers).map(cb => cb.getAttribute('data-member-id'));
+//             const ids = Array.from(selectedMembers).map(cb => cb.getAttribute('data-member-id'));
+//             const today = new Date().toISOString().slice(0, 10);
+//             const operator = '[[${session.loggedInSmg.smgrName}]]';
+//             const statusText = window.batchTargetStatus == 1 ? '啟用' : (window.batchTargetStatus == 0 ? '停用' : '停權');
 
-            fetch('/smg/admin-members-permissions/batch-update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    memIds: ids,
-                    targetStatus: window.batchTargetStatus,
-                    reason: reason
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                	ids.forEach(memId => {
-                	    const batchHistoryRow = `
-                	        <tr>
-                	            <td>${new Date().toISOString().slice(0, 10)}</td>
-                	            <td>
-                	                <ul style="padding-left: 1em;">
-                	                    <li>狀態: 批量變更 ➔ ${window.batchTargetStatus == 1 ? '啟用' : '停用'}</li>
-                	                </ul>
-                	            </td>
-                	            <td>系統管理員</td>
-                	            <td>${reason}</td>
-                	        </tr>
-                	    `;
-                	    saveHistoryToLocal(memId, batchHistoryRow);
-                	});
-                    alert(`批量變更成功，共 ${data.updatedCount} 位會員`);
-                 // --- 存 localStorage ---
-                    const savedData = JSON.parse(localStorage.getItem('adminMembersPageData')) || {
-                        version: currentVersion,
-                        batchPermissionHistory: [],
-                        permissionHistory: [],
-                        searchConditions: {}
-                    };
+//             fetch('/smg/admin-members-permissions/batch-update-status', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({
+//                     memIds: ids,
+//                     targetStatus: window.batchTargetStatus,
+//                     reason: reason
+//                 })
+//             })
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data.success) {
+//                     ids.forEach(memId => {
+//                         const batchHistoryRow = `
+//                             <tr>
+//                                 <td>${today}</td>
+//                                 <td>
+//                                     <ul style="padding-left: 1em;">
+//                                         <li>狀態: 批量變更 ➔ ${statusText}</li>
+//                                     </ul>
+//                                 </td>
+//                                 <td>${operator}</td>
+//                                 <td>${reason}</td>
+//                             </tr>
+//                         `;
+//                         saveHistoryToLocal(memId, batchHistoryRow);
 
-                    const newHistoryItem = {
-                            date: new Date().toISOString().substring(0, 10),
-                            targetStatus: window.batchTargetStatus == 1 ? '啟用' : '停用',
-                            memberCount: ids.length,
-                            operator: '[[${session.loggedInSmg.smgrName}]]',
-                            reason: reason
-                        };
+//                         // ✅ 即時更新畫面上的日期與操作人員欄位
+//                         const row = document.querySelector(`.member-checkbox[data-member-id="${memId}"]`)?.closest('tr');
+//                         if (row) {
+//                             const dateCell = row.querySelector('td:nth-child(6) div');
+//                             const byCell = row.querySelector('td:nth-child(6) small');
+//                             if (dateCell) dateCell.textContent = `${today}（本地）`;
+//                             if (byCell) byCell.textContent = operator;
+//                         }
+//                     });
 
-                    	savedData.batchPermissionHistory.unshift(newHistoryItem);
+//                     // ✅ 更新 localStorage 全局歷史紀錄
+//                     const savedData = JSON.parse(localStorage.getItem('adminMembersPageData')) || {
+//                         version: currentVersion,
+//                         batchPermissionHistory: [],
+//                         permissionHistory: [],
+//                         searchConditions: {}
+//                     };
 
-                        // 最多只保留 20 筆
-                        if (savedData.batchPermissionHistory.length > 20) {
-						    savedData.batchPermissionHistory = savedData.batchPermissionHistory.slice(0, 20);
-						}
-						
-						localStorage.setItem('adminMembersPageData', JSON.stringify(savedData));
+//                     const newHistoryItem = {
+//                         date: today,
+//                         targetStatus: statusText,
+//                         memberCount: ids.length,
+//                         operator: operator,
+//                         reason: reason
+//                     };
 
-                    bootstrap.Modal.getInstance(document.getElementById('batchPermissionModal')).hide();
-                    location.reload();
-                } else {
-                    alert('批量變更失敗');
-                }
-            })
-            .catch(error => {
-                console.error('發生錯誤:', error);
-                alert('批量變更失敗');
-            });
-        }
+//                     savedData.batchPermissionHistory.unshift(newHistoryItem);
+//                     if (savedData.batchPermissionHistory.length > 20) {
+//                         savedData.batchPermissionHistory = savedData.batchPermissionHistory.slice(0, 20);
+//                     }
+//                     localStorage.setItem('adminMembersPageData', JSON.stringify(savedData));
 
-
-
-        
-        function savePermissionChanges() {
-            const memId = document.getElementById('modalMemId').value;
-            const memStatus = document.getElementById('memStatus').value;
-            const memNoSpeak = document.getElementById('memNoSpeak').value;
-            const memNoPost = document.getElementById('memNoPost').value;
-            const memNoGroup = document.getElementById('memNoGroup').value;
-            const memNoJoingroup = document.getElementById('memNoJoingroup').value;
-            const permissionReason = document.getElementById('permissionReason').value;
-
-            const formData = new URLSearchParams();
-            formData.append("memId", memId);
-            formData.append("memStatus", memStatus);
-            formData.append("memNoSpeak", memNoSpeak);
-            formData.append("memNoPost", memNoPost);
-            formData.append("memNoGroup", memNoGroup);
-            formData.append("memNoJoingroup", memNoJoingroup);
-            formData.append("permissionReason", permissionReason);
-
-            fetch('/smg/admin-members-permissions/update-status', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest' // 識別為 AJAX 請求
-                }
-            })
-            .then(response => {
-                const contentType = response.headers.get("content-type");
-
-                // 🔐 未登入或非 JSON 錯誤（例如返回 HTML）
-                if (!response.ok || !contentType || !contentType.includes("application/json")) {
-                    if (response.status === 401 || response.redirected) {
-                        alert('請重新登入管理員帳號！');
-                        window.location.href = '/smg/login';
-                        return Promise.reject();
-                    }
-                    throw new Error('伺服器回應格式錯誤或非預期錯誤');
-                }
-
-                return response.json(); // 安全解析 JSON
-            })
-            .then(data => {
-            	
-                if (!data) return;
-
-                if (data.success) {
-                    if (data.kickedOut === true) {
-                    	console.log('回傳資料:', data); // ✅ 加這行
-                        alert("該會員目前登入中，已被強制登出。");
-                        return;
-                    } 
-	                    alert('更新成功');
-	                    // ✅ 更新畫面狀態
-                    const row = document.querySelector(`input[data-member-id="${data.memId}"]`)?.closest('tr');
-                    if (row) {
-                        const statusSpan = row.querySelector('td:nth-child(5) span');
-                        if (data.memStatus == 0) {
-                            statusSpan.className = 'badge bg-secondary';
-                            statusSpan.textContent = '尚未啟用';
-                        } else if (data.memStatus == 1) {
-                            statusSpan.className = 'badge bg-success';
-                            statusSpan.textContent = '啟用';
-                        } else if (data.memStatus == 2) {
-                            statusSpan.className = 'badge bg-danger';
-                            statusSpan.textContent = '停權';
-                        }
-
-                        row.querySelector('td:nth-child(6) div').textContent = data.lastModifiedDate;
-                        row.querySelector('td:nth-child(6) small').textContent = data.lastModifiedBy;
-                    }
-
-                    // ✅ 插入歷史記錄
-                    const historyTable = document.querySelector('#permissionHistoryTable tbody');
-                    const historyRow = `
-                        <tr>
-                            <td>${data.lastModifiedDate}</td>
-                            <td>
-                                <ul style="padding-left: 1em;">
-                                    <li>狀態: ${data.oldStatus == 1 ? '啟用' : '停用'} ➔ ${data.memStatus == 1 ? '啟用' : '停用'}</li>
-                                    <li>禁言: ${data.oldNoSpeak == 1 ? '禁止發言' : '允許發言'} ➔ ${data.memNoSpeak == 1 ? '禁止發言' : '允許發言'}</li>
-                                    <li>發文: ${data.oldNoPost == 1 ? '禁止發文' : '允許發文'} ➔ ${data.memNoPost == 1 ? '禁止發文' : '允許發文'}</li>
-                                    <li>開團: ${data.oldNoGroup == 1 ? '禁開團' : '正常'} ➔ ${data.memNoGroup == 1 ? '禁開團' : '正常'}</li>
-                                    <li>參團: ${data.oldNoJoingroup == 1 ? '禁參團' : '正常'} ➔ ${data.memNoJoingroup == 1 ? '禁參團' : '正常'}</li>
-                                </ul>
-                            </td>
-                            <td>${data.lastModifiedBy}</td>
-                            <td>${permissionReason}</td>
-                        </tr>
-                    `;
-                    historyTable.insertAdjacentHTML('afterbegin', historyRow);
-                    saveHistoryToLocal(memId, historyRow);
-
-                    // ✅ 關閉 modal
-                    bootstrap.Modal.getInstance(document.getElementById('editPermissionsModal')).hide();
-	                    location.reload();
-                    }else {
-                        alert('變更失敗');
-                    }
-	            })
-	            .catch(error => {
-	              console.error('錯誤:', error);
-	              alert('變更時發生錯誤');
-	            });               
-                }
+//                     alert(`批量變更成功，共 ${data.updatedCount} 位會員`);
+//                     bootstrap.Modal.getInstance(document.getElementById('batchPermissionModal')).hide();
+//                 } else {
+//                     alert('批量變更失敗');
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error('發生錯誤:', error);
+//                 alert('批量變更失敗');
+//             });
+//         }
 
 
-        
-        function updateMemberStatus(formData) {
-        	  fetch('/smg/admin-members-permissions/update-status', {
-        	    method: 'POST',
-        	    body: formData,
-        	    headers: {
-        	      'X-Requested-With': 'XMLHttpRequest'
-        	    }
-        	  })
-        	  .then(async response => {
-				    const contentType = response.headers.get("content-type");
-				
-				    // 嘗試安全地解析 JSON，若不是 JSON 則報錯
-				    if (!response.ok || !contentType || !contentType.includes("application/json")) {
-				        if (response.status === 401 || response.redirected) {
-				            alert('請重新登入管理員帳號！');
-				            window.location.href = '/smg/login';
-				            return;
-				        }
-				        const text = await response.text(); // 加這行可以幫助除錯（選擇性）
-				        console.error("非 JSON 回應：", text);
-				        throw new Error('伺服器錯誤，請稍後再試');
-				    }
-				
-				    return response.json();
-				})
-        	  .then(data => {
-        	    if (data.success) {
-        	      alert('更新成功');
-        	      location.reload();
-        	    } else {
-        	      alert('更新失敗');
-        	    }
-        	  })
-        	  .catch(err => {
-        	    console.error(err);
-        	    alert('發生錯誤，請稍後再試');
-        	  });
-        	}
+
 
         
         function saveHistoryToLocal(memId, newHistoryRowHtml) {

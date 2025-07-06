@@ -29,6 +29,7 @@ import com.foodietime.act.model.ActCategoryEnum;
 import com.foodietime.act.model.ActParticipationService;
 import com.foodietime.act.model.ActParticipationVO;
 import com.foodietime.act.model.ActService;
+import com.foodietime.act.model.ActStoreDTO;
 import com.foodietime.act.model.ActVO;
 import com.foodietime.act.model.StoreSimpleDTO;
 import com.foodietime.act.model.StoreWithDiscountedProductsDTO;
@@ -104,6 +105,12 @@ public class ActApiController {
 	    return result;
 	}
 	
+	//顯示參與活動的店家 (dto) 沒有用到
+	@GetMapping("/with-store")
+    public List<ActStoreDTO> getActsWithStoreInfo() {
+        return actSvc.getActsWithStores();
+    }
+	
 //	/**參與活動的店家**/
 //	@GetMapping("/act/{actId}/stores")
 //	@ResponseBody
@@ -139,7 +146,7 @@ public class ActApiController {
 	                        cate.calculate(p, act)
 	                )).toList();
 
-	            return new StoreWithDiscountedProductsDTO(store.getStorName(), discounted);
+	            return new StoreWithDiscountedProductsDTO(store.getStorId(), store.getStorName(), discounted); //店家頁面跳轉要有storid http://localhost:8080/category/store/storId
 	        })
 	        .filter(dto -> !dto.getProducts().isEmpty()) // 只回傳有折扣商品的店家
 	        .toList();

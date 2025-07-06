@@ -70,7 +70,7 @@
     
     body{ /*讓nav不要蓋住內容*/
       	 
-		  margin: 120px auto 2rem auto;
+		  margin: 0 auto;
 		  padding: 1rem;
 		  max-width: 100%;
 		  overflow-x: hidden;
@@ -82,16 +82,19 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>活動資料管理 - select_page.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/}"><img th:src="@{/images/back1.gif}">回act-index.html</a></h3></div>
+  <div align="center">
+    <h2 style="color: #ccff00;">活動資料管理 - select_page.html</h2>
+  </div>
 </nav>
+<!-- 空白來自 nav fixed-top，記得留出空間 -->
+<div>
 
 	<h4><span>資料查詢:</span></h4>
 	<!-- 錯誤表列 -->
 	<div class="errorblock" th:utext="${errorMessage}">${errorMessage}</div><br>
 	<div class="a">
 	  <ul>
-		<li><h5><a href='listAllAct'>List</a> all Acts. <br><br></h5></li>
+		<li><h2><a href='listAllAct'>List</a> all Acts. <br></h2></li>
 
 		<li>
 			<form method="post" th:action="@{getOne_For_Display}">
@@ -136,50 +139,51 @@
         </form><br>
 		</li>
 		
-		
-		
-		
-<!--  萬用複合查詢-以下欄位-可隨意增減 -->
-  
-  <li>   
-    <form method="post" th:action="@{listActs_ByCompositeQuery}">
-        <font color=blue>萬用複合查詢:</font><br>
-        輸入活動編號: 
-        <input type="text" name="actId" value="1"><br>
-        
-        選擇活動類型:
-        <select th:field="*{actVO.actCate}">
-        	<option value="">
-        	<option th:each="actVO : ${actListData}" th:value="${actVO.actCate}" th:text="${actVO.actCate}" />
-        </select>
-           <br>
-        輸入活動名稱: 
-        <input type="text" name="actName" value="夏日祭典"><br>
-       
-        輸入活動狀態: 
-        <select th:field="*{actVO.actStatus}">
-        	<option value="1">上架</option>
-        	<option value="2">下架</option>
-        </select>
-        
-        <input type="submit" value="送出">
-     
-     </form>
-  </li>
-</ul>	
-	
-      <h4><span>活動管理</span></h4>
-	  <ul>
-		  <li><h5><a th:href="@{/act/addAct}">Add</a> a new Act.</h5></li>
-	  </ul>
-	</div>
-    
-    <!-- 送出查詢，預覽結果 -->
-    <!-- 旗標actVO見SelectController 的@PostMapping("getOne_For_Display") -->
-    <div class="b" th:if="${actVO!=null}">
-<!--         使用listOneAct.html網頁的listOneAct-div片段 見listOneAct.html的th:fragment="listOneAct-div" 使用th:replace也可 -->
-        <div th:insert="~{/admin/act/listOneAct :: listOneAct-div}"></div>
-    </div>
+				
+				
+				
+		<!--  萬用複合查詢-以下欄位-可隨意增減 -->
+		  
+		  <li>   
+		    <form method="post" th:action="@{listActs_ByCompositeQuery}">
+		        <font color=blue>萬用複合查詢:</font><br>
+		        輸入活動編號: 
+		        <input type="text" name="actId" value="1"><br>
+		        
+		        選擇活動類型:
+		        <select th:field="*{actVO.actCate}">
+		        	<option value="">
+		        	<option th:each="actVO : ${actListData}" th:value="${actVO.actCate}" th:text="${actVO.actCate}" />
+		        </select>
+		           <br>
+		        輸入活動名稱: 
+		        <input type="text" name="actName" value="夏日祭典"><br>
+		       
+		        輸入活動狀態: 
+		        <select th:field="*{actVO.actStatus}">
+		        	<option value="1">上架</option>
+		        	<option value="2">下架</option>
+		        </select>
+		        
+		        <input type="submit" value="送出">
+		     
+		     </form>
+		  </li>
+		</ul>	
+			
+		      <h4><span>活動管理</span></h4>
+			  <ul>
+				  <li><h2><a th:href="@{/act/addAct}">Add</a> a new Act.</h2></li>
+			  </ul>
+			</div>
+		    
+		    <!-- 送出查詢，預覽結果 -->
+		    <!-- 旗標actVO見SelectController 的@PostMapping("getOne_For_Display") -->
+		    <div class="b" th:if="${actVO!=null}">
+		<!--         使用listOneAct.html網頁的listOneAct-div片段 見listOneAct.html的th:fragment="listOneAct-div" 使用th:replace也可 -->
+		        <div th:insert="~{/admin/act/listOneAct :: listOneAct-div}"></div>
+		    </div>
+  </div>
 
 </body>
 </html>

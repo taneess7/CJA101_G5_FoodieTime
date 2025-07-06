@@ -115,14 +115,23 @@
 }
 
 .btn-secondary {
-  background-color: #666;
+  position: relative;
+  background-color: #f99ca1; /* 粉紅色背景 */
+  border: none;
+  padding: 8px 12px;
+  font-size: 15px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  overflow: hidden;
+   border-radius: 8px; /* ← 圓角設定 */
 }
 .btn-secondary:hover {
-  background-color: #444;
+  background-color: rgb(255, 128, 192);
 }
 
 .acts-container {
-  background-color: gray;
+  background-color: rgb(255, 128, 128);
   display: flex;
   flex-wrap: wrap;      /* ✅ 多的自動換行 */
   flex-direction: row;  /* ✅ 水平排列（預設就是 row，可以加強明確性） */
@@ -286,14 +295,18 @@ document.addEventListener('click', function (e) {
         	  document.getElementById('modal-overlay').style.display = 'block';
 	        } else {
 	          data.forEach(store => {  //迴圈加資料
-	        	  
+	        	  console.log("🔍 store =", store); //console可看到storId
 	            const li = document.createElement('li');
 	         // 建立店家名稱
-	            const storeName = document.createElement('strong');
-	            storeName.textContent = store.storName;
-	            storeName.style.color = '#4A90E2';
-
-	            li.appendChild(storeName);
+	            const storeLink = document.createElement('a')
+	            storeLink.textContent = store.storName;
+	            storeLink.href = `/category/store/${store.storId}`;  // ✅ 設定連結
+	            storeLink.style.color = '#4A90E2';
+	            storeLink.style.fontWeight = 'bold';  // 模擬 strong 樣式
+	            storeLink.style.textDecoration = 'none';  // 可選：去除底線
+	            storeLink.target = '_blank';  // 可選：在新視窗打開
+	            li.appendChild(storeLink); // ✅ 這裡改成 storeLink 而不是 storeName
+	        
 	           
 
 	            // 如果有商品，加入商品表格

@@ -54,13 +54,27 @@
 	});
 </script>
 
-
+<style>
+  th {
+    white-space: wrap;
+    padding: 8px 12px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 80px;
+  }
+  
+ 
+  td {
+    white-space: wrap; /* 可選，看你是否希望資料欄也不換行 */
+  }
+</style>
 
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>所有活動資料 - listAllAct.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div>
+		 <div align="center"> <h2>所有活動資料</h2>
+<!-- 		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div> -->
+		 <h3><a class="navbar-brand" th:href="@{/act/addAct}">返回新增<label th:text="${success}"></label></a></h3></div>
 </nav>
 <div class="table-responsive">
   <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
@@ -88,7 +102,8 @@
 			<tr>
 				<td th:text="${stat.count}"></td>
 				<td th:text="${actVO.actId}"></td>
-				<td class="white-nowrap" th:text="${actVO.actCate}"></td>
+<!-- 				<td class="white-nowrap" th:text="${actCateMap[actVO.actCate]}"></td> -->
+				<td th:text="${actVO.actCate}"></td>
 				<td th:text="${actVO.actName}"></td>
 				<td th:text="${actVO.actContent}"></td>
 				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '金額'}"></td>

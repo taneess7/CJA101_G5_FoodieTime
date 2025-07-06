@@ -26,7 +26,10 @@ public interface ActRepository extends JpaRepository<ActVO, Integer>{
 	@Query("SELECT a.actPhoto FROM ActVO a WHERE a.actId = :id")
 	byte[] findActPhotoById(@Param("id") Integer id);
 	
-	 
+	//顯示參與活動的店家 (dto) 沒有用到
+	@Query("SELECT new com.foodietime.act.model.ActStoreDTO(a.actId, a.actName, s.storId, s.storName) " +
+		       "FROM ActVO a JOIN a.store s")
+		List<ActStoreDTO> findAllWithStore();
 	
 }
 

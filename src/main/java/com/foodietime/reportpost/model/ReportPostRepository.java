@@ -47,4 +47,5 @@ public interface ReportPostRepository extends JpaRepository<ReportPostVO, Intege
 	 */
 	long countByPost_Member_MemIdAndRepPostStatusIn(Integer memberId, List<Byte> statuses);
 
+	List<ReportPostVO> findByPost_Member_MemId(Integer memId);
 }
