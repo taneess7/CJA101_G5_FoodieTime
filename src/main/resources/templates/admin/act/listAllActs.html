@@ -67,6 +67,38 @@
   td {
     white-space: wrap; /* 可選，看你是否希望資料欄也不換行 */
   }
+  
+  .custom-btn {
+	     background-color: #ff6b6b;
+	    color: white;
+	    border: none;
+	    padding: 6px 12px;           /* ✅ 原本是 10px 25px，這裡縮小 */
+	    font-size: 0.9rem;           /* ✅ 原本是 1rem */
+	    font-weight: 600;
+	    border-radius: 6px;          /* ✅ 原本是 8px */
+	    box-shadow: 0 3px 6px rgba(255, 107, 107, 0.3);
+	    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	    cursor: pointer;
+	    display: inline-block;
+	    text-align: center;
+	    user-select: none;
+	}
+  
+  .custom-btn:hover {
+	  background-color: #ff4d4d;        /* 滑過變深紅 */
+	  text-decoration: none;           /* 防止 hover 時出現底線 */
+	  color: white;
+	}
+	
+      .btn-group {
+	  display: flex;
+	  gap: 12px; /* ✅ 中間的空格 */
+	  justify-content: center; /* 如果想置中 */
+	}
+	
+	
+    
+	
 </style>
 
 <body>
@@ -74,7 +106,10 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
 		 <div align="center"> <h2>所有活動資料</h2>
 <!-- 		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}"><label th:text="${success}"></label></a></h3></div> -->
-		 <h3><a class="navbar-brand" th:href="@{/act/addAct}">返回新增<label th:text="${success}"></label></a></h3></div>
+		     <span><a class="custom-btn" style="text-decoration: none;" th:href="@{/act/addAct}">返回新增<label th:text="${success}"></label></a></span>
+		     <span><a class="custom-btn" style="text-decoration: none;" th:href="@{/smg/admin-orders-view}">回訂單詳情</a></span>
+		</div>
+
 </nav>
 <div class="table-responsive">
   <table id="example" class="display table table-bordered table-hover white-nowrap center-text" style="width: 100%;">
@@ -103,8 +138,8 @@
 				<td th:text="${stat.count}"></td>
 				<td th:text="${actVO.actId}"></td>
 <!-- 				<td class="white-nowrap" th:text="${actCateMap[actVO.actCate]}"></td> -->
-				<td th:text="${actVO.actCate}"></td>
-				<td th:text="${actVO.actName}"></td>
+				<td style="width:80px;" th:text="${actVO.actCate}"></td>
+				<td style="width:80px;"th:text="${actVO.actName}"></td>
 				<td th:text="${actVO.actContent}"></td>
 				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '金額'}"></td>
 				<td th:text="${actVO.actDiscValue}"></td>
@@ -117,7 +152,7 @@
 
 			<td>
 			  <form method="post" th:action="@{/act/getOne_For_Update}" style="margin-bottom: 0px;">
-			     <input type="submit" value="修改">
+			     <input type="submit" class="custom-btn" value="修改">
 			     <input type="hidden" name="actId" th:value="${actVO.actId}">
 			  </form>
 			

@@ -42,19 +42,70 @@
         margin-left: auto;
         margin-right: auto;
     }
+            .custom-btn {
+	    background-color: #ff6b6b;
+	    color: white;
+	    border: none;
+	    padding: 6px 12px;           /* ✅ 原本是 10px 25px，這裡縮小 */
+	    font-size: 0.9rem;           /* ✅ 原本是 1rem */
+	    font-weight: 600;
+	    border-radius: 6px;          /* ✅ 原本是 8px */
+	    box-shadow: 0 3px 6px rgba(255, 107, 107, 0.3);
+	    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	    cursor: pointer;
+	    display: inline-block;
+	    text-align: center;
+	    user-select: none;
+	}
+    .custom-btn:hover {
+	  background-color: #ff4d4d;        /* 滑過變深紅 */
+	  text-decoration: none;           /* 防止 hover 時出現底線 */
+	  color: white;
+	}
     
+    .btn-group {
+	  display: flex;
+	  gap: 12px; /* ✅ 中間的空格 */
+	  justify-content: center; /* 如果想置中 */
+	}
+    
+	input[type="text"],
+	input[type="password"],
+	input[type="datetime-local"],
+	input[type="file"],
+	select,
+	textarea {
+    width: 200px;
+    margin: 5px;
+    border-radius: 8px; /* ✅ 加上這行實現圓角 */
+    padding: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+ h2,h3{
+    margin: 5px auto;}
+  
 
 </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>活動資料修改</h2>
-		 <sapn><a class="navbar-brand" th:href="@{/act/listAllAct}">回活動列表</a><sapn><label th:text="${success}"></label>
+		 <div align="center"> 
+			<div class="title-row">
+			  <h2>活動資料修改</h2>
+			  <h3><b>所有欄位皆為必填欄位</b></h3>
+			</div>
+		</div>
+		 <div class="btn-group">
+		    	 <span><a class="custom-btn" style="text-decoration: none;" th:href="@{/smg/admin-orders-view}">回訂單詳情</a></span>
+		     	 <span><a class="custom-btn" style="text-decoration: none;" th:href="@{/act/listAllAct}">回活動列表</a></span><label th:text="${success}"></label>
+		 </div>
 </nav>
 
 	<div align="center">
-		<h3><b>所有欄位皆為必填欄位</b></h3>
+		
 		<form th:action="@{/act/update}" method="post" th:object="${actVO}" enctype="multipart/form-data">
 			<div>
 			<label>活動編號:</label>
@@ -202,14 +253,14 @@
 			     </div>
 			</div>
 			
-	<p th:text="${#dates.format(actVO.actLastUpdate, 'yyyy-MM-dd HH:mm:ss')}">最後更新時間</p>
+	<p th:text="'最後更新時間: ' + ${#dates.format(actVO.actLastUpdate, 'yyyy-MM-dd HH:mm:ss')}">最後更新時間</p>
 			
 			
 
 			
 			<div>
 				<div></div>
-				<div><button type="submit" id="submit"> 送出修改 </button></div>
+				<div><button class="custom-btn" type="submit" id="submit"> 送出修改 </button></div>
 				<div></div>
 			</div>		
 		</form>
