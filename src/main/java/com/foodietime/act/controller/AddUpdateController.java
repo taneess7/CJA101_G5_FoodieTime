@@ -40,6 +40,7 @@ import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreService;
 import com.foodietime.store.model.StoreVO;
 import com.foodietime.storeCate.model.StoreCateService;
+import com.foodietime.storeCate.model.StoreCateVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -64,14 +65,7 @@ public class AddUpdateController {
 	@Autowired
 	ActParticipationService actPartSvc;
 
-	// 進入新增活動後台畫面
-	@GetMapping("/addAct")
-	public String addAct(Model model) {
-		ActVO actVO = new ActVO();
-		model.addAttribute("actVO", actVO);// 將actVO 傳給 HTML畫面使用
-		actVO.setActSetTime(new Timestamp(System.currentTimeMillis()));
-		return "admin/act/addAct"; // Thymeleaf 會去找 /templates/admin/act/addAct.html
-	}
+
 
 	// 不讓 Spring 綁定TimeStamp欄位
 	@InitBinder
@@ -87,139 +81,7 @@ public class AddUpdateController {
 		});
 	}
 
-	// 新增功能
-	@PostMapping("/insert")
-	public String insert(@Valid ActVO actVO, BindingResult result, ModelMap model,
-			@RequestParam("storeCateId") Integer storeCateId,
-			@RequestParam("upFiles") MultipartFile[] parts, RedirectAttributes redirectAttrs,
-			HttpServletRequest request) throws IOException {
-
-		// ✅ <<< 這裡加上 debug log
-		System.out.println(">>> insert 方法有觸發");
-		System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
-		System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
-		for (FieldError fe : result.getFieldErrors()) {
-			System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
-		}
-
-//		/**使用storeCateId 查相關店家 **/
-		List<StoreVO> stores = storeSvc.findByCateId(storeCateId);
-		
-
-		/*** 接收請求參數，輸入格式錯誤處理 ***/
-		// 去除圖片欄位驗證錯誤
-		result = removeFieldError(actVO, result, "upFiles"); // <input type="file" name="upFiles"> removeFieldError
-																// 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
-		// 處理圖片上傳
-		if (parts.length == 0 || parts[0].isEmpty()) { // 未選擇圖片，補驗證訊息
-			model.addAttribute("errorMessage", "活動照片: 請上傳照片"); // addAct.html th:utext="${errorMessage}"
-		} else {
-			for (MultipartFile multipartFile : parts) {
-				byte[] buf = multipartFile.getBytes(); // 圖片轉byte[]
-				actVO.setActPhoto(buf);
-			}
-		}
-
-		// 表單驗證不通過 → 回原頁
-		if (result.hasErrors() || parts[0].isEmpty()) {
-			List<FieldError> errors = result.getFieldErrors(); // FieldError 表單欄位單一BindingResult，使用傳給前端看錯誤
-			return "admin/act/addAct"; // 回到原頁顯示錯誤訊息
-
-		}
-
-		/********** 表單驗證通過，開始新增資料 ************/
-		if (Boolean.TRUE.equals(actVO.getIsGlobal())) {
-			actVO.setStorId(-1); // storId設虛擬值，表示全店通用
-		} else {
-			// 部分店家 → 正常選擇
-			String storIdStr = request.getParameter("storId");
-			if (storIdStr != null && !storIdStr.isEmpty()) {
-				actVO.setStorId(Integer.valueOf(storIdStr));
-			}
-		}
-		
-		actSvc.addAct(actVO);
-
-//		//儲存活動及關聯
-//				actSvc.addAct(actVO);
-//				for(StoreVO store : stores) {
-//					actSvc.addAct(actVO.getActId(), store.getStorId());
-//				}
-
-		/********** 新增完成，準備轉交 ********/
-		List<ActVO> list = actSvc.getAllActs();
-		model.addAttribute("actListData", list);
-		redirectAttrs.addFlashAttribute("success", "- (新增成功)"); // 用redirectAttrs存成功訊息在listAllAct.html顯示
-		return "redirect:/act/listAllAct"; // 新增成功後發出HTTP302 重導，發出新的request 到ActPageController
-											// @GetMapping("/act/listAllAct")
-
-	}
-
-	// 點選修改按鈕，進入後台修改畫面listOneAct.html
-	@PostMapping("getOne_For_Update")
-	public String getOne_For_Update(@RequestParam("actId") String actId, ModelMap model) {
-		/*** 接收參數，進入進入修改畫面listOneAct.html，查詢actId資料 ***/
-		ActVO actVO = actSvc.getOneAct(Integer.valueOf(actId));
-
-		/*** 查詢完成，轉交 update_act_input.html ***/
-		model.addAttribute("actVO", actVO);
-		return "admin/act/update_act_input";
-	}
-
-	// 點選送出修改按鈕，檢查actVO欄位格式
-	@PostMapping("update")
-	public String update(@Valid ActVO actVO, BindingResult result, ModelMap model,
-			@RequestParam("upFiles") MultipartFile[] parts) throws IOException {
-
-		// ✅ <<< 這裡加上 debug log
-		System.out.println(">>> update 方法有觸發");
-		System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
-		System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
-		for (FieldError fe : result.getFieldErrors()) {
-			System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
-		}
-
-		/** 接收參數，驗證格式 **/
-		// 去除BindingResult中 upFiles欄位的FieldError紀錄
-		/*** 接收請求參數，輸入格式錯誤處理 ***/
-		// 去除圖片欄位驗證錯誤
-		result = removeFieldError(actVO, result, "upFiles"); // <input type="file" name="upFiles"> removeFieldError
-																// 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
-		// 處理圖片上傳
-		if (parts.length == 0 || parts[0].isEmpty()) { // 未選擇圖片，補驗證訊息
-			model.addAttribute("errorMessage", "活動照片: 請上傳照片"); // addAct.html th:utext="${errorMessage}"
-		} else {
-			for (MultipartFile multipartFile : parts) {
-				byte[] buf = multipartFile.getBytes(); // 圖片轉byte[]
-				actVO.setActPhoto(buf);
-			}
-		}
-		if (result.hasErrors()) { // 如果其他欄位驗證格式錯誤，回到原頁面
-			return "admin/act/update_act_input";
-		}
-		/** 格式驗證無誤，開始修改資料 **/
-		actSvc.updateAct(actVO);
-
-		/** 修改成功，回到listOneAct.html <label th:text="${success}"></label> **/
-		model.addAttribute("success", "- (修改成功)");
-		actVO = actSvc.getOneAct(Integer.valueOf(actVO.getActId()));
-		model.addAttribute("actVO", actVO);
-		return "admin/act/listOneAct";
-	}
-
-	// 點選刪除按鈕
-	@PostMapping("delete")
-	public String delete(@RequestParam("actId") String actId, ModelMap model) {
-		/*** 接收參數，在listAllAct.html，刪除actId資料 ***/
-		actSvc.deleteAct(Integer.valueOf(actId));
-
-		/*** 刪除完成，回到listAllAct.html ***/
-		List<ActVO> list = actSvc.getAllActs();
-		model.addAttribute("actListData", list);
-		model.addAttribute("success", "- (刪除成功)");
-		return "admin/act/listAllAct";
-
-	}
+	
 
 	// 列出下拉選單-產生「所有店家」的下拉選單
 	@ModelAttribute("storeListData")
@@ -232,25 +94,27 @@ public class AddUpdateController {
 	@ModelAttribute("actCateMap")
 	protected Map<Integer, String> prepareActCateMap(){
 		Map<Integer, String> map = new LinkedHashMap<>();
-		
-		List<ActVO> cateList = actSvc.getAllActs();
-		for (ActVO cate : cateList ) {
-			map.put(cate.getActId(), cate.getActCate());
-		}
-		return map;
-	}
 
-//	//列出下拉選單- 產生「所有店家分類」的下拉選單
-//	@ModelAttribute("storeCateMap")
-//	protected Map<Integer, String> prepareStoreCateMap(){
-//		Map<Integer, String> map = new LinkedHashMap<>();
-//		
-//		List<StoreCateVO> cateList = storeCateSvc.getAll();
-//		for (StoreCateVO cate : cateList) {
-//			map.put(cate.getStorCateId(), cate.getStorCatName());
+		//只會回傳類別數字
+//		List<ActVO> cateList = actSvc.getAllActs();
+//		for (ActVO cate : cateList ) {
+//			map.put(cate.getActId(), cate.getActCate());
 //		}
-//		return map;
-//	}
+		    map.put(1, "優惠活動");
+		    map.put(2, "新品上市");
+		    map.put(3, "限時優惠");
+		    map.put(4, "會員日");
+		    map.put(5, "飲品日");
+		    map.put(6, "素食推廣");
+		    map.put(7, "速食優惠");
+		    map.put(8, "義式美食節");
+		    map.put(9, "燒烤日");
+		    map.put(10,"火鍋季");
+		    return map;
+		}
+
+
+
 
 	// 列出下拉選單 - 上架/下架
 	@ModelAttribute("actStatus")
@@ -274,8 +138,20 @@ public class AddUpdateController {
 	@ModelAttribute("isGlobal")
 	protected Map<Integer, String> referenceStore() {
 		Map<Integer, String> map = new LinkedHashMap<Integer, String>();
-		map.put(0, "店家");// false
+		map.put(0, "部分店家");// false
 		map.put(1, "全店家");// true
+		return map;
+	}
+	
+//	//列出下拉選單- 產生「所有店家分類」的下拉選單
+	@ModelAttribute("storeCateMap")
+	protected Map<Integer, String> prepareStoreCateMap(){
+		Map<Integer, String> map = new LinkedHashMap<>();
+		
+		List<StoreCateVO> cateList = storeCateSvc.getAll();
+		for (StoreCateVO cate : cateList) {
+			map.put(cate.getStorCateId(), cate.getStorCatName());
+		}
 		return map;
 	}
 
@@ -297,37 +173,10 @@ public class AddUpdateController {
 		return result;
 	}
 
-	// 複合查詢
-	@PostMapping("listActs_ByCompositeQuery")
-	public String listAllAct(HttpServletRequest req, Model model) {
-		Map<String, String[]> map = req.getParameterMap();
-		List<ActVO> list = actSvc.getAllMap(map);
-		model.addAttribute("actListData", list); // for listAllAct.html
-		return "admin/act/listAllAct";
-	}
 
-//===============//店家參加活動商品列表XXX沒有用到========================================================================//
 
-	@GetMapping("/actProducts")
-	public String showActProds(@RequestParam("actId") Integer actId, HttpSession session, Model model) {
 
-		StoreVO store = (StoreVO) session.getAttribute("loggedInStore"); // 判斷是否登入店家
-
-		// 比對一個全站活動
-		ActVO globalAct = actSvc.getOneAct(actId); // 抓取點到的活動
-
-		// 取得 enum 折扣邏輯
-		ActCategoryEnum actCategory = ActCategoryEnum.from(globalAct.getActCate());
-
-		// 顯示活動對應商品清單
-		List<ProductVO> eligibleProds = store.getProduct().stream()
-				.filter(p -> actCategory.calculate(p, globalAct) != p.getProdPrice()).collect(Collectors.toList());
-
-		model.addAttribute("discProds", eligibleProds); // html <tr th:each="entry : ${discProds}">
-		model.addAttribute("act", globalAct);
-		return "front/store/store_actProducts";
-	}
-
+	/*****************活動前台************************************************************/
 	// ========================================================
 	@Bean(name = "actCategoryEnum")
 	public ActCategoryEnum actCategoryEnum() {
@@ -406,4 +255,194 @@ public class AddUpdateController {
 		model.addAttribute("actProdMap", actProdMap); // <div th:each="entry : ${actProdMap}">
 		return "front/store/storeJoinedActs";
 	}
+	
+	//===============//店家參加活動商品列表XXX沒有用到========================================================================//
+
+		@GetMapping("/actProducts")
+		public String showActProds(@RequestParam("actId") Integer actId, HttpSession session, Model model) {
+
+			StoreVO store = (StoreVO) session.getAttribute("loggedInStore"); // 判斷是否登入店家
+
+			// 比對一個全站活動
+			ActVO globalAct = actSvc.getOneAct(actId); // 抓取點到的活動
+
+			// 取得 enum 折扣邏輯
+			ActCategoryEnum actCategory = ActCategoryEnum.from(globalAct.getActCate());
+
+			// 顯示活動對應商品清單
+			List<ProductVO> eligibleProds = store.getProduct().stream()
+					.filter(p -> actCategory.calculate(p, globalAct) != p.getProdPrice()).collect(Collectors.toList());
+
+			model.addAttribute("discProds", eligibleProds); // html <tr th:each="entry : ${discProds}">
+			model.addAttribute("act", globalAct);
+			return "front/store/store_actProducts";
+		}
+		
+	
+	/*****************活動後台************************************************************/
+	
+		
+		// 進入新增活動後台畫面
+		@GetMapping("/addAct")
+		public String addAct(Model model) {
+			ActVO actVO = new ActVO();
+			model.addAttribute("actVO", actVO);// 將actVO 傳給 HTML畫面使用
+			actVO.setActSetTime(new Timestamp(System.currentTimeMillis()));
+			return "admin/act/addAct"; // Thymeleaf 會去找 /templates/admin/act/addAct.html
+		}
+		
+		// 進入活動列表後台畫面
+		@GetMapping("/listAllAct")
+		public String listAllAct(Model model) {
+		    List<ActVO> actList = actSvc.getAllActs();
+		    model.addAttribute("actListData", actList);
+		    return "admin/act/listAllActs"; // 對應 Thymeleaf 頁面路徑 templates/admin/act/listAllAct.html
+		}
+		
+
+
+		
+		// 新增功能 /Spring Boot 會根據 ActVO 裡面的欄位、型別、自動綁定畫面輸入的欄位，只要有一個欄位轉換失敗或缺少必要欄位，整個請求會拋出 400 錯誤。
+		@PostMapping("/insert")
+		public String insert(@Valid ActVO actVO, BindingResult result, ModelMap model,
+				@RequestParam("storeCateId") Integer storeCateId,
+				@RequestParam("actCate") String actCate, // ✅ 接中文字串,
+				@RequestParam("upFiles") MultipartFile[] parts, RedirectAttributes redirectAttrs,
+				HttpServletRequest request) throws IOException { //<select name="storId">	➜ 你要用request.getParameter("storId")，有用HttpServlet request取值就不用RequestParam()
+
+			// ✅ <<< 這裡加上 debug log
+			System.out.println(">>> insert 方法有觸發");
+			System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
+			System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
+			for (FieldError fe : result.getFieldErrors()) {
+				System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
+			}
+
+//			/**使用storeCateId 查相關店家 **/
+			List<StoreVO> stores = storeSvc.findByCateId(storeCateId);
+			
+
+			/*** 接收請求參數，輸入格式錯誤處理 ***/
+			// 去除圖片欄位驗證錯誤
+			result = removeFieldError(actVO, result, "upFiles"); // <input type="file" name="upFiles"> removeFieldError
+																	// 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
+			// 處理圖片上傳
+			if (parts.length == 0 || parts[0].isEmpty()) { // 未選擇圖片，補驗證訊息
+				model.addAttribute("errorMessage", "活動照片: 請上傳照片"); // addAct.html th:utext="${errorMessage}"
+			} else {
+				for (MultipartFile multipartFile : parts) {
+					byte[] buf = multipartFile.getBytes(); // 圖片轉byte[]
+					actVO.setActPhoto(buf);
+				}
+			}
+
+			// 表單驗證不通過 → 回原頁
+			if (result.hasErrors() || parts[0].isEmpty()) {
+				List<FieldError> errors = result.getFieldErrors(); // FieldError 表單欄位單一BindingResult，使用傳給前端看錯誤
+				return "admin/act/addAct"; // 回到原頁顯示錯誤訊息
+
+			}
+
+			/********** 表單驗證通過，開始新增資料 ************/
+			if (Boolean.TRUE.equals(actVO.getIsGlobal())) {
+				actVO.setStorId(-1); // storId設虛擬值，表示全店通用
+			} else {
+				// 部分店家 → 正常選擇
+				String storIdStr = request.getParameter("storId");
+				if (storIdStr != null && !storIdStr.isEmpty()) {
+					actVO.setStorId(Integer.valueOf(storIdStr));
+				}
+			}
+			
+			actSvc.addAct(actVO);
+
+//			//儲存活動及關聯
+//					actSvc.addAct(actVO);
+//					for(StoreVO store : stores) {
+//						actSvc.addAct(actVO.getActId(), store.getStorId());
+//					}
+
+			/********** 新增完成，準備轉交 ********/
+			List<ActVO> list = actSvc.getAllActs();
+			model.addAttribute("actListData", list);
+			redirectAttrs.addFlashAttribute("success", "- (新增成功)"); // 用redirectAttrs存成功訊息在listAllAct.html顯示
+			return "redirect:/act/listAllAct"; // 新增成功後發出HTTP302 重導，發出新的request 到ActPageController
+												// @GetMapping("/act/listAllAct")
+
+		}
+
+		// 點選修改按鈕，進入後台修改畫面listOneAct.html
+				@PostMapping("getOne_For_Update")
+				public String getOne_For_Update(@RequestParam("actId") String actId, ModelMap model) {
+					/*** 接收參數，進入進入修改畫面listOneAct.html，查詢actId資料 ***/
+					ActVO actVO = actSvc.getOneAct(Integer.valueOf(actId));
+
+					/*** 查詢完成，轉交 update_act_input.html ***/
+					model.addAttribute("actVO", actVO);
+					return "admin/act/update_act_input";
+				}
+
+		// 點選送出修改按鈕，檢查actVO欄位格式
+		@PostMapping("update")
+		public String update(@Valid ActVO actVO, BindingResult result, ModelMap model,
+				@RequestParam("upFiles") MultipartFile[] parts) throws IOException {
+
+			// ✅ <<< 這裡加上 debug log
+			System.out.println(">>> update 方法有觸發");
+			System.out.println(">> 檢查 result.hasErrors() = " + result.hasErrors());
+			System.out.println(">> 圖片是否空 = " + (parts.length == 0 || parts[0].isEmpty()));
+			for (FieldError fe : result.getFieldErrors()) {
+				System.out.println("欄位錯誤: " + fe.getField() + " -> " + fe.getDefaultMessage());
+			}
+
+			/** 接收參數，驗證格式 **/
+			// 去除BindingResult中 upFiles欄位的FieldError紀錄
+			/*** 接收請求參數，輸入格式錯誤處理 ***/
+			// 去除圖片欄位驗證錯誤
+			result = removeFieldError(actVO, result, "upFiles"); // <input type="file" name="upFiles"> removeFieldError
+																	// 不想因為「圖片未上傳」就不讓表單送出，排除圖片上傳欄位不被檢查
+			// 處理圖片上傳
+			if (parts.length == 0 || parts[0].isEmpty()) { // 未選擇圖片，補驗證訊息
+				model.addAttribute("errorMessage", "活動照片: 請上傳照片"); // addAct.html th:utext="${errorMessage}"
+			} else {
+				for (MultipartFile multipartFile : parts) {
+					byte[] buf = multipartFile.getBytes(); // 圖片轉byte[]
+					actVO.setActPhoto(buf);
+				}
+			}
+			if (result.hasErrors()) { // 如果其他欄位驗證格式錯誤，回到原頁面
+				return "admin/act/update_act_input";
+			}
+			/** 格式驗證無誤，開始修改資料 **/
+			actSvc.updateAct(actVO);
+
+			/** 修改成功，回到listOneAct.html <label th:text="${success}"></label> **/
+			model.addAttribute("success", "- (修改成功)");
+			actVO = actSvc.getOneAct(Integer.valueOf(actVO.getActId()));
+			model.addAttribute("actVO", actVO);
+			return "admin/act/listOneAct";
+		}
+
+		// 點選刪除按鈕
+		@PostMapping("delete")
+		public String delete(@RequestParam("actId") String actId, ModelMap model) {
+			/*** 接收參數，在listAllAct.html，刪除actId資料 ***/
+			actSvc.deleteAct(Integer.valueOf(actId));
+
+			/*** 刪除完成，回到listAllAct.html ***/
+			List<ActVO> list = actSvc.getAllActs();
+			model.addAttribute("actListData", list);
+			model.addAttribute("success", "- (刪除成功)");
+			return "admin/act/listAllAct";
+
+		}
+		
+		// 複合查詢
+		@PostMapping("listActs_ByCompositeQuery")
+		public String listAllAct(HttpServletRequest req, Model model) {
+			Map<String, String[]> map = req.getParameterMap();
+			List<ActVO> list = actSvc.getAllMap(map);
+			model.addAttribute("actListData", list); // for listAllAct.html
+			return "admin/act/listAllAct";
+		}
 }

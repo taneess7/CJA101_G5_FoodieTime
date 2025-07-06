@@ -85,13 +85,22 @@
 		<div align="center">     <!--  model.addAttribute("actVO", new ActVO()) AddUpdateController 有建立通道 -->  
 		<form th:action="@{/act/insert}" method="post" th:object="${actVO}" enctype="multipart/form-data">
 			<div><h3><b>所有欄位皆為必填欄位</b></h3>  </div>     
-			
+			<div>
+				<label>店家類別:</label>
+					<select name="storeCateId">
+					     <option value="0">全部類別適用</option> 
+						<option th:each="entry : ${storeCateMap}"
+								th:value="${entry.key}"
+								th:text="${entry.value}">
+						</option>
+					</select>
+			</div>
 			
 			<label>選擇活動類型</label> 
-				<select name="actId" required>
+				<select name="actCate" required>
 					<option value="0">---選擇活動---</option>
 					<option th:each="entry : ${actCateMap}" 
-					    th:value="${entry.key}"
+					    th:value="${entry.value}"
 						th:text="'活動類型:' + ${entry.key} + ' - ' + ${entry.value}">
 					</option>
 				</select>
@@ -199,15 +208,7 @@
 			     </div>
 			</div>
 
-<!-- 			<div> -->
-<!-- 			<label>店家類別:</label> -->
-<!-- 			<select name="storeCateId"> -->
-<!-- 				<option th:each="entry : ${storeCateMap}" -->
-<!-- 						th:value="${entry.key}" -->
-<!-- 						th:text="${entry.value}"> -->
-<!-- 				</option> -->
-<!-- 			</select> -->
-<!-- 			</div> -->
+			
 			
 				
 			<div>
