@@ -159,20 +159,28 @@ public class GroupBuyingCasesController {
 	         return "redirect:/gb/leader-groups";
 	     }
 
-	     // 3. 放到 Model 裡供表單綁定
-	     model.addAttribute("groupBuyingCase", group);
-	  // 取得促銷結束時間
+	  // 秒數歸零（只要不是 null）
+         if (group.getGbStartTime() != null) group.setGbStartTime(group.getGbStartTime().withSecond(0).withNano(0));
+         if (group.getGbEndTime() != null) group.setGbEndTime(group.getGbEndTime().withSecond(0).withNano(0));
+
+         // 取得促銷開始與結束時間，並秒數歸零
+         String promoStartTime = null;
          String promoEndTime = null;
          if (group.getGbProd() != null && group.getGbProd().getGbpromotionList() != null && !group.getGbProd().getGbpromotionList().isEmpty()) {
              var promo = group.getGbProd().getGbpromotionList().get(0);
+             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+             if (promo.getPromotStart() != null) {
+                 promoStartTime = sdf.format(promo.getPromotStart());
+             }
              if (promo.getPromotEnd() != null) {
-                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
                  promoEndTime = sdf.format(promo.getPromotEnd());
              }
          }
+         model.addAttribute("promoStartTime", promoStartTime);
          model.addAttribute("promoEndTime", promoEndTime);
-	     return "front/gb/gbleader/leader-groups-edit";
-	 }
+         model.addAttribute("groupBuyingCase", group);
+         return "front/gb/gbleader/leader-groups-edit";
+     }
 
 	
 //	// 只負責「建立」

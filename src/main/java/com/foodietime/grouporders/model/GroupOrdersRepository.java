@@ -22,8 +22,7 @@ public interface GroupOrdersRepository extends JpaRepository<GroupOrdersVO, Inte
           Optional<GroupOrdersVO> findLeaderOrder(@Param("orderId") Integer orderId,@Param("memId")    Integer memId);
    //根據多個 gbId 撈出所有對應訂單
   List<GroupOrdersVO> findByGroupBuyingCase_GbIdIn(List<Integer> gbIds);
-  // 查詢某會員的所有團購訂單，通過參與的團購（GroupBuyingCasesVO）中的會員ID
-  List<GroupOrdersVO> findByGroupBuyingCase_Member_MemId(Integer memId);
+
 
     // 根據訂單狀態查詢團購訂單
     List<GroupOrdersVO> findByOrderStatus(Byte orderStatus);
@@ -52,11 +51,13 @@ public interface GroupOrdersRepository extends JpaRepository<GroupOrdersVO, Inte
 //    // 查詢已經付款的團購訂單
 //    List<GroupOrdersVO> findByPaymentStatusAndOrderStatus(Byte paymentStatus, Byte orderStatus);
     
-    //查詢團員參加的團購訂單
+    //查詢會員參加的所有團購訂單（通過訂單的參與者關聯）
     @Query("SELECT o FROM GroupOrdersVO o " +
-            "JOIN o.groupBuyingCase gbc " +
-            "JOIN gbc.participants p " +
-            "WHERE p.member.memId = :memId AND p.leader = 1")
-     List<GroupOrdersVO> findOrdersByMemberIsNotLeader(Integer memId);
+            "WHERE o.participants.member.memId = :memId")
+     List<GroupOrdersVO> findOrdersByMemberParticipation(Integer memId);
+
+    // 根據參與者ID查詢團購訂單
+    @Query("SELECT o FROM GroupOrdersVO o WHERE o.participants.parId = :parId")
+    List<GroupOrdersVO> findOrdersByParId(@Param("parId") Integer parId);
 
 }

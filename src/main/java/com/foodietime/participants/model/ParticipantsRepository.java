@@ -16,4 +16,7 @@ public interface ParticipantsRepository extends JpaRepository<ParticipantsVO, In
 
 	 // 查詢某會員(團長)的所有地址
      List<ParticipantsVO> findByMember_MemIdAndLeader(Integer memId, Byte leader);
+     
+     // 查詢某會員的所有參與者記錄
+     List<ParticipantsVO> findByMember_MemId(Integer memId);
 }
