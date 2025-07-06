@@ -373,18 +373,19 @@ public class AddUpdateController {
 
 		// 點選修改按鈕，進入後台修改畫面listOneAct.html
 				@PostMapping("getOne_For_Update")
-				public String getOne_For_Update(@RequestParam("actId") String actId, ModelMap model) {
+				public String getOne_For_Update(@RequestParam("actId") String actId, ModelMap model){
 					/*** 接收參數，進入進入修改畫面listOneAct.html，查詢actId資料 ***/
-					ActVO actVO = actSvc.getOneAct(Integer.valueOf(actId));
+					ActVO actVO = actSvc.getOneAct(Integer.valueOf(actId));// 從 DB 取出整筆資料
 
 					/*** 查詢完成，轉交 update_act_input.html ***/
-					model.addAttribute("actVO", actVO);
-					return "admin/act/update_act_input";
+					model.addAttribute("actVO", actVO);//直接丟入 model，裡面已經有 actCate 字串欄位
+					return "admin/act/update_act_input"; // 進入修改畫面
 				}
 
 		// 點選送出修改按鈕，檢查actVO欄位格式
 		@PostMapping("update")
 		public String update(@Valid ActVO actVO, BindingResult result, ModelMap model,
+				@RequestParam("actCate") String actCate, // ✅ 接中文字串,
 				@RequestParam("upFiles") MultipartFile[] parts) throws IOException {
 
 			// ✅ <<< 這裡加上 debug log
@@ -417,7 +418,7 @@ public class AddUpdateController {
 			actSvc.updateAct(actVO);
 
 			/** 修改成功，回到listOneAct.html <label th:text="${success}"></label> **/
-			model.addAttribute("success", "- (修改成功)");
+			model.addAttribute("success", "- (修改成功) ");
 			actVO = actSvc.getOneAct(Integer.valueOf(actVO.getActId()));
 			model.addAttribute("actVO", actVO);
 			return "admin/act/listOneAct";

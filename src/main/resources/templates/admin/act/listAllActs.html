@@ -54,7 +54,20 @@
 	});
 </script>
 
-
+<style>
+  th {
+    white-space: wrap;
+    padding: 8px 12px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 80px;
+  }
+  
+ 
+  td {
+    white-space: wrap; /* 可選，看你是否希望資料欄也不換行 */
+  }
+</style>
 
 <body>
 
@@ -90,7 +103,7 @@
 				<td th:text="${stat.count}"></td>
 				<td th:text="${actVO.actId}"></td>
 <!-- 				<td class="white-nowrap" th:text="${actCateMap[actVO.actCate]}"></td> -->
-				<td class="white-nowrap" th:text="${actVO.actCate}"></td>
+				<td th:text="${actVO.actCate}"></td>
 				<td th:text="${actVO.actName}"></td>
 				<td th:text="${actVO.actContent}"></td>
 				<td th:text="${actVO.actDiscount == 0 ? '百分比' : '金額'}"></td>

@@ -50,7 +50,7 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
 		 <div align="center"> <h2>活動資料修改 - update_act_input.html</h2>
-		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}">回查詢頁</a></h3></div>
+		 <sapn><a class="navbar-brand" th:href="@{/act/listAllAct}">回活動列表</a><sapn><label th:text="${success}"></label>
 </nav>
 
 	<div align="center">
@@ -61,13 +61,15 @@
 			<input type="text" th:field="*{actId}" style="border:0px ; font-weight: bold;" readonly /><br/>
 			</div>
 			
-			<div>
-			<label>活動類型:</label>
-			<input type="text" th:field="*{actCate}" onchange="hideContent('actCate.errors');" placeholder="優惠活動"/><br/>
-			<div class="error-block">
-			<span  th:if="${#fields.hasErrors('actCate')}" th:errors="*{actCate}" class="error" id="actCate.errors"></span>
-			</div>
-			</div>
+			<label>選擇活動類型</label> 
+				<select name="actCate" required>
+					<option value="0">---選擇活動---</option>
+					<option th:each="entry : ${actCateMap}" 
+					    th:value="${entry.value}"
+					    th:selected="${entry.value == actVO.actCate}"  
+						th:text="'活動類型:' + ${entry.key} + ' - ' + ${entry.value}">
+					</option>   <!-- selected ✅ 自動選中 -->
+				</select>
 			
 			<div>
 			<label>活動名稱:</label>
