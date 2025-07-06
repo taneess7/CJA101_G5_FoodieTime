@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.foodietime.gbprod.model.GbprodVO;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.participants.model.ParticipantsVO;
 import com.foodietime.store.model.StoreVO;
 
 import jakarta.persistence.Column;
@@ -58,6 +59,10 @@ public class GroupOrdersVO implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="GB_PROD_ID", nullable = false)
 	private GbprodVO gbprod;  //商品編號
+	
+	@ManyToOne
+	@JoinColumn(name="PAR_ID", nullable = false)
+	private ParticipantsVO participants;  //商品編號
 	
 	
 	@Column(name = "JOIN_TIME", nullable = false, updatable = false)

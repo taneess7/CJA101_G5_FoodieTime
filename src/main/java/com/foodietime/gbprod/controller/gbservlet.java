@@ -229,7 +229,7 @@ public class gbservlet {
         order.setDeliveryMethod(req.getDeliveryMethod());
         order.setComment(null);
         order.setRating((byte)0); // 尚未評分
-        groupOrdersService.save(order);
+        
         // 3. 新增參與者
         ParticipantsVO participant = new ParticipantsVO();
         participant.setMember(member);
@@ -242,7 +242,11 @@ public class gbservlet {
         participant.setLeader(member.getMemId().equals(groupCase.getMember().getMemId()) ? (byte)0 : (byte)1);
         participant.setParPurchaseQuantity(req.getQuantity());
         participant.setPaymentStatus((byte)0); // 未付款
-        participantsService.save(participant);
+        ParticipantsVO savedParticipant = participantsService.save(participant);
+        
+        // 4. 設定團購訂單的參與者
+        order.setParticipants(savedParticipant);
+        groupOrdersService.save(order);
         // 4. 不要在這裡更新累計購買數量，僅在付款成功時加總
         return ResponseEntity.ok("參團成功");
     }
@@ -456,8 +460,7 @@ public class gbservlet {
         order.setDeliveryMethod((byte)0); // 宅配
         order.setComment(null);
         order.setRating((byte)0); // 尚未評分
-        GroupOrdersVO savedOrder = groupOrdersService.save(order);
-        logger.info("團購訂單建立成功，訂單ID: {}", savedOrder.getGbOrId());
+        
         // 2. 建立參與者
         ParticipantsVO participant = new ParticipantsVO();
         participant.setMember(member);
@@ -472,6 +475,11 @@ public class gbservlet {
         participant.setPaymentStatus((byte)0); // 未付款
         ParticipantsVO savedParticipant = participantsService.save(participant);
         logger.info("參與者建立成功，參與者ID: {}", savedParticipant.getParId());
+        
+        // 3. 設定團購訂單的參與者
+        order.setParticipants(savedParticipant);
+        GroupOrdersVO savedOrder = groupOrdersService.save(order);
+        logger.info("團購訂單建立成功，訂單ID: {}", savedOrder.getGbOrId());
         // 3. 更新累計購買數量
         int currentQuantity = groupCase.getCumulativePurchaseQuantity() != null ? groupCase.getCumulativePurchaseQuantity() : 0;
         groupCase.setCumulativePurchaseQuantity(currentQuantity + quantity);

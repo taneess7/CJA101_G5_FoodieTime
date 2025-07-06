@@ -154,7 +154,9 @@ public class GroupOrdersController {
         }
         model.addAttribute("memberVO", member);
         Integer memId = member.getMemId();
-        List<GroupOrdersVO> orders = groupOrdersService.getOrdersByMemberIsNotLeader(memId);
+        
+        // 使用原本的方法：查詢會員的團購訂單
+        List<GroupOrdersVO> orders = groupOrdersService.getOrdersByMemberParticipation(memId);
         model.addAttribute("orders", orders);
         return "front/memgborders/member-gborders";
     }
@@ -166,4 +168,13 @@ public class GroupOrdersController {
         groupOrdersService.updateOrderField(gbOrId, field, newStatus);
         return "redirect:/gb/member/orders";
     }
+    
+    // 根據參與者ID查詢團購訂單
+    @GetMapping("/orders/parId/{parId}")
+    @ResponseBody
+    public List<GroupOrdersVO> getOrdersByParId(@PathVariable Integer parId) {
+        return groupOrdersService.getOrdersByParId(parId);
+    }
+    
+
 }

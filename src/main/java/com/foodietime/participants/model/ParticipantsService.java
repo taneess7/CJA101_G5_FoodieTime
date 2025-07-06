@@ -81,6 +81,11 @@ public class ParticipantsService {
     public void deleteById(Integer parId) {
         participantsRepository.deleteById(parId);
     }
+    
+    // 查詢某會員的所有參與者記錄
+    public List<ParticipantsVO> getParticipantsByMemberId(Integer memId) {
+        return participantsRepository.findByMember_MemId(memId);
+    }
 }
 
 	

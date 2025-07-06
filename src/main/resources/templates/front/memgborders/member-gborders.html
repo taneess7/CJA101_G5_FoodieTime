@@ -94,8 +94,8 @@
 							<option value="">訂單狀態(全部)</option>
 							<option value="1">已接單</option>
 							<option value="2">已完成</option>
-							<option value="3">開團失敗</option>
-							<option value="4">團主取消</option>
+							<option value="3">團主取消</option>
+							<option value="4">開團失敗</option>
 						</select>
 					</div>
 				</div>
@@ -152,8 +152,8 @@
                                         <span th:case="0" class="status-pending">未接單</span>
                                         <span th:case="1" class="status-accepted">已接單</span>
                                         <span th:case="2" class="status-completed">已完成</span>
-                                        <span th:case="3" class="status-failed">開團失敗</span>
-                                        <span th:case="4" class="status-cancelled">團主取消</span>
+                                        <span th:case="3" class="status-failed">團主取消</span>
+                                        <span th:case="4" class="status-cancelled">開團失敗</span>
                                         <span th:case="*"  class="status-unknown">未知</span>
                                     </span>
 							</td>

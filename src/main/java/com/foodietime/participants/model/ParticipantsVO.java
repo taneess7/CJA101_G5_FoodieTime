@@ -2,12 +2,14 @@ package com.foodietime.participants.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
+import com.foodietime.grouporders.model.GroupOrdersVO;
 import com.foodietime.member.model.MemberVO;
 
 import jakarta.persistence.*;
@@ -26,8 +28,8 @@ import lombok.ToString;
 
 @Entity
 @Data
-@ToString(exclude = {"groupBuyingCase","member"})
-@EqualsAndHashCode(exclude = {"groupBuyingCase","member"})
+@ToString(exclude = {"groupBuyingCase","member","groupOrders"})
+@EqualsAndHashCode(exclude = {"groupBuyingCase","member","groupOrders"})
 @Table(name="participants")
 @JsonIdentityInfo(
 		  generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -112,6 +114,8 @@ public class ParticipantsVO implements Serializable {
 	@Max(value = 1, message = "付款狀態: 僅能為 0（未付款）或 1（已付款）")
 	private Byte paymentStatus;  //付款狀態
 
+	@OneToMany(mappedBy = "participants", cascade = CascadeType.ALL)
+    private List<GroupOrdersVO> groupOrders;
 	
 	
 	public ParticipantsVO() {  //必需有一個不傳參數建構子

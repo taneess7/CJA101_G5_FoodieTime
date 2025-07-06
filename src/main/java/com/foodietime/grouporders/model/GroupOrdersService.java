@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesRepository;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesService;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
-import com.foodietime.participants.model.ParticipantsRepository;
-import com.foodietime.participants.model.ParticipantsVO;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,10 +49,7 @@ public class GroupOrdersService {
             );
     }
     
-    // 查詢某會員的所有團購訂單
-    public List<GroupOrdersVO> getOrdersByMemberId(Integer memId) {
-        return groupOrdersRepository.findByGroupBuyingCase_Member_MemId(memId);
-    }
+
 
     // 根據訂單狀態查詢團購訂單
     public List<GroupOrdersVO> getOrdersByStatus(Byte orderStatus) {
@@ -135,8 +130,15 @@ public class GroupOrdersService {
         return groupOrdersRepository.findAll();
     }
     
-    //查詢團員參加的團購訂單
-    public List<GroupOrdersVO> getOrdersByMemberIsNotLeader(Integer memId) {
-        return groupOrdersRepository.findOrdersByMemberIsNotLeader(memId);
+    //查詢會員參加的所有團購訂單（通過訂單的參與者關聯）
+    public List<GroupOrdersVO> getOrdersByMemberParticipation(Integer memId) {
+        return groupOrdersRepository.findOrdersByMemberParticipation(memId);
     }
+    
+    // 根據參與者ID查詢團購訂單
+    public List<GroupOrdersVO> getOrdersByParId(Integer parId) {
+        return groupOrdersRepository.findOrdersByParId(parId);
+    }
+    
+
 }

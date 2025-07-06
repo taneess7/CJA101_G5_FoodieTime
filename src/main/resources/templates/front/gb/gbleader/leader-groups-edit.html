@@ -331,7 +331,6 @@ footer {
                                                     <select th:field="*{gbStatus}" class="form-select" id="editCaseStatus">
                                                         <option th:value="1">招募中</option>
                                                         <option th:value="5">已取消</option>
-                                                        
                                                     </select>
                                                     <small class="form-text text-muted"></small>
                                                 </div>
@@ -347,13 +346,13 @@ footer {
 					                        <!-- 開始時間 -->
 					                        <div class="col-md-6 mb-3">
 								                <label class="form-label">開始時間</label>
-								                <input type="datetime-local" th:field="*{gbStartTime}" class="form-control" id="startTimeInput" />
+								                <input type="datetime-local" th:field="*{gbStartTime}" class="form-control" id="startTimeInput" step="60" />
 								            </div>
 					                        
 					                        <!-- 結束時間 -->
 					                        <div class="col-md-6 mb-3">
 								              <label class="form-label">結束時間</label>
-								              <input type="datetime-local" th:field="*{gbEndTime}" class="form-control" id="endTimeInput" th:max="${promoEndTime}" />
+								              <input type="datetime-local" th:field="*{gbEndTime}" class="form-control" id="endTimeInput" step="60" th:max="${promoEndTime}" />
 								            </div>
 					                    </div>
 					
@@ -533,34 +532,165 @@ footer {
                     }
                 });
             }
-         // 設定開始時間min為當前時間（不含秒）
+         // 設定時間驗證邏輯
             var startTimeInput = document.getElementById('startTimeInput');
             var endTimeInput = document.getElementById('endTimeInput');
-            if (startTimeInput) {
-                var now = new Date();
-                now.setSeconds(0, 0); // 秒與毫秒歸零
-                var offset = now.getTimezoneOffset();
-                var local = new Date(now.getTime() - offset * 60000);
-                var nowStr = local.toISOString().slice(0,16); // yyyy-MM-ddTHH:mm
-                startTimeInput.setAttribute('min', nowStr);
-                // 若input預設值有秒數，自動去除
-                if (startTimeInput.value && startTimeInput.value.length > 16) {
-                    startTimeInput.value = startTimeInput.value.slice(0,16);
+            
+            // 獲取促銷時間範圍（從 Thymeleaf 變數）
+            var promoStartTime = /*[[${promoStartTime}]]*/ null;
+            var promoEndTime = /*[[${promoEndTime}]]*/ null;
+            
+            if (startTimeInput && endTimeInput) {
+                // 設定開始時間的範圍限制（必須在促銷期間內）
+                if (promoStartTime) {
+                    startTimeInput.setAttribute('min', promoStartTime);
                 }
-            }
-            // 結束時間min設為開始時間
-            function updateEndTimeMin() {
-                if (endTimeInput && startTimeInput) {
-                    endTimeInput.setAttribute('min', startTimeInput.value);
-                    // 若結束時間早於開始時間，自動修正
-                    if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
-                        endTimeInput.value = startTimeInput.value;
+                if (promoEndTime) {
+                    startTimeInput.setAttribute('max', promoEndTime);
+                }
+                
+                // 設定結束時間的範圍限制（必須在促銷期間內）
+                if (promoStartTime) {
+                    endTimeInput.setAttribute('min', promoStartTime);
+                }
+                if (promoEndTime) {
+                    endTimeInput.setAttribute('max', promoEndTime);
+                }
+                
+                // 初始化時檢查並修正時間範圍
+                function initializeTimeRange() {
+                    var startTime = new Date(startTimeInput.value);
+                    var endTime = new Date(endTimeInput.value);
+                    var promoStart = promoStartTime ? new Date(promoStartTime) : null;
+                    var promoEnd = promoEndTime ? new Date(promoEndTime) : null;
+                    
+                    // 如果開始時間早於促銷開始時間，設為促銷開始時間
+                    if (promoStart && startTime < promoStart) {
+                        startTimeInput.value = promoStartTime;
+                    }
+                    // 如果開始時間晚於促銷結束時間，設為促銷開始時間（確保在促銷期間內）
+                    if (promoEnd && startTime > promoEnd) {
+                        startTimeInput.value = promoStartTime;
+                    }
+                    
+                    // 如果結束時間早於促銷開始時間，設為促銷開始時間
+                    if (promoStart && endTime < promoStart) {
+                        endTimeInput.value = promoStartTime;
+                    }
+                    // 如果結束時間晚於促銷結束時間，設為促銷結束時間
+                    if (promoEnd && endTime > promoEnd) {
+                        endTimeInput.value = promoEndTime;
                     }
                 }
-            }
-            if (startTimeInput && endTimeInput) {
-                updateEndTimeMin();
-                startTimeInput.addEventListener('change', updateEndTimeMin);
+                
+                // 頁面載入時初始化時間範圍
+                initializeTimeRange();
+                
+
+                
+                // 更新結束時間的最小值為開始時間
+                function updateEndTimeMin() {
+                    if (startTimeInput.value) {
+                        endTimeInput.setAttribute('min', startTimeInput.value);
+                        // 若結束時間早於開始時間，自動修正
+                        if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
+                            endTimeInput.value = startTimeInput.value;
+                        }
+                    }
+                }
+                
+                // 更新開始時間的最大值為結束時間
+                function updateStartTimeMax() {
+                    if (endTimeInput.value) {
+                        startTimeInput.setAttribute('max', endTimeInput.value);
+                        // 若開始時間晚於結束時間，自動修正
+                        if (startTimeInput.value && startTimeInput.value > endTimeInput.value) {
+                            startTimeInput.value = endTimeInput.value;
+                        }
+                    }
+                }
+                
+                // 綁定事件監聽器
+                startTimeInput.addEventListener('change', function() {
+                    checkStartTime();
+                    updateEndTimeMin();
+                });
+                
+                endTimeInput.addEventListener('change', function() {
+                    checkEndTime();
+                    updateStartTimeMax();
+                });
+                
+                // 檢查開始時間
+                function checkStartTime() {
+                    if (!startTimeInput.value) return;
+                    
+                    var startTime = new Date(startTimeInput.value);
+                    var promoStart = promoStartTime ? new Date(promoStartTime) : null;
+                    var promoEnd = promoEndTime ? new Date(promoEndTime) : null;
+                    
+                    if (promoStart && startTime < promoStart) {
+                        alert('開始時間不能比促銷開始時間早！');
+                        startTimeInput.value = promoStartTime;
+                        return false;
+                    }
+                    
+                    if (promoEnd && startTime > promoEnd) {
+                        alert('開始時間不能晚於促銷結束時間！');
+                        startTimeInput.value = promoStartTime;
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                
+                // 檢查結束時間
+                function checkEndTime() {
+                    if (!endTimeInput.value) return;
+                    
+                    var endTime = new Date(endTimeInput.value);
+                    var startTime = startTimeInput.value ? new Date(startTimeInput.value) : null;
+                    var promoStart = promoStartTime ? new Date(promoStartTime) : null;
+                    var promoEnd = promoEndTime ? new Date(promoEndTime) : null;
+                    
+                    if (promoStart && endTime < promoStart) {
+                        alert('結束時間不能比促銷開始時間早！');
+                        endTimeInput.value = promoStartTime;
+                        return false;
+                    }
+                    
+                    if (promoEnd && endTime > promoEnd) {
+                        alert('結束時間不能晚於促銷結束時間！');
+                        endTimeInput.value = promoEndTime;
+                        return false;
+                    }
+                    
+                    if (startTime && endTime <= startTime) {
+                        alert('結束時間必須晚於開始時間！');
+                        var newEndTime = new Date(startTime);
+                        newEndTime.setMinutes(newEndTime.getMinutes() + 1);
+                        endTimeInput.value = newEndTime.toISOString().slice(0, 16);
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                
+                // 表單提交時驗證
+                function validateTimeRange() {
+                    return checkStartTime() && checkEndTime();
+                }
+                
+                // 表單提交時驗證
+                var form = document.querySelector('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        if (!validateTimeRange()) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                }
             }
         });
 
