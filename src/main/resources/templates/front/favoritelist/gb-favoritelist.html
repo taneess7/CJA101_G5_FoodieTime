@@ -114,11 +114,11 @@
                         <!-- 卡片內容 -->
                         <div class="card-content">
                             <div class="card-header">
-                                <h3 class="gb-title" th:text="${item.groupBuyingCase.gbTitle}">團購標題</h3>
+                                <h3 class="gb-title" th:text="${item.groupBuyingCase.gbProd.gbProdName}">團購標題</h3>
                                 <span class="category-tag" th:text="${item.groupBuyingCase.gbProd.gbprodcgVO.gbCateName}">分類</span>
                             </div>
 
-                            <p class="product-name" th:text="${item.groupBuyingCase.gbProd.gbProdName}">商品名稱</p>
+                            <p class="product-name" th:text="${item.groupBuyingCase.gbTitle}">商品名稱</p>
 
                             <div class="card-info">
                                 <div class="info-item">
