@@ -12,13 +12,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>活動資料新增 - addAct.html</title>
+<title>活動資料新增</title>
 
 <head th:insert="~{/admin/act/included-fragment}"></head>
 <style type="text/css">
 	
 	button {
-		padding: 5px;
+		padding: 3px;
 	}
 	form {
 		display: table;
@@ -46,7 +46,13 @@
     form {
       margin-top: 0px; /* 避開 fixed nav 的高度 */
       padding: 20px;
+      padding-top: 10px;
     }
+    
+
+
+
+
     
     
     
@@ -68,15 +74,61 @@
     color: red;
     white-space: normal; /* 允許自動換行 */
     }
+        .custom-btn {
+	     background-color: #ff6b6b;
+	    color: white;
+	    border: none;
+	    padding: 6px 12px;           /* ✅ 原本是 10px 25px，這裡縮小 */
+	    font-size: 0.9rem;           /* ✅ 原本是 1rem */
+	    font-weight: 600;
+	    border-radius: 6px;          /* ✅ 原本是 8px */
+	    box-shadow: 0 3px 6px rgba(255, 107, 107, 0.3);
+	    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	    cursor: pointer;
+	    display: inline-block;
+	    text-align: center;
+	    user-select: none;
+	}
+    .custom-btn:hover {
+	  background-color: #ff4d4d;        /* 滑過變深紅 */
+	  text-decoration: none;           /* 防止 hover 時出現底線 */
+	  color: white;
+	}
     
+    .btn-group {
+	  display: flex;
+	  gap: 12px; /* ✅ 中間的空格 */
+	  justify-content: center; /* 如果想置中 */
+	}
     
+	input[type="text"],
+	input[type="password"],
+	input[type="datetime-local"],
+	input[type="file"],
+	select,
+	textarea {
+    width: 200px;
+    margin: 5px;
+    border-radius: 8px; /* ✅ 加上這行實現圓角 */
+    padding: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+   
+    h2,h3{
+    margin: 5px auto;}
 </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
-		 <div align="center"> <h2>活動資料新增 - addAct.html</h2>
-		     <sapn><a class="navbar-brand" th:href="@{/act/listAllAct}">回活動列表</a><sapn><label th:text="${success}"></label>
+		 <div align="center"> <h2>活動資料新增</h2></div>
+		 <div class="top-right-btns">
+		     <div class="btn-group">
+		    	 <span><a class="custom-btn" style="text-decoration: none;" th:href="@{/smg/admin-orders-view}">回訂單詳情</a></span>
+		     	 <span><a class="custom-btn" style="text-decoration: none;" th:href="@{/act/listAllAct}">回活動列表</a></span><label th:text="${success}"></label>
+		     </div>
+		 </div>
 <!-- 		 <h3><a class="navbar-brand" th:href="@{/act/select_page}"><img th:src="@{/images/back1.gif}">回查詢頁</a></h3></div> -->
 </nav>
 
@@ -85,7 +137,7 @@
 		
 		<div align="center">     <!--  model.addAttribute("actVO", new ActVO()) AddUpdateController 有建立通道 -->  
 		<form th:action="@{/act/insert}" method="post" th:object="${actVO}" enctype="multipart/form-data">
-			<div><h3><b>所有欄位皆為必填欄位</b></h3>  </div>     
+			<div><h3>所有欄位皆為必填欄位</h3>  </div>     
 			<div>
 				<label>店家類別:</label>
 					<select name="storeCateId">
@@ -232,7 +284,7 @@
 			
 			<div>
 				<div></div>
-				<div><button type="submit" id="submit"> 送出新增 </button></div>
+				<div><button type="submit" class="custom-btn" id="submit"> 送出新增 </button></div>
 				<div></div>
 			</div>		
 		</form>
