@@ -495,13 +495,13 @@
         <!-- 麵包屑導航 -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="gbindex.html">首頁</a></li>
-                <li class="breadcrumb-item"><a href="#">3C電子</a></li>
-                <li class="breadcrumb-item"><a href="#">耳機/音響</a></li>
-                <li class="breadcrumb-item active" aria-current="page">高音質無線藍牙耳機</li>
+                <li class="breadcrumb-item"><a th:href="@{/gb/leaderindex}">首頁</a></li>
+                <li class="breadcrumb-item"><a href="#">美食團購</a></li>
+                <li class="breadcrumb-item"><a href="#">台南美食</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product != null ? product.gbProdName : '商品詳情'}">商品詳情</li>
+
             </ol>
         </nav>
-
         <!-- 商品詳情 -->
         <div class="row">
             <!-- 商品圖片 -->
@@ -539,16 +539,27 @@
                        <!--  <span class="product-original-price" th:text="${product.gbpromotionList[0] != null && product.gbpromotionList[0].gbProdSpe != null ? 'NT$' + #numbers.formatInteger(product.gbpromotionList[0].gbProdSpe, 0) : '-'}">NT$0</span> -->
                     </div>
                     <div class="organizer-info">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="團長頭像" class="organizer-avatar">
                         <div>
-                            <div class="organizer-name">科技達人 - 小明</div>
+                     		<div th:if="${product.store != null}">
+							    商家名稱：<span th:text="${product.store.storName}">商家</span>
+							</div>
                             <div class="organizer-rating">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span class="ms-1">4.5 (128 評價)</span>
+                                <!-- 整星 -->
+								<th:block th:each="i : ${#numbers.sequence(1, productDetail != null and productDetail.newStar != null ? T(java.lang.Math).floor(productDetail.newStar).intValue() : 4)}">
+								    <i class="bi bi-star-fill"></i>
+								</th:block>
+								
+								<!-- 半星 -->
+								<th:block th:if="${productDetail != null and productDetail.newStar != null and (productDetail.newStar % 1) >= 0.5}">
+								    <i class="bi bi-star-half"></i>
+								</th:block>
+								<!-- 空星 -->
+								<th:block
+								    th:each="i : ${#numbers.sequence(1, 5 - (productDetail != null and productDetail.newStar != null ? T(java.lang.Math).floor(productDetail.newStar).intValue() + ((productDetail.newStar % 1) >= 0.5 ? 1 : 0) : 4))}">
+								    <i class="bi bi-star"></i>
+								</th:block>
+
+                                <span class="ms-1" th:text="${productDetail != null and productDetail.newStar != null ? #numbers.formatDecimal(productDetail.newStar, 1, 1) + ' (' + productDetail.reviewCount + ' 評價)' : '4.8 (256 評價)'}">4.8 (256 評價)</span>
                             </div>
                         </div>
                     </div>
@@ -622,46 +633,46 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="false">規格參數</button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">用戶評價 (42)</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab" aria-controls="shipping" aria-selected="false">配送與退貨</button>
-                </li>
+                
             </ul>
             <div class="tab-content p-4" id="productTabsContent">
                 <!-- 商品詳情 -->
                 <div class="tab-pane fade show active product-description" id="description" role="tabpanel" aria-labelledby="description-tab">
-                    <h4>高音質無線藍牙耳機 - 主動降噪版</h4>
-                    <p>體驗無與倫比的音質與舒適度，讓您的聆聽體驗更上一層樓。</p>
-                    
-                    <h5>主要特點：</h5>
+                    <div th:if="${product != null}">
+					    <h4 th:text="${product.gbProdName}">商品名稱</h4>
+					    
+					</div>
+					<div th:unless="${product != null}">
+					    <h4>商品名稱</h4>
+					    
+					</div>
+
+                    <h5>產品特色：</h5>
                     <ul>
-                        <li><strong>主動降噪技術</strong>：有效隔絕外界噪音，沉浸在音樂世界中</li>
-                        <li><strong>40小時超長續航</strong>：單次充電可使用長達40小時，滿足您的長時間使用需求</li>
-                        <li><strong>IPX7防水等級</strong>：防汗防水，運動、雨天使用無憂</li>
-                        <li><strong>藍牙5.2技術</strong>：穩定連接，低延遲，支援多設備切換</li>
-                        <li><strong>高清通話</strong>：內建4麥克風，通話清晰，有效過濾環境噪音</li>
+                        <li><strong>嚴選在地鳳梨</strong>：使用台南關廟鳳梨，天然香甜無添加</li>
+                        <li><strong>手工製作</strong>：傳統工法製作，每個鳳梨酥都是師傅的用心之作</li>
+                        <li><strong>酥脆外皮</strong>：採用優質奶油，口感層次豐富</li>
+                        <li><strong>精美包裝</strong>：適合送禮自用，展現台灣伴手禮的精緻</li>
+                        <li><strong>新鮮配送</strong>：現做現賣，確保最佳口感</li>
                     </ul>
                     
-                    <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" alt="產品展示圖">
+                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="鳳梨酥展示圖">
                     
-                    <h5>舒適貼合的設計</h5>
-                    <p>採用人體工學設計，輕量化材質，長時間佩戴也不會感到不適。配備三種尺寸的耳塞，滿足不同用戶的需求，確保穩固貼合。</p>
+                    <h5>製作工藝</h5>
+                    <p>堅持傳統手工製作，從鳳梨餡的熬煮到外皮的調製，每個步驟都精心把關。鳳梨餡採用土鳳梨製作，保留天然纖維，口感更加豐富。</p>
                     
-                    <h5>智能觸控操作</h5>
-                    <p>輕觸耳機即可控制音樂播放、接聽電話、喚醒語音助手等功能，操作簡單直觀。</p>
+                    <h5>品質保證</h5>
+                    <p>通過食品安全認證，無添加防腐劑，採用真空包裝確保新鮮度。每盒都有製作日期標示，讓您吃得安心。</p>
                     
-                    <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" alt="產品展示圖">
+                    <img src="https://images.unsplash.com/photo-1587049352846-4a222e784d38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" alt="製作過程展示圖">
                     
                     <h5>包裝內容</h5>
                     <ul>
-                        <li>無線藍牙耳機 x 1對</li>
-                        <li>充電盒 x 1</li>
-                        <li>USB-C充電線 x 1</li>
-                        <li>耳塞（S/M/L尺寸）x 3對</li>
-                        <li>使用說明書 x 1</li>
-                        <li>保固卡 x 1</li>
+                        <li>手工鳳梨酥 x 12個</li>
+                        <li>精美禮盒包裝 x 1</li>
+                        <li>產品說明卡 x 1</li>
+                        <li>保存方式說明 x 1</li>
+                        <li>製作工坊介紹 x 1</li>
                     </ul>
                 </div>
                 
@@ -670,311 +681,72 @@
                     <table class="table table-bordered spec-table">
                         <tbody>
                             <tr>
-                                <th>型號</th>
-                                <td>BT-ANC200</td>
+                                <th>產品名稱</th>
+                                <td th:text="${product.gbProdName ?: '商品名稱'}">商品名稱</td>
+
                             </tr>
                             <tr>
-                                <th>顏色</th>
-                                <td>黑色、白色、藍色</td>
+                                <th>包裝選擇</th> 
+                                <td>精美提袋</td>     
+                            </tr>                                                                    
+                            <tr>
+                                <th>單個重量</th>
+                                <td>約50公克</td>
                             </tr>
                             <tr>
-                                <th>藍牙版本</th>
-                                <td>Bluetooth 5.2</td>
+                                <th>總重量</th>
+                                <td>約600公克（不含包裝）</td>
                             </tr>
                             <tr>
-                                <th>藍牙範圍</th>
-                                <td>10米（無障礙物）</td>
+                                <th>保存期限</th>
+                                <td>常溫保存30天</td>
                             </tr>
                             <tr>
-                                <th>電池容量</th>
-                                <td>耳機：50mAh x 2<br>充電盒：500mAh</td>
+                                <th>保存方式</th>
+                                <td>請置於陰涼乾燥處，避免陽光直射</td>
                             </tr>
                             <tr>
-                                <th>播放時間</th>
-                                <td>開啟降噪：30小時（含充電盒）<br>關閉降噪：40小時（含充電盒）</td>
+                                <th>主要成分</th>
+                                <td>鳳梨餡、麵粉、奶油、雞蛋、糖</td>
                             </tr>
                             <tr>
-                                <th>充電時間</th>
-                                <td>耳機：約1小時<br>充電盒：約2小時</td>
+                                <th>過敏原資訊</th>
+                                <td>含麩質、蛋、奶類製品</td>
                             </tr>
                             <tr>
-                                <th>防水等級</th>
-                                <td>IPX7</td>
+                                <th>產地</th>
+                                <td>台灣台南</td>
                             </tr>
                             <tr>
-                                <th>驅動單元</th>
-                                <td>10mm動圈單元</td>
+                                <th>製造商</th>
+                                <td>台南傳統糕餅工坊</td>
                             </tr>
                             <tr>
-                                <th>頻率響應</th>
-                                <td>20Hz-20kHz</td>
+                                <th>食品業者登錄字號</th>
+                                <td>A-123456789-00000-0</td>
                             </tr>
                             <tr>
-                                <th>阻抗</th>
-                                <td>32Ω</td>
+                                <th>營養標示</th>
+                                <td>每100公克：熱量450大卡、蛋白質6公克、脂肪18公克、碳水化合物65公克</td>
                             </tr>
                             <tr>
-                              <tr>
-                                <th>降噪深度</th>
-                                <td>最高可達35dB</td>
+                                <th>包裝尺寸</th>
+                                <td>長25cm x 寬20cm x 高8cm</td>
                             </tr>
-                            <tr>
-                                <th>麥克風</th>
-                                <td>4個環境降噪麥克風</td>
-                            </tr>
-                            <tr>
-                                <th>支援協議</th>
-                                <td>HSP, HFP, A2DP, AVRCP</td>
-                            </tr>
-                            <tr>
-                                <th>支援編碼</th>
-                                <td>SBC, AAC, aptX</td>
-                            </tr>
-                            <tr>
-                                <th>重量</th>
-                                <td>耳機：5g x 2<br>充電盒：45g</td>
-                            </tr>
-                            <tr>
-                                <th>產品尺寸</th>
-                                <td>耳機：22 x 18 x 25mm<br>充電盒：65 x 30 x 40mm</td>
-                            </tr>
-                            <tr>
-                                <th>保固期限</th>
-                                <td>一年保固</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- 用戶評價 -->
-                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">用戶評價 (42)</h4>
-                        <div>
-                            <span class="fs-4 fw-bold text-warning">4.6</span>
-                            <span class="text-warning ms-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- 評價過濾 -->
-                    <div class="mb-4">
-                        <button class="btn btn-sm btn-outline-secondary me-2 active">全部 (42)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">5星 (30)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">4星 (8)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">3星 (3)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">2星 (1)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">1星 (0)</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2">有圖評價 (15)</button>
-                    </div>
-                    
-                    <!-- 評價列表 -->
-                    <div class="review-list">
-                        <!-- 評價項目 1 -->
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="評價者頭像" class="reviewer-avatar">
-                                    <div>
-                                        <div class="reviewer-name">林小美</div>
-                                        <div class="review-date">2023-12-15</div>
-                                    </div>
-                                </div>
-                                <div class="review-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                </div>
-                            </div>
-                            <div class="review-content">
-                                <p>音質非常好，降噪效果也很棒！戴著耳機在捷運上完全聽不到外界噪音，可以專心聽音樂。電池續航也很驚人，充一次電可以用好幾天。整體來說非常滿意這次的購買！</p>
-                                <div class="review-images">
-                                    <img th:src="@{/gb/gbproduct/image/{id}(id=${product.gbProdId})}" th:alt="${product.gbProdName}" alt="評價圖片" class="review-image">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 評價項目 2 -->
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="評價者頭像" class="reviewer-avatar">
-                                    <div>
-                                        <div class="reviewer-name">王大明</div>
-                                        <div class="review-date">2023-12-10</div>
-                                    </div>
-                                </div>
-                                <div class="review-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star"></i>
-                                </div>
-                            </div>
-                            <div class="review-content">
-                                <p>耳機整體表現不錯，音質清晰，低音也很有力。降噪效果在這個價位算是很好了。唯一的缺點是耳機有點大，戴久了會有些不舒服。但考慮到價格，這款耳機絕對值得推薦！</p>
-                            </div>
-                        </div>
-                        
-                        <!-- 評價項目 3 -->
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="評價者頭像" class="reviewer-avatar">
-                                    <div>
-                                        <div class="reviewer-name">陳小華</div>
-                                        <div class="review-date">2023-12-05</div>
-                                    </div>
-                                </div>
-                                <div class="review-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-half"></i>
-                                </div>
-                            </div>
-                            <div class="review-content">
-                                <p>這款耳機的音質和降噪效果都很棒！我特別喜歡它的觸控功能，非常方便。充電盒也很小巧，放在包包裡一點都不佔空間。唯一的小缺點是藍牙連接有時候會有點不穩定，但整體來說還是很推薦的！</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 分頁 -->
-                    <nav aria-label="評價分頁" class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一頁</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">下一頁</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- 配送與退貨 -->
-                <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
-                    <h4>配送資訊</h4>
-                    <table class="table table-bordered spec-table mb-4">
-                        <tbody>
                             <tr>
                                 <th>配送方式</th>
-                                <td>宅配 / 超商取貨</td>
+                                <td>常溫宅配</td>
                             </tr>
                             <tr>
-                                <th>配送範圍</th>
-                                <td>台灣本島、離島地區</td>
-                            </tr>
-                            <tr>
-                                <th>配送時間</th>
-                                <td>團購結束後3-5個工作天內出貨</td>
-                            </tr>
-                            <tr>
-                                <th>運費</th>
-                                <td>滿$1,000免運費，未滿者酌收$60運費</td>
+                                <th>退換貨政策</th>
+                                <td>食品類商品，除瑕疵品外恕不接受退換貨</td>
                             </tr>
                         </tbody>
                     </table>
-                    
-                    <h4>退換貨政策</h4>
-                    <div class="mb-4">
-                        <p>本商品提供到貨7天內退換貨服務（包含例假日），請留意以下事項：</p>
-                        <ul>
-                            <li>商品必須是全新狀態且完整包裝（包含商品、配件、說明書、保固卡等）。</li>
-                            <li>因個人原因退貨，需自行負擔退貨運費。</li>
-                            <li>商品有瑕疵或與描述不符，可免費退換貨。</li>
-                            <li>特殊商品（如耳塞、貼身用品等）拆封後恕不接受退換貨。</li>
-                        </ul>
-                        <p>如需退換貨，請先聯繫客服取得退貨授權，未經授權的退貨可能會被拒收。</p>
-                    </div>
-                    
-                    <h4>保固資訊</h4>
-                    <p>本商品享有原廠一年保固服務，保固期內因產品本身故障可免費維修。以下情況不適用於保固範圍：</p>
-                    <ul>
-                        <li>人為損壞（如摔落、進水等）</li>
-                        <li>非正常使用或意外造成的損壞</li>
-                        <li>自行拆解或改裝</li>
-                        <li>未經授權的維修</li>
-                        <li>保固貼紙損毀或遺失</li>
-                    </ul>
                 </div>
-            </div>
+        	</div>
         </div>
         
-        <!-- 相關商品 -->
-        <div class="related-products">
-            <h2 class="related-title">相關商品推薦</h2>
-            <div class="row">
-                <!-- 相關商品 1 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">多功能智能手錶 - 心率監測、運動追蹤</h5>
-                            <div>
-                                <span class="related-product-price">$1,999</span>
-                                <span class="related-product-original-price">$3,299</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 相關商品 2 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1575997759258-91792eaaf87b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">無線充電板 - 快充版</h5>
-                            <div>
-                                <span class="related-product-price">$799</span>
-                                <span class="related-product-original-price">$1,299</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 相關商品 3 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1511300636408-a63a89df3482?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">便攜式藍牙音箱 - 防水版</h5>
-                            <div>
-                                <span class="related-product-price">$1,499</span>
-                                <span class="related-product-original-price">$2,499</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 相關商品 4 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="related-product-card">
-                        <div class="related-product-image" style="background-image: url('https://images.unsplash.com/photo-1484704849700-f032a568e944?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');"></div>
-                        <div class="related-product-info">
-                            <h5 class="related-product-title">頭戴式耳機 - 高解析音質</h5>
-                            <div>
-                                <span class="related-product-price">$2,499</span>
-                                <span class="related-product-original-price">$3,999</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
 
@@ -1021,6 +793,7 @@
             </div>
         </div>
     </div>
+  </div>   
     <div class="modal fade" id="organizerModal" tabindex="-1" aria-labelledby="organizerModalLabel" aria-hidden="true">
       <div class="modal-dialog">
           <div class="modal-content">
@@ -1076,6 +849,7 @@
               </div>
           </div>
       </div>
+  </div>
   </div>
     <!-- 頁腳 -->
     <footer th:replace="~{front/common/footer :: main-footer}"></footer>
