@@ -10,25 +10,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 </head>
 <body th:data-store-id="${store.memId}">
-<header class="app-header">
-    <div class="header-container">
-        <div class="logo-container">
-            <a th:href="@{/}" class="logo">
-                <img th:src="@{/img/logo.png}" alt="FoodieTime 食刻" class="logo-img">
-                <span class="logo-text">FoodieTime 食刻</span>
-            </a>
-        </div>
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li class="nav-item"><a th:href="@{/merchant/dashboard}" class="nav-link">儀表板</a></li>
-                <li class="nav-item"><a th:href="@{/store/orders/manage}" class="nav-link active">訂單管理</a></li>
-                <li class="nav-item"><a th:href="@{/merchant/menu}" class="nav-link">菜單管理</a></li>
-                <li class="nav-item"><a th:href="@{/merchant/profile}" class="nav-link">商家資料</a></li>
-                <li class="nav-item"><a th:href="@{/merchant/logout}" class="nav-link logout-btn">登出</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+<!-- ======================= Header ======================= -->
+<header th:replace="~{front/common/header :: main-header}"></header>
 
 <main class="merchant-orders-page">
     <div class="container">
@@ -225,14 +208,13 @@
     </div>
 </div>
 
-<footer class="app-footer">
-    <!-- footer內容保持不變 -->
-</footer>
+<!-- ======================= Footer ======================= -->
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 <!-- SockJS 用於提供跨瀏覽器的 WebSocket 連線能力 -->
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
 <!-- Stomp.js 用於在 WebSocket 之上使用 STOMP 協定 -->
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script th:src="@{/js/front/merchantorders/merchant-orders.js}"></script>
-
+<script th:src="@{/js/common/main.js}"></script>
 </body>
 </html>
