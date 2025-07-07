@@ -1017,7 +1017,7 @@
         <!-- 麵包屑導航 -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/gbindex}">首頁</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/gb/gbindex}">首頁</a></li>
                 <li class="breadcrumb-item"><a href="#">美食團購</a></li>
                 <li class="breadcrumb-item"><a href="#">台南美食</a></li>
                 <li class="breadcrumb-item active" aria-current="page" th:text="${productDetail != null ? productDetail.gbProdName : '商品詳情'}">商品詳情</li>
@@ -1490,7 +1490,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <!-- 頁腳 -->
 	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 
