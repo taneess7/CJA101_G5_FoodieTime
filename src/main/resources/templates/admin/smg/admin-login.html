@@ -100,17 +100,77 @@
     <div class="d-grid">
         <button type="submit" class="btn btn-primary btn-lg">登入</button>
     </div>
+    <div class="text-end mt-2">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">忘記密碼？</a>
+    </div>
 </form>
 
             
             <div class="login-footer">
-                <p>© 2023 團購樂 版權所有</p>
+                <p>© FoodieTime 食刻 版權所有</p>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 忘記密碼 Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="forgotPasswordModalLabel">重設密碼</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="forgotPasswordForm">
+              <div class="mb-3">
+                <label for="forgotEmail" class="form-label">請輸入您的管理員信箱</label>
+                <input type="email" class="form-control" id="forgotEmail" name="email" placeholder="admin@example.com" required>
+              </div>
+              <div id="forgotPasswordMsg" class="text-danger mb-2" style="display:none;"></div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">發送驗證信</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    // 忘記密碼表單送出
+    const forgotForm = document.getElementById('forgotPasswordForm');
+    const forgotMsg = document.getElementById('forgotPasswordMsg');
+    forgotForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('forgotEmail').value;
+        fetch('/smg/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'email=' + encodeURIComponent(email)
+        })
+        .then(res => res.text())
+        .then(msg => {
+            forgotMsg.style.display = 'block';
+            forgotMsg.textContent = msg;
+            if (msg.includes('驗證信已寄出')) {
+                forgotMsg.classList.remove('text-danger');
+                forgotMsg.classList.add('text-success');
+            } else {
+                forgotMsg.classList.remove('text-success');
+                forgotMsg.classList.add('text-danger');
+            }
+        })
+        .catch(() => {
+            forgotMsg.style.display = 'block';
+            forgotMsg.textContent = '伺服器錯誤，請稍後再試。';
+            forgotMsg.classList.remove('text-success');
+            forgotMsg.classList.add('text-danger');
+        });
+    });
+    </script>
 
 </body>
 </html>

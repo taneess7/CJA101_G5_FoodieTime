@@ -18,6 +18,17 @@ public class SmgLoginInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         SmgVO smg = (session != null) ? (SmgVO) session.getAttribute("loggedInSmg") : null;
         
+        String uri = request.getRequestURI();
+        // 忘記密碼、重設密碼 API 允許匿名訪問
+        if (
+            uri.equals("/smg/forgot-password") ||
+            uri.equals("/smg/reset-password") ||
+            uri.equals("/smg/do-reset-password") ||
+            uri.equals("/smg/reset-password-success") ||
+            uri.equals("/smg/reset-password-error")
+        ) {
+            return true;
+        }
 
         if (smg == null) {
             // 判斷是否為 AJAX 請求

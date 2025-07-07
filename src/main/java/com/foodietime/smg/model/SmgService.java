@@ -1,8 +1,13 @@
 package com.foodietime.smg.model;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +25,10 @@ public class SmgService {
     private SmgfcRepository smgfcRepository;
     @Autowired
     private SmgauthRepository smgauthRepository;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @Autowired
+    private JavaMailSender mailSender;
     
     
     public List<SmgVO> findAllSmgs() {
@@ -84,5 +93,23 @@ public class SmgService {
 	        smgauthRepository.save(auth);
 	    }
 	}
+
+    public SmgVO findBySmgrEmail(String email) {
+        return smgRepository.findBySmgrEmail(email);
+    }
+
+    public String processForgotPassword(String email) {
+        SmgVO admin = findBySmgrEmail(email);
+        if (admin == null) return "信箱不存在";
+        String token = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set("admin:reset:token:" + token, email, 10, TimeUnit.MINUTES);
+        String resetUrl = "http://localhost:8080/smg/reset-password?token=" + token;
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("FoodieTime 後台重設密碼");
+        message.setText("請點擊以下連結重設密碼：" + resetUrl);
+        mailSender.send(message);
+        return "驗證信已寄出，請至信箱查收。";
+    }
 
 }

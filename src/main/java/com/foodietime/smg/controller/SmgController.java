@@ -2,8 +2,13 @@ package com.foodietime.smg.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -53,6 +58,10 @@ public class SmgController {
 	private AccrecService accrecService;
 	@Autowired
 	private AccrecPayoutScheduler accrecPayoutScheduler;
+	@Autowired
+	private StringRedisTemplate redisTemplate;
+	@Autowired
+	private JavaMailSender mailSender;
 	@GetMapping("/login")
 	public String showLoginPage() {
 	    return "admin/smg/admin-login"; // 對應到你的 Thymeleaf 登入頁面
@@ -400,5 +409,50 @@ public class SmgController {
         } catch (Exception e) {
             return "ERROR";
         }
+    }
+
+    // 忘記密碼 - 發送驗證信
+    @PostMapping("/forgot-password")
+    @ResponseBody
+    public String forgotPassword(@RequestParam String email) {
+        return smgSvc.processForgotPassword(email);
+    }
+
+    // 顯示重設密碼頁
+    @GetMapping("/reset-password")
+    public String showResetPassword(@RequestParam String token, Model model) {
+        String email = redisTemplate.opsForValue().get("admin:reset:token:" + token);
+        if (email == null) {
+            model.addAttribute("error", "連結已失效或錯誤");
+            return "admin/smg/reset-password-error";
+        }
+        model.addAttribute("token", token);
+        return "admin/smg/reset-password";
+    }
+
+    // 處理重設密碼
+    @PostMapping("/do-reset-password")
+    public String doResetPassword(@RequestParam String token, @RequestParam String newPassword, Model model) {
+        String email = redisTemplate.opsForValue().get("admin:reset:token:" + token);
+        if (email == null) {
+            model.addAttribute("error", "連結已失效或錯誤");
+            return "admin/smg/reset-password-error";
+        }
+        // 密碼格式驗證
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,20}$";
+        if (!newPassword.matches(passwordRegex)) {
+            model.addAttribute("token", token);
+            model.addAttribute("error", "密碼需包含大小寫字母、數字，長度 6~20 字元");
+            return "admin/smg/reset-password";
+        }
+        SmgVO admin = smgSvc.findBySmgrEmail(email);
+        if (admin == null) {
+            model.addAttribute("error", "找不到管理員");
+            return "admin/smg/reset-password-error";
+        }
+        admin.setSmgrPassword(newPassword); // 實務應加密
+        smgSvc.save(admin);
+        redisTemplate.delete("admin:reset:token:" + token);
+        return "admin/smg/reset-password-success";
     }
 }

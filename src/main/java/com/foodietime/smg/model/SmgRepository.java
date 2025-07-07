@@ -15,6 +15,7 @@ public interface SmgRepository extends JpaRepository<SmgVO, Integer> {
     // 可以根據需求自訂方法，例如：
     // Optional<SmgVO> findBySmgrAccount(String account);
 	SmgVO findBySmgrAccount(String smgrAccount); 
+	SmgVO findBySmgrEmail(String smgrEmail);
 	
 	
 	
