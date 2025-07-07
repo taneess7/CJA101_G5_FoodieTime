@@ -70,7 +70,7 @@ public class CouponVO implements Serializable {
     private Integer couMinOrd;
 
     // 7.新增 優惠額度
-    @NotNull(message = "最低消費金額不可為空")
+    @NotNull(message = "優惠額度不可為空")
     @Column(name = "COU_DISCOUNT", nullable = false)
     private BigDecimal couDiscount;
 
