@@ -17,7 +17,6 @@
 
 <header th:replace="~{front/common/header :: main-header}"></header>
 
-
 <main class="cart-page">
     <div class="container">
         <!-- 購物流程指示器 (維持不變) -->
@@ -26,18 +25,14 @@
             <div class="stepper-item" data-step="checkout"><div class="step-counter">2</div><div class="step-name">結帳資訊</div></div>
             <div class="stepper-item" data-step="confirmation"><div class="step-counter">3</div><div class="step-name">訂單確認</div></div>
         </div>
-        <!-- ==================== 新增的錯誤訊息提示框 ==================== -->
-        <!--
-            th:if="${errorMessage}"：
-            這是 Thymeleaf 的條件判斷。只有當 Controller 透過 RedirectAttributes
-            傳遞了一個名為 "errorMessage" 的屬性時，這個 <div> 區塊才會被渲染出來。
-        -->
+
         <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
             <span th:text="${errorMessage}">這是一條預設的錯誤訊息。</span>
             <button type="button" class="close-alert-btn" onclick="this.parentElement.style.display='none'">&times;</button>
         </div>
-        <!-- ==================== 主要修改區域開始 ==================== -->
+
         <!-- 使用 form 標籤包裹整個列表和側邊欄 -->
+        <!-- 【註】目標 action 指向 /orders/checkout，這會將勾選的商品送去建立訂單 -->
         <form id="cart-form" th:action="@{/orders/checkout}" method="post">
             <div class="cart-content">
 
@@ -53,7 +48,6 @@
                     <!-- 外層循環：遍歷店家 -->
                     <th:block th:each="entry, iterStat : ${groupedCartData}">
                         <div class="shop-group">
-                            <!-- 店家標題與全選框 -->
                             <div class="shop-header">
                                 <input type="checkbox" class="shop-select-all" th:id="'shop-select-' + ${iterStat.index}" checked>
                                 <label th:for="'shop-select-' + ${iterStat.index}" class="shop-name-label">
@@ -64,46 +58,51 @@
 
                             <!-- 內層循環：遍歷該店家的商品列表 -->
                             <div class="shop-items-list">
-                                <th:block th:each="cartVO : ${entry.value}">
-                                    <!-- data-* 屬性用於 JS 計算，cart-item 現在是 grid 容器 -->
-                                    <div class="cart-item" th:data-price="${cartVO.product.prodPrice}" th:data-quantity="${cartVO.prodN}">
+                                <!-- 【修正 1】: 變數從 cartVO 改為 item，以符合 CartItemDTO 的語意 -->
+                                <th:block th:each="item : ${entry.value}">
+                                    <!-- 【修正 2】: data-quantity 的值從 item.prodN 改為 item.quantity -->
+                                    <div class="cart-item" th:data-price="${item.product.prodPrice}" th:data-quantity="${item.quantity}">
 
                                         <!-- 第 1 欄：商品勾選框 -->
                                         <div class="item-selection">
-                                            <input type="checkbox" class="item-checkbox" name="selectedItems" th:value="${cartVO.shopId}" checked>
+                                            <!-- 【修正 3】: value 從 item.shopId 改為 item.product.prodId。這是結帳時提交的關鍵值！ -->
+                                            <input type="checkbox" class="item-checkbox" name="selectedProdIds" th:value="${item.product.prodId}" checked>
                                         </div>
 
-                                        <!-- 第 2 欄：商品圖片 -->
+                                        <!-- 第 2 欄：商品圖片 (此處無誤) -->
                                         <div class="item-image">
-                                            <img th:src="@{/product/image/{prodId}(prodId=${cartVO.product.prodId})}"
-                                                 th:alt="${cartVO.product.prodName}" class="product-image"
+                                            <img th:src="@{/product/image/{prodId}(prodId=${item.product.prodId})}"
+                                                 th:alt="${item.product.prodName}" class="product-image"
                                                  onerror="this.src='/images/default-product.jpg'">
                                         </div>
 
                                         <!-- 第 3 欄：商品詳情與控制項 -->
                                         <div class="item-details">
                                             <div class="item-info">
-                                                <h3 class="item-name" th:text="${cartVO.product.prodName}">商品名稱</h3>
-                                                <p class="item-description" th:text="${cartVO.product.prodDesc}">商品簡短描述</p>
-                                                <div class="item-price" th:text="'NT$ ' + ${cartVO.product.prodPrice}">NT$ 100</div>
+                                                <h3 class="item-name" th:text="${item.product.prodName}">商品名稱</h3>
+                                                <p class="item-description" th:text="${item.product.prodDesc}">商品簡短描述</p>
+                                                <div class="item-price" th:text="'NT$ ' + ${item.product.prodPrice}">NT$ 100</div>
                                             </div>
 
                                             <div class="item-controls">
                                                 <div class="quantity-controls">
                                                     <div class="quantity-input-group">
-                                                        <button type="button" class="quantity-btn minus" th:data-shop-id="${cartVO.shopId}">-</button>
-                                                        <input type="number" class="quantity-input" th:value="${cartVO.prodN}" min="1" max="99" readonly>
-                                                        <button type="button" class="quantity-btn plus" th:data-shop-id="${cartVO.shopId}">+</button>
+                                                        <!-- 【修正 4】: data-shop-id 改為 data-prod-id，供 JS 使用 -->
+                                                        <button type="button" class="quantity-btn minus" th:data-prod-id="${item.product.prodId}">-</button>
+                                                        <!-- 【修正 5】: value 從 item.prodN 改為 item.quantity -->
+                                                        <input type="number" class="quantity-input" th:value="${item.quantity}" min="1" max="99" readonly>
+                                                        <button type="button" class="quantity-btn plus" th:data-prod-id="${item.product.prodId}">+</button>
                                                     </div>
                                                 </div>
                                                 <div class="item-subtotal">
-                                                    <span class="subtotal-value" th:text="'NT$ ' + ${cartVO.product.prodPrice * cartVO.prodN}">NT$ 200</span>
+                                                    <!-- 【修正 6】: 計算小計時，從 item.prodN 改為 item.quantity -->
+                                                    <span class="subtotal-value" th:text="'NT$ ' + ${item.product.prodPrice * item.quantity}">NT$ 200</span>
                                                 </div>
-                                                    <button type="button" class="delete-btn" th:data-shop-id="${cartVO.shopId}">
-                                                        <i class="material-icons-outlined">delete_outline</i>
-                                                        <span>刪除</span>
-                                                    </button>
-
+                                                <!-- 【修正 7】: data-shop-id 改為 data-prod-id，供 JS 觸發刪除燈箱 -->
+                                                <button type="button" class="delete-btn" th:data-prod-id="${item.product.prodId}">
+                                                    <i class="material-icons-outlined">delete_outline</i>
+                                                    <span>刪除</span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -113,7 +112,7 @@
                     </th:block>
                 </div>
 
-                <!-- 訂單摘要側邊欄 (結構維持不變) -->
+                <!-- 訂單摘要側邊欄 (此處的 ID 由 JS 控制，無需修改) -->
                 <div class="cart-sidebar" th:if="${groupedCartData != null and not #maps.isEmpty(groupedCartData)}">
                     <div class="cart-summary">
                         <h2 class="summary-title">訂單摘要</h2>
@@ -130,8 +129,6 @@
                             <span>總計</span>
                             <span id="final-total">NT$ 0</span>
                         </div>
-
-                        <!-- 結帳按鈕，現在是 form 的一部分 -->
                         <button type="submit" id="checkout-btn" class="btn btn-primary btn-block">
                             前往結帳
                         </button>
@@ -143,7 +140,8 @@
 </main>
 
 <footer th:replace="~{front/common/footer :: main-footer}"></footer>
-<!-- ====================【新增】刪除確認燈箱 (Modal) ==================== -->
+
+<!-- 刪除確認燈箱 (此處無需修改) -->
 <div id="delete-confirm-modal" class="confirm-modal-overlay">
     <div class="confirm-modal-content">
         <h3 class="confirm-modal-title">
@@ -152,15 +150,11 @@
         </h3>
         <p class="confirm-modal-text">您確定要從購物車中移除此商品嗎？此操作無法復原。</p>
         <div class="modal-button-container">
-            <!-- 將取消設為次要按鈕 -->
             <button id="cancel-delete-btn" class="modal-button btn-secondary">取消</button>
-            <!-- 將確認刪除設為主要按鈕，並加上紅色警告樣式 -->
             <button id="confirm-delete-btn" class="modal-button btn-danger">確認刪除</button>
         </div>
     </div>
 </div>
-<!-- ======================================================================= -->
-
 
 <script th:src="@{/js/common/main.js}"></script>
 <script th:src="@{/js/front/cart/cart.js}"></script>
