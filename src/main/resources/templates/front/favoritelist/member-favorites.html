@@ -1,166 +1,164 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>我的收藏餐廳 - FoodieTime 食刻</title>
-	<meta name="description" content="查看您收藏的餐廳和美食。FoodieTime 食刻讓您輕鬆管理喜愛的美食和餐廳，隨時查看並分享。">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的收藏餐廳 - FoodieTime 食刻</title>
+<meta name="description"
+	content="查看您收藏的餐廳和美食。FoodieTime 食刻讓您輕鬆管理喜愛的美食和餐廳，隨時查看並分享。">
 
-	<!-- Google Fonts & Icons -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<!-- Google Fonts & Icons -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 
-	<!-- FoodieTime Design System -->
-	<link rel="stylesheet" th:href="@{/css/common/style.css}">
-	<link rel="stylesheet" th:href="@{/css/front/favoritelist/member-favorites.css}">
+<!-- FoodieTime Design System -->
+<link rel="stylesheet" th:href="@{/css/common/style.css}">
+<link rel="stylesheet"
+	th:href="@{/css/front/favoritelist/member-favorites.css}">
 </head>
 <body>
 
-<!-- ======================= Header ======================= -->
-<header th:replace="~{front/common/header :: main-header}"></header>
+	<!-- ======================= Header ======================= -->
+	<header th:replace="~{front/common/header :: main-header}"></header>
 
-<!-- ======================= Main Content ======================= -->
-<main class="main-content">
-	<div class="content-container">
-		<div class="member-section">
+	<!-- ======================= Main Content ======================= -->
+	<main class="main-content">
+		<div class="content-container">
+			<div class="member-section">
 
-			<!-- ========== Member Sidebar (Standardized) ========== -->
-			<aside class="member-sidebar">
-				<!-- Profile Card -->
-				<div class="member-profile" th:if="${memberVO}">
-					<div class="member-avatar">
-						<img th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
-							 alt="會員頭像">
+				<!-- ========== Member Sidebar (Standardized) ========== -->
+				<aside class="member-sidebar">
+					<!-- Profile Card -->
+					<div class="member-profile" th:if="${memberVO}">
+						<div class="member-avatar">
+							<img
+								th:src="${memberVO.memAvatar != null} ? @{/front/member/avatar/{id}(id=${memberVO.memId})} : @{/images/icons/logo.png}"
+								alt="會員頭像">
+						</div>
+						<div class="member-info">
+							<h3 class="member-name" th:text="${memberVO.memNickname}">會員暱稱</h3>
+						</div>
 					</div>
-					<div class="member-info">
-						<h3 class="member-name" th:text="${memberVO.memNickname}">會員暱稱</h3>
-					</div>
-				</div>
 
-				<!-- Navigation -->
-				<nav class="member-nav">
-					<a th:href="@{/front/member/member_center}" class="member-nav-item" th:classappend="${currentPage == 'member_center' ? 'active' : ''}">
-						<i class="material-icons-outlined">person</i>
-						<span>會員資料</span>
-					</a>
-					<div th:if="${session.loggedInStore != null}">
-						<a th:href="@{/store/sc}" class="member-nav-item">
-							<i class="material-icons-outlined">store</i>
-							<span>店家後台</span>
+					<!-- Navigation -->
+					<nav class="member-nav">
+						<a th:href="@{/front/member/member_center}"
+							class="member-nav-item"
+							th:classappend="${currentPage == 'member_center' ? 'active' : ''}">
+							<i class="material-icons-outlined">person</i> <span>會員資料</span>
 						</a>
-					</div>
-					<a th:href="@{/member/orders}" class="member-nav-item">
-						<i class="material-icons-outlined">receipt_long</i>
-						<span>一般訂單</span>
-					</a>
-					<a th:href="@{/gb/member/orders}" class="member-nav-item">
-						<i class="material-icons-outlined">receipt</i>
-						<span>團購訂單</span>
-					</a>
-					<a th:href="@{/gb/gbfavoritelist}" class="member-nav-item">
-						<i class="material-icons-outlined">group</i>
-						<span>團購收藏</span>
-					</a>
-					<a th:href="@{/member/coupons}" class="member-nav-item">
-						<i class="material-icons-outlined">local_offer</i>
-						<span>我的優惠券</span>
-					</a>
-					<a th:href="@{/favorite/member-favorites}" class="member-nav-item active">
-						<i class="material-icons-outlined">favorite</i>
-						<span>收藏餐廳</span>
-					</a>
-					<a th:href="@{/front/member/post/notifications}" class="member-nav-item">
-						<i class="material-icons-outlined">inbox</i>
-						<span>收件夾</span>
-					</a>
-				</nav>
-			</aside>
-
-			<!-- ========== Member Content ========== -->
-			<div class="member-content-main">
-				<div class="member-content-header">
-					<h1 class="member-content-title">我的收藏餐廳</h1>
-					<div class="category-filter">
-						<select id="categorySelect" class="filter-select" onchange="filterFavorites()">
-							<option value="all">全部分類</option>
-							<option value="中式料理">中式料理</option>
-							<option value="日式料理">日式料理</option>
-							<option value="韓式料理">韓式料理</option>
-							<option value="泰式料理">泰式料理</option>
-							<option value="義式料理">義式料理</option>
-							<option value="美式料理">美式料理</option>
-							<option value="甜點飲料">甜點飲料</option>
-							<option value="素食料理">素食料理</option>
-						</select>
-					</div>
-				</div>
-
-				<!-- 空狀態 -->
-				<div th:if="${#maps.isEmpty(groupedFavorites)}" class="empty-state">
-					<i class="material-icons-outlined">restaurant</i>
-					<p>您目前沒有收藏任何餐廳</p>
-					<span>快去發掘喜歡的餐廳和美食吧！</span>
-				</div>
-
-				<!-- 餐廳收藏列表 -->
-				<div class="restaurants-container" th:if="${not #maps.isEmpty(groupedFavorites)}">
-					<div class="restaurant-card" th:each="entry : ${groupedFavorites}"
-						 th:attr="data-category=${entry.key.storeCate.storCatName}">
-
-						<div class="restaurant-header">
-							<h3 class="restaurant-name" th:text="${entry.key.storName}">餐廳名稱</h3>
-							<span class="cuisine-tag" th:text="${entry.key.storeCate.storCatName}">分類</span>
+						<div th:if="${session.loggedInStore != null}">
+							<a th:href="@{/store/sc}" class="member-nav-item"> <i
+								class="material-icons-outlined">store</i> <span>店家後台</span>
+							</a>
 						</div>
+						<a th:href="@{/member/orders}" class="member-nav-item"> <i
+							class="material-icons-outlined">receipt_long</i> <span>一般訂單</span>
+						</a> <a th:href="@{/gb/member/orders}" class="member-nav-item"> <i
+							class="material-icons-outlined">receipt</i> <span>團購訂單</span>
+						</a> <a th:href="@{/gb/gbfavoritelist}" class="member-nav-item"> <i
+							class="material-icons-outlined">group</i> <span>團購收藏</span>
+						</a> <a th:href="@{/member/coupons}" class="member-nav-item"> <i
+							class="material-icons-outlined">local_offer</i> <span>我的優惠券</span>
+						</a> <a th:href="@{/favorite/member-favorites}"
+							class="member-nav-item active"> <i
+							class="material-icons-outlined">favorite</i> <span>收藏餐廳</span>
+						</a> <a th:href="@{/front/member/post/notifications}"
+							class="member-nav-item"> <i class="material-icons-outlined">inbox</i>
+							<span>收件夾</span>
+						</a>
+					</nav>
+				</aside>
 
-						<div class="restaurant-info">
-							<div class="info-item">
-								<i class="material-icons-outlined">location_on</i>
-								<span th:text="${entry.key.storAddr}">地址</span>
-							</div>
-							<div class="info-item">
-								<i class="material-icons-outlined">access_time</i>
-								<span th:text="${entry.key.storOnTime} + ' - ' + ${entry.key.storOffTime}">營業時間</span>
-							</div>
+				<!-- ========== Member Content ========== -->
+				<div class="member-content-main">
+					<div class="member-content-header">
+						<h1 class="member-content-title">我的收藏餐廳</h1>
+						<div class="category-filter">
+							<select id="categorySelect" class="filter-select"
+								onchange="filterFavorites()">
+								<option value="all">全部分類</option>
+								<option value="中式料理">中式料理</option>
+								<option value="日式料理">日式料理</option>
+								<option value="韓式料理">韓式料理</option>
+								<option value="泰式料理">泰式料理</option>
+								<option value="義式料理">義式料理</option>
+								<option value="美式料理">美式料理</option>
+								<option value="甜點飲料">甜點飲料</option>
+								<option value="素食料理">素食料理</option>
+							</select>
 						</div>
+					</div>
 
-						<!-- 商品列表 -->
-						<div class="products-section">
-							<h4 class="products-title">收藏商品</h4>
-							<div class="products-grid">
-								<div class="product-item" th:each="product : ${entry.value}">
-									<div class="product-image-container">
-										<img class="product-image"
-											 th:if="${productImageMap[product.prodId] != null}"
-											 th:src="${productImageMap[product.prodId]}" alt="商品圖片" />
-										<img class="product-image"
-											 th:unless="${productImageMap[product.prodId] != null}"
-											 th:src="@{/images/restaurant/placeholder.svg}" alt="預設圖片" />
+					<!-- 空狀態 -->
+					<div th:if="${#maps.isEmpty(groupedFavorites)}" class="empty-state">
+						<i class="material-icons-outlined">restaurant</i>
+						<p>您目前沒有收藏任何餐廳</p>
+						<span>快去發掘喜歡的餐廳和美食吧！</span>
+					</div>
 
-										<button class="favorite-btn active"
-												th:attr="data-prodid=${product.prodId}"
-												aria-label="取消收藏">
-											<i class="material-icons-outlined">favorite</i>
-										</button>
-									</div>
-									<p class="product-name" th:text="${product.prodName}">商品名稱</p>
+					<!-- 餐廳收藏列表 -->
+					<div class="restaurants-container"
+						th:if="${not #maps.isEmpty(groupedFavorites)}">
+						<div class="restaurant-card" th:each="entry : ${groupedFavorites}"
+							th:attr="data-category=${entry.key.storeCate.storCatName}">
+
+							<div class="restaurant-header">
+								<h3 class="restaurant-name" th:text="${entry.key.storName}">餐廳名稱</h3>
+								<span class="cuisine-tag"
+									th:text="${entry.key.storeCate.storCatName}">分類</span>
+							</div>
+
+							<div class="restaurant-info">
+								<div class="info-item">
+									<i class="material-icons-outlined">location_on</i> <span
+										th:text="${entry.key.storAddr}">地址</span>
+								</div>
+								<div class="info-item">
+									<i class="material-icons-outlined">access_time</i> <span
+										th:text="${entry.key.storOnTime} + ' - ' + ${entry.key.storOffTime}">營業時間</span>
 								</div>
 							</div>
-						</div>
 
-						<div class="restaurant-actions">
-							<a th:href="@{'/category/store/' + ${entry.key.storId}}" class="btn btn-primary">查看餐廳</a>
+							<!-- 商品列表 -->
+							<div class="products-section">
+								<h4 class="products-title">收藏商品</h4>
+								<div class="products-grid">
+									<div class="product-item" th:each="product : ${entry.value}">
+										<div class="product-image-container">
+											<img class="product-image"
+												th:if="${productImageMap[product.prodId] != null}"
+												th:src="${productImageMap[product.prodId]}" alt="商品圖片" /> <img
+												class="product-image"
+												th:unless="${productImageMap[product.prodId] != null}"
+												th:src="@{/images/restaurant/placeholder.svg}" alt="預設圖片" />
+
+											<button class="favorite-btn active"
+												th:attr="data-prodid=${product.prodId}" aria-label="取消收藏">
+												<i class="material-icons-outlined">favorite</i>
+											</button>
+										</div>
+										<p class="product-name" th:text="${product.prodName}">商品名稱</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="restaurant-actions">
+								<a th:href="@{'/category/store/' + ${entry.key.storId}}"
+									class="btn btn-primary">查看餐廳</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</main>
+	</main>
 
-<!-- ======================= Footer ======================= -->
-<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+	<!-- ======================= Footer ======================= -->
+	<footer th:replace="~{front/common/footer :: main-footer}"></footer>
 
-<!-- JavaScript (完全保留功能) -->
-<script>
+	<!-- JavaScript (完全保留功能) -->
+	<script>
 	function filterFavorites() {
 		const selected = document.getElementById("categorySelect").value;
 		const cards = document.querySelectorAll(".restaurant-card");
@@ -175,6 +173,16 @@
 		});
 	}
 
+	// ✅ 新增 Toast 函式
+	function showToast(message) {
+		const toast = document.getElementById('toast');
+		toast.textContent = message;
+		toast.classList.add('show');
+		setTimeout(() => {
+			toast.classList.remove('show');
+		}, 1500); 
+	}
+	
 	// 收藏取消功能
 	document.addEventListener('DOMContentLoaded', function () {
 		document.querySelectorAll('.favorite-btn').forEach(btn => {
@@ -191,14 +199,15 @@
 							return res.json();
 						})
 						.then(data => {
-							alert("已取消收藏");
-							location.reload();
+							showToast("已取消收藏");
+							setTimeout(() => location.reload(), 1500); // 延遲刷新
 						})
-						.catch(err => alert(err.message));
+						.catch(err => showToast(err.message));
 			});
 		});
 	});
 </script>
-
+	<!-- 自訂提示訊息區塊 -->
+	<div id="toast" class="custom-toast">已取消收藏</div>
 </body>
 </html>

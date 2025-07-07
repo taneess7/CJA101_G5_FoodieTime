@@ -129,53 +129,64 @@
 	<header th:replace="~{front/common/header :: main-header}"></header>
 
 	<main>
-		<section class="page-header">
+		<!-- ✅ 分類頁：顯示分類名稱與介紹 -->
+		<section class="page-header"
+			th:if="${not isSearchPage and categoryName != null}">
 			<div class="container">
-				<h1 class="page-title"
-					th:text="${categoryName != null ? categoryName : '搜尋結果'}">分類名稱</h1>
+				<h1 class="page-title" th:text="${categoryName}">分類名稱</h1>
 				<p class="page-description"
-					th:text="'探索道地的 ' + (${categoryName != null ? categoryName : '美食'}) + '，從傳統小吃到精緻料理'">
-					分類描述</p>
+					th:text="'探索道地的 ' + ${categoryName} + '，從傳統小吃到精緻料理'">分類描述</p>
 			</div>
 		</section>
 
+
+		<!-- ✅ 搜尋結果頁：有結果時顯示「搜尋結果」 -->
+		<section class="page-header"
+			th:if="${categoryName == null and param.keyword != null and not #lists.isEmpty(storeList)}">
+			<div class="container">
+				<h1 class="page-title">搜尋結果</h1>
+				<p class="page-description">以下是我們為您找到的相關美食與餐廳：</p>
+			</div>
+		</section>
+
+
 		<!-- 🔍 只有在關鍵字搜尋時才顯示「所有相關料理」 -->
 		<section class="search-products"
-         th:if="${param.keyword != null and not #lists.isEmpty(productList)}">
-    <h2>相關料理</h2>
-    <div class="menu-items">
-        <div class="menu-item product-clickable"
-             th:each="prodCard : ${productList}"
-             th:attr="data-prod-id=${prodCard.prodId},
+			th:if="${param.keyword != null and not #lists.isEmpty(productList)}">
+			<h2>相關料理</h2>
+			<div class="menu-items">
+				<div class="menu-item product-clickable"
+					th:each="prodCard : ${productList}"
+					th:attr="data-prod-id=${prodCard.prodId},
                       data-prod-name=${prodCard.prodName},
                       data-prod-desc=${prodCard.prodDesc},
                       data-prod-price=${prodCard.prodPrice}">
-            <img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
-                 th:alt="${prodCard.prodName}" class="menu-item-image">
-            <div class="menu-item-info">
-                <h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
-                <p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
-                <span class="menu-item-price" th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
-            </div>
-        </div>
-    </div>
-</section>
-		
+					<img th:src="@{/product/image/{prodId}(prodId=${prodCard.prodId})}"
+						th:alt="${prodCard.prodName}" class="menu-item-image">
+					<div class="menu-item-info">
+						<h3 class="menu-item-name" th:text="${prodCard.prodName}">商品名稱</h3>
+						<p class="menu-item-description" th:text="${prodCard.prodDesc}">商品描述</p>
+						<span class="menu-item-price"
+							th:text="'NT$ ' + ${prodCard.prodPrice}">價格</span>
+					</div>
+				</div>
+			</div>
+		</section>
 
-		<!-- ❗查無結果顯示 -->
-		<div class="container"
-			th:if="${param.keyword != null and #lists.isEmpty(storeList)}">
-			<div style="text-align: center; padding: 2em;">
+		<!-- ❌ 查無結果區塊：巢狀避免 null 轉型錯誤 -->
+		<div class="container" th:if="${isSearchPage}">
+			<div th:if="${isEmptyResult}"
+				style="text-align: center; padding: 2em;">
 				<h3>
 					沒有符合「<span th:text="${param.keyword}">關鍵字</span>」的結果
 				</h3>
 				<p>請嘗試其他關鍵字。</p>
 			</div>
 		</div>
-	<div class="container"
-     th:if="${param.keyword == null or not #lists.isEmpty(storeList)}">
-	<div class="restaurant-list">
-		<article class="restaurant-detail" th:each="store : ${storeList}">
+		<div class="container"
+			th:if="${param.keyword == null or not #lists.isEmpty(storeList)}">
+			<div class="restaurant-list">
+				<article class="restaurant-detail" th:each="store : ${storeList}">
 					<!-- 餐廳主區塊 -->
 					<div class="restaurant-header">
 						<div class="restaurant-main-info">

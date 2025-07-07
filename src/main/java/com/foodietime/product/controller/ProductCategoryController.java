@@ -111,7 +111,8 @@ public class ProductCategoryController {
         // ==================== 2. 獲取分類與店家基礎資料 (維持不變) ====================
         ProductCategoryVO categoryVO = categoryService.findById(cateId);
         model.addAttribute("categoryName", categoryVO.getProdCate());
-
+        model.addAttribute("isSearchPage", false); // 明確標記為非搜尋頁
+        
         List<StoreVO> storeList = categoryService.getStoresByCategoryId(cateId);
         model.addAttribute("storeList", storeList);
         model.addAttribute("categoryId", cateId);
@@ -191,9 +192,10 @@ public class ProductCategoryController {
             model.addAttribute("claimedCouponIds", Collections.emptySet());
         }
         // ======================================================================================================== //
-        model.addAttribute("categoryName", "搜尋結果");
         model.addAttribute("keyword", keyword);
-
+        model.addAttribute("isSearchPage", true);
+        model.addAttribute("categoryName", null);
+        
         // 1. 搜尋商品與店家
         List<StoreVO> storeList = storeService.searchStores(keyword);
         List<ProductVO> productList = productService.searchProductsByKeyword(keyword);
@@ -206,8 +208,12 @@ public class ProductCategoryController {
         combinedStores.addAll(productStoreSet);
         List<StoreVO> finalStoreList = new ArrayList<>(combinedStores);
         model.addAttribute("storeList", finalStoreList);
-      
+        model.addAttribute("productList", productList != null ? productList : new ArrayList<>());
 
+        // ✅ 判斷是否為空結果（前端會用來顯示查無結果訊息）
+        boolean isEmptyResult = finalStoreList.isEmpty();
+        model.addAttribute("isEmptyResult", isEmptyResult);
+        
         // 2. 店家圖片轉 base64
         Map<Integer, String> storeImageMap = new HashMap<>();
         for (StoreVO store : finalStoreList) {
@@ -261,6 +267,9 @@ public class ProductCategoryController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
+        
+        // ✅ 加這一行，讓前端正確判斷是否顯示黃色 header 區塊
+        model.addAttribute("isSearchPage", false);
         
         StoreVO store = storeService.getOneStore(storeId);
         List<CouponVO> couponList = storeService.getCouponsByStore(storeId);
