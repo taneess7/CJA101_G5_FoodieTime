@@ -47,8 +47,8 @@ public interface GroupBuyingCasesRepository extends JpaRepository<GroupBuyingCas
     // 根據狀態查詢團購案並按創建時間降序排列
     List<GroupBuyingCasesVO> findByGbStatusOrderByGbCreateAtDesc(Byte gbStatus);
     
-    // 根據標題關鍵字和狀態搜尋團購案
-    List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus);
+    // 根據商品名稱關鍵字和狀態搜尋團購案
+    List<GroupBuyingCasesVO> findByGbProd_GbProdNameContainingAndGbStatus(String gbProdName, Byte gbStatus);
 
     List<GroupBuyingCasesVO> findByGbStatusAndSettled(Byte gbStatus, Boolean settled);
 

@@ -105,8 +105,8 @@ public class GroupBuyingCasesService {
     }
     
     // 根據標題關鍵字和狀態搜尋團購案
-    public List<GroupBuyingCasesVO> findByGbTitleContainingAndGbStatus(String keyword, Byte gbStatus) {
-        return groupBuyingCasesRepository.findByGbTitleContainingAndGbStatus(keyword, gbStatus);
+    public List<GroupBuyingCasesVO> findByGbProd_GbProdNameContainingAndGbStatus(String gbProdName, Byte gbStatus) {
+        return groupBuyingCasesRepository.findByGbProd_GbProdNameContainingAndGbStatus(gbProdName, gbStatus);
     }
 
 
