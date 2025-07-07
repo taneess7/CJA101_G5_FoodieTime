@@ -2,8 +2,8 @@ package com.foodietime.orders.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foodietime.cart.dto.CartItemDTO;
 import com.foodietime.cart.model.CartService;
-import com.foodietime.cart.model.CartVO;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.memcoupon.model.MemCouponService;
 import com.foodietime.memcoupon.model.MemCouponVO;
@@ -53,29 +53,31 @@ public class OrdersController {
      * 【核心修改】處理從購物車提交的結帳請求 (POST)
      * 這個方法現在會接收被勾選的商品ID，並進行店家驗證。
      *
-     * @param selectedItems      參數用途：從前端表單接收到的、被勾選的購物車項目ID列表 (name="selectedItems")。
+     * @param selectedProdIds      參數用途：從前端表單接收到的、被勾選的購物車項目ID列表 (name="selectedProdIds")。
      *                           資料來源：cart.html 中的複選框。
      * @param session            參數用途：用於獲取會員資訊及在不同請求間傳遞數據。
      * @param redirectAttributes 參數用途：用於在重定向時傳遞提示訊息給前端。
      * @return 重定向到結帳頁面或返回購物車（如果驗證失敗）。
      */
     @PostMapping("/checkout")
-    public String processCheckout(@RequestParam(name = "selectedItems", required = false) List<Integer> selectedItems,
+    public String processCheckout(@RequestParam(name = "selectedProdIds", required = false) List<Integer> selectedProdIds,
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
 
         // -------------------- 步驟1：安全性與有效性檢查 --------------------
-        if (selectedItems == null || selectedItems.isEmpty()) {
+        MemberVO memberVO = (MemberVO) session.getAttribute("loggedInMember");
+        if (memberVO == null) { return "redirect:/front/member/login"; }
+        if (selectedProdIds == null || selectedProdIds.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "請至少選擇一項商品進行結帳！");
             return "redirect:/cart/cart";
         }
 
         // -------------------- 步驟2：獲取勾選商品的詳情 --------------------
-        List<CartVO> selectedCartItems = cartService.getCartItemsByIds(selectedItems);
+        List<CartItemDTO> selectedCartItems = cartService.getCartItemsByProdIds(memberVO.getMemId(), selectedProdIds);
 
         // -------------------- 步驟3：店家驗證邏輯 --------------------
         Set<Integer> uniqueStoreIds = selectedCartItems.stream()
-                .map(cartVO -> cartVO.getProduct().getStore().getStorId())
+                .map(item -> item.getProduct().getStore().getStorId())
                 .collect(Collectors.toSet());
 
         if (uniqueStoreIds.size() > 1) {
@@ -101,7 +103,7 @@ public class OrdersController {
                                    // 【新增】接收使用者選擇的優惠券 ID (用於更新預覽)
                                    @RequestParam(name = "selectedCouponId", required = false, defaultValue = "0") Integer selectedCouponId) {
 
-        List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
+        List<CartItemDTO> checkoutItems = (List<CartItemDTO>) session.getAttribute("checkoutItems");
         if (checkoutItems == null || checkoutItems.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "無結帳商品，請從購物車重新選擇。");
             return "redirect:/cart/cart";
@@ -114,7 +116,9 @@ public class OrdersController {
             model.addAttribute("loggedInMember", memberVO);
         }
         // 1. 計算商品總金額 (小計)
-        Integer subtotalAmount = checkoutItems.stream().mapToInt(cart -> cart.getProduct().getProdPrice() * cart.getProdN()).sum();
+        Integer subtotalAmount = checkoutItems.stream()
+                .mapToInt(item -> item.getProduct().getProdPrice() * item.getQuantity())
+                .sum();
         model.addAttribute("totalAmount", subtotalAmount); // 將小計金額傳給前端
 
         // 2. 計算運費
@@ -225,18 +229,15 @@ public class OrdersController {
             if (memberVO == null) {
                 return "redirect:/cart/login";
             }
-            List<CartVO> checkoutItems = (List<CartVO>) session.getAttribute("checkoutItems");
+            List<CartItemDTO> checkoutItems = (List<CartItemDTO>) session.getAttribute("checkoutItems");
             if (checkoutItems == null || checkoutItems.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "結帳已逾時或無商品，請重新操作。");
                 return "redirect:/cart/cart";
             }
             // ==================== 2. 後端重新計算金額，確保資料正確性 ====================
-            // 重新計算商品小計，不能信任任何前端傳來的金額
             Integer subtotalAmount = checkoutItems.stream()
-                    .mapToInt(item -> item.getProduct().getProdPrice() * item.getProdN())
+                    .mapToInt(item -> item.getProduct().getProdPrice() * item.getQuantity())
                     .sum();
-
-            // 重新計算運費，規則必須與 showCheckoutPage 方法中的一致
             Integer shippingFee = (subtotalAmount >= 500) ? 0 : 60;
 
 
