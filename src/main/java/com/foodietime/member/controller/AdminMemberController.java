@@ -192,9 +192,15 @@ import jakarta.servlet.http.HttpSession;
 	        if (session != null) {
 	            MemberVO loggedIn = (MemberVO) session.getAttribute("loggedInMember");
 	            // 只踢出會員端登入者（不要踢管理員）
-	            if (loggedIn != null && loggedIn.getMemId().equals(memId) && memStatus == 2) {
-	                session.setAttribute("kickoutReason", "您的帳號已被停權，請聯絡客服人員！");
-	                result.put("kickedOut", true);
+	            if (loggedIn != null && loggedIn.getMemId().equals(memId)) {
+	                if (memStatus == 2) {
+	                    session.setAttribute("kickoutReason", "您的帳號已被停權，請聯絡客服人員！");
+	                    result.put("kickedOut", true);
+	                } else {
+	                    // ✅ 若是登入者，但非停權 → 同步更新 session 中的資料
+	                    MemberVO refreshed = memService.getById(memId);
+	                    session.setAttribute("loggedInMember", refreshed);
+	                }
 	            }
 	        }
 

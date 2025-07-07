@@ -170,8 +170,7 @@
 								    <input type="date" class="form-control" name="regDateFrom" th:value="${regDateFrom}">
 								    
 								
-								    <input type="number" class="form-control" name="orderCountMin" th:value="${orderCountMin}">
-								    <input type="number" class="form-control" name="totalSpentMin" th:value="${totalSpentMin}">
+								   
 								
 								    <button type="submit" class="btn btn-primary" onclick="document.getElementById('pageInput').value = 1">查詢</button>
 
@@ -299,13 +298,7 @@
 
                             </div>
 
-                            <!-- Batch Actions -->
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <button class="btn btn-info me-2" onclick="batchMessage()">
-                                        <i class="fas fa-envelope me-1"></i>批量發送訊息
-                                    </button>                                    
-                                </div>
+                           
                                 
                                 <!-- Pagination -->
                                 <nav th:if="${totalPages > 1}">

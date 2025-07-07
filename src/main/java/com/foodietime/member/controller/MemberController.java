@@ -324,9 +324,14 @@ public class MemberController {
 
         // 🌟 用 pendingIsStore
         Boolean isStore = (Boolean) session.getAttribute("pendingIsStore");
-        if (Boolean.TRUE.equals(isStore)) {
+        System.out.println("【DEBUG】activate - pendingIsStore = " + isStore);
+
+
+        // fallback：若 session 遺失但該會員尚未建立店家 → 仍導去註冊
+        if (Boolean.TRUE.equals(isStore) || storeService.findByStorEmail(member.getMemEmail()) == null) {
             session.setAttribute("registeringStore", member);
-            session.removeAttribute("pendingIsStore");  
+            session.removeAttribute("pendingIsStore");
+            System.out.println("【DEBUG】導向店家註冊頁面");
             return "redirect:/front/member/storeregister";
         }
         return "front/member/activation_success";
