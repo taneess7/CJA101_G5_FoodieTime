@@ -27,7 +27,20 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    // ... 其他不變的請求映射方法 (login, checkout, etc.)
+    @GetMapping("login")
+    public String login() {
+        return "front/member/login";
+    }
+
+    @GetMapping("checkout")
+    public String checkout(Model model) {
+        return "front/cart/checkout";
+    }
+
+    @GetMapping("order-confirmation")
+    public String orderConfirmation(Model model) {
+        return "front/cart/order-confirmation";
+    }
 
     @GetMapping("cart")
     public String listAllCart(Model model, HttpSession session) {
