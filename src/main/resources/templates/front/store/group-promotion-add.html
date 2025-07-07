@@ -22,15 +22,15 @@
         </div>
         <div class="mb-3">
             <label class="form-label">關聯商品 <span class="text-danger">*</span></label>
-            <select class="form-select" th:field="*{gbprod}" required>
+            <select class="form-select" th:field="*{gbprod}" required id="gbprodSelect">
                 <option value="">請選擇商品</option>
-                <option th:each="prod : ${products}" th:value="${prod.gbProdId}" th:text="${prod.gbProdName}"></option>
+                <option th:each="prod : ${products}" th:value="${prod.gbProdId}" th:text="${prod.gbProdName}" th:attr="data-quantity=${prod.gbProdQuantity}"></option>
             </select>
             <div th:if="${#fields.hasErrors('gbprod')}" class="text-danger" th:errors="*{gbprod}"></div>
         </div>
         <div class="mb-3">
             <label class="form-label">最小成團數 <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" th:field="*{gbMinQty}" min="1" required>
+            <input type="number" class="form-control" th:field="*{gbMinQty}" min="1" required id="gbMinQtyInput">
             <div th:if="${#fields.hasErrors('gbMinQty')}" class="text-danger" th:errors="*{gbMinQty}"></div>
         </div>
         <div class="mb-3">
@@ -76,6 +76,30 @@ window.addEventListener('DOMContentLoaded', function() {
         // 若結束時間早於開始時間，自動調整
         if (endInput.value < startInput.value) {
             endInput.value = startInput.value;
+        }
+    });
+
+    // ====== 新增商品達標數量驗證 ======
+    const prodSelect = document.getElementById('gbprodSelect');
+    const minQtyInput = document.getElementById('gbMinQtyInput');
+    let prodQuantity = 0;
+
+    prodSelect.addEventListener('change', function() {
+        const selected = prodSelect.options[prodSelect.selectedIndex];
+        prodQuantity = parseInt(selected.getAttribute('data-quantity')) || 0;
+        minQtyInput.min = prodQuantity;
+        if (parseInt(minQtyInput.value) < prodQuantity) {
+            minQtyInput.value = prodQuantity;
+        }
+        minQtyInput.dispatchEvent(new Event('input'));
+    });
+
+    minQtyInput.addEventListener('input', function() {
+        if (parseInt(this.value) < prodQuantity) {
+            this.setCustomValidity('最小成團數必須大於等於商品達標數量（' + prodQuantity + '）');
+            this.reportValidity();
+        } else {
+            this.setCustomValidity('');
         }
     });
 });
