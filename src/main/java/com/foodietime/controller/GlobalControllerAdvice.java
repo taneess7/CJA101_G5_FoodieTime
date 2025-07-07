@@ -33,7 +33,7 @@ public class GlobalControllerAdvice {
         if (loginMember != null) {
             // ==================== 2. 計算購物車商品總數 ====================
             // 呼叫 Service 層方法計算該會員的購物車商品總數
-            Integer cartItemCount = cartService.getTotalItemCountByMemberId(loginMember.getMemId());
+            Integer cartItemCount = cartService.getCartItemCount(loginMember.getMemId());
 
             // ==================== 3. 將資料加入全域 Model ====================
             // 將會員物件本身加入 Model，方便 Thymeleaf 直接取用，例如 ${loginMember.memName}

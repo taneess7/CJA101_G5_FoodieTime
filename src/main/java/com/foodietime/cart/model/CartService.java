@@ -1,196 +1,213 @@
 package com.foodietime.cart.model;
 
-import com.foodietime.member.model.MemberRepository;
-import com.foodietime.member.model.MemberVO;
+import com.foodietime.cart.dto.CartItemDTO;
 import com.foodietime.product.model.ProductRepository;
 import com.foodietime.product.model.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
-    // ============================= 注入 ===================================================================
-    private final CartRepository repo;
-    private final MemberRepository memberRepo;
-    private final ProductRepository productRepo;
+
+    // ==================== 1. 常數與依賴注入 ====================
+    private static final String CART_KEY_PREFIX = "cart:";
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final HashOperations<String, String, Integer> hashOps;
+    private final ProductRepository productRepo; // 仍然需要用來獲取商品詳細資訊
+
     @Autowired
-    public CartService(CartRepository repo, MemberRepository memberRepo, ProductRepository productRepo) {
-        this.repo = repo;
-        this.memberRepo = memberRepo;
+    public CartService(RedisTemplate<String, Object> redisTemplate, ProductRepository productRepo) {
+        this.redisTemplate = redisTemplate;
+        this.hashOps = redisTemplate.opsForHash();
         this.productRepo = productRepo;
     }
 
-    // ============================= 主要方法 ===================================================================
+    // ==================== 2. 主要公開方法 ====================
 
-
-    // 新增_購物車商品，智能加入購物車（如果商品已存在則增加數量）
-    public CartVO addCart(Integer memId, Integer prodId, Integer prodN) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
+    /**
+     * 將商品加入指定會員的購物車。
+     * @param memId 會員ID
+     * @param prodId 商品ID
+     * @param quantity 欲增加的數量
+     */
+    public void addCart(Integer memId, Integer prodId, Integer quantity) {
+        // ==================== 1. 商品存在性檢查 (新的 FK 約束) ====================
+        // 在操作 Redis 之前，先確認這個商品在 MySQL 中是真實存在的。
+        // 這一步取代了資料庫的 FK 約束檢查。
         ProductVO product = productRepo.findById(prodId)
-                .orElseThrow(() -> new RuntimeException("商品不存在"));
+                .orElseThrow(() -> new IllegalArgumentException("無效的商品ID：" + prodId));
 
-        CartVO existingCart = repo.findByMemberAndProduct(member, product);
-        if (existingCart != null) {
-            existingCart.setProdN(existingCart.getProdN() + prodN);
-            return repo.save(existingCart);
+        // 你甚至可以增加商品狀態的檢查
+        if (!product.getProdStatus()) {
+            throw new IllegalStateException("此商品目前無法購買");
+        }
+
+        // ==================== 2. 執行 Redis 操作 ====================
+        String cartKey = getCartKey(memId);
+        String prodIdStr = String.valueOf(prodId);
+
+        // 使用 HINCRBY 命令，原子性地增加數量
+        hashOps.increment(cartKey, prodIdStr, quantity);
+    }
+
+    /**
+     * 更新購物車中特定商品的數量。
+     * @param memId 會員ID
+     * @param prodId 商品ID
+     * @param newQuantity 新的商品數量
+     */
+    public void updateCartQuantity(Integer memId, Integer prodId, Integer newQuantity) {
+        // 步驟 1：同樣進行商品存在性檢查
+        productRepo.findById(prodId)
+                .orElseThrow(() -> new IllegalArgumentException("無效的商品ID：" + prodId));
+
+        // 步驟 2：執行更新邏輯...
+        if (newQuantity <= 0) {
+            deleteCartItem(memId, prodId);
         } else {
-            CartVO newCart = new CartVO();
-            newCart.setMember(member);
-            newCart.setProduct(product);
-            newCart.setProdN(prodN);
-            return repo.save(newCart);
+            String cartKey = getCartKey(memId);
+            hashOps.put(cartKey, String.valueOf(prodId), newQuantity);
+        }
+    }
+
+    /**
+     * 從購物車中刪除一項商品。
+     * @param memId 會員ID
+     * @param prodId 商品ID
+     */
+    public void deleteCartItem(Integer memId, Integer prodId) {
+        String cartKey = getCartKey(memId);
+        hashOps.delete(cartKey, String.valueOf(prodId));
+    }
+
+    /**
+     * 獲取會員的完整購物車內容。
+     * @param memId 會員ID
+     * @return 包含完整商品資訊的 DTO 列表
+     */
+    public List<CartItemDTO> getCart(Integer memId) {
+        String cartKey = getCartKey(memId);
+        // 從 Redis 獲取所有商品ID和對應的數量
+        Map<String, Integer> cartItemsMap = hashOps.entries(cartKey);
+
+        if (cartItemsMap.isEmpty()) {
+            return new ArrayList<>();
         }
 
+        // 根據商品ID列表，一次性從資料庫查詢所有商品詳細資訊
+        List<Integer> prodIds = cartItemsMap.keySet().stream()
+                .map(Integer::valueOf)
+                .collect(Collectors.toList());
+
+        List<ProductVO> products = productRepo.findAllById(prodIds);
+
+        // 將商品資訊和購物車中的數量組合成 DTO
+        return products.stream()
+                .map(product -> new CartItemDTO(
+                        product,
+                        cartItemsMap.get(String.valueOf(product.getProdId()))
+                ))
+                .collect(Collectors.toList());
     }
 
-    // 修改_更新購物車數量
-    public CartVO updateCart(Integer shopId, Integer memId, Integer newProdN) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        CartVO cart = repo.findByShopIdAndMember(shopId,member)
-                .orElseThrow(() -> new RuntimeException("購物車項目不存在或無權限修改"));
-        cart.setProdN(newProdN);
-        return repo.save(cart);
-    }
-
-    // 刪除購物車商品
-    public void deleteCart(Integer shopId) {
-        if (!repo.existsById(shopId)) {
-            throw new RuntimeException("購物車項目不存在");
-        }
-        repo.deleteById(shopId);
-    }
-
-    // 查詢單一購物車商品
-    public CartVO getOneCart(Integer shopId) {
-        return repo.findById(shopId)
-                .orElseThrow(() -> new RuntimeException("購物車項目不存在"));
-    }
-
-    // 查詢所有購物車商品
-    public List<CartVO> getAll() {
-        return repo.findAll();
-    }
-
-    // 查詢某會員所有購物車商品
-    public List<CartVO> getByMemId(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        return repo.findAllByMemberIdWithDetails(member);
-    }
-    // 查詢某會員某商品是否已存在於購物車
-    public CartVO getByMemIdAndProdId(Integer memId, Integer prodId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        ProductVO product = productRepo.findById(prodId)
-                .orElseThrow(() -> new RuntimeException("商品不存在"));
-        return repo.findByMemberAndProduct(member, product);
-    }
-
-    // 計算會員的購物車總金額
-    public Integer calculateTotalAmount(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        List<CartVO> carts = repo.findByMember(member);
-        return carts.stream().mapToInt( cart -> cart.getProduct().getProdPrice() * cart.getProdN()).sum();
-    }
-
-    // 計算會員購物車總商品數量
-    public Integer calculateTotalQuantity(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        List<CartVO> carts = repo.findByMember(member);
-        return carts.stream().mapToInt(CartVO::getProdN).sum();
-    }
-
-    // 清空會員購物車
+    /**
+     * 清空指定會員的購物車。
+     * @param memId 會員ID
+     */
     public void clearCart(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        List<CartVO> carts = repo.findByMember(member);
-        repo.deleteAll(carts);
+        String cartKey = getCartKey(memId);
+        redisTemplate.delete(cartKey);
     }
 
-    // 批量刪除購物車商品
-    public void deleteCartItems(List<Integer> shopIds) {
-        repo.deleteAllById(shopIds);
-    }
-
-    // 檢查會員購物車是否為空
-    public boolean isCartEmpty(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        return repo.findByMember(member).isEmpty();
-    }
-
-    // 獲取購物車商品數量（用於購物車圖標顯示）
+    /**
+     * 獲取會員購物車中的商品項目總數 (用於購物車圖標)。
+     * @param memId 會員ID
+     * @return 商品項目數量
+     */
     public Integer getCartItemCount(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        return repo.findByMember(member).size();
+        String cartKey = getCartKey(memId);
+        // HLEN 命令，高效獲取 Hash 中的 Field 數量
+        return hashOps.size(cartKey).intValue();
     }
 
-    // 更新商品價格（如果商品價格有變動）
-    public void updateCartPrices(Integer memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-        List<CartVO> carts = repo.findByMember(member);
-        for (CartVO cart : carts) {
-            // 重新取得最新商品資訊
-            ProductVO latestProduct = productRepo.findById(cart.getProduct().getProdId())
-                    .orElse(null);
-            if (latestProduct != null) {
-                cart.setProduct(latestProduct);
-                repo.save(cart);
+
+    // ==================== 3. 輔助方法 ====================
+
+    /**
+     * 根據會員ID生成對應的 Redis Key。
+     * @param memId 會員ID
+     * @return Redis Key
+     */
+    private String getCartKey(Integer memId) {
+        return CART_KEY_PREFIX + memId;
+    }
+
+    /**
+     * 【新增】根據商品ID列表，從會員購物車中獲取指定的商品項目。
+     * 這個方法是結帳流程的關鍵，用於獲取用戶勾選的商品詳情。
+     *
+     * @param memId 會員ID
+     * @param prodIds 商品ID列表
+     * @return 包含指定商品完整資訊的 DTO 列表
+     */
+    public List<CartItemDTO> getCartItemsByProdIds(Integer memId, List<Integer> prodIds) {
+        String cartKey = getCartKey(memId);
+        if (prodIds == null || prodIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 將 Integer 列表轉換為 String 列表以用於 HMGET
+        List<String> prodIdStrs = prodIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+
+        // 1. 使用 HMGET 一次從 Redis 獲取多個商品的數量
+        List<Integer> quantities = hashOps.multiGet(cartKey, prodIdStrs);
+
+        // 2. 一次性從資料庫查詢所有商品的詳細資訊
+        List<ProductVO> products = productRepo.findAllById(prodIds);
+
+        // 3. 組裝成 CartItemDTO 列表
+        List<CartItemDTO> result = new ArrayList<>();
+        Map<Integer, ProductVO> productMap = products.stream()
+                .collect(Collectors.toMap(ProductVO::getProdId, p -> p));
+
+        for (int i = 0; i < prodIds.size(); i++) {
+            Integer prodId = prodIds.get(i);
+            Integer quantity = quantities.get(i);
+            ProductVO product = productMap.get(prodId);
+
+            // 確保商品存在且購物車中有此項 (quantity 不為 null)
+            if (product != null && quantity != null && quantity > 0) {
+                result.add(new CartItemDTO(product, quantity));
             }
         }
-    }
-
-    @Transactional(readOnly = true)
-    public List<CartVO> getCartItemsByIds(List<Integer> shopIds) {
-        if (shopIds == null || shopIds.isEmpty()) {
-            return List.of(); // 返回一個空的列表
-        }
-        // 呼叫 Repository 中對應的新方法
-        return repo.findAllByIdsWithDetails(shopIds);
+        return result;
     }
 
     /**
-     * 【新增】根據會員和商品列表，批量刪除購物車中的項目。
-     * @param member   執行刪除操作的會員
-     * @param products 要從購物車中移除的商品列表
+     * 【新增】從購物車中批量刪除多項商品。
+     * 這個方法將在訂單成功建立後被呼叫。
+     *
+     * @param memId 會員ID
+     * @param prodIds 要刪除的商品ID列表
      */
-    @Transactional
-    public void deleteItemsByMemberAndProducts(MemberVO member, List<ProductVO> products) {
-        if (member == null || products == null || products.isEmpty()) {
+    public void deleteCartItems(Integer memId, List<Integer> prodIds) {
+        if (prodIds == null || prodIds.isEmpty()) {
             return;
         }
-        repo.deleteByMemberAndProducts(member, products);
-    }
-
-    /**
-     * 根據會員實體，計算該會員購物車中的【商品項目總數】。
-     * <p>
-     * 注意：此方法計算的是購物車中有幾筆不同的商品記錄，而非所有商品的總數量加總。
-     * 這個方法專為 Header 購物車圖標上的計數顯示而設計，效能經過最佳化。
-     *
-     * @param memId 欲查詢的會員實體 (從 GlobalControllerAdvice 或 Session 傳入)
-     * @return Integer 購物車中的商品項目數量。如果會員為 null，則返回 0。
-     */
-    public Integer getTotalItemCountByMemberId(Integer  memId) {
-        MemberVO member = memberRepo.findById(memId)
-                .orElseThrow(() -> new RuntimeException("會員不存在"));
-
-        // ==================== 1. 參數檢查 ====================
-        // 確保傳入的會員物件不是 null，避免後續發生 NullPointerException
-        if (member == null) {
-            return 0;
-        }
-        // ==================== 2. 呼叫 Repository 執行高效計數 ====================
-        return repo.countByMember(member);
+        String cartKey = getCartKey(memId);
+        // 將 prodId 轉換為 String[] 以作為 HDEL 的參數
+        String[] fieldsToDelete = prodIds.stream()
+                .map(String::valueOf)
+                .toArray(String[]::new);
+        hashOps.delete(cartKey, (Object[]) fieldsToDelete);
     }
 }
