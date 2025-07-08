@@ -53,17 +53,24 @@ public class GroupOrdersController {
         // 1) 檢查是否登入
         MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
         if (member == null) {
-            return "front/member/login";
+            return "redirect:/front/member/login";
         }
 
-        // 2) 取得該筆訂單，若無則抛例外
-        Integer memId = member.getMemId();
-        GroupOrdersVO order = groupOrdersService.getLeaderOrder(memId, orderId);
+        try {
+            // 2) 嘗試查詢該筆訂單（只能是自己作為團主的）
+            Integer memId = member.getMemId();
+            GroupOrdersVO order = groupOrdersService.getLeaderOrder(memId, orderId);
 
-        // 3) 放入 Model，交給 Thymeleaf 渲染
-        model.addAttribute("order", order);
-        return "front/gb/gbleader/leader-gborder-detail";
+            // 3) 正常放入 model
+            model.addAttribute("order", order);
+            return "front/gb/gbleader/leader-gborder-detail";
+
+        } catch (Exception e) {
+            // 4) 若查不到或發生錯誤，就返回訂單列表
+            return "redirect:/gb/leader-orders";
+        }
     }
+
     
     
 //    // 查詢某會員的所有團購訂單
