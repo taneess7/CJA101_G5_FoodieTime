@@ -179,6 +179,19 @@ footer {
 	font-size: 1.5rem;
 	margin-right: 15px;
 }
+#cancelReasonError {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#cancelReasonCount {
+    white-space: nowrap;
+    text-align: right;
+    margin-left: 8px;
+}
+
 </style>
 </head>
 <body>
@@ -358,12 +371,17 @@ footer {
 					
 					                    <!-- 取消原因 -->
 					                    <div class="mb-3">
-								            <label class="form-label">取消原因</label>
-								            <textarea th:field="*{cancelReason}" class="form-control" rows="2" id="cancelReason"></textarea>
-                                            <div class="invalid-feedback" id="cancelReasonError">
-                                                當團購狀態為「已取消」時，必須填寫取消原因
-                                            </div>
-                                       </div>
+										    <label class="form-label">取消原因</label>
+										    <textarea th:field="*{cancelReason}" class="form-control" rows="2" id="cancelReason" maxlength="65"></textarea>
+										    
+										    <div class="d-flex justify-content-between mt-1">
+										        <div class="text-danger small" id="cancelReasonError" style="display: none;">
+										            當團購狀態為「已取消」時，必須填寫取消原因
+										        </div>
+										        <div class="text-muted small" id="cancelReasonCount">0 / 65</div>
+										    </div>
+										</div>
+
 					          
 							            <div class="modal-footer">
 							                <button type="submit" class="btn btn-danger">儲存變更</button>
@@ -695,6 +713,25 @@ footer {
         });
 
         /*]]>*/
+        
+        // 限制取消原因字數並即時顯示長度
+		var cancelReasonTextarea = document.getElementById('cancelReason');
+		var cancelReasonCount = document.getElementById('cancelReasonCount');
+		
+		if (cancelReasonTextarea && cancelReasonCount) {
+		    function updateCancelReasonCount() {
+		        var length = cancelReasonTextarea.value.length;
+		        cancelReasonCount.textContent = length + ' / 65';
+		        if (length > 65) {
+		            cancelReasonTextarea.value = cancelReasonTextarea.value.slice(0, 65);
+		        }
+		    }
+		
+		    cancelReasonTextarea.addEventListener('input', updateCancelReasonCount);
+		    // 初始化字數顯示
+		    updateCancelReasonCount();
+		}
+
     </script>
 
 
