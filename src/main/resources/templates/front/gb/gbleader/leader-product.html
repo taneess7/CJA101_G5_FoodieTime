@@ -569,13 +569,23 @@
                         <form th:action="@{/gb/create-case}" method="post">
                             <input type="hidden" name="gbProdId" th:value="${product.gbProdId}" />
                             <div class="mb-3">
-                                <label class="form-label">團購標題</label>
-                                <input type="text" class="form-control" name="gbTitle" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">團購描述</label>
-                                <textarea class="form-control" name="gbDescription" rows="4" required></textarea>
-                            </div>
+							    <label class="form-label">團購標題</label>
+							    <input type="text" class="form-control" name="gbTitle" id="gbTitleInput" maxlength="45" required>
+							    <div class="d-flex justify-content-between mt-1">
+							        <span class="text-danger small d-none" id="gbTitleWarning">最多45字</span>
+							        <span class="text-muted small" id="gbTitleCount">0 / 45</span>
+							    </div>
+							</div>
+							
+							<div class="mb-3">
+							    <label class="form-label">團購描述</label>
+							    <textarea class="form-control" name="gbDescription" id="gbDescriptionInput" rows="4" maxlength="255" required></textarea>
+							    <div class="d-flex justify-content-between mt-1">
+							        <span class="text-danger small d-none" id="gbDescriptionWarning">最多255字</span>
+							        <span class="text-muted small" id="gbDescriptionCount">0 / 255</span>
+							    </div>
+							</div>
+
                             <div class="mb-3">
                                 <label class="form-label">最低成團數量</label>
                                 <input type="number" class="form-control" name="gbMinQty" th:value="${gbMinQty}" min="1" readonly required>
@@ -613,6 +623,52 @@
                                     }
                                 });
                                 /*]]>*/
+                                // 團購標題與描述字數統計
+								(function() {
+								    const gbTitleInput = document.getElementById('gbTitleInput');
+								    const gbTitleWarning = document.getElementById('gbTitleWarning');
+								    const gbDescriptionInput = document.getElementById('gbDescriptionInput');
+								    const gbDescriptionWarning = document.getElementById('gbDescriptionWarning');
+								
+								    const gbTitleCount = document.getElementById('gbTitleCount');
+								    const gbDescriptionCount = document.getElementById('gbDescriptionCount');
+								
+								    const TITLE_LIMIT = 45;
+								    const DESC_LIMIT = 255;
+								
+								    function updateCountDisplay(input, counter, limit) {
+								        counter.textContent = `${input.value.length} / ${limit}`;
+								    }
+								
+								    if (gbTitleInput && gbTitleWarning) {
+								        gbTitleInput.addEventListener('input', function () {
+								            const len = gbTitleInput.value.length;
+								            updateCountDisplay(gbTitleInput, gbTitleCount, TITLE_LIMIT);
+								            if (len > TITLE_LIMIT) {
+								                gbTitleWarning.classList.remove('d-none');
+								                gbTitleInput.value = gbTitleInput.value.substring(0, TITLE_LIMIT);
+								            } else {
+								                gbTitleWarning.classList.add('d-none');
+								            }
+								        });
+								        updateCountDisplay(gbTitleInput, gbTitleCount, TITLE_LIMIT); // 初始顯示
+								    }
+								
+								    if (gbDescriptionInput && gbDescriptionWarning) {
+								        gbDescriptionInput.addEventListener('input', function () {
+								            const len = gbDescriptionInput.value.length;
+								            updateCountDisplay(gbDescriptionInput, gbDescriptionCount, DESC_LIMIT);
+								            if (len > DESC_LIMIT) {
+								                gbDescriptionWarning.classList.remove('d-none');
+								                gbDescriptionInput.value = gbDescriptionInput.value.substring(0, DESC_LIMIT);
+								            } else {
+								                gbDescriptionWarning.classList.add('d-none');
+								            }
+								        });
+								        updateCountDisplay(gbDescriptionInput, gbDescriptionCount, DESC_LIMIT); // 初始顯示
+								    }
+								})();
+
                             </script>
                             <button type="submit" class="btn btn-primary">開啟團購</button>
                         </form>
@@ -862,24 +918,42 @@
     
     <!-- 自定義 JavaScript -->
     <script>
-        document.getElementById("group-buy-form").addEventListener("submit", function(event) {
-            event.preventDefault();
 
-            const minQuantity = document.getElementById("min-quantity").value;
-            const groupPrice = document.getElementById("group-price").value;
-            const maxQuantity = document.getElementById("max-quantity").value;
-            const endTime = document.getElementById("end-time").value;
-            const groupDescription = document.getElementById("group-description").value;
+     	// 團購標題與簡介字數限制提示
+        (function() {
+            const gbTitleInput = document.getElementById('gbTitleInput');
+            const gbTitleWarning = document.getElementById('gbTitleWarning');
+            const gbDescriptionInput = document.getElementById('gbDescriptionInput');
+            const gbDescriptionWarning = document.getElementById('gbDescriptionWarning');
 
-            alert("團購已成功開啟！\n" +
-                "最少成團數量: " + minQuantity + "\n" +
-                "團購價格: NT$" + groupPrice + "\n" +
-                "最大購買數量: " + maxQuantity + "\n" +
-                "結束時間: " + endTime + "\n" +
-                "團購描述: " + groupDescription);
+            const TITLE_LIMIT = 45;
+            const DESC_LIMIT = 255;
 
-            // 這裡可以用來送出團購資料，可能會調用後端API來儲存團購設定
-        });
+            if (gbTitleInput && gbTitleWarning) {
+                gbTitleInput.addEventListener('input', function () {
+                    const len = gbTitleInput.value.length;
+                    if (len > TITLE_LIMIT) {
+                        gbTitleWarning.classList.remove('d-none');
+                        gbTitleInput.value = gbTitleInput.value.substring(0, TITLE_LIMIT);
+                    } else {
+                        gbTitleWarning.classList.add('d-none');
+                    }
+                });
+            }
+
+            if (gbDescriptionInput && gbDescriptionWarning) {
+                gbDescriptionInput.addEventListener('input', function () {
+                    const len = gbDescriptionInput.value.length;
+                    if (len > DESC_LIMIT) {
+                        gbDescriptionWarning.classList.remove('d-none');
+                        gbDescriptionInput.value = gbDescriptionInput.value.substring(0, DESC_LIMIT);
+                    } else {
+                        gbDescriptionWarning.classList.add('d-none');
+                    }
+                });
+            }
+        })();
+
     </script>
 </body>
 </html>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.foodietime.groupbuyingcases.model.GroupBuyingCasesVO;
 import com.foodietime.member.model.MemberVO;
 import com.foodietime.participants.model.ParticipantsService;
+import com.foodietime.participants.model.ParticipantsVO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -116,11 +117,16 @@ public class GroupBuyingCasesController {
            }
            group.setCumulativePurchaseQuantity(total);
 
-           // 5. 放到 Model，顯示詳情
+        // 5. 放到 Model，顯示詳情
+           // 過濾掉團主且數量為0的參與者
+           List<ParticipantsVO> filteredParticipants = group.getParticipants().stream()
+               .filter(p -> !(p.getLeader() == 0 && p.getParPurchaseQuantity() == 0))
+               .toList();
            model.addAttribute("group", group);
-           model.addAttribute("participants", group.getParticipants());
+           model.addAttribute("participants", filteredParticipants);
            return "front/gb/gbleader/leader-gbdetail";
        }
+       
 	
 	
 //	// 新增修改團購案

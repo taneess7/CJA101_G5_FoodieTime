@@ -88,37 +88,53 @@ public class gbleaderservlet {
 
 
 	    @GetMapping("/leader-product/{gbProdId}")
-        public String getLeaderProductDetail(@PathVariable Integer gbProdId, Model model, HttpSession session) {
-            // 檢查登入
-            MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-            if (member == null) {
-                return "front/member/login";
-            }
-            // 查詢商品
-            GbprodVO product = gbprodService.findById(gbProdId);
-            if (product == null) {
-                return "error/404";
-            }
-            model.addAttribute("product", product);
-         // 取得promotion最低成團數量與開始/結束時間
-            Integer gbMinQty = null;
-            String promotStart = null;
-            String promotEnd = null;
-            if (product.getGbpromotionList() != null && !product.getGbpromotionList().isEmpty()) {
-                var promo = product.getGbpromotionList().get(0);
-                gbMinQty = promo.getGbMinQty();
-                if (promo.getPromotStart() != null) {
-                    promotStart = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(promo.getPromotStart());
-                }
-                if (promo.getPromotEnd() != null) {
-                    promotEnd = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(promo.getPromotEnd());
-                }
-            }
-            model.addAttribute("gbMinQty", gbMinQty);
-            model.addAttribute("promotStart", promotStart);
-            model.addAttribute("promotEnd", promotEnd);
-            return "front/gb/gbleader/leader-product";
-        }
+	    public String getLeaderProductDetail(@PathVariable Integer gbProdId, Model model, HttpSession session) {
+	        // 1. 檢查是否登入
+	        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
+	        if (member == null) {
+	            return "redirect:/front/member/login";
+	        }
+
+	        try {
+	            // 2. 查詢商品（找不到會拋出例外或為 null）
+	            GbprodVO product = gbprodService.findById(gbProdId);
+	            if (product == null) {
+	                return "redirect:/gb/leaderindex";
+	            }
+
+	            // 3. 放入 model
+	            model.addAttribute("product", product);
+
+	            // 4. 抓 promotion 成團數量與起訖時間
+	            Integer gbMinQty = null;
+	            String promotStart = null;
+	            String promotEnd = null;
+
+	            if (product.getGbpromotionList() != null && !product.getGbpromotionList().isEmpty()) {
+	                var promo = product.getGbpromotionList().get(0);
+	                gbMinQty = promo.getGbMinQty();
+	                if (promo.getPromotStart() != null) {
+	                    promotStart = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+	                        .format(promo.getPromotStart());
+	                }
+	                if (promo.getPromotEnd() != null) {
+	                    promotEnd = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+	                        .format(promo.getPromotEnd());
+	                }
+	            }
+
+	            model.addAttribute("gbMinQty", gbMinQty);
+	            model.addAttribute("promotStart", promotStart);
+	            model.addAttribute("promotEnd", promotEnd);
+
+	            return "front/gb/gbleader/leader-product";
+
+	        } catch (Exception e) {
+	            // 5. 發生任何錯誤也回到商品列表
+	            return "redirect:/gb/leaderindex";
+	        }
+	    }
+
 	    
 	    @PostMapping("/create-case")
         public String createGroupBuyingCase(
