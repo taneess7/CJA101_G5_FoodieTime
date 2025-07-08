@@ -4,423 +4,542 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>商家後台管理 - FoodieTime 食刻</title>
-  
- 
-  <!-- header/footer cs -->
-  <link rel="stylesheet" th:href="@{/css/common/index.css}">
-  <link rel="stylesheet" th:href="@{/css/common/style.css}">
-  
-  <!-- 引入icon圖片 -->
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-   
- 
-<!--     <link rel="stylesheet" href="/css/front/store/sc.css"> -->
 
-    <!-- WebSocket 相關 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script th:src="@{/js/common/websocket.js}"></script>
-    <script th:inline="javascript">
-      document.addEventListener('DOMContentLoaded', function() {
-        // 從 Thymeleaf 取得商家ID，若 storeVO 為 null 則為空字串
-        const storeId = /*[['' + (${storeVO} != null ? ${storeVO.storId} : '')]]*/ '';
-        console.log('storeId:', storeId);
-        if (storeId) {
-          connectWebSocketNotify({ storeId: storeId });
+  <!-- Common CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/index.css}">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+
+  <!-- WebSocket & Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script th:src="@{/js/common/websocket.js}"></script>
+  <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      const storeId = /*[[${storeVO != null ? storeVO.storId : ''}]]*/ null;
+      if (storeId) {
+        connectWebSocketNotify({ storeId: storeId });
+      }
+    });
+  </script>
+
+  <style>
+    /* ==========================================================================
+       1. 設計系統變數 (Design System & Variables)
+       ========================================================================== */
+    :root {
+      /* 色彩系統 */
+      --color-primary: #C39B7B;       /* 主色調: 深赤陶色 */
+      --color-primary-dark: #B07D62;  /* 輔助色: 深棕色 (用於 hover) */
+      --color-accent: #FFCCBC;        /* 輔助色: 淺棕色 */
+      --color-background: #FAFAFA;    /* 中性色: 淺灰背景 */
+      --color-surface: #FFFFFF;       /* 中性色: 卡片白底 */
+      --color-border: #E0E0E0;        /* 中性色: 邊框灰 */
+      --color-text-primary: #333333;  /* 主要文字顏色 */
+      --color-text-secondary: #666666;/* 次要文字顏色 */
+      --color-success: #4CAF50;        /* 功能色: 成功 */
+      --color-error: #F44336;          /* 功能色: 錯誤 */
+
+      /* 字體 */
+      --font-family-base: 'Noto Sans TC', sans-serif;
+      --line-height-base: 1.5;
+
+      /* 圓角 */
+      --border-radius-base: 8px;
+
+      /* 陰影 (Material Design) */
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); /* 增強陰影 */
+
+      /* 過渡效果 */
+      --transition-base: 0.15s ease;
+    }
+
+    /* ==========================================================================
+       2. 全域與基礎樣式 (Global & Base Styles)
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      line-height: var(--line-height-base);
+      background-color: var(--color-background);
+      color: var(--color-text-primary);
+      margin: 0;
+      padding-top: 64px; /* 為固定 header 預留空間 */
+    }
+
+    /* 自訂捲軸樣式 */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-background); }
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--color-primary);
+      border-radius: 10px;
+      border: 2px solid var(--color-background);
+    }
+    ::-webkit-scrollbar-thumb:hover { background-color: var(--color-primary-dark); }
+
+    /* ==========================================================================
+       3. 佈局 (Layout)
+       ========================================================================== */
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      background-color: var(--color-surface);
+      padding: 0 24px;
+      box-shadow: var(--shadow-1);
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .dashboard {
+      display: flex;
+      padding: 24px;
+      gap: 24px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ==========================================================================
+   4. 側邊欄 (Sidebar) - 手風琴樣式
+   ========================================================================== */
+    .sidebar {
+      flex-shrink: 0;
+      width: 240px; /* 適當加寬以容納圖示和文字 */
+      background: var(--color-surface);
+      border-radius: var(--border-radius-base);
+      padding: 16px;
+      box-shadow: var(--shadow-1);
+      height: calc(100vh - 64px - 48px);
+      overflow-y: auto;
+    }
+
+    .sidebar-group {
+      margin-bottom: 8px;
+    }
+
+    /* 主分類切換按鈕 */
+    .sidebar-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      border-radius: var(--border-radius-base);
+      font-family: var(--font-family-base);
+      font-size: 1.1rem; /* 17.6px */
+      font-weight: 500;
+      text-align: left;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background-color var(--transition-base);
+    }
+
+    .sidebar-toggle:hover {
+      background-color: rgba(195, 155, 123, 0.1);
+    }
+
+    .sidebar-toggle .fa-chevron-down {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      transition: transform var(--transition-base);
+    }
+
+    /* 子選單容器 */
+    .sidebar-submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      padding-left: 16px; /* 子選單縮排 */
+    }
+
+    /* 當群組為 active 時展開子選單 */
+    .sidebar-group.active > .sidebar-submenu {
+      max-height: 500px; /* 給一個足夠大的高度來容納所有子項目 */
+      transition: max-height 0.3s ease-in;
+      margin-top: 8px;
+    }
+
+    /* 當群組為 active 時，箭頭旋轉 */
+    .sidebar-group.active > .sidebar-toggle .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    /* 子項目按鈕 */
+    .sidebar-submenu .tab-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius-base);
+      font-size: 1rem;
+      font-family: var(--font-family-base);
+      text-align: left;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      color: var(--color-text-secondary);
+    }
+
+    .sidebar-submenu .tab-btn:hover {
+      background-color: rgba(195, 155, 123, 0.1);
+      color: var(--color-primary-dark);
+      transform: translateX(5px);
+    }
+
+    .sidebar-submenu .tab-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      font-weight: 500;
+      box-shadow: var(--shadow-1);
+    }
+
+    /* ==========================================================================
+       5. 內容面板 (Content Panel)
+       ========================================================================== */
+    .content-panel {
+      flex: 1;
+      display: none;
+      min-width: 0; /* 防止 flex item 溢出 */
+      border-radius: var(--border-radius-base);
+    }
+
+    .content-panel.active {
+      display: flex; /* 使用 flex 來控制內部 iframe */
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .content-panel iframe {
+      flex: 1; /* 佔滿剩餘空間 */
+      width: 100%;
+      border: none;
+      background-color: var(--color-surface);
+      border-radius: var(--border-radius-base);
+      box-shadow: var(--shadow-1);
+      height: 100%;
+    }
+
+    /* ==========================================================================
+       6. 表單與元件 (Forms & Components)
+       ========================================================================== */
+    .form-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background-color: var(--color-surface);
+      border-radius: var(--border-radius-base);
+      box-shadow: var(--shadow-1);
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+
+    .section-title {
+      font-size: 1.25rem; /* 20px */
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin: 0;
+    }
+
+    .form-input {
+      min-width: 200px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      font-family: var(--font-family-base);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-base);
+      background-color: var(--color-surface);
+      transition: all var(--transition-base);
+    }
+
+    select.form-input {
+      cursor: pointer;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(195, 155, 123, 0.25);
+    }
+
+    /* 統一按鈕樣式 */
+    .btn {
+      display: inline-block;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius-base);
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      box-shadow: var(--shadow-1);
+      transition: all var(--transition-base);
+    }
+
+    .btn:hover {
+      background-color: var(--color-primary-dark);
+      box-shadow: var(--shadow-2);
+      transform: translateY(-2px);
+    }
+
+    /* 側邊欄分組標題 */
+    .sidebar-group {
+      margin-bottom: 32px;
+    }
+
+    .sidebar-group-title {
+      font-size: 1.125rem; /* 18px */
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin-bottom: 12px;
+      padding-left: 8px;
+      user-select: none;
+    }
+
+    /* 子項目按鈕 */
+    .sidebar-group .tab-btn {
+      display: block;
+      width: 95%;
+      padding: 10px 20px;
+      margin-bottom: 8px;
+      background: transparent;
+      border: none;
+      border-radius: var(--border-radius-base);
+      font-size: 1rem;
+      text-align: left;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    /* 子項目按鈕 hover */
+    .sidebar-group .tab-btn:hover {
+      background-color: rgba(195, 155, 123, 0.1);
+      color: var(--color-primary-dark);
+      transform: translateX(5px);
+    }
+
+    /* 子項目按鈕 active */
+    .sidebar-group .tab-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      font-weight: 500;
+      box-shadow: var(--shadow-1);
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header th:replace="~{front/common/header :: main-header}"></header>
+
+<main class="dashboard">
+  <aside class="sidebar">
+    <!-- 編輯店家 -->
+    <div class="sidebar-group active"> <!-- 預設展開第一個 -->
+      <button class="sidebar-toggle">
+        <span>編輯店家</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="sidebar-submenu">
+        <button class="tab-btn active" data-tab="store">編輯店家</button>
+        <button class="tab-btn" data-tab="order-management">訂單管理</button>
+      </div>
+    </div>
+
+    <!-- 商品 -->
+    <div class="sidebar-group">
+      <button class="sidebar-toggle">
+        <span>商品</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="sidebar-submenu">
+        <button class="tab-btn" data-tab="product">上傳商品</button>
+        <button class="tab-btn" data-tab="product-view">查看商品</button>
+      </div>
+    </div>
+
+    <!-- 團購 -->
+    <div class="sidebar-group">
+      <button class="sidebar-toggle">
+        <span>團購</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="sidebar-submenu">
+        <button class="tab-btn" data-tab="group-promotion-add">新增團購</button>
+        <button class="tab-btn" data-tab="group-promotion-list">查看團購</button>
+      </div>
+    </div>
+
+    <!-- 優惠/活動 -->
+    <div class="sidebar-group">
+      <button class="sidebar-toggle">
+        <span>優惠/活動</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="sidebar-submenu">
+        <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
+        <button class="tab-btn" data-tab="activity-view">查看活動</button>
+        <button class="tab-btn" data-tab="act-product-view">活動商品</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="content-panel active" id="tab-store">
+    <iframe th:src="@{/store/store_edit2}" title="店家資料維護"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-coupon">
+    <iframe th:src="@{/store/editCoupon}" title="店家優惠券維護"></iframe>
+  </div>
+
+
+  <div class="content-panel" id="tab-order-management">
+    <iframe th:src="@{/store/orders/manage}" title="訂單管理"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-product">
+    <div class="form-group">
+      <label for="productType">商品類型</label>
+      <select class="form-input" id="productType">
+        <option value="normal">一般商品</option>
+        <option value="group">團購商品</option>
+      </select>
+      <h2 class="section-title">上傳商品</h2>
+    </div>
+    <iframe id="normalProductUpload" th:src="@{/store/prod/prodEdit}" style="display:block;" title="一般商品上傳"></iframe>
+    <iframe id="groupProdAddFrame" src="/store/group-prod-add" style="display:none;" title="團購商品新增"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-product-view">
+    <div class="form-group">
+      <label for="productViewType">商品類型</label>
+      <select class="form-input" id="productViewType">
+        <option value="normal">一般商品</option>
+        <option value="group">團購商品</option>
+      </select>
+      <h2 class="section-title">已上傳商品</h2>
+    </div>
+    <iframe id="normalProductList" th:src="@{/store/listAllProds}" style="display:block;" title="一般商品列表"></iframe>
+    <iframe id="groupProductListFrame" src="/store/group-prod-list" style="display:none;" title="團購商品列表"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-act-product-view">
+    <iframe th:src="@{/act/myActs}" title="查看參加活動的商品"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-activity-view">
+    <iframe th:src="@{/act}" title="查看活動"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-group-promotion-add">
+    <iframe th:src="@{/store/group-promotion-add}" title="新增團購促銷"></iframe>
+  </div>
+
+  <div class="content-panel" id="tab-group-promotion-list">
+    <iframe th:src="@{/store/group-promotion-list}" title="查看團購促銷"></iframe>
+  </div>
+</main>
+<footer th:replace="~{front/common/footer :: main-footer}"></footer>
+<script th:src="@{/js/common/main.js}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebarGroups = document.querySelectorAll('.sidebar-group');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const contentPanels = document.querySelectorAll('.content-panel');
+
+    // --- 手風琴選單邏輯 (Accordion Logic) ---
+    sidebarGroups.forEach(group => {
+      const toggle = group.querySelector('.sidebar-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          // 如果點擊的不是當前已展開的，則先關閉其他所有群組
+          if (!group.classList.contains('active')) {
+            sidebarGroups.forEach(otherGroup => {
+              otherGroup.classList.remove('active');
+            });
+          }
+          // 切換當前點擊群組的展開/收合狀態
+          group.classList.toggle('active');
+        });
+      }
+    });
+
+    // --- 內容面板切換邏輯 (Tab Switching Logic) ---
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 1. 更新按鈕樣式
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // 2. 切換內容面板
+        const tabId = 'tab-' + btn.dataset.tab;
+        contentPanels.forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById(tabId);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+        }
+
+        // 3. 強制刷新特定 iframe
+        const tabsToReload = ['act-product-view', 'product-view'];
+        if (tabsToReload.includes(btn.dataset.tab)) {
+          const iframe = targetPanel?.querySelector('iframe:not([style*="display:none"])') || targetPanel?.querySelector('iframe');
+          if (iframe) {
+            const originalSrc = iframe.getAttribute('src') || iframe.getAttribute('th:src');
+            if (originalSrc && !originalSrc.startsWith('about:blank')) {
+              const url = new URL(iframe.src, window.location.origin);
+              url.searchParams.set('ts', new Date().getTime());
+              iframe.src = url.toString();
+            }
+          }
         }
       });
-    </script>
-  
-   
-   
-   
-  <style> 
-   .app-header { 
-     position: fixed;           /* ✅ 固定在畫面頂部 */ 
-     top: 0; 
-     left: 0; 
-     width: 100%;               /* 撐滿整個寬度 */ 
-     z-index: 50;               /* 確保蓋在上方 */ 
-     height: 64px; 
-     background-color: white; 
-     padding: 0 1rem; 
-     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); 
-     display: flex; 
-     align-items: center; 
-   } 
+    });
 
-/*main區塊*/
-     .dashboard {
-      display: flex; 
-       padding: 40px; 
-       gap: 20px; 
-       height: 100vh; /* ✅ 滿版高度，配合 overflow 控制 */
-    } 
-
-
-/*側邊欄*/
-     .sidebar { 
-       width: 150px; 
-       background: white; 
-       border-radius: 16px; 
-       padding: 14px; 
-       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-       text-align: center; 
-       max-height: 90vh; 
-       overflow-y: auto; 
-       margin-top: 40px;
-     } 
-     .sidebar h2 { 
-       font-size: 20px; 
-       margin: 10px; 
-     } 
-     .sidebar button { 
-       border: 1px dashed #ff5722; 
-       display: block; 
-       width: 90%; 
-       padding: 12px 16px; 
-       margin-bottom: 12px; 
-       background: none; 
-      
-       text-align: center; 
-       border-radius: 8px; 
-       font-size: 16px; 
-       cursor: pointer; 
-       transition: background 0.2s; 
-     } 
-     .sidebar button:hover, 
-     .sidebar button.active { 
-       background-color: #fff5f3; 
-       color: #ff5722; 
-       font-weight: bold; 
-     } 
-     
-     /*使主頁面不並排重複*/
-     .content-panel { 
-       flex: 1; 
-       background: #f0f0f0; 
-       border-radius: 16px; 
-       padding: 10px; 
-       padding-top: 50px;
-       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-       display: none; 
-       max-width: none; 
-       overflow-x: hidden; /*禁用橫軸*/
-       overflow-y: auto; /* ✅ 僅內層可滾動 */
-        
-     } 
-     .content-panel iframe { 
-       background: white; 
-       border-radius: 16px; 
-       padding: 20px; 
-       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
-     } 
-     .content-panel.active { 
-       display: block; 
-     } 
-     
-     /*設定iframe寬度*/
-     iframe { 
-       border: none; 
-       width: 100%; 
- 	  overflow: hidden; 
-   	  height: 89vh; 
-
-     } 
-     
-    .section-title { 
- 	font-size: 20px; 
- 	font-weight: 700; 
- 	color: #333; 
- 	margin-bottom: 10px; 
- } 
- 
-  select.form-input { 
- 	cursor: pointer; 
- } 
- 
- 
- 
- 
- /*團購一般商品切換選單*/
- .form-input { 
- 	width: 15%;  /*選單寬度*/
- 	padding: 8px; 
- 	border: 2px solid #e9ecef; 
- 	border-radius: 12px; 
- 	font-size: 16px; 
-	
- } 
-
- .form-input:focus { 
- 	outline: none; 
- 	border-color: #FF5722; 
- 	box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1); 
- } 
-
- .form-input::placeholder { 
- 	color: #adb5bd; 
- }
- 
-  .form-group { 
- 	display: flex; 
- 	align-items:baseline; 
- 	gap: 12px;
- 	
- }
- 
- 
- .form-group label {
-    white-space: nowwrap; /*避免label換行*/
-    font-weight: 600;
-    font-size: 16px;
+    // --- 表單切換邏輯 (Form Switching Logic) ---
+    const productTypeSelect = document.getElementById('productType');
+    if (productTypeSelect) {
+      productTypeSelect.addEventListener('change', function() {
+        const isGroup = this.value === 'group';
+        document.getElementById('normalProductUpload').style.display = isGroup ? 'none' : 'block';
+        document.getElementById('groupProdAddFrame').style.display = isGroup ? 'block' : 'none';
+      });
     }
-	 
-	 
-	 /* 整體捲軸寬度 */
-::-webkit-scrollbar {
-  width: 10px;
-}
 
-/* 捲軸軌道（背景） */
-::-webkit-scrollbar-track {
-  background: #f5f5f5;
-  border-radius: 10px;
-}
-
-/* 捲軸本體（滑動條） */
-::-webkit-scrollbar-thumb {
-  background-color: #bd9977;  /* 這裡換成你想要的色號 */
-  border-radius: 10px;
-  border: 2px solid #f5f5f5;  /* 外框空隙 */
-}
-
-/* 滑鼠懸停時的顏色 */
-::-webkit-scrollbar-thumb:hover {
-  background-color: #a97e63;
-}
-
-
-
-</style>
-
-
-</head>
-<body>
-<body>
-
-<!-- <header  style=" padding: 5px;"> -->
-<!--     <div class="container" style="display: flex; justify-content: space-between; align-items: center;"> -->
-<!--         <a th:href="@{/}" class="logo" style="font-weight: 800;  font-size: 24px; color: #9DB17C;text-decoration: none;"> -->
-<!--             FoodieTime<span style="color: var(--accent-color-1);">食刻</span> -->
-<!--         </a> -->
-<!--         <nav class="main-nav"> -->
-<!--             <a th:href="@{/index}" class="clay clay-button clay-convex">回首頁</a> -->
-<!--             <a th:href="@{/front/member/member_center}" class="clay clay-button clay-convex">會員</a>  -->
-<!--              <a th:href="@{/front/member/logout}" class="clay clay-button clay-convex">登出</a>        -->
-<!--         </nav> -->
-<!--     </div> -->
-<!-- </header> -->
-
- <header th:replace="~{front/common/header :: main-header}"></header> 
-	
-  <main class="dashboard" >
-    <aside class="sidebar">
-      <h2 style="color:#A56D5D;">商家管理</h2>
-      <button class="tab-btn active" data-tab="store">編輯店家</button>
-      <button class="tab-btn" data-tab="product">上傳商品</button>
-      <button class="tab-btn" data-tab="product-view">查看商品</button>           
-      <button class="tab-btn" data-tab="group-promotion-add">新增團購促銷</button>
-      <button class="tab-btn" data-tab="group-promotion-list">查看團購促銷</button>
-      <button class="tab-btn" data-tab="coupon">編輯優惠券</button>
-      <button class="tab-btn" data-tab="activity-view">查看活動</button>  
-      <button class="tab-btn" data-tab="act-product-view">活動商品</button>
-      
-   
-     
-
-                
-             
-    </aside>
-	
-	
-<!-- 店家資料維護頁 -->
-    <section class="content-panel active" id="tab-store">
-      <iframe th:src="@{/store/store_edit2}" height="1400"></iframe>
-<!--           <div th:replace="store_edit :: storeEditFragment"></div> -->
-    </section>
-
-
-
-<!-- 店家優惠券維護頁 -->
-    <section class="content-panel" id="tab-coupon">
-      <iframe th:src="@{/store/editCoupon}" height="1000"></iframe>
-    </section>
-  
-    
-<!-- 上傳商品 -->
-    <section class="content-panel" id="tab-product">
-      
-      <div class="form-group">
-        <label for="productType">商品類型</label>
-        <select class="form-input" id="productType">
-          <option value="normal">一般商品</option>
-          <option value="group">團購商品</option>
-        </select>
-        <h2 class="section-title">上傳商品</h2>
-      </div>
-
-
-        
-        <iframe id="normalProductUpload" th:src="@{/store/prod/prodEdit}" style="width:100%;height:900px;display:block;border:none;"></iframe> 
-        <button type="submit" class="btn" id="saveNormalProduct"  style="display:none;">儲存商品</button>
-
-      <button type="button" class="btn" id="addGroupProductBtn" style="display:none;margin-top:20px;">新增團購商品</button>
-      <iframe id="groupProdAddFrame" src="/store/group-prod-add" style="width:100%;height:900px;display:none;border:none;"></iframe>
-    </section>
-
-
-<!-- 查看商品 -->
-    <section class="content-panel" id="tab-product-view">
-      
-      <div class="form-group">
-        <label for="productViewType">商品類型</label>
-        <select class="form-input" id="productViewType">
-          <option value="normal">一般商品</option>
-          <option value="group">團購商品</option>
-        </select>
-        <h2 class="section-title">已上傳商品</h2>
-      </div>
-     
-      <iframe id="normalProductList" class="product-list prod-img"  th:src="@{/store/listAllProds}" style="width:100%;height:900px; margin-top:0; border:none;" ></iframe>
-      
-      <iframe id="groupProductListFrame" src="/store/group-prod-list" style="width:100%;height:900px;display:none;border:none;"></iframe>
-    </section>
-
-<!-- 查看參加活動的商品 -->
-    <section class="content-panel" id="tab-act-product-view">
-       <iframe th:src="@{/act/myActs}" height="1000"></iframe>
-    </section>
-
-    
-
-<!-- 查看活動 -->    
-	<section class="content-panel" id="tab-activity-view">
-      <iframe th:src="@{/act}" height="1000"></iframe>
-    </section>
-
-<!-- 新增團購促銷頁 -->
-    <section class="content-panel" id="tab-group-promotion-add">
-      <iframe th:src="@{/store/group-promotion-add}" style="width:100%;height:900px;border:none;"></iframe>
-    </section>
-
-<!-- 查看團購促銷 -->
-<section class="content-panel" id="tab-group-promotion-list">
-  <iframe th:src="@{/store/group-promotion-list}" style="width:100%;height:900px;border:none;"></iframe>
-</section>
-
-
-
-    
-  </main>
-  
-
-  <script>
-  //切換分頁
-//     document.querySelectorAll('.tab-btn').forEach(btn => {
-//       btn.addEventListener('click', () => {
-//         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-//         btn.classList.add('active');
-//         const tab = btn.dataset.tab;
-//         document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
-//         document.getElementById('tab-' + tab).classList.add('active');
-//       });
-//     });
-    
-   //切換分頁強制刷新 
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // 1. 切換按鈕樣式
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    // 2. 切換顯示面板
-    const tab = btn.dataset.tab;
-    document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tab);
-    targetPanel.classList.add('active');
-
-    // 3. 多個特定分頁需要刷新 iframe
-    const tabsToReload = ['act-product-view', 'product-view']; // ⬅ 這裡加你要刷新 iframe 的 tab 名
-
-    if (tabsToReload.includes(tab)) {
-      const iframe = targetPanel.querySelector('iframe');
-      if (iframe) {
-        const originalSrc = iframe.getAttribute('src') || iframe.getAttribute('th:src');
-        if (originalSrc) {
-          iframe.src = originalSrc + '?ts=' + new Date().getTime(); // 防快取
-        }
-      }
+    const productViewTypeSelect = document.getElementById('productViewType');
+    if (productViewTypeSelect) {
+      productViewTypeSelect.addEventListener('change', function() {
+        const isGroup = this.value === 'group';
+        document.getElementById('normalProductList').style.display = isGroup ? 'none' : 'block';
+        document.getElementById('groupProductListFrame').style.display = isGroup ? 'block' : 'none';
+      });
     }
   });
-});
-
-  
-
-  
-    function renderProductList() {
-      productList.innerHTML = products.map((p, index) => `
-        <div class="product-card">
-          <button class="delete-btn" onclick="deleteProduct(${index})">×</button>
-          <img src="${p.imgSrc}" alt="商品圖片" />
-          <div class="info">
-            <input type="text" value="${p.name}" placeholder="輸入商品名稱" id="name-${index}" />
-            <button class="save-btn" onclick="saveProduct(${index})">儲存</button>
-          </div>
-        </div>
-      `).join('');
-    }
-  
-    function deleteProduct(index) {
-      products.splice(index, 1);
-      renderProductList();
-    }
-  
-    function saveProduct(index) {
-      const nameInput = document.getElementById(`name-${index}`);
-      products[index].name = nameInput.value;
-      alert('商品已儲存！');
-    }
-
-    document.getElementById('productType').addEventListener('change', function() {
-      if (this.value === 'group') {
-        document.getElementById('normalProductUpload').style.display = 'none';
-        document.getElementById('saveNormalProduct').style.display = 'none';
-        document.getElementById('addGroupProductBtn').style.display = 'none';
-        document.getElementById('groupProdAddFrame').style.display = 'block';
-      } else {
-        document.getElementById('normalProductUpload').style.display = '';
-        document.getElementById('saveNormalProduct').style.display = 'none';
-        document.getElementById('addGroupProductBtn').style.display = 'none';
-        document.getElementById('groupProdAddFrame').style.display = 'none';
-      }
-    });
-
-    // 商品查詢分頁切換
-    document.getElementById('productViewType').addEventListener('change', function() {
-      if (this.value === 'group') {
-        document.getElementById('normalProductList').style.display = 'none';
-        document.getElementById('groupProductListFrame').style.display = 'block';
-      } else {
-        document.getElementById('normalProductList').style.display = '';
-        document.getElementById('groupProductListFrame').style.display = 'none';
-      }
-    });
-    // 預設顯示一般商品
-    document.getElementById('normalProductList').style.display = '';
-    document.getElementById('groupProductListFrame').style.display = 'none';
-  </script>
+</script>
 </body>
 </html>
