@@ -43,25 +43,28 @@
         
         .filter-bar {
             background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(255,107,107,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
-            padding: 24px 18px 12px 18px;
-            margin-bottom: 32px;
+            border-radius: 10px;
+            box-shadow: 0 1px 6px rgba(255,107,107,0.06), 0 1px 3px rgba(0,0,0,0.03);
+            padding: 10px 8px 4px 8px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
         }
         .filter-bar label {
             font-weight: 500;
             color: #ff6b6b;
-            margin-bottom: 6px;
+            margin-bottom: 2px;
+            font-size: 0.98rem;
         }
         .filter-bar .input-group, .filter-bar input[type=number] {
-            border-radius: 8px;
+            border-radius: 6px;
+            height: 32px;
+            font-size: 0.98rem;
         }
         .filter-bar .form-control:focus {
             border-color: #ff6b6b;
-            box-shadow: 0 0 0 0.15rem rgba(255,107,107,0.15);
+            box-shadow: 0 0 0 0.08rem rgba(255,107,107,0.10);
         }
         .filter-bar .form-check-input:checked {
             background-color: #ff6b6b;
@@ -70,32 +73,41 @@
         .filter-bar .btn-primary {
             background: linear-gradient(90deg, #ff6b6b 60%, #ffb86b 100%);
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             transition: box-shadow 0.2s;
+            font-size: 0.98rem;
+            height: 32px;
         }
         .filter-bar .btn-primary:hover {
-            box-shadow: 0 4px 16px rgba(255,107,107,0.15);
+            box-shadow: 0 2px 8px rgba(255,107,107,0.10);
             background: linear-gradient(90deg, #ff5252 60%, #ffb86b 100%);
         }
         .filter-bar .input-group-text {
             background: #fff0f0;
             color: #ff6b6b;
-            border-radius: 8px;
+            border-radius: 6px;
             border: none;
+            font-size: 0.98rem;
         }
         .filter-bar .form-check-label {
-            margin-left: 6px;
+            margin-left: 4px;
             color: #6c757d;
+            font-size: 0.97rem;
         }
         .filter-bar .form-check-input {
-            margin-top: 0.2em;
+            margin-top: 0.1em;
+            width: 1em;
+            height: 1em;
+        }
+        .filter-bar i.bi {
+            font-size: 1.05em;
         }
         @media (max-width: 768px) {
             .filter-bar {
                 flex-direction: column;
                 gap: 0;
-                padding: 18px 8px 8px 8px;
+                padding: 8px 4px 4px 4px;
             }
         }
         
