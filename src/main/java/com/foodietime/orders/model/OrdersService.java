@@ -15,6 +15,7 @@ import com.foodietime.orddet.model.OrdDetVO;
 import com.foodietime.orders.dto.LinePayRequestDTO;
 import com.foodietime.orders.dto.LinePayResponseDTO;
 import com.foodietime.orders.dto.NewOrderNotificationDTO;
+import com.foodietime.orders.dto.OrderStatusUpdateDTO;
 import com.foodietime.product.model.ProductVO;
 import com.foodietime.store.model.StoreRepository;
 import com.foodietime.store.model.StoreVO;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -62,6 +64,7 @@ public class OrdersService {
     private final StoreRepository storeRepo;
     private final NotificationService notificationService;
     private final MemService memService;
+
 
     @Autowired
     public OrdersService(OrdersRepository ordersRepo,
@@ -267,7 +270,10 @@ public class OrdersService {
         if (newStatus < 0 || newStatus > 4) {
             throw new IllegalStateException("無效的訂單狀態碼：" + newStatus);
         }
+
         order.setOrderStatus(newStatus);
+        OrdersVO savedOrder = ordersRepo.save(order);
+        notifyOrderUpdate(savedOrder);
         return ordersRepo.save(order);
     }
 
@@ -452,7 +458,8 @@ public class OrdersService {
             return order;
         });
     }
-
+    //==================================================================================================================
+    // 後臺管理的交易
     @Transactional
     public OrdersVO updateOrderStatus(Integer ordId, Integer orderStatus, Integer paymentStatus, String cancelReason) {
         OrdersVO order = ordersRepo.findById(ordId)
@@ -478,6 +485,55 @@ public class OrdersService {
             ordersRepo.deleteById(ordId);
         } else {
             throw new RuntimeException("刪除失敗：找不到對應的訂單，ID: " + ordId);
+        }
+    }
+//======================================================================================================================
+    /**
+     * 延遲更新訂單狀態為「準備中」的方法。
+     * 使用 @Async 讓此方法在新的線程中執行，不會阻塞主線程。
+     */
+    @Async // 【新增】此方法將異步執行
+    public void delayUpdateOrderStatusToPreparing(Integer orderId) {
+        try {
+            // 延遲 2 秒
+            Thread.sleep(2000); // 這裡的單位是毫秒，2000ms = 2秒
+            System.out.println("訂單ID " + orderId + " 延遲 2 秒後，準備更新為準備中狀態...");
+
+            // 再次更新訂單狀態為「準備中」(狀態碼 2)
+            // 直接呼叫自己 Service 裡的 updateOrderStatus，確保邏輯集中且正確
+            updateOrderStatus(orderId, 2);
+            System.out.println("訂單ID " + orderId + " 已更新為準備中狀態。");
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 重新設置中斷標誌
+            System.err.println("訂單ID " + orderId + " 延遲更新被中斷。");
+        } catch (Exception e) {
+            System.err.println("訂單ID " + orderId + " 延遲更新時發生錯誤: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 輔助方法：發送 WebSocket 通知
+     * 延遲更新由 Service 觸發
+     */
+    private void notifyOrderUpdate(OrdersVO order) {
+        try {
+            OrderStatusUpdateDTO updateDTO = new OrderStatusUpdateDTO(
+                    order.getOrdId(),
+                    order.getOrderStatus()
+            );
+            String orderJson = objectMapper.writeValueAsString(updateDTO);
+
+            // 通知會員
+            if (order.getMember() != null && order.getMember().getMemId() != null) {
+                notificationService.sendOrderStatusUpdateToMember(order.getMember().getMemId(), orderJson);
+            }
+
+
+        } catch (Exception e) {
+            System.err.println("發送訂單狀態更新通知 (WebSocket) 失敗，訂單ID: " + order.getOrdId());
+            e.printStackTrace();
         }
     }
 }

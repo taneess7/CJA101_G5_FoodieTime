@@ -1,6 +1,9 @@
 package com.foodietime.orders.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodietime.member.model.MemberVO;
+import com.foodietime.orders.dto.OrderStatusUpdateDTO;
+import com.foodietime.orders.model.NotificationService;
 import com.foodietime.orders.model.OrdersService;
 import com.foodietime.orders.model.OrdersVO;
 import com.foodietime.store.model.StoreVO;
@@ -12,16 +15,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/store/orders")
 public class MerchantOrdersController {
 
     private final OrdersService ordersService;
+    private final NotificationService notificationService;
+    private final ObjectMapper objectMapper; // 注入JSON工具
 
     @Autowired
-    public MerchantOrdersController(OrdersService ordersService) {
+    public MerchantOrdersController(OrdersService ordersService, NotificationService notificationService, ObjectMapper objectMapper) {
         this.ordersService = ordersService;
+        this.notificationService = notificationService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -80,34 +88,28 @@ public class MerchantOrdersController {
     public String acceptOrder(@PathVariable Integer orderId,
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
-
-        // ================== 步驟1：安全性檢查 ==================
         MemberVO currentStore = (MemberVO) session.getAttribute("loggedInMember");
-        if (currentStore == null) {
-            return "redirect:/login";
-        }
+        if (currentStore == null) return "redirect:/login";
 
         try {
-            // ================== 步驟2：驗證訂單歸屬權 ==================
             if (!ordersService.validateOrderBelongsToStore(orderId, currentStore.getMemId())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "您沒有權限操作此訂單！");
                 return "redirect:/store/orders/manage";
             }
 
-            // ================== 步驟3：更新訂單狀態為已接單 ==================
-            ordersService.updateOrderStatus(orderId, 1); // 1 = 已接單
+            ordersService.updateOrderStatus(orderId, 1); // 更新狀態為 1: 已接單
+
+            // 【核心】發送 WebSocket 通知給會員
+            ordersService.delayUpdateOrderStatusToPreparing(orderId);
 
             redirectAttributes.addFlashAttribute("successMessage", "訂單已成功接受！");
-
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "接受訂單時發生錯誤，請稍後再試。");
+            redirectAttributes.addFlashAttribute("errorMessage", "接受訂單時發生錯誤。");
         }
-
         return "redirect:/store/orders/manage";
     }
+
 
     /**
      * 處理商家拒絕訂單的請求。
@@ -198,7 +200,6 @@ public class MerchantOrdersController {
             ordersService.updateOrderStatus(orderId, 3); // 3 = 已完成
 
             redirectAttributes.addFlashAttribute("successMessage", "訂單已標記為完成！");
-
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {

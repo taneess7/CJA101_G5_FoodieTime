@@ -11,8 +11,17 @@
     <!-- FoodieTime Design System -->
     <link rel="stylesheet" th:href="@{/css/common/style.css}">
     <link rel="stylesheet" th:href="@{/css/front/memorders/member-orders.css}">
+    <style>
+        @keyframes highlight-fade {
+            from { background-color: rgba(195, 155, 123, 0.3); }
+            to { background-color: transparent; }
+        }
+        .highlight {
+            animation: highlight-fade 2s ease-out;
+        }
+    </style>
 </head>
-<body>
+<body th:data-member-id="${session.loggedInMember != null ? session.loggedInMember.memId : ''}">
 
 <!-- ======================= Header ======================= -->
 <header th:replace="~{front/common/header :: main-header}"></header>
@@ -46,7 +55,7 @@
                             <span>店家後台</span>
                         </a>
                     </div>
-                    <a th:href="@{/member/orders}" class="member-nav-item  active ">
+                    <a th:href="@{/member/orders}" class="member-nav-item active">
                         <i class="material-icons-outlined">receipt_long</i>
                         <span>一般訂單</span>
                     </a>
@@ -92,7 +101,7 @@
                     </div>
                     <div class="orders-container" th:if="${not #lists.isEmpty(currentOrders)}">
                         <!-- Order Card Loop -->
-                        <div class="order-card" th:each="order : ${currentOrders}">
+                        <div class="order-card" th:each="order : ${currentOrders}" th:id="'order-card-' + ${order.ordId}">
                             <div class="order-card-header">
                                 <div class="store-info">
                                     <i class="material-icons-outlined">storefront</i>
@@ -107,7 +116,6 @@
                             </div>
                             <div class="order-card-body">
                                 <div class="order-meta">
-                                    <!-- [修正] 將 T(String) 改回 T(java.lang.String) -->
                                     <span class="order-id" th:text="'訂單編號: FT' + ${T(java.lang.String).format('%08d', order.ordId)}"></span>
                                     <span class="order-date" th:text="${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm')}"></span>
                                 </div>
@@ -119,11 +127,25 @@
                                     </li>
                                 </ul>
                             </div>
+                            <!-- [修改] 將按鈕替換為進度條 -->
                             <div class="order-card-footer">
                                 <div class="order-total">實付金額: <strong th:text="'$ ' + ${#numbers.formatInteger(order.actualPayment, 0, 'COMMA')}"></strong></div>
-                                <div class="order-actions">
-                                    <button class="btn btn-secondary btn-sm">聯繫店家</button>
-                                    <button class="btn btn-primary btn-sm">追蹤訂單</button>
+                                <div class="order-progress-wrapper">
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-line" th:style="'width:' + (${order.orderStatus == 0 ? '0%' : (order.orderStatus == 1 ? '50%' : '100%')})"></div>
+                                        <div class="progress-step" th:classappend="${order.orderStatus >= 0 ? 'active' : ''} + ' ' + ${order.orderStatus == 0 ? 'current' : ''}">
+                                            <div class="step-dot"></div>
+                                            <div class="step-label">待處理</div>
+                                        </div>
+                                        <div class="progress-step" th:classappend="${order.orderStatus >= 1 ? 'active' : ''} + ' ' + ${order.orderStatus == 1 ? 'current' : ''}">
+                                            <div class="step-dot"></div>
+                                            <div class="step-label">已接單</div>
+                                        </div>
+                                        <div class="progress-step" th:classappend="${order.orderStatus >= 2 ? 'active' : ''} + ' ' + ${order.orderStatus == 2 ? 'current' : ''}">
+                                            <div class="step-dot"></div>
+                                            <div class="step-label">準備中</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +174,6 @@
                             </div>
                             <div class="order-card-body">
                                 <div class="order-meta">
-                                    <!-- [修正] 將 T(String) 改回 T(java.lang.String) -->
                                     <span class="order-id" th:text="'訂單編號: FT' + ${T(java.lang.String).format('%08d', order.ordId)}"></span>
                                     <span class="order-date" th:text="${#dates.format(order.ordDate, 'yyyy-MM-dd HH:mm')}"></span>
                                 </div>
@@ -184,6 +205,9 @@
 <footer th:replace="~{front/common/footer :: main-footer}"></footer>
 
 <!-- JavaScript for Tab Switching -->
+<!-- 引入 SockJS 和 STOMP.js 函式庫 -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 <script>
     function showTab(tabName) {
         document.querySelectorAll('.order-section').forEach(section => section.classList.remove('active'));
@@ -191,6 +215,72 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
     }
+
+    // WebSocket 即時更新邏輯
+    document.addEventListener('DOMContentLoaded', function() {
+        const memberId = document.body.getAttribute('data-member-id');
+        if (!memberId) return; // 如果沒登入，就不執行
+
+        const socket = new SockJS('/ws');
+        const stompClient = Stomp.over(socket);
+        stompClient.debug = null; // 關閉 console 的 debug 訊息
+
+        stompClient.connect({}, function(frame) {
+            console.log('WebSocket 已連接，準備接收訂單更新！');
+            // 訂閱專屬於此會員的 Topic
+            stompClient.subscribe('/topic/member/orders/' + memberId, function(message) {
+                const updatedOrder = JSON.parse(message.body);
+                handleOrderUpdate(updatedOrder);
+            });
+        });
+
+        function handleOrderUpdate(order) {
+            // 如果訂單已完成或取消，最好的方式是重新整理頁面，讓卡片正確移到歷史訂單
+            if (order.orderStatus === 3 || order.orderStatus === 4) {
+                location.reload();
+                return;
+            }
+
+            const orderCard = document.getElementById('order-card-' + order.ordId);
+            if (orderCard) {
+                updateOrderStatus(orderCard, order.orderStatus);
+                updateProgressBar(orderCard, order.orderStatus);
+                // 高亮提示
+                orderCard.classList.add('highlight');
+                setTimeout(() => orderCard.classList.remove('highlight'), 2000);
+            }
+        }
+
+        function updateOrderStatus(card, status) {
+            const statusElement = card.querySelector('.order-status');
+            const statusMap = {
+                0: { text: '待處理', class: 'status-pending' },
+                1: { text: '已接單', class: 'status-accepted' },
+                2: { text: '準備中', class: 'status-preparing' }
+            };
+            const newStatus = statusMap[status];
+            if (newStatus) {
+                statusElement.className = 'order-status ' + newStatus.class;
+                statusElement.innerHTML = `<span>${newStatus.text}</span>`;
+            }
+        }
+
+        function updateProgressBar(card, status) {
+            const progressBarLine = card.querySelector('.progress-bar-line');
+            const steps = card.querySelectorAll('.progress-step');
+            const widthMap = { 0: '0%', 1: '50%', 2: '100%' };
+            progressBarLine.style.width = widthMap[status] || '0%';
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'current');
+                if (status >= index) {
+                    step.classList.add('active');
+                }
+                if (status === index) {
+                    step.classList.add('current');
+                }
+            });
+        }
+    });
 </script>
 
 </body>
