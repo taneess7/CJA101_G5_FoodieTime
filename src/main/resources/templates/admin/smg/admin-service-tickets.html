@@ -454,20 +454,9 @@
                         document.getElementById('viewMessContent').textContent = data.messContent;
 
 
-                        // 建立時間 (用 localStorage 記住)
-                        let createdTimeKey = `ticket_created_time_${data.dmId}`;
-                        let createdTime = localStorage.getItem(createdTimeKey);
-                        if (!createdTime) {
-                            createdTime = new Date(data.messTime).toLocaleString('zh-TW');
-                            localStorage.setItem(createdTimeKey, createdTime);
-                        }
-                        document.getElementById('viewCreatedTime').textContent = createdTime;
-						
-                        
-	                   
+                        document.getElementById('viewCreatedTime').textContent = data.formattedTime;
 
-
-                        
+                  
                         // 狀態 badge
                         const statusBadge = document.getElementById('viewTicketStatus');
 						if (data.replyStatus === '待處理') {
