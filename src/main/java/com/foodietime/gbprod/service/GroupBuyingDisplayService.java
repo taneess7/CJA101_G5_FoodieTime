@@ -179,8 +179,7 @@ public class GroupBuyingDisplayService {
      * @return 搜尋結果DTO列表
      */
     public List<GroupBuyingDisplayDTO> searchProducts(String keyword) {
-        List<GroupBuyingCasesVO> searchResults = groupBuyingCasesService.findByGbTitleContainingAndGbStatus(keyword, (byte) 1);
-        
+        List<GroupBuyingCasesVO> searchResults = groupBuyingCasesService.findByGbProd_GbProdNameContainingAndGbStatus(keyword, (byte) 1);
         return searchResults.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

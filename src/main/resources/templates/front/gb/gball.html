@@ -42,11 +42,83 @@
         }
         
         .filter-bar {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 12px 16px 8px 16px;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .filter-bar label {
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .filter-bar i.bi {
+            color: #ff6b6b;
+            font-size: 1.1em;
+            margin-right: 2px;
+        }
+        .filter-bar .input-group, .filter-bar input[type=number] {
+            border-radius: 8px;
+            height: 34px;
+            font-size: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .filter-bar .form-control:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 0.12rem rgba(255,107,107,0.13);
+        }
+        .filter-bar .form-check-input:checked {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        .filter-bar .btn-primary {
+            background: linear-gradient(90deg, #ff6b6b 60%, #ffb86b 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: box-shadow 0.2s, background 0.2s;
+            font-size: 1rem;
+            height: 36px;
+            padding: 0 18px;
+            box-shadow: 0 1px 4px rgba(255,107,107,0.08);
+        }
+        .filter-bar .btn-primary:hover {
+            box-shadow: 0 2px 8px rgba(255,107,107,0.13);
+            background: linear-gradient(90deg, #ff5252 60%, #ffb86b 100%);
+        }
+        .filter-bar .input-group-text {
+            background: #fff0f0;
+            color: #ff6b6b;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            padding: 0 10px;
+        }
+        .filter-bar .form-check-label {
+            margin-left: 4px;
+            color: #6c757d;
+            font-size: 0.98rem;
+            font-weight: 500;
+        }
+        .filter-bar .form-check-input {
+            margin-top: 0.1em;
+            width: 1em;
+            height: 1em;
+        }
+        @media (max-width: 768px) {
+            .filter-bar {
+                flex-direction: column;
+                gap: 0;
+                padding: 8px 4px 4px 4px;
+            }
         }
         
         .product-card {
@@ -202,7 +274,8 @@
         }
         
         .results-info {
-            margin-bottom: 20px;
+            margin-bottom: 8px;
+            margin-top: 0;
             color: #6c757d;
         }
     </style>
@@ -274,7 +347,7 @@
                 <h1 class="search-title" th:text="${keyword != null ? '搜尋結果：' + keyword : '全部團購商品'}">全部團購商品</h1>
                 <p class="search-subtitle" th:text="${keyword != null ? '為您找到相關的團購商品' : '探索所有精選團購商品，找到最適合的優惠'}">探索所有精選團購商品，找到最適合的優惠</p>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg" placeholder="搜尋團購商品..." id="searchInput" th:value="${keyword != null ? keyword : ''}">
+                    <input type="text" class="form-control form-control-lg" placeholder="搜尋團購商品名稱..." aria-label="搜尋團購商品名稱" id="searchInput" th:value="${keyword != null ? keyword : ''}">
                     <button class="btn btn-primary btn-lg" type="button" onclick="searchProducts()">
                         <i class="bi bi-search"></i> 搜尋
                     </button>
@@ -285,9 +358,38 @@
 
     <!-- 篩選欄 -->
     <div class="container">
+      <div class="filter-bar d-flex flex-wrap align-items-end mb-4" style="gap:12px;">
+        <div style="flex:1 1 180px; min-width:160px;">
+            <label><i class="bi bi-cash-coin me-1"></i>價格區間</label>
+            <div class="input-group">
+                <input type="number" class="form-control" id="priceMin" placeholder="最低價">
+                <span class="input-group-text">~</span>
+                <input type="number" class="form-control" id="priceMax" placeholder="最高價">
+            </div>
+        </div>
+        <div style="flex:1 1 180px; min-width:160px;">
+            <label><i class="bi bi-clock-history me-1"></i>剩餘時間（小時以內）</label>
+            <input type="number" class="form-control" id="timeLeftMax" placeholder="如 24">
+        </div>
+        <div style="flex:1 1 120px; min-width:120px;" class="d-flex align-items-end">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="soldOverTarget">
+                <label class="form-check-label" for="soldOverTarget">
+                    <i class="bi bi-graph-up-arrow me-1"></i>已售出大於目標
+                </label>
+            </div>
+        </div>
+        <div style="flex:none;" class="d-flex align-items-end">
+            <button class="btn btn-primary" style="min-width:120px;" onclick="filterProducts()"><i class="bi bi-funnel-fill me-1"></i>套用篩選</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 篩選欄 -->
+    <div class="container">
         <!-- 結果資訊 -->
         <div class="results-info">
-            <p>共找到 <span th:text="${#lists.size(allProducts)}">0</span> 個團購商品</p>
+            <p>共找到 <span id="productCount" th:text="${#lists.size(allProducts)}">0</span> 個團購商品</p>
         </div>
 
         <!-- 全部團購商品 -->
@@ -534,100 +636,54 @@
         }
         
         // 篩選功能
-        document.getElementById('categoryFilter').addEventListener('change', filterProducts);
-        document.getElementById('regionFilter').addEventListener('change', filterProducts);
-        document.getElementById('priceFilter').addEventListener('change', filterProducts);
-        document.getElementById('sortFilter').addEventListener('change', sortProducts);
-        
         function filterProducts() {
-            // 這裡可以實現更複雜的篩選邏輯
-            console.log('篩選功能待實現');
-        }
-        
-        function sortProducts() {
-            const sortValue = document.getElementById('sortFilter').value;
+            const priceMin = parseInt(document.getElementById('priceMin').value) || 0;
+            const priceMax = parseInt(document.getElementById('priceMax').value) || Infinity;
+            const timeLeftMax = parseInt(document.getElementById('timeLeftMax').value) || Infinity;
+            const soldOverTarget = document.getElementById('soldOverTarget').checked;
+
             const container = document.getElementById('productContainer');
             const items = Array.from(container.querySelectorAll('.product-item'));
-            
-            // 根據不同的排序選項進行排序
-            switch(sortValue) {
-                case '熱門程度':
-                    // 根據售出件數排序（從高到低）
-                    items.sort((a, b) => {
-                        const salesA = parseInt(a.getAttribute('data-sales') || '0');
-                        const salesB = parseInt(b.getAttribute('data-sales') || '0');
-                        return salesB - salesA; // 降序排列
-                    });
-                    break;
-                    
-                case '最新上架':
-                    // 使用 data-create-time 屬性排序
-                    items.sort((a, b) => {
-                        const timeA = a.getAttribute('data-create-time') || '';
-                        const timeB = b.getAttribute('data-create-time') || '';
-                        return timeB.localeCompare(timeA); // 降序排列，最新的在前面
-                    });
-                    break;
-                    
-                case '價格低至高':
-                    items.sort((a, b) => {
-                        const priceA = parseInt(a.querySelector('.product-price').textContent.replace('$', ''));
-                        const priceB = parseInt(b.querySelector('.product-price').textContent.replace('$', ''));
-                        return priceA - priceB;
-                    });
-                    break;
-                    
-                case '價格高至低':
-                    items.sort((a, b) => {
-                        const priceA = parseInt(a.querySelector('.product-price').textContent.replace('$', ''));
-                        const priceB = parseInt(b.querySelector('.product-price').textContent.replace('$', ''));
-                        return priceB - priceA; // 降序排列
-                    });
-                    break;
-                    
-                case '即將結束':
-                    // 根據剩餘時間排序
-                    items.sort((a, b) => {
-                        const timeLeftA = a.querySelector('.time-left span').textContent;
-                        const timeLeftB = b.querySelector('.time-left span').textContent;
-                        
-                        // 提取剩餘天數或小時數進行比較
-                        // 假設格式為「剩餘 X 天」或「剩餘 X 小時」
-                        const getTimeValue = (timeText) => {
-                            if (!timeText.includes('剩餘')) return 9999; // 如果沒有剩餘時間信息，放到最後
-                            
-                            const match = timeText.match(/剩餘\s+(\d+)\s+([天小時])/);
-                            if (!match) return 9999;
-                            
-                            const value = parseInt(match[1]);
-                            const unit = match[2];
-                            
-                            // 將天轉換為小時以便比較
-                            return unit === '天' ? value * 24 : value;
-                        };
-                        
-                        const valueA = getTimeValue(timeLeftA);
-                        const valueB = getTimeValue(timeLeftB);
-                        
-                        return valueA - valueB; // 升序排列，剩餘時間少的在前面
-                    });
-                    break;
-                    
-                default:
-                    // 默認不排序
-                    return;
+
+            items.forEach(item => {
+                // 價格
+                const price = parseInt(item.querySelector('.product-price').textContent.replace('$', '')) || 0;
+                // 已售出
+                const sold = parseInt(item.getAttribute('data-sales')) || 0;
+                // 目標
+                const target = parseInt(item.querySelector('.progress-info span:last-child').textContent.replace(/[^0-9]/g, '')) || 0;
+                // 剩餘時間
+                let timeLeft = Infinity;
+                const timeText = item.querySelector('.time-left span').textContent;
+                if (timeText.includes('剩餘')) {
+                    const match = timeText.match(/剩餘\s*(\d+)\s*([天小時])/);
+                    if (match) {
+                        const value = parseInt(match[1]);
+                        const unit = match[2];
+                        timeLeft = unit === '天' ? value * 24 : value;
+                    }
+                }
+
+                // 條件判斷
+                let show = true;
+                if (price < priceMin || price > priceMax) show = false;
+                if (timeLeft > timeLeftMax) show = false;
+                if (soldOverTarget && !(sold > target)) show = false;
+
+                item.style.display = show ? 'block' : 'none';
+            });
+
+            // 篩選後重新初始化分頁
+            allItems = Array.from(container.querySelectorAll('.product-item')).filter(item => item.style.display !== 'none');
+            if (allItems.length > ITEMS_PER_PAGE) {
+                showPage(1);
+                updatePagination();
+                document.querySelector('.pagination-container').style.display = '';
+            } else {
+                document.querySelector('.pagination-container').style.display = 'none';
             }
-            
-            // 清空容器
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            
-            // 重新排列DOM元素
-            items.forEach(item => container.appendChild(item));
-            
-            // 重新初始化分頁
-            initializePagination();
+
+            document.getElementById('productCount').textContent = allItems.length;
         }
     </script>
 </body>

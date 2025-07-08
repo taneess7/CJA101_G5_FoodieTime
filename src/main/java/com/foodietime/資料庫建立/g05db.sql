@@ -1193,7 +1193,7 @@ CREATE TABLE SERVERMANAGER
 );
 
 INSERT INTO SERVERMANAGER (SMGR_EMAIL, SMGR_ACCOUNT, SMGR_PASSWORD, SMGR_NAME, SMGR_PHONE, SMGR_STATUS)
-VALUES ('admin1@foodmap.com', 'admin1', 'pass1', '管理員一', '0900000001', 1),
+VALUES ('maybefamiler@gmail.com', 'admin1', 'pass1', '管理員一', '0900000001', 1),
        ('admin2@foodmap.com', 'admin2', 'pass2', '管理員二', '0900000002', 1),
        ('admin3@foodmap.com', 'admin3', 'pass3', '管理員三', '0900000003', 1),
        ('admin4@foodmap.com', 'admin4', 'pass4', '管理員四', '0900000004', 1),

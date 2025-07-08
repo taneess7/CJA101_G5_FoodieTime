@@ -321,8 +321,10 @@ public class MemberController {
         Boolean isStore = (Boolean) session.getAttribute("pendingIsStore");
         System.out.println("【DEBUG】activate - pendingIsStore = " + isStore);
 
+
         // ✅ 若有勾選 → 導向店家註冊
         if (Boolean.TRUE.equals(isStore)) {
+
             session.setAttribute("registeringStore", member);
             session.removeAttribute("pendingIsStore");
             System.out.println("【DEBUG】導向店家註冊頁面");
