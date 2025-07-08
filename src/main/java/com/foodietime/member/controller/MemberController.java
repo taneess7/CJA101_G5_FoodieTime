@@ -285,8 +285,7 @@ public class MemberController {
         MemberVO member = memService.getByMemCode(code);
 
         // 🌟 Case 1：該 code 已被清除，但帳號已啟用 → 直接顯示成功頁
-        if (member == null) {	
-        	// 嘗試 fallback
+        if (member == null) {
             String fallbackEmail = (String) session.getAttribute("lastActivatedEmail");
             if (fallbackEmail != null) {
                 MemberVO fallbackMember = memService.getByMemEmail(fallbackEmail);
@@ -297,45 +296,45 @@ public class MemberController {
                 }
             }
             model.addAttribute("error", "啟用失敗，啟用碼無效！");
-            session.removeAttribute("pendingIsStore"); // 確保清掉
+            session.removeAttribute("pendingIsStore");
             session.removeAttribute("lastActivatedEmail");
             return "front/member/activation_failed";
         }
-        
-        // 🌟 Case 2：該帳號已經啟用過 → 再點一次，不要失敗，直接當作成功
+
+        // 🌟 Case 2：帳號已啟用過 → 不要失敗，顯示成功頁
         if (member.getMemStatus() == MemberVO.MemberStatus.ACTIVE) {
             session.setAttribute("loggedInMember", member);
             model.addAttribute("nickname", member.getMemNickname());
             return "front/member/activation_success";
         }
 
-        // Case 3：正常啟用流程
+        // ✅ Case 3：第一次啟用成功
         member.setMemStatus(MemberVO.MemberStatus.ACTIVE);
         member.setMemCode(null);  // 清掉啟用碼
         memService.save(member);
 
         session.setAttribute("loggedInMember", member);
-        model.addAttribute("nickname", member.getMemNickname());
-        
-        // 記住 fallback email
         session.setAttribute("lastActivatedEmail", member.getMemEmail());
+        model.addAttribute("nickname", member.getMemNickname());
 
-        
-
-        // 🌟 用 pendingIsStore
+        // ✅ 判斷是否勾選「我是店家」
         Boolean isStore = (Boolean) session.getAttribute("pendingIsStore");
         System.out.println("【DEBUG】activate - pendingIsStore = " + isStore);
 
 
-        // fallback：若 session 遺失但該會員尚未建立店家 → 仍導去註冊
-        if (Boolean.TRUE.equals(isStore) || storeService.findByStorEmail(member.getMemEmail()) == null) {
+        // ✅ 若有勾選 → 導向店家註冊
+        if (Boolean.TRUE.equals(isStore)) {
+
             session.setAttribute("registeringStore", member);
             session.removeAttribute("pendingIsStore");
             System.out.println("【DEBUG】導向店家註冊頁面");
             return "redirect:/front/member/storeregister";
         }
+
+        // ❌ 沒勾選 → 進入啟用成功頁
         return "front/member/activation_success";
     }
+
 
 
     @GetMapping("/login")

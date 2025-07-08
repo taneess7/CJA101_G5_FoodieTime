@@ -195,8 +195,7 @@ public class AdminMemberSearchController {
 
         // 傳篩選值 (保持畫面有原值)
         model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", (int) Math.ceil((double) allMembers.size() / pageSize));
+        
         model.addAttribute("status", status);
         model.addAttribute("gender", gender);
         model.addAttribute("regDateFrom", regDateFrom);

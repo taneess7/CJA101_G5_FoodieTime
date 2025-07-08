@@ -316,9 +316,10 @@ footer {
 			        <!-- 主要內容 -->
 					<div class="col-lg-9">
 					  <div class="profile-content">
-					    <h3 class="mb-4">
-					      團購標題：<span th:text="${group.gbTitle}">超值美食組</span>
-					    </h3>
+					    <h3 class="mb-4" style="word-break: break-word;">
+						  團購標題：<span th:text="${group.gbTitle}">超值美食組</span>
+						</h3>
+
 					    <p><strong>團購編號：</strong>
 					       <span th:text="${group.gbId}">001</span>
 					    </p>
@@ -358,12 +359,8 @@ footer {
                            <span th:text="${group.cancelReason != null ? group.cancelReason : '無'}">團購人數不足</span>
                         </p>
                         
-					    <p><strong>團購說明：</strong>
-					       <span th:text="${group.gbDescription}">
-					         本團為限時優惠，精選新鮮海鮮，組合超值，歡迎參加！
-					       </span>
-					    </p>
-					
+					    <p><strong>團購說明：</strong></p>
+                        <p th:utext="${#strings.replace(group.gbDescription, '\n', '<br/>')}" style="max-height: 200px; overflow-y: auto; word-break: break-all; white-space: normal;"></p>
 					    <h5 class="mt-4">參與者清單</h5>
 					    <table class="table table-bordered">
 					      <thead>
@@ -551,6 +548,8 @@ function saveOrderChanges() {
     }
 }
 </script>
+
+
 
 
 </body>
