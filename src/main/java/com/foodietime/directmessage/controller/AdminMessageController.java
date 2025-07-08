@@ -116,6 +116,7 @@ public class AdminMessageController {
     @ResponseBody
     public DirectMessageDTO viewTicket(@PathVariable Integer dmId) {
         DirectMessageVO entity = dmService.getById(dmId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         MemberVO member = memService.getById(entity.getMember().getMemId());
 
         DirectMessageDTO dto = new DirectMessageDTO();
@@ -124,6 +125,7 @@ public class AdminMessageController {
         dto.setMemName(member != null ? member.getMemName() : "未知會員");
         dto.setMessContent(entity.getMessContent());
         dto.setMessTime(entity.getMessTime());
+        dto.setFormattedTime(entity.getMessTime().format(formatter));
         dto.setMessDirection(entity.getMessDirection().ordinal());
 
         // 不用再判斷 hasReplyForMember（因為用最新 service 方法來顯示即可）
