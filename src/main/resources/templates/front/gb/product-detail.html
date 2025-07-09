@@ -967,16 +967,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/index">首頁</a>
+                        <a class="nav-link active" th:href="@{/index}">首頁</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/gb/gbindex#hot}">熱門團購</a>
+                        <a class="nav-link" th:href="@{/gb/all}">全部團購</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/gb/gbindex#new">最新上架</a>
+                        <a class="nav-link"  th:href="@{/gb/gbindex#hot}">熱門團購</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">即將結束</a>
+                        <a class="nav-link" th:href="@{/gb/gbindex#new}">最新上架</a>
                     </li>
                     <li class="nav-item">
                          <!-- 未登入狀態：顯示登入模態視窗 -->
