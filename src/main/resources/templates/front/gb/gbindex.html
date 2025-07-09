@@ -294,9 +294,9 @@
                         <div>
                             <span class="product-price" th:text="'$' + ${product.gbProdSpe}">$299</span>
                             <!-- 這裡可以加入原價計算邏輯 -->
-                            <span class="product-original-price" th:if="${product.gbProdSpe != null}" 
-                                  th:text="'$' + ${#numbers.formatInteger(product.gbProdSpe * 1.5, 0)}">$499</span>
-                            <span class="product-discount" th:if="${product.gbProdSpe != null}">33%</span>
+<!--                             <span class="product-original-price" th:if="${product.gbProdSpe != null}"  -->
+<!--                                   th:text="'$' + ${#numbers.formatInteger(product.gbProdSpe * 1.5, 0)}">$499</span> -->
+<!--                             <span class="product-discount" th:if="${product.gbProdSpe != null}">33%</span> -->
                         </div>
                         <div class="progress">
                             <div class="progress-bar bg-success" role="progressbar" 
@@ -339,9 +339,9 @@
                         <div>
                             <span class="product-price" th:text="'$' + ${product.gbProdSpe}">$399</span>
                             <!-- 這裡可以加入原價計算邏輯 -->
-                            <span class="product-original-price" th:if="${product.gbProdSpe != null}" 
-                                  th:text="'$' + ${#numbers.formatInteger(product.gbProdSpe * 1.5, 0)}">$699</span>
-                            <span class="product-discount" th:if="${product.gbProdSpe != null}">33%</span>
+<!--                             <span class="product-original-price" th:if="${product.gbProdSpe != null}"  -->
+<!--                                   th:text="'$' + ${#numbers.formatInteger(product.gbProdSpe * 1.5, 0)}">$699</span> -->
+<!--                             <span class="product-discount" th:if="${product.gbProdSpe != null}">33%</span> -->
                         </div>
                         <div class="progress">
                             <div class="progress-bar bg-success" role="progressbar" 

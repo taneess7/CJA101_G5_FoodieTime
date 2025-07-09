@@ -144,7 +144,7 @@
             <div class="card mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold">編輯管理員資訊</h6>
-                    <a th:href="@{/smg/admin-users-permissions}" class="btn btn-sm btn-secondary">
+                    <a th:href="@{/smg/admin-users-permissions}" class="btn btn-sm btn-secondary" id="cancelBtn">
                         <i class="fas fa-arrow-left"></i> 返回列表
                     </a>
                 </div>
@@ -448,7 +448,7 @@
                         <!-- 操作按鈕 -->
                         <div class="row">
                             <div class="col-12 d-flex justify-content-end">
-                                <a href="admin-users-permissions.html" class="btn btn-secondary me-2">
+                                <a th:href="@{/smg/admin-users-permissions}" class="btn btn-secondary me-2" id="cancelBtn">
                                     <i class="fas fa-times"></i> 取消
                                 </a>
                                 <button type="submit" class="btn btn-primary">
@@ -505,10 +505,20 @@
             sectionCheckbox.addEventListener('change', function() {
                 const cardBody = this.closest('.card').querySelector('.card-body');
                 const permissionCheckboxes = cardBody.querySelectorAll('.permission-checkbox');
-                
                 permissionCheckboxes.forEach(function(checkbox) {
                     checkbox.checked = sectionCheckbox.checked;
                     checkbox.disabled = !sectionCheckbox.checked;
+                });
+            });
+        });
+        // 新增：底下全選時自動勾選上層，否則取消
+        document.querySelectorAll('.card').forEach(function(card) {
+            const sectionCheckbox = card.querySelector('.section-checkbox');
+            const permissionCheckboxes = card.querySelectorAll('.permission-checkbox');
+            permissionCheckboxes.forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    const allChecked = Array.from(permissionCheckboxes).every(c => c.checked);
+                    sectionCheckbox.checked = allChecked;
                 });
             });
         });
@@ -527,6 +537,12 @@
         // 確認儲存
         document.getElementById('confirmSaveBtn').addEventListener('click', function() {
             document.getElementById('editAdminForm').submit();
+        });
+
+        // 取消按鈕回上一頁
+        document.getElementById('cancelBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            history.back();
         });
     </script>
 
