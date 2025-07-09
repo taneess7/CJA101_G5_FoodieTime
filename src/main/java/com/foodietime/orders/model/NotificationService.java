@@ -37,4 +37,19 @@ public class NotificationService {
         // convertAndSend 會自動將 message 字串包裝成 STOMP 訊息並發送到指定目的地
         messagingTemplate.convertAndSend(destination, message);
     }
+
+    /**
+     * 發送訂單狀態更新通知給【會員】
+     * 當店家更新訂單狀態時，呼叫此方法。
+     *
+     * @param memberId 訂單所屬會員的 ID
+     * @param message  更新後的訂單資料 (JSON 格式)
+     */
+    @Async
+    public void sendOrderStatusUpdateToMember(Integer memberId, String message) {
+        // 定義一個給會員的專屬 Topic 路徑
+        String destination = "/topic/member/orders/" + memberId;
+        // 發送訊息
+        messagingTemplate.convertAndSend(destination, message);
+    }
 }

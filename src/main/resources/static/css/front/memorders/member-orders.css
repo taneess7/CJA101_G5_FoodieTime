@@ -296,6 +296,104 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ==================== 8a. [新增] 訂單進度條 ==================== */
+.order-progress-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--space-4);
+    min-width: 200px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* 讓 label 對齊頂部 */
+}
+
+/* 灰色背景線 */
+.progress-bar-container::before {
+    content: '';
+    position: absolute;
+    top: 5px; /* 對齊圓點中心 */
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background-color: var(--neutral-200);
+    z-index: 1;
+}
+
+/* 有顏色的進度線 */
+.progress-bar-line {
+    position: absolute;
+    top: 5px; /* 對齊圓點中心 */
+    left: 0;
+    height: 4px;
+    background-color: var(--primary-color);
+    z-index: 2;
+    transition: width 0.4s ease-in-out;
+    border-radius: 4px;
+}
+
+.progress-step {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--neutral-300);
+    border: 2px solid var(--bg-light);
+    transition: background-color 0.4s ease;
+    box-shadow: 0 0 0 2px var(--bg-light); /* 確保背景線不會穿過 */
+}
+
+.progress-step.active .step-dot {
+    background-color: var(--primary-color);
+}
+
+.step-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+    white-space: nowrap; /* 防止標籤換行 */
+}
+
+.progress-step.active .step-label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* 目前進度的跳動動畫 */
+.progress-step.current .step-dot {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(195, 155, 123, 0.4), 0 0 0 2px var(--bg-light);
+    }
+    70% {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 8px rgba(195, 155, 123, 0), 0 0 0 2px var(--bg-light);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(195, 155, 123, 0), 0 0 0 2px var(--bg-light);
+    }
+}
+
+
 /* ==================== 9. 響應式設計 ==================== */
 @media (max-width: 992px) {
     .member-section {
@@ -310,6 +408,23 @@ body {
 @media (max-width: 768px) {
     .member-content-header { flex-direction: column; align-items: stretch; }
     .order-tabs { justify-content: center; }
-    .order-card-footer, .order-meta { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
-    .order-actions { width: 100%; justify-content: flex-end; }
+    .order-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+    .order-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+    .order-progress-wrapper {
+        width: 100%;
+        margin-left: 0;
+        padding-top: var(--space-2);
+    }
+    .order-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
 }
