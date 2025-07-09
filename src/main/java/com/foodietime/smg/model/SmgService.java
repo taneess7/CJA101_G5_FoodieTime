@@ -103,7 +103,7 @@ public class SmgService {
         if (admin == null) return "信箱不存在";
         String token = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set("admin:reset:token:" + token, email, 10, TimeUnit.MINUTES);
-        String resetUrl = "http://localhost:8080/smg/reset-password?token=" + token;
+        String resetUrl = "http://foodietime.ddns.net/smg/reset-password?token=" + token;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("FoodieTime 後台重設密碼");
