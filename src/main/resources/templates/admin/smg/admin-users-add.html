@@ -219,7 +219,7 @@
                                 <div th:if="${#fields.hasErrors('smgrEmail')}" class="text-danger mt-1" th:errors="*{smgrEmail}"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="smgrPhone" class="form-label">聯絡電話</label>
+                                <label for="smgrPhone" class="form-label">聯絡電話 <span class="text-danger">*</span></label>
                                 <input type="tel" class="form-control" th:field="*{smgrPhone}" required>
                                 <div th:if="${#fields.hasErrors('smgrPhone')}" class="text-danger mt-1" th:errors="*{smgrPhone}"></div>
                             </div>
@@ -465,6 +465,19 @@
             resetBtn.addEventListener('click', function() {
                 passwordMatchError.style.display = 'none';
                 confirmPasswordField.classList.remove('is-invalid');
+            });
+
+            // 權限區塊：上層勾選時，底下全部勾選/取消
+            document.querySelectorAll('.section-checkbox').forEach(function(sectionCheckbox) {
+                sectionCheckbox.addEventListener('change', function() {
+                    // 找到同一個 card 內的所有 permission-checkbox
+                    const card = sectionCheckbox.closest('.card');
+                    if (card) {
+                        card.querySelectorAll('.permission-checkbox').forEach(function(cb) {
+                            cb.checked = sectionCheckbox.checked;
+                        });
+                    }
+                });
             });
         });
     </script>
