@@ -224,7 +224,7 @@ public class OrdersService {
         }
 
         order.setPaymentStatus(1);
-        order.setOrderStatus(1);
+        order.setOrderStatus(0);
 
         if (order.getCoupon() != null) {
             memCouponRepo.findByMemberAndCoupon(order.getMember(), order.getCoupon())
