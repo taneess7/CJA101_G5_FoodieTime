@@ -158,28 +158,35 @@ public class StorePageController {
 	//====================更新store全部欄位=========================//
 	@PostMapping("/updateAll")
 	public String updateStore(@Valid @ModelAttribute("storeVO") StoreVO storeVO, BindingResult result, Model model,
-			@RequestParam("upFiles") MultipartFile[] parts, @RequestParam("storWeeklyOffDay") String[] offDays // 公休日欄位：多選
+			@RequestParam("upFiles") MultipartFile[] parts, @RequestParam(value = "storWeeklyOffDay", required = false) String[] offDays // 公休日欄位：多選
 	) throws IOException {
 
 		System.out.println("[後端進入 updateAll]");
 		System.out.println("接收到 ID：" + storeVO.getStorId());
 
-		// 1. 若有驗證錯誤（來自 @NotN @NotBlank, @Email 等），就返回原頁
+		// 1. 若有驗證錯誤BindingResult.hasErrors() == true（來自 @NotN @NotBlank, @Email 等）， 執行 hasErrors1 區塊，回傳原畫面
 		if (result.hasErrors()) {
+			//修正: 驗證失敗也要處理公休日轉換
+			if(offDays != null) {
+				storeVO.setStorOffDay(String.join(",", offDays));
+			}else {
+				storeVO.setStorOffDay(""); //若沒選擇，仍要避免null
+			}
 			if (storeVO.getStorOffDay() == null) {
 				storeVO.setStorOffDay(""); }// 轉空字串以避免 Thymeleaf contains 錯誤
 			model.addAttribute("storeVO", storeVO);
 			model.addAttribute("error", "請檢查欄位輸入");
 			model.addAttribute("storCatNameList", storeCateSvc.getAll());
-			System.out.println("hasErrors1");
+			System.out.println("hasErrors1"); // 驗證錯誤印這個
 			return "front/store/store_edit2"; 
 		}
-
+        
+		//表單資料正確 → hasErrors() == false 不會再進入 hasErrors1 區塊，直接往下執行
 		// 2. 處理圖片欄位（若未上傳新圖片，保留舊圖）
 		if (parts[0].isEmpty()) {
 			byte[] originalPhoto = storeSvc.findById(storeVO.getStorId()).getStorPhoto();
 			storeVO.setStorPhoto(originalPhoto);
-			System.out.println("hasErrors2");
+			System.out.println("noError"); // 成功進入更新流程印這個
 		} else {
 			byte[] photo = parts[0].getBytes();
 			storeVO.setStorPhoto(photo);
@@ -217,7 +224,7 @@ public class StorePageController {
 		List<StoreCateVO> storCatNameList = storeCateSvc.getAll();
 		model.addAttribute("storCatNameList", storCatNameList);
 
-		// 3. 公休日多選 → 字串儲存（如 "1,6"）
+		// 3.驗證成功，公休日多選 → 字串儲存（如 "1,6"）
 		String joinedOffDays = String.join(",", offDays);
 		storeVO.setStorOffDay(joinedOffDays);
 
