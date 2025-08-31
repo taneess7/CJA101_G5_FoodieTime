@@ -78,39 +78,49 @@ public class GroupBuyingCasesController {
             model.addAttribute("error", "找不到該會員開設且為團主的團購案");
         }
         model.addAttribute("groupBuyingCases", groupBuyingCases);
+        model.addAttribute("selectedStatus", status);
 
         // 4. 回傳列表頁面
         return "front/gb/gbleader/leader-groups";
     }
 
-	// 查詢某會員(團主)的某一團購詳細
-	 @GetMapping("/leader-gbdetail/{gbId}")
-	    public String leaderGbDetail(
-	            @PathVariable Integer gbId,
-	            HttpSession session,
-	            Model model) {
+    // 查詢某會員(團主)的某一團購詳細
+    @GetMapping("/leader-gbdetail/{gbId}")
+       public String leaderGbDetail(
+               @PathVariable Integer gbId,
+               HttpSession session,
+               Model model) {
 
-	        // 1. 登入檢查
-	        MemberVO me = (MemberVO) session.getAttribute("loggedInMember");
-	        if (me == null) {
-	            return "redirect:/front/member/login";
-	        }
+           // 1. 登入檢查
+           MemberVO me = (MemberVO) session.getAttribute("loggedInMember");
+           if (me == null) {
+               return "redirect:/front/member/login";
+           }
 
-	        // 2. 同時按 gbId, memId, leader=0 (團主) 來查
-	        GroupBuyingCasesVO group =
-	            groupBuyingCasesService
-	                .findByGbIdAndMember_MemIdAndLeader(gbId, me.getMemId(), (byte)0);
+           // 2. 同時按 gbId, memId, leader=0 (團主) 來查
+           GroupBuyingCasesVO group =
+               groupBuyingCasesService
+                   .findByGbIdAndMember_MemIdAndLeader(gbId, me.getMemId(), (byte)0);
 
-	        // 3. 找不到就回列表
-	        if (group == null) {
-	            return "redirect:/gb/leader-groups";
-	        }
+           // 3. 找不到就回列表
+           if (group == null) {
+               return "redirect:/gb/leader-groups";
+           }
 
-	        // 4. 放到 Model，顯示詳情
-	        model.addAttribute("group", group);
-	        model.addAttribute("participants", group.getParticipants());
-	        return "front/gb/gbleader/leader-gbdetail";
-	    }
+           // 4. 計算累計購買數量（根據訂單）
+           int total = 0;
+           if (group.getGroupOrders() != null) {
+               total = group.getGroupOrders().stream()
+                   .mapToInt(order -> order.getQuantity() != null ? order.getQuantity() : 0)
+                   .sum();
+           }
+           group.setCumulativePurchaseQuantity(total);
+
+           // 5. 放到 Model，顯示詳情
+           model.addAttribute("group", group);
+           model.addAttribute("participants", group.getParticipants());
+           return "front/gb/gbleader/leader-gbdetail";
+       }
 	
 	
 //	// 新增修改團購案

@@ -320,20 +320,17 @@ body {
 									  <input type="hidden" th:field="*{gbDescription}" />
 					                    <div class="row">
 					                        <!-- 團購狀態 -->
-					                        <div class="col-md-6">
-					                            <div class="mb-3">
-					                                <label for="editCaseStatus" class="form-label">團購狀態</label>
-					                                <select th:field="*{gbStatus}" class="form-select" id="editCaseStatus">
-					                                    <!--  <option th:value="0">待開團</option>   -->
-										                <option th:value="1">招募中</option>
-										                <!--  <option th:value="2">即將截止</option>   -->
-										                <!--  <option th:value="3">已開團</option>   -->
-										                <!--  <option th:value="4">已截止</option>   -->
-										                <option th:value="5">已取消</option>
-										                <!--  <option th:value="6">開團失敗</option>   -->
-					                                </select>
-					                            </div>
-					                        </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="editCaseStatus" class="form-label">團購狀態</label>
+                                                    <select th:field="*{gbStatus}" class="form-select" id="editCaseStatus">
+                                                        <option th:value="1">招募中</option>
+                                                        <option th:value="5">已取消</option>
+                                                        <option th:value="6">開團失敗</option>
+                                                    </select>
+                                                    <small class="form-text text-muted">「已取消」為團主手動取消，「開團失敗」為未達標自動失敗</small>
+                                                </div>
+                                            </div>
 					                        
 					                        <!-- 最低成團數量 -->
 					                        <div class="col-md-6 mb-3">

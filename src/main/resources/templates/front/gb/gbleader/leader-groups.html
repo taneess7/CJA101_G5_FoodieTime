@@ -274,8 +274,8 @@ body {
 		<div class="row">
 			<!-- 側邊欄 -->
 			<div class="col-lg-3 mb-4">
-                <div class="profile-sidebar p-3">
-                    <!-- 主要內容：動態顯示團長（從 Session 取） -->
+				<div class="profile-sidebar p-3">
+					<!-- 主要內容：動態顯示團長（從 Session 取） -->
 					<div class="text-center mb-4">
 					  <!-- 如果有頭像 URL，可改這裡 -->
 					  <!--  <img th:if="${session.loggedInMember.photoUrl != null}"
@@ -334,7 +334,6 @@ body {
 					</nav>
 				</div>
 			</div>
-
 			<!-- 主要內容 -->
 			<div class="col-lg-9">
 				<div class="profile-content">
@@ -351,12 +350,18 @@ body {
                             <option value="1" th:selected="${selectedStatus != null and selectedStatus == 1}">招募中</option>
                             <option value="4" th:selected="${selectedStatus != null and selectedStatus == 4}">已截止</option>
                             <option value="5" th:selected="${selectedStatus != null and selectedStatus == 5}">已取消</option>
+                            <option value="6" th:selected="${selectedStatus != null and selectedStatus == 6}">開團失敗</option>
                         </select>
 					</div>
 
 
 					<!-- 團購列表-->
-					<div class="card mb-4">
+					<!-- 無資料訊息 -->
+					<div id="noDataMessage" class="text-center py-5" style="display:none;">
+					  <h4 class="text-muted">目前無任何團購案</h4>
+					</div>
+					<!-- 團購列表表格 -->
+					<div id="groupTableCard" class="card mb-4">
 						<div
 							class="card-header py-3 d-flex justify-content-between align-items-center">
 							<h6 class="m-0 font-weight-bold">團購列表</h6>
@@ -378,7 +383,8 @@ body {
 									<tbody id="groupsTbody">
 										<!-- th:each 會對應到 model 裡的 groupBuyingCases -->
 										<tr th:each="gbcase, iterStat : ${groupBuyingCases}"
-											th:data-index="${iterStat.index}">
+											th:data-index="${iterStat.index}"
+											th:attr="data-status=${gbcase.gbStatus}">
 											<!-- 團購編號 -->
 											<td th:text="${gbcase.gbId}">1</td>
 											<!-- 團購標題 -->
@@ -394,6 +400,7 @@ body {
 												<span th:case="1">招募中</span> 
 												<span th:case="4">已截止</span> 
 												<span th:case="5">已取消</span> 
+												<span th:case="6">開團失敗</span>
 												<span th:case="*">未知</span>
 											</span></td>
 											<!-- 查看詳情 按鈕 -->
@@ -435,17 +442,8 @@ body {
                             </div>
                         </div>
                     </div>
-
-
-					
-
-
-
-
-
-					
-
-
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -549,6 +547,7 @@ body {
           </div>
       </div>
   </div>
+</div>  
 	<!-- 頁腳 -->
 	<footer class="footer">
 		<div class="container">
@@ -612,42 +611,54 @@ body {
 		document.addEventListener('DOMContentLoaded', () => {
 			initItems();
 			initializePagination();
+			updateNoDataMessage();
 		});
 
 		function initItems() {
-			const rows = Array.from(document.querySelectorAll('#groupsTbody tr'));
-			allItems = rows.filter(tr =>
-				!tr.querySelector('td[colspan]') && tr.querySelectorAll('td').length > 1
-			);
+			// 只抓有 data-status 屬性的資料列
+			const rows = Array.from(document.querySelectorAll('#groupsTbody tr[data-status]'));
+			allItems = rows;
+		}
+
+		function updateNoDataMessage() {
+			const itemsToUse = getCurrentItemsToUse();
+			const visibleCount = itemsToUse.filter(tr => tr.style.display !== 'none').length;
+			document.getElementById('noDataMessage').style.display = visibleCount === 0 ? '' : 'none';
+			document.getElementById('groupTableCard').style.display = visibleCount === 0 ? 'none' : '';
 		}
 
 		function filterGroups() {
 			const filterValue = document.getElementById('editCaseStatus').value;
 			filteredItems = [];
 			allItems.forEach(tr => {
-				const statusTd = tr.querySelector('td:nth-child(5)');
+				const status = tr.getAttribute('data-status');
 				let show = true;
 				if (filterValue) {
-					show = statusTd && statusTd.textContent.indexOf(getStatusText(filterValue)) !== -1;
+					show = status === filterValue;
 				}
 				tr.style.display = show ? '' : 'none';
 				if (show) filteredItems.push(tr);
 			});
 			currentPage = 1;
 			initializePagination();
+			updateNoDataMessage();
 		}
 
-		function getStatusText(val) {
-			switch(val) {
-				case '1': return '招募中';
-				case '4': return '已截止';
-				case '5': return '已取消';
-				default: return '';
-			}
+		function getCurrentItemsToUse() {
+			// 若有篩選條件（下拉選單有選），就用 filteredItems，否則用 allItems
+			const hasFilter = document.getElementById('editCaseStatus').value !== '';
+			return hasFilter ? filteredItems : allItems;
 		}
 
 		function initializePagination() {
-			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const itemsToUse = getCurrentItemsToUse();
+			if (itemsToUse.length === 0) {
+				allItems.forEach(tr => tr.style.display = 'none');
+				document.querySelectorAll('.pagination').forEach(p => p.style.display = 'none');
+				updatePaginationInfo(0, 0, 0);
+				updateNoDataMessage();
+				return;
+			}
 			if (itemsToUse.length > ITEMS_PER_PAGE) {
 				showPage(1);
 				updatePagination();
@@ -657,17 +668,25 @@ body {
 				document.querySelectorAll('.pagination').forEach(p => p.style.display = 'none');
 				updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
 			}
+			updateNoDataMessage();
 		}
 
 		function showPage(page) {
 			currentPage = page;
-			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const itemsToUse = getCurrentItemsToUse();
+			if (itemsToUse.length === 0) {
+				allItems.forEach(tr => tr.style.display = 'none');
+				updatePaginationInfo(0, 0, 0);
+				updateNoDataMessage();
+				return;
+			}
 			const start = (page - 1) * ITEMS_PER_PAGE;
 			const end = start + ITEMS_PER_PAGE;
 			itemsToUse.forEach((tr, idx) => {
 				tr.style.display = (idx >= start && idx < end) ? '' : 'none';
 			});
 			updatePaginationInfo(start, end, itemsToUse.length);
+			updateNoDataMessage();
 		}
 
 		function updatePaginationInfo(startIndex, endIndex, total) {
@@ -679,10 +698,11 @@ body {
 		}
 
 		function updatePagination() {
-			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const itemsToUse = getCurrentItemsToUse();
 			const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
 			const container = document.getElementById('pagination');
 			container.innerHTML = '';
+			if (itemsToUse.length === 0) return;
 			// 上一頁
 			const prevLi = document.createElement('li');
 			prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
@@ -703,7 +723,7 @@ body {
 		}
 
 		window.changePage = function(page) {
-			const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+			const itemsToUse = getCurrentItemsToUse();
 			const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
 			if (page < 1 || page > totalPages) return;
 			showPage(page);

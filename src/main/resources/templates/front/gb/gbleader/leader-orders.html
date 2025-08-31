@@ -306,17 +306,16 @@
                     
                     
                     <!-- 訂單列表 -->
-					<div class="card mb-4">
-					  <div class="card-header py-3 d-flex justify-content-between align-items-center">
-					    <h6 class="m-0 font-weight-bold">訂單列表</h6>
-					  </div>
-					  
-					<!-- 如果沒有訂單，直接顯示這個區塊 -->
-					<div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
-					  <h4 class="text-muted">目前無任何團購訂單</h4>
-					</div>
-					
-					<!-- 如果有訂單，才顯示表格和分頁 -->
+                    <!-- 無資料訊息 -->
+                    <div id="noDataMessage" class="text-center py-5" style="display:none;">
+                      <h4 class="text-muted">目前無任何團購訂單</h4>
+                    </div>
+                    <div class="card mb-4" id="orderTableCard">
+                      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold">訂單列表</h6>
+                      </div>
+                      
+                    <!-- 如果有訂單，才顯示表格和分頁 -->
                     <div th:if="${!#lists.isEmpty(orders)}" class="card-body table-responsive">
                         <table class="table table-bordered" width="100%" cellspacing="0">
                           <thead>
@@ -575,36 +574,53 @@
     // 篩完重設到第1頁
     currentPage = 1;
     initializePagination();
+    updateNoDataMessage();
+  }
+
+  function getCurrentItemsToUse() {
+    // 若有篩選條件（下拉選單有選），就用 filteredItems，否則用 allItems
+    const hasFilter = document.getElementById('orderFilter').value !== '';
+    return hasFilter ? filteredItems : allItems;
   }
 
   function initializePagination() {
-    // 選要「分頁的資料」：若有篩選，就用 filteredItems，否則就用 allItems
-    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
-
-    // 如果筆數超過每頁上限，就顯示分頁器，否則隱藏
+    const itemsToUse = getCurrentItemsToUse();
+    const pagers = document.querySelectorAll('.pagination');
+    if (itemsToUse.length === 0) {
+      allItems.forEach(tr => tr.style.display = 'none');
+      pagers.forEach(p => p.style.display = 'none');
+      updatePaginationInfo(0, 0, 0);
+      updateNoDataMessage();
+      return;
+    }
     if (itemsToUse.length > ITEMS_PER_PAGE) {
+      pagers.forEach(p => p.style.display = 'flex');
       showPage(1);
       updatePagination();
     } else {
-      // 顯示所有
       itemsToUse.forEach(tr => tr.style.display = '');
-      document.querySelectorAll('.pagination').forEach(p => p.style.display = 'none');
-      // 顯示正確資訊
+      pagers.forEach(p => p.style.display = 'none');
       updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
     }
+    updateNoDataMessage();
   }
 
   function showPage(page) {
     currentPage = page;
-    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+    const itemsToUse = getCurrentItemsToUse();
+    if (itemsToUse.length === 0) {
+      allItems.forEach(tr => tr.style.display = 'none');
+      updatePaginationInfo(0, 0, 0);
+      updateNoDataMessage();
+      return;
+    }
     const start = (page - 1) * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
-
     itemsToUse.forEach((tr, idx) => {
       tr.style.display = (idx >= start && idx < end) ? '' : 'none';
     });
-
     updatePaginationInfo(start, end, itemsToUse.length);
+    updateNoDataMessage();
   }
 
   function updatePaginationInfo(startIndex, endIndex, total) {
@@ -616,17 +632,16 @@
   }
 
   function updatePagination() {
-    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+    const itemsToUse = getCurrentItemsToUse();
     const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
     const container = document.getElementById('pagination');
     container.innerHTML = '';
-
+    if (itemsToUse.length === 0) return;
     // 上一頁
     const prevLi = document.createElement('li');
     prevLi.className = currentPage === 1 ? 'page-item disabled' : 'page-item';
     prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1});return false;">上一頁</a>`;
     container.appendChild(prevLi);
-
     // 頁碼
     for (let i = 1; i <= totalPages; i++) {
       const li = document.createElement('li');
@@ -634,7 +649,6 @@
       li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i});return false;">${i}</a>`;
       container.appendChild(li);
     }
-
     // 下一頁
     const nextLi = document.createElement('li');
     nextLi.className = currentPage === totalPages ? 'page-item disabled' : 'page-item';
@@ -643,7 +657,7 @@
   }
 
   window.changePage = function(page) {
-    const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
+    const itemsToUse = getCurrentItemsToUse();
     const totalPages = Math.ceil(itemsToUse.length / ITEMS_PER_PAGE);
     if (page < 1 || page > totalPages) return;
     showPage(page);
@@ -651,23 +665,12 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
-  function initializePagination() {
-	  const itemsToUse = filteredItems.length > 0 ? filteredItems : allItems;
-	  const pagers = document.querySelectorAll('.pagination');
-
-	  if (itemsToUse.length > ITEMS_PER_PAGE) {
-	    // 重新顯示分頁器
-	    pagers.forEach(p => p.style.display = 'flex');  
-	    showPage(1);
-	    updatePagination();
-	  } else {
-	    // 隱藏分頁器，並把所有資料攤開
-	    itemsToUse.forEach(tr => tr.style.display = '');
-	    pagers.forEach(p => p.style.display = 'none');  
-	    updatePaginationInfo(0, ITEMS_PER_PAGE, itemsToUse.length);
-	  }
-	}
-
+  function updateNoDataMessage() {
+    const itemsToUse = getCurrentItemsToUse();
+    const visibleCount = itemsToUse.filter(tr => tr.style.display !== 'none').length;
+    document.getElementById('noDataMessage').style.display = visibleCount === 0 ? '' : 'none';
+    document.getElementById('orderTableCard').style.display = visibleCount === 0 ? 'none' : '';
+  }
 </script>
 
 </body>
